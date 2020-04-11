@@ -1,9 +1,8 @@
 {
 	"compilerOptions": {
-		"module": "es6",
-		"lib": ["es6", "dom"],
+		"target": "ES6",
 		"outDir": "build",
-		"rootDir": "./src",
+		"rootDir": "src",
 		"noImplicitAny": true,
 		"removeComments": false,
 		"preserveConstEnums": true,

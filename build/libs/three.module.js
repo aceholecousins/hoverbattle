@@ -1,18 +1,4 @@
 // Polyfills
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var _a;
 if (Number.EPSILON === undefined) {
     Number.EPSILON = Math.pow(2, -52);
 }
@@ -8039,12 +8025,11 @@ Geometry.prototype = Object.assign(Object.create(EventDispatcher.prototype), {
  * @author Mugen87 / https://github.com/Mugen87
  */
 // BoxGeometry
-var BoxGeometry = /** @class */ (function (_super) {
-    __extends(BoxGeometry, _super);
-    function BoxGeometry(width, height, depth, widthSegments, heightSegments, depthSegments) {
-        var _this_1 = _super.call(this) || this;
-        _this_1.type = 'BoxGeometry';
-        _this_1.parameters = {
+class BoxGeometry extends Geometry {
+    constructor(width, height, depth, widthSegments, heightSegments, depthSegments) {
+        super();
+        this.type = 'BoxGeometry';
+        this.parameters = {
             width: width,
             height: height,
             depth: depth,
@@ -8052,19 +8037,16 @@ var BoxGeometry = /** @class */ (function (_super) {
             heightSegments: heightSegments,
             depthSegments: depthSegments
         };
-        _this_1.fromBufferGeometry(new BoxBufferGeometry(width, height, depth, widthSegments, heightSegments, depthSegments));
-        _this_1.mergeVertices();
-        return _this_1;
+        this.fromBufferGeometry(new BoxBufferGeometry(width, height, depth, widthSegments, heightSegments, depthSegments));
+        this.mergeVertices();
     }
-    return BoxGeometry;
-}(Geometry));
+}
 // BoxBufferGeometry
-var BoxBufferGeometry = /** @class */ (function (_super) {
-    __extends(BoxBufferGeometry, _super);
-    function BoxBufferGeometry(width, height, depth, widthSegments, heightSegments, depthSegments) {
-        var _this_1 = _super.call(this) || this;
-        _this_1.type = 'BoxBufferGeometry';
-        _this_1.parameters = {
+class BoxBufferGeometry extends BufferGeometry {
+    constructor(width, height, depth, widthSegments, heightSegments, depthSegments) {
+        super();
+        this.type = 'BoxBufferGeometry';
+        this.parameters = {
             width: width,
             height: height,
             depth: depth,
@@ -8072,7 +8054,7 @@ var BoxBufferGeometry = /** @class */ (function (_super) {
             heightSegments: heightSegments,
             depthSegments: depthSegments
         };
-        var scope = _this_1;
+        var scope = this;
         width = width || 1;
         height = height || 1;
         depth = depth || 1;
@@ -8096,10 +8078,10 @@ var BoxBufferGeometry = /** @class */ (function (_super) {
         buildPlane('x', 'y', 'z', 1, -1, width, height, depth, widthSegments, heightSegments, 4); // pz
         buildPlane('x', 'y', 'z', -1, -1, width, height, -depth, widthSegments, heightSegments, 5); // nz
         // build geometry
-        _this_1.setIndex(indices);
-        _this_1.setAttribute('position', new Float32BufferAttribute(vertices, 3));
-        _this_1.setAttribute('normal', new Float32BufferAttribute(normals, 3));
-        _this_1.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
+        this.setIndex(indices);
+        this.setAttribute('position', new Float32BufferAttribute(vertices, 3));
+        this.setAttribute('normal', new Float32BufferAttribute(normals, 3));
+        this.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
         function buildPlane(u, v, w, udir, vdir, width, height, depth, gridX, gridY, materialIndex) {
             var segmentWidth = width / gridX;
             var segmentHeight = height / gridY;
@@ -8160,10 +8142,8 @@ var BoxBufferGeometry = /** @class */ (function (_super) {
             // update total number of vertices
             numberOfVertices += vertexCounter;
         }
-        return _this_1;
     }
-    return BoxBufferGeometry;
-}(BufferGeometry));
+}
 /**
  * Uniform Utilities
  */
@@ -8644,7 +8624,7 @@ WebGLCubeRenderTarget.prototype.fromEquirectangularTexture = function (renderer,
     var scene = new Scene();
     var shader = {
         uniforms: {
-            tEquirect: { value: null }
+            tEquirect: { value: null },
         },
         vertexShader: [
             "varying vec3 vWorldDirection;",
@@ -8669,7 +8649,7 @@ WebGLCubeRenderTarget.prototype.fromEquirectangularTexture = function (renderer,
             "	sampleUV.x = atan( direction.z, direction.x ) * RECIPROCAL_PI2 + 0.5;",
             "	gl_FragColor = texture2D( tEquirect, sampleUV );",
             "}"
-        ].join('\n')
+        ].join('\n'),
     };
     var material = new ShaderMaterial({
         type: 'CubemapFromEquirect',
@@ -8818,10 +8798,10 @@ var UniformsLib = {
         map: { value: null },
         uvTransform: { value: new Matrix3() },
         uv2Transform: { value: new Matrix3() },
-        alphaMap: { value: null }
+        alphaMap: { value: null },
     },
     specularmap: {
-        specularMap: { value: null }
+        specularMap: { value: null },
     },
     envmap: {
         envMap: { value: null },
@@ -9054,7 +9034,7 @@ function WebGLAttributes(gl, capabilities) {
         var data = buffers.get(attribute);
         if (data) {
             gl.deleteBuffer(data.buffer);
-            buffers["delete"](attribute);
+            buffers.delete(attribute);
         }
     }
     function update(attribute, bufferType) {
@@ -9577,7 +9557,7 @@ var ShaderLib = {
     background: {
         uniforms: {
             uvTransform: { value: new Matrix3() },
-            t2D: { value: null }
+            t2D: { value: null },
         },
         vertexShader: ShaderChunk.background_vert,
         fragmentShader: ShaderChunk.background_frag
@@ -9597,7 +9577,7 @@ var ShaderLib = {
     },
     equirect: {
         uniforms: {
-            tEquirect: { value: null }
+            tEquirect: { value: null },
         },
         vertexShader: ShaderChunk.equirect_vert,
         fragmentShader: ShaderChunk.equirect_frag
@@ -9639,7 +9619,7 @@ ShaderLib.physical = {
             clearcoatNormalScale: { value: new Vector2(1, 1) },
             clearcoatNormalMap: { value: null },
             sheen: { value: new Color(0x000000) },
-            transparency: { value: 0 }
+            transparency: { value: 0 },
         }
     ]),
     vertexShader: ShaderChunk.meshphysical_vert,
@@ -10021,11 +10001,11 @@ function WebGLGeometries(gl, attributes, info) {
             attributes.remove(buffergeometry.attributes[name]);
         }
         geometry.removeEventListener('dispose', onGeometryDispose);
-        geometries["delete"](geometry);
+        geometries.delete(geometry);
         var attribute = wireframeAttributes.get(buffergeometry);
         if (attribute) {
             attributes.remove(attribute);
-            wireframeAttributes["delete"](buffergeometry);
+            wireframeAttributes.delete(buffergeometry);
         }
         //
         info.memory.geometries--;
@@ -11762,7 +11742,7 @@ function WebGLProperties() {
         return map;
     }
     function remove(object) {
-        properties["delete"](object);
+        properties.delete(object);
     }
     function update(object, key, value) {
         properties.get(object)[key] = value;
@@ -11898,7 +11878,7 @@ function WebGLRenderLists() {
     function onSceneDispose(event) {
         var scene = event.target;
         scene.removeEventListener('dispose', onSceneDispose);
-        lists["delete"](scene);
+        lists.delete(scene);
     }
     function get(scene, camera) {
         var cameras = lists.get(scene);
@@ -12278,7 +12258,7 @@ function WebGLRenderStates() {
     function onSceneDispose(event) {
         var scene = event.target;
         scene.removeEventListener('dispose', onSceneDispose);
-        renderStates["delete"](scene);
+        renderStates.delete(scene);
     }
     function get(scene, camera) {
         var renderState;
@@ -12666,7 +12646,6 @@ function WebGLShadowMap(_renderer, _objects, maxTextureSize) {
  * @author mrdoob / http://mrdoob.com/
  */
 function WebGLState(gl, extensions, capabilities) {
-    var _a, _b;
     var isWebGL2 = capabilities.isWebGL2;
     function ColorBuffer() {
         var locked = false;
@@ -12967,11 +12946,11 @@ function WebGLState(gl, extensions, capabilities) {
         }
         return false;
     }
-    var equationToGL = (_a = {},
-        _a[AddEquation] = 32774,
-        _a[SubtractEquation] = 32778,
-        _a[ReverseSubtractEquation] = 32779,
-        _a);
+    var equationToGL = {
+        [AddEquation]: 32774,
+        [SubtractEquation]: 32778,
+        [ReverseSubtractEquation]: 32779
+    };
     if (isWebGL2) {
         equationToGL[MinEquation] = 32775;
         equationToGL[MaxEquation] = 32776;
@@ -12983,19 +12962,19 @@ function WebGLState(gl, extensions, capabilities) {
             equationToGL[MaxEquation] = extension.MAX_EXT;
         }
     }
-    var factorToGL = (_b = {},
-        _b[ZeroFactor] = 0,
-        _b[OneFactor] = 1,
-        _b[SrcColorFactor] = 768,
-        _b[SrcAlphaFactor] = 770,
-        _b[SrcAlphaSaturateFactor] = 776,
-        _b[DstColorFactor] = 774,
-        _b[DstAlphaFactor] = 772,
-        _b[OneMinusSrcColorFactor] = 769,
-        _b[OneMinusSrcAlphaFactor] = 771,
-        _b[OneMinusDstColorFactor] = 775,
-        _b[OneMinusDstAlphaFactor] = 773,
-        _b);
+    var factorToGL = {
+        [ZeroFactor]: 0,
+        [OneFactor]: 1,
+        [SrcColorFactor]: 768,
+        [SrcAlphaFactor]: 770,
+        [SrcAlphaSaturateFactor]: 776,
+        [DstColorFactor]: 774,
+        [DstAlphaFactor]: 772,
+        [OneMinusSrcColorFactor]: 769,
+        [OneMinusSrcAlphaFactor]: 771,
+        [OneMinusDstColorFactor]: 775,
+        [OneMinusDstAlphaFactor]: 773
+    };
     function setBlending(blending, blendEquation, blendSrc, blendDst, blendEquationAlpha, blendSrcAlpha, blendDstAlpha, premultipliedAlpha) {
         if (blending === NoBlending) {
             if (currentBlendingEnabled) {
@@ -13289,7 +13268,6 @@ function WebGLState(gl, extensions, capabilities) {
  * @author mrdoob / http://mrdoob.com/
  */
 function WebGLTextures(_gl, extensions, state, properties, capabilities, utils, info) {
-    var _a, _b;
     var isWebGL2 = capabilities.isWebGL2;
     var maxTextures = capabilities.maxTextures;
     var maxCubemapSize = capabilities.maxCubemapSize;
@@ -13420,7 +13398,7 @@ function WebGLTextures(_gl, extensions, state, properties, capabilities, utils, 
         texture.removeEventListener('dispose', onTextureDispose);
         deallocateTexture(texture);
         if (texture.isVideoTexture) {
-            _videoTextures["delete"](texture);
+            _videoTextures.delete(texture);
         }
         info.memory.textures--;
     }
@@ -13603,19 +13581,19 @@ function WebGLTextures(_gl, extensions, state, properties, capabilities, utils, 
         state.activeTexture(33984 + slot);
         state.bindTexture(34067, properties.get(texture).__webglTexture);
     }
-    var wrappingToGL = (_a = {},
-        _a[RepeatWrapping] = 10497,
-        _a[ClampToEdgeWrapping] = 33071,
-        _a[MirroredRepeatWrapping] = 33648,
-        _a);
-    var filterToGL = (_b = {},
-        _b[NearestFilter] = 9728,
-        _b[NearestMipmapNearestFilter] = 9984,
-        _b[NearestMipmapLinearFilter] = 9986,
-        _b[LinearFilter] = 9729,
-        _b[LinearMipmapNearestFilter] = 9985,
-        _b[LinearMipmapLinearFilter] = 9987,
-        _b);
+    var wrappingToGL = {
+        [RepeatWrapping]: 10497,
+        [ClampToEdgeWrapping]: 33071,
+        [MirroredRepeatWrapping]: 33648
+    };
+    var filterToGL = {
+        [NearestFilter]: 9728,
+        [NearestMipmapNearestFilter]: 9984,
+        [NearestMipmapLinearFilter]: 9986,
+        [LinearFilter]: 9729,
+        [LinearMipmapNearestFilter]: 9985,
+        [LinearMipmapLinearFilter]: 9987
+    };
     function setTextureParameters(textureType, texture, supportsMips) {
         if (supportsMips) {
             _gl.texParameteri(textureType, 10242, wrappingToGL[texture.wrapS]);
@@ -14452,7 +14430,7 @@ function WebXRManager(renderer, gl) {
             var controller = inputSourcesMap.get(inputSource);
             if (controller) {
                 controller.dispatchEvent({ type: 'disconnected', data: inputSource });
-                inputSourcesMap["delete"](inputSource);
+                inputSourcesMap.delete(inputSource);
             }
         }
         // Notify connected
@@ -17156,7 +17134,7 @@ function LineLoop(geometry, material) {
 }
 LineLoop.prototype = Object.assign(Object.create(Line.prototype), {
     constructor: LineLoop,
-    isLineLoop: true
+    isLineLoop: true,
 });
 /**
  * @author mrdoob / http://mrdoob.com/
@@ -21264,7 +21242,7 @@ Object.assign(Interpolant.prototype, {
     //( 0, t, t0 ), returns this.resultBuffer
     beforeStart_: Interpolant.prototype.copySampleValue_,
     //( N-1, tN-1, t ), returns this.resultBuffer
-    afterEnd_: Interpolant.prototype.copySampleValue_
+    afterEnd_: Interpolant.prototype.copySampleValue_,
 });
 /**
  * Fast and simple cubic spline interpolant.
@@ -25425,7 +25403,7 @@ ImageBitmapLoader.prototype = Object.assign(Object.create(Loader.prototype), {
             if (onLoad)
                 onLoad(imageBitmap);
             scope.manager.itemEnd(url);
-        })["catch"](function (e) {
+        }).catch(function (e) {
             if (onError)
                 onError(e);
             scope.manager.itemError(url);
@@ -26862,7 +26840,7 @@ Object.assign(PropertyBinding.prototype, {
 Object.assign(PropertyBinding.prototype, {
     // initial state of these methods that calls 'bind'
     _getValue_unbound: PropertyBinding.prototype.getValue,
-    _setValue_unbound: PropertyBinding.prototype.setValue
+    _setValue_unbound: PropertyBinding.prototype.setValue,
 });
 /**
  *
@@ -29064,17 +29042,17 @@ var TOTAL_LODS = LOD_MAX - LOD_MIN + 1 + EXTRA_LOD_SIGMA.length;
 // The maximum length of the blur for loop. Smaller sigmas will use fewer
 // samples and exit early, but not recompile the shader.
 var MAX_SAMPLES = 20;
-var ENCODINGS = (_a = {},
-    _a[LinearEncoding] = 0,
-    _a[sRGBEncoding] = 1,
-    _a[RGBEEncoding] = 2,
-    _a[RGBM7Encoding] = 3,
-    _a[RGBM16Encoding] = 4,
-    _a[RGBDEncoding] = 5,
-    _a[GammaEncoding] = 6,
-    _a);
+var ENCODINGS = {
+    [LinearEncoding]: 0,
+    [sRGBEncoding]: 1,
+    [RGBEEncoding]: 2,
+    [RGBM7Encoding]: 3,
+    [RGBM16Encoding]: 4,
+    [RGBDEncoding]: 5,
+    [GammaEncoding]: 6
+};
 var _flatCamera = new OrthographicCamera();
-var _b = _createPlanes(), _lodPlanes = _b._lodPlanes, _sizeLods = _b._sizeLods, _sigmas = _b._sigmas;
+var { _lodPlanes, _sizeLods, _sigmas } = _createPlanes();
 var _oldTarget = null;
 // Golden Ratio
 var PHI = (1 + Math.sqrt(5)) / 2;
@@ -29110,10 +29088,7 @@ PMREMGenerator.prototype = {
      * and far planes ensure the scene is rendered in its entirety (the cubeCamera
      * is placed at the origin).
      */
-    fromScene: function (scene, sigma, near, far) {
-        if (sigma === void 0) { sigma = 0; }
-        if (near === void 0) { near = 0.1; }
-        if (far === void 0) { far = 100; }
+    fromScene: function (scene, sigma = 0, near = 0.1, far = 100) {
         _oldTarget = this._renderer.getRenderTarget();
         var cubeUVRenderTarget = this._allocateTargets();
         this._sceneToCubeUV(scene, near, far, cubeUVRenderTarget);
@@ -29328,7 +29303,7 @@ PMREMGenerator.prototype = {
         var sigmaPixels = sigmaRadians / radiansPerPixel;
         var samples = isFinite(sigmaRadians) ? 1 + Math.floor(STANDARD_DEVIATIONS * sigmaPixels) : MAX_SAMPLES;
         if (samples > MAX_SAMPLES) {
-            console.warn("sigmaRadians, " + sigmaRadians + ", is too large and will clip, as it requested " + samples + " samples when the maximum is set to " + MAX_SAMPLES);
+            console.warn(`sigmaRadians, ${sigmaRadians}, is too large and will clip, as it requested ${samples} samples when the maximum is set to ${MAX_SAMPLES}`);
         }
         var weights = [];
         var sum = 0;
@@ -29418,7 +29393,7 @@ function _createPlanes() {
             lod--;
         }
     }
-    return { _lodPlanes: _lodPlanes, _sizeLods: _sizeLods, _sigmas: _sigmas };
+    return { _lodPlanes, _sizeLods, _sigmas };
 }
 function _createRenderTarget(params) {
     var cubeUVRenderTarget = new WebGLRenderTarget(3 * SIZE_MAX, 3 * SIZE_MAX, params);
@@ -29448,7 +29423,49 @@ function _getBlurShader(maxSamples) {
             'outputEncoding': { value: ENCODINGS[LinearEncoding] }
         },
         vertexShader: _getCommonVertexShader(),
-        fragmentShader: "\nprecision mediump float;\nprecision mediump int;\nvarying vec3 vOutputDirection;\nuniform sampler2D envMap;\nuniform int samples;\nuniform float weights[n];\nuniform bool latitudinal;\nuniform float dTheta;\nuniform float mipInt;\nuniform vec3 poleAxis;\n\n" + _getEncodings() + "\n\n#define ENVMAP_TYPE_CUBE_UV\n#include <cube_uv_reflection_fragment>\n\nvec3 getSample(float theta, vec3 axis) {\n\tfloat cosTheta = cos(theta);\n\t// Rodrigues' axis-angle rotation\n\tvec3 sampleDirection = vOutputDirection * cosTheta\n\t\t+ cross(axis, vOutputDirection) * sin(theta)\n\t\t+ axis * dot(axis, vOutputDirection) * (1.0 - cosTheta);\n\treturn bilinearCubeUV(envMap, sampleDirection, mipInt);\n}\n\nvoid main() {\n\tvec3 axis = latitudinal ? poleAxis : cross(poleAxis, vOutputDirection);\n\tif (all(equal(axis, vec3(0.0))))\n\t\taxis = vec3(vOutputDirection.z, 0.0, - vOutputDirection.x);\n\taxis = normalize(axis);\n\tgl_FragColor = vec4(0.0);\n\tgl_FragColor.rgb += weights[0] * getSample(0.0, axis);\n\tfor (int i = 1; i < n; i++) {\n\t\tif (i >= samples)\n\t\t\tbreak;\n\t\tfloat theta = dTheta * float(i);\n\t\tgl_FragColor.rgb += weights[i] * getSample(-1.0 * theta, axis);\n\t\tgl_FragColor.rgb += weights[i] * getSample(theta, axis);\n\t}\n\tgl_FragColor = linearToOutputTexel(gl_FragColor);\n}\n\t\t",
+        fragmentShader: `
+precision mediump float;
+precision mediump int;
+varying vec3 vOutputDirection;
+uniform sampler2D envMap;
+uniform int samples;
+uniform float weights[n];
+uniform bool latitudinal;
+uniform float dTheta;
+uniform float mipInt;
+uniform vec3 poleAxis;
+
+${_getEncodings()}
+
+#define ENVMAP_TYPE_CUBE_UV
+#include <cube_uv_reflection_fragment>
+
+vec3 getSample(float theta, vec3 axis) {
+	float cosTheta = cos(theta);
+	// Rodrigues' axis-angle rotation
+	vec3 sampleDirection = vOutputDirection * cosTheta
+		+ cross(axis, vOutputDirection) * sin(theta)
+		+ axis * dot(axis, vOutputDirection) * (1.0 - cosTheta);
+	return bilinearCubeUV(envMap, sampleDirection, mipInt);
+}
+
+void main() {
+	vec3 axis = latitudinal ? poleAxis : cross(poleAxis, vOutputDirection);
+	if (all(equal(axis, vec3(0.0))))
+		axis = vec3(vOutputDirection.z, 0.0, - vOutputDirection.x);
+	axis = normalize(axis);
+	gl_FragColor = vec4(0.0);
+	gl_FragColor.rgb += weights[0] * getSample(0.0, axis);
+	for (int i = 1; i < n; i++) {
+		if (i >= samples)
+			break;
+		float theta = dTheta * float(i);
+		gl_FragColor.rgb += weights[i] * getSample(-1.0 * theta, axis);
+		gl_FragColor.rgb += weights[i] * getSample(theta, axis);
+	}
+	gl_FragColor = linearToOutputTexel(gl_FragColor);
+}
+		`,
         blending: NoBlending,
         depthTest: false,
         depthWrite: false
@@ -29466,7 +29483,39 @@ function _getEquirectShader() {
             'outputEncoding': { value: ENCODINGS[LinearEncoding] }
         },
         vertexShader: _getCommonVertexShader(),
-        fragmentShader: "\nprecision mediump float;\nprecision mediump int;\nvarying vec3 vOutputDirection;\nuniform sampler2D envMap;\nuniform vec2 texelSize;\n\n" + _getEncodings() + "\n\n#define RECIPROCAL_PI 0.31830988618\n#define RECIPROCAL_PI2 0.15915494\n\nvoid main() {\n\tgl_FragColor = vec4(0.0);\n\tvec3 outputDirection = normalize(vOutputDirection);\n\tvec2 uv;\n\tuv.y = asin(clamp(outputDirection.y, -1.0, 1.0)) * RECIPROCAL_PI + 0.5;\n\tuv.x = atan(outputDirection.z, outputDirection.x) * RECIPROCAL_PI2 + 0.5;\n\tvec2 f = fract(uv / texelSize - 0.5);\n\tuv -= f * texelSize;\n\tvec3 tl = envMapTexelToLinear(texture2D(envMap, uv)).rgb;\n\tuv.x += texelSize.x;\n\tvec3 tr = envMapTexelToLinear(texture2D(envMap, uv)).rgb;\n\tuv.y += texelSize.y;\n\tvec3 br = envMapTexelToLinear(texture2D(envMap, uv)).rgb;\n\tuv.x -= texelSize.x;\n\tvec3 bl = envMapTexelToLinear(texture2D(envMap, uv)).rgb;\n\tvec3 tm = mix(tl, tr, f.x);\n\tvec3 bm = mix(bl, br, f.x);\n\tgl_FragColor.rgb = mix(tm, bm, f.y);\n\tgl_FragColor = linearToOutputTexel(gl_FragColor);\n}\n\t\t",
+        fragmentShader: `
+precision mediump float;
+precision mediump int;
+varying vec3 vOutputDirection;
+uniform sampler2D envMap;
+uniform vec2 texelSize;
+
+${_getEncodings()}
+
+#define RECIPROCAL_PI 0.31830988618
+#define RECIPROCAL_PI2 0.15915494
+
+void main() {
+	gl_FragColor = vec4(0.0);
+	vec3 outputDirection = normalize(vOutputDirection);
+	vec2 uv;
+	uv.y = asin(clamp(outputDirection.y, -1.0, 1.0)) * RECIPROCAL_PI + 0.5;
+	uv.x = atan(outputDirection.z, outputDirection.x) * RECIPROCAL_PI2 + 0.5;
+	vec2 f = fract(uv / texelSize - 0.5);
+	uv -= f * texelSize;
+	vec3 tl = envMapTexelToLinear(texture2D(envMap, uv)).rgb;
+	uv.x += texelSize.x;
+	vec3 tr = envMapTexelToLinear(texture2D(envMap, uv)).rgb;
+	uv.y += texelSize.y;
+	vec3 br = envMapTexelToLinear(texture2D(envMap, uv)).rgb;
+	uv.x -= texelSize.x;
+	vec3 bl = envMapTexelToLinear(texture2D(envMap, uv)).rgb;
+	vec3 tm = mix(tl, tr, f.x);
+	vec3 bm = mix(bl, br, f.x);
+	gl_FragColor.rgb = mix(tm, bm, f.y);
+	gl_FragColor = linearToOutputTexel(gl_FragColor);
+}
+		`,
         blending: NoBlending,
         depthTest: false,
         depthWrite: false
@@ -29482,7 +29531,20 @@ function _getCubemapShader() {
             'outputEncoding': { value: ENCODINGS[LinearEncoding] }
         },
         vertexShader: _getCommonVertexShader(),
-        fragmentShader: "\nprecision mediump float;\nprecision mediump int;\nvarying vec3 vOutputDirection;\nuniform samplerCube envMap;\n\n" + _getEncodings() + "\n\nvoid main() {\n\tgl_FragColor = vec4(0.0);\n\tgl_FragColor.rgb = envMapTexelToLinear(textureCube(envMap, vec3( - vOutputDirection.x, vOutputDirection.yz ))).rgb;\n\tgl_FragColor = linearToOutputTexel(gl_FragColor);\n}\n\t\t",
+        fragmentShader: `
+precision mediump float;
+precision mediump int;
+varying vec3 vOutputDirection;
+uniform samplerCube envMap;
+
+${_getEncodings()}
+
+void main() {
+	gl_FragColor = vec4(0.0);
+	gl_FragColor.rgb = envMapTexelToLinear(textureCube(envMap, vec3( - vOutputDirection.x, vOutputDirection.yz ))).rgb;
+	gl_FragColor = linearToOutputTexel(gl_FragColor);
+}
+		`,
         blending: NoBlending,
         depthTest: false,
         depthWrite: false
@@ -29491,10 +29553,86 @@ function _getCubemapShader() {
     return shaderMaterial;
 }
 function _getCommonVertexShader() {
-    return "\nprecision mediump float;\nprecision mediump int;\nattribute vec3 position;\nattribute vec2 uv;\nattribute float faceIndex;\nvarying vec3 vOutputDirection;\nvec3 getDirection(vec2 uv, float face) {\n\tuv = 2.0 * uv - 1.0;\n\tvec3 direction = vec3(uv, 1.0);\n\tif (face == 0.0) {\n\t\tdirection = direction.zyx;\n\t\tdirection.z *= -1.0;\n\t} else if (face == 1.0) {\n\t\tdirection = direction.xzy;\n\t\tdirection.z *= -1.0;\n\t} else if (face == 3.0) {\n\t\tdirection = direction.zyx;\n\t\tdirection.x *= -1.0;\n\t} else if (face == 4.0) {\n\t\tdirection = direction.xzy;\n\t\tdirection.y *= -1.0;\n\t} else if (face == 5.0) {\n\t\tdirection.xz *= -1.0;\n\t}\n\treturn direction;\n}\nvoid main() {\n\tvOutputDirection = getDirection(uv, faceIndex);\n\tgl_Position = vec4( position, 1.0 );\n}\n\t";
+    return `
+precision mediump float;
+precision mediump int;
+attribute vec3 position;
+attribute vec2 uv;
+attribute float faceIndex;
+varying vec3 vOutputDirection;
+vec3 getDirection(vec2 uv, float face) {
+	uv = 2.0 * uv - 1.0;
+	vec3 direction = vec3(uv, 1.0);
+	if (face == 0.0) {
+		direction = direction.zyx;
+		direction.z *= -1.0;
+	} else if (face == 1.0) {
+		direction = direction.xzy;
+		direction.z *= -1.0;
+	} else if (face == 3.0) {
+		direction = direction.zyx;
+		direction.x *= -1.0;
+	} else if (face == 4.0) {
+		direction = direction.xzy;
+		direction.y *= -1.0;
+	} else if (face == 5.0) {
+		direction.xz *= -1.0;
+	}
+	return direction;
+}
+void main() {
+	vOutputDirection = getDirection(uv, faceIndex);
+	gl_Position = vec4( position, 1.0 );
+}
+	`;
 }
 function _getEncodings() {
-    return "\nuniform int inputEncoding;\nuniform int outputEncoding;\n\n#include <encodings_pars_fragment>\n\nvec4 inputTexelToLinear(vec4 value){\n\tif(inputEncoding == 0){\n\t\treturn value;\n\t}else if(inputEncoding == 1){\n\t\treturn sRGBToLinear(value);\n\t}else if(inputEncoding == 2){\n\t\treturn RGBEToLinear(value);\n\t}else if(inputEncoding == 3){\n\t\treturn RGBMToLinear(value, 7.0);\n\t}else if(inputEncoding == 4){\n\t\treturn RGBMToLinear(value, 16.0);\n\t}else if(inputEncoding == 5){\n\t\treturn RGBDToLinear(value, 256.0);\n\t}else{\n\t\treturn GammaToLinear(value, 2.2);\n\t}\n}\n\nvec4 linearToOutputTexel(vec4 value){\n\tif(outputEncoding == 0){\n\t\treturn value;\n\t}else if(outputEncoding == 1){\n\t\treturn LinearTosRGB(value);\n\t}else if(outputEncoding == 2){\n\t\treturn LinearToRGBE(value);\n\t}else if(outputEncoding == 3){\n\t\treturn LinearToRGBM(value, 7.0);\n\t}else if(outputEncoding == 4){\n\t\treturn LinearToRGBM(value, 16.0);\n\t}else if(outputEncoding == 5){\n\t\treturn LinearToRGBD(value, 256.0);\n\t}else{\n\t\treturn LinearToGamma(value, 2.2);\n\t}\n}\n\nvec4 envMapTexelToLinear(vec4 color) {\n\treturn inputTexelToLinear(color);\n}\n\t";
+    return `
+uniform int inputEncoding;
+uniform int outputEncoding;
+
+#include <encodings_pars_fragment>
+
+vec4 inputTexelToLinear(vec4 value){
+	if(inputEncoding == 0){
+		return value;
+	}else if(inputEncoding == 1){
+		return sRGBToLinear(value);
+	}else if(inputEncoding == 2){
+		return RGBEToLinear(value);
+	}else if(inputEncoding == 3){
+		return RGBMToLinear(value, 7.0);
+	}else if(inputEncoding == 4){
+		return RGBMToLinear(value, 16.0);
+	}else if(inputEncoding == 5){
+		return RGBDToLinear(value, 256.0);
+	}else{
+		return GammaToLinear(value, 2.2);
+	}
+}
+
+vec4 linearToOutputTexel(vec4 value){
+	if(outputEncoding == 0){
+		return value;
+	}else if(outputEncoding == 1){
+		return LinearTosRGB(value);
+	}else if(outputEncoding == 2){
+		return LinearToRGBE(value);
+	}else if(outputEncoding == 3){
+		return LinearToRGBM(value, 7.0);
+	}else if(outputEncoding == 4){
+		return LinearToRGBM(value, 16.0);
+	}else if(outputEncoding == 5){
+		return LinearToRGBD(value, 256.0);
+	}else{
+		return LinearToGamma(value, 2.2);
+	}
+}
+
+vec4 envMapTexelToLinear(vec4 color) {
+	return inputTexelToLinear(color);
+}
+	`;
 }
 /**
  * @author mrdoob / http://mrdoob.com/
@@ -29761,7 +29899,7 @@ Object.assign(Sphere.prototype, {
     empty: function () {
         console.warn('THREE.Sphere: .empty() has been renamed to .isEmpty().');
         return this.isEmpty();
-    }
+    },
 });
 Frustum.prototype.setFromMatrix = function (m) {
     console.warn('THREE.Frustum: .setFromMatrix() has been renamed to .setFromProjectionMatrix().');
@@ -30055,7 +30193,7 @@ Object.defineProperties(Object3D.prototype, {
 Object.assign(Mesh.prototype, {
     setDrawMode: function () {
         console.error('THREE.Mesh: .setDrawMode() has been removed. The renderer now always assumes THREE.TrianglesDrawMode. Transform your geometry via BufferGeometryUtils.toTrianglesDrawMode() if necessary.');
-    }
+    },
 });
 Object.defineProperties(Mesh.prototype, {
     drawMode: {
@@ -30788,7 +30926,7 @@ function LensFlare() {
 if (typeof __THREE_DEVTOOLS__ !== 'undefined') {
     /* eslint-disable no-undef */
     __THREE_DEVTOOLS__.dispatchEvent(new CustomEvent('register', { detail: {
-            revision: REVISION
+            revision: REVISION,
         } }));
     /* eslint-enable no-undef */
 }

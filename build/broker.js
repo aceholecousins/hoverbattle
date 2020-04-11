@@ -1,31 +1,30 @@
-var EventChannel = /** @class */ (function () {
-    function EventChannel() {
+class EventChannel {
+    constructor() {
         this.handlers = new Set();
     }
-    EventChannel.prototype.addHandler = function (handler) {
+    addHandler(handler) {
         this.handlers.add(handler);
-    };
-    EventChannel.prototype.removeHandler = function (handler) {
-        this.handlers["delete"](handler);
-    };
-    EventChannel.prototype.fire = function (event) {
+    }
+    removeHandler(handler) {
+        this.handlers.delete(handler);
+    }
+    fire(event) {
         this.handlers.forEach(function (handler) {
             handler(event);
         });
-    };
-    EventChannel.prototype.fetch = function (request) {
-        var responses = [];
+    }
+    fetch(request) {
+        let responses = [];
         this.handlers.forEach(function (handler) {
-            var response = handler(request);
+            let response = handler(request);
             if (response !== undefined) {
                 responses.push(response);
             }
         });
         return responses;
-    };
-    return EventChannel;
-}());
-var broker = {};
+    }
+}
+let broker = {};
 broker.newChannel = function (name) {
     if (broker.hasOwnProperty(name)) {
         throw new Error('channel "' + name + '" already exists');

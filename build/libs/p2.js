@@ -626,7 +626,7 @@ else {
             }, {}], 5: [function (_dereq_, module, exports) {
                 module.exports = {
                     Polygon: _dereq_("./Polygon"),
-                    Point: _dereq_("./Point")
+                    Point: _dereq_("./Point"),
                 };
             }, { "./Point": 2, "./Polygon": 3 }], 6: [function (_dereq_, module, exports) {
                 module.exports = {
@@ -3217,7 +3217,7 @@ else {
                     this.type = type;
                     options = Utils.defaults(options, {
                         collideConnected: true,
-                        wakeUpBodies: true
+                        wakeUpBodies: true,
                     });
                     /**
                      * Equations to be solved in this constraint
@@ -7273,7 +7273,7 @@ else {
                 function Spring(bodyA, bodyB, options) {
                     options = Utils.defaults(options, {
                         stiffness: 100,
-                        damping: 1
+                        damping: 1,
                     });
                     /**
                      * Stiffness of the spring.
@@ -7548,7 +7548,7 @@ else {
                     Utils: _dereq_('./utils/Utils'),
                     World: _dereq_('./world/World'),
                     vec2: _dereq_('./math/vec2'),
-                    version: _dereq_('../package.json').version
+                    version: _dereq_('../package.json').version,
                 };
                 Object.defineProperty(p2, 'Rectangle', {
                     get: function () {
