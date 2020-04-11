@@ -13,8 +13,5 @@
 	},
 	"include": [
 		"src/**/*"
-	],
-	"excluse": [
-		"libs/**/*"
 	]
 }
