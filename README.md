@@ -1,2 +1,2 @@
-# hoverbattle
-AceChase Vol. 2
+# HoverBattle
+AceChase Remastered
