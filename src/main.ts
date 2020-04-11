@@ -1,6 +1,6 @@
 
-import {GraphicsManager} from "./graphics/graphicsmanager.js"
-import * as THREE from './libs/three.module.js'
+import {GraphicsManager} from "src/graphics/graphicsmanager.js"
+import * as THREE from 'src/libs/three.module.js'
 
 let gm = new GraphicsManager("rendertarget")
 
