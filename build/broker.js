@@ -34,4 +34,5 @@ broker.newChannel = function (name) {
         broker[name] = new EventChannel();
     }
 };
+export { EventChannel, broker };
 //# sourceMappingURL=broker.js.map

@@ -39,3 +39,5 @@ broker.newChannel = function(name:string){
 		broker[name] = new EventChannel()
 	}
 }
+
+export {EventChannel, broker}
