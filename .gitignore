@@ -1,1 +1,3 @@
 tsconfig.tsbuildinfo
+/src/libs/threejs
+/build/libs/threejs

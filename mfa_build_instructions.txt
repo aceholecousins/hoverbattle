@@ -1,0 +1,8 @@
+checkout three.js
+create a threejs folder in src/libs
+copy src and examples from the three.js project into your threejs folder
+run a global search and replace:
+../constants'
+->
+../constants.js'
+build with tsc

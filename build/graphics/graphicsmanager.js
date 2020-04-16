@@ -1,11 +1,9 @@
-import * as THREE from 'src/libs/three.module.js';
+import * as THREE from '../libs/threejs/src/Three.js';
 export class GraphicsManager {
     constructor(canvasId) {
         this.canvas = null;
         this.renderer = null;
-        //private scene:THREE.Scene|null = null
         this.scene = null;
-        //private camera:THREE.Camera|null = null
         this.camera = null;
         this.running = false;
         this.canvas = document.getElementById(canvasId);
@@ -19,7 +17,6 @@ export class GraphicsManager {
         this.scene.add(this.camera);
         this.resize();
     }
-    //setBackground(background:THREE.Color|THREE.Texture){
     setBackground(background) {
         this.scene.background = background;
     }
@@ -44,9 +41,10 @@ export class GraphicsManager {
         if (this.renderer !== null) {
             this.renderer.setSize(this.canvas.clientWidth, this.canvas.clientHeight);
         }
-        if (this.camera !== null) {
-            this.camera.aspect = this.canvas.clientWidth / this.canvas.clientHeight;
-            this.camera.updateProjectionMatrix();
+        if (this.camera !== null && this.camera instanceof THREE.PerspectiveCamera) {
+            let perspectiveCamera = this.camera;
+            perspectiveCamera.aspect = this.canvas.clientWidth / this.canvas.clientHeight;
+            perspectiveCamera.updateProjectionMatrix();
         }
     }
     cleanup() {

@@ -1,5 +1,1 @@
-https://raw.githubusercontent.com/mrdoob/three.js/dev/build/three.module.js
-https://raw.githubusercontent.com/mrdoob/three.js/dev/src/math/MathUtils.js
-https://raw.githubusercontent.com/mrdoob/three.js/dev/src/math/Vector3.js
-https://raw.githubusercontent.com/mrdoob/three.js/dev/src/math/Quaternion.js
 https://raw.githubusercontent.com/schteppe/p2.js/master/build/p2.js
