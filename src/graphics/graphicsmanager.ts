@@ -17,8 +17,7 @@ export class GraphicsManager{
 		this.resize()
 	}
 
-	//setBackground(background:THREE.Color|THREE.Texture){
-	setBackground(background:any){
+	setBackground(background:THREE.Color|THREE.Texture){
 		this.scene.background = background
 	}
 
@@ -48,9 +47,10 @@ export class GraphicsManager{
 		if(this.renderer !== null){
 			this.renderer.setSize(this.canvas.clientWidth, this.canvas.clientHeight)
 		}
-		if(this.camera !== null){
-			this.camera.aspect = this.canvas.clientWidth / this.canvas.clientHeight
-			this.camera.updateProjectionMatrix()
+		if(this.camera !== null && this.camera instanceof THREE.PerspectiveCamera){
+			let perspectiveCamera = this.camera as THREE.PerspectiveCamera
+			perspectiveCamera.aspect = this.canvas.clientWidth / this.canvas.clientHeight
+			perspectiveCamera.updateProjectionMatrix()
 		}
 	}
 
@@ -64,10 +64,8 @@ export class GraphicsManager{
 
 	private canvas:HTMLCanvasElement = null
 	private renderer:THREE.WebGLRenderer = null
-	//private scene:THREE.Scene|null = null
-	private scene:any = null
-	//private camera:THREE.Camera|null = null
-	private camera:any = null
+	private scene:THREE.Scene = null
+	private camera:THREE.Camera = null
 	private running:boolean = false
 
 	private renderLoop(){
