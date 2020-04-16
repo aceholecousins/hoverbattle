@@ -1,16 +1,13 @@
 {
 	"compilerOptions": {
 		"target": "ES6",
-		"outDir": "build",
-		"rootDir": "src",
+		"moduleResolution": "node",
+		"outDir": "./dist/",		
 		"noImplicitAny": true,
 		"removeComments": false,
 		"preserveConstEnums": true,
 		"sourceMap": true,
 		"allowJs": true,
 		"incremental": true
-	},
-	"include": [
-		"src/**/*"
-	]
+	}
 }
