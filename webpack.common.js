@@ -11,10 +11,6 @@ module.exports = {
 			},
 		],
 	},
-	devtool: 'inline-source-map',
-	devServer: {
-		contentBase: '.',
-	},
 	resolve: {
 		extensions: ['.tsx', '.ts', '.js'],
 	},

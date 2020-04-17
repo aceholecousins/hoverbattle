@@ -5,10 +5,10 @@
 	"private": true,
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"watch": "webpack --watch --mode=development",
-		"start": "webpack-dev-server --open",
-		"dev-build": "webpack --mode=development",
-		"build": "webpack --mode=production"
+		"watch": "webpack --watch --config=webpack.dev.js",
+		"start": "webpack-dev-server --open --config=webpack.dev.js",
+		"dev-build": "webpack --config=webpack.dev.js",
+		"build": "webpack --config=webpack.prod.js"
 	},
 	"repository": {
 		"type": "git",
@@ -25,7 +25,8 @@
 		"typescript": "^3.8.3",
 		"webpack": "^4.42.1",
 		"webpack-cli": "^3.3.11",
-		"webpack-dev-server": "^3.10.3"
+		"webpack-dev-server": "^3.10.3",
+		"webpack-merge": "^4.2.2"
 	},
 	"dependencies": {
 		"three": "^0.115.0"
