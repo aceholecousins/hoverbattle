@@ -19,7 +19,7 @@ module.exports = {
 		new CleanWebpackPlugin(),
 	],
 	output: {
-		filename: 'bundle.js',
+		filename: 'acechase.js',
 		path: path.resolve(__dirname, 'dist'),
 	},
 };

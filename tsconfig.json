@@ -4,7 +4,6 @@
 		"moduleResolution": "node",
 		"outDir": "./dist/",		
 		"noImplicitAny": true,
-		"removeComments": false,
 		"preserveConstEnums": true,
 		"sourceMap": true,
 		"allowJs": true,
