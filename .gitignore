@@ -1,3 +1,4 @@
 tsconfig.tsbuildinfo
-/src/libs/threejs
-/build/libs/threejs
+package-lock.json
+/node_modules/*
+/dist/*

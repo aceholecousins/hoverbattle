@@ -1,1 +1,0 @@
-https://raw.githubusercontent.com/schteppe/p2.js/master/build/p2.js

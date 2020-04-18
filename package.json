@@ -1,0 +1,34 @@
+{
+	"name": "acechase",
+	"version": "1.0.0",
+	"description": "AceChase Remastered",
+	"private": true,
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"watch": "webpack --watch --config=webpack.dev.js",
+		"dev-build": "webpack --config=webpack.dev.js",
+		"build": "webpack --config=webpack.prod.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/aceholecousins/hoverbattle.git"
+	},
+	"author": "AceholeCousins",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/aceholecousins/hoverbattle/issues"
+	},
+	"homepage": "https://github.com/aceholecousins/hoverbattle#readme",
+	"devDependencies": {
+		"clean-webpack-plugin": "3.0.0",
+		"ts-loader": "7.0.0",
+		"typescript": "3.8.3",
+		"webpack": "4.42.1",
+		"webpack-cli": "3.3.11",
+		"webpack-dev-server": "3.10.3",
+		"webpack-merge": "4.2.2"
+	},
+	"dependencies": {
+		"three": "0.115.0"
+	}
+}

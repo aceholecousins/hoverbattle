@@ -1,5 +1,5 @@
 
-import * as THREE from '../libs/threejs/src/Three.js'
+import * as THREE from 'three'
 
 export class GraphicsManager{
 
