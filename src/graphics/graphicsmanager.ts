@@ -1,5 +1,5 @@
-import { WebGLRenderer, Scene, PerspectiveCamera, Color, Texture, Camera, Object3D } from "three"
 
+import * as THREE from 'three'
 
 export class GraphicsManager{
 
@@ -9,28 +9,28 @@ export class GraphicsManager{
 	}
 
 	setup(){
-		this.renderer = new WebGLRenderer({canvas:this.canvas})
-		this.scene = new Scene()
-		this.camera = new PerspectiveCamera(75, 1.0, 0.1, 100)
+		this.renderer = new THREE.WebGLRenderer({canvas:this.canvas})
+		this.scene = new THREE.Scene()
+		this.camera = new THREE.PerspectiveCamera(75, 1.0, 0.1, 100)
 		this.camera.position.set(0, 0, 10)
 		this.scene.add(this.camera)
 		this.resize()
 	}
 
-	setBackground(background:Color|Texture){
+	setBackground(background:THREE.Color|THREE.Texture){
 		this.scene.background = background
 	}
 
-	setCamera(camera:Camera){
+	setCamera(camera:THREE.Camera){
 		this.camera = camera
 		this.resize()
 	}
 
-	addToScene(object:Object3D){
+	addToScene(object:THREE.Object3D){
 		this.scene.add(object)
 	}
 
-	removeFromScene(object:Object3D){
+	removeFromScene(object:THREE.Object3D){
 		this.scene.remove(object)
 	}
 
@@ -47,8 +47,8 @@ export class GraphicsManager{
 		if(this.renderer !== null){
 			this.renderer.setSize(this.canvas.clientWidth, this.canvas.clientHeight)
 		}
-		if(this.camera !== null && this.camera instanceof PerspectiveCamera){
-			let perspectiveCamera = this.camera as PerspectiveCamera
+		if(this.camera !== null && this.camera instanceof THREE.PerspectiveCamera){
+			let perspectiveCamera = this.camera as THREE.PerspectiveCamera
 			perspectiveCamera.aspect = this.canvas.clientWidth / this.canvas.clientHeight
 			perspectiveCamera.updateProjectionMatrix()
 		}
@@ -63,9 +63,9 @@ export class GraphicsManager{
 
 
 	private canvas:HTMLCanvasElement = null
-	private renderer:WebGLRenderer = null
-	private scene:Scene = null
-	private camera:Camera = null
+	private renderer:THREE.WebGLRenderer = null
+	private scene:THREE.Scene = null
+	private camera:THREE.Camera = null
 	private running:boolean = false
 
 	private renderLoop(){

@@ -1,10 +1,10 @@
 
 import {GraphicsManager} from "./graphics/graphicsmanager"
-import { Color, Mesh, BoxGeometry, MeshNormalMaterial } from "three"
+import * as THREE from 'three'
 
 let gm = new GraphicsManager("rendertarget")
 
 gm.setup()
-gm.setBackground(new Color("skyblue"))
-gm.addToScene(new Mesh(new BoxGeometry(), new MeshNormalMaterial()))
+gm.setBackground(new THREE.Color("skyblue"))
+gm.addToScene(new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshNormalMaterial()))
 gm.animate()
