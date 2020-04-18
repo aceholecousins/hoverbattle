@@ -13,8 +13,8 @@
 		"type": "git",
 		"url": "git+https://github.com/aceholecousins/hoverbattle.git"
 	},
-	"author": "AceHoleCousins",
-	"license": "ISC",
+	"author": "AceholeCousins",
+	"license": "MIT",
 	"bugs": {
 		"url": "https://github.com/aceholecousins/hoverbattle/issues"
 	},
