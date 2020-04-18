@@ -1,0 +1,54 @@
+@startuml
+
+title Hoverbattle DomainModel
+
+class Vehicle {
+  -position:Vector2 
+  -velocity:Vector2 
+  -direction:number //rad, math sense
+  -mass:number
+  -radius:number
+  -hull:number
+  +void hit(damage:number)
+}
+
+Glider --|> Vehicle
+Buggy --|> Vehicle
+
+class Player {
+  -name:String
+  -color:Color
+}
+
+RaceScore --|> Score
+KillScore --|> Score
+
+class Team {
+  -name:String
+  -color:Color
+}
+
+class Control {
+  -thrust:number
+  -targetDirection:number
+  -fire:number
+}
+
+Shield --|> Capability
+Phaser --|> Capability
+
+SuperCharge --|> Capability
+Mine --|> Capability
+Missile --|> Capability
+PowerShiled --|> Capability
+RepairPack --|> Capability
+
+Capability "*" <-- Vehicle
+Player "*" --> Team
+Player --> Control
+Player --> Vehicle
+Player --> Score
+Team --> Score
+Control --> Vehicle
+
+@enduml
