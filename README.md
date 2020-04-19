@@ -1,10 +1,6 @@
 # HoverBattle
 AceChase Remastered
 
-## Play
-
-# [>> PLAY! <<](https://aceholecousins.github.io/hoverbattle/dist/screen.html)
-
 ## Contribute
 ### Preparation
 Clone the repository to a local working copy:
