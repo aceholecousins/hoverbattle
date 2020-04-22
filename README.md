@@ -27,4 +27,4 @@ Build a production version:
 npm run build
 ```
 ### Run
-Serve the working copy root via a web server and open the file `screen.html`
+Serve the folder `dist` via a web server and open the file `index.html`
