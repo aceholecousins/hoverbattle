@@ -1,6 +1,7 @@
 
 import {GraphicsManager} from "./graphics/graphicsmanager"
 import * as THREE from "three"
+// @ts-ignore
 import Stats from "stats-js"
 
 let gm = new GraphicsManager("rendertarget")
