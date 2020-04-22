@@ -23,6 +23,9 @@ jobs:
     - run: npm test
       env:
         CI: true
-    - uses: "guahanweb/actions/node-app@master"
-      secrets: ["GITHUB_TOKEN"]
-      args:    "gh-pages"
+    - name: Deploy
+      uses: JamesIves/github-pages-deploy-action@releases/v3
+      with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        BRANCH: gh-pages
+        FOLDER: dist
