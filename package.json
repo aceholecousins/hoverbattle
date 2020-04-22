@@ -30,6 +30,7 @@
 		"webpack-merge": "4.2.2"
 	},
 	"dependencies": {
+		"stats-js": "^1.0.1",
 		"three": "0.115.0"
 	}
 }
