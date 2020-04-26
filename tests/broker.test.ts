@@ -7,7 +7,7 @@ describe('Test broker', () => {
 		
 		broker.newChannel('myChannel')
 		
-		let myChannel:EventChannel = broker['myChannel']
+		let myChannel:EventChannel = broker.myChannel
 
 		let receivedEvent:any;
 
