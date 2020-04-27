@@ -114,10 +114,9 @@ class P2Physics implements Physics{
 
 	constructor(){
 		this.world = new p2.World({gravity:[0, 0]})
-		this.world.defaultContactMaterial.friction = 0.05
-		this.world.defaultContactMaterial.restitution = 0.9
+		this.world.defaultContactMaterial.friction = 0.01
+		this.world.defaultContactMaterial.restitution = 0.999
 		this.world.defaultContactMaterial.stiffness = 1e9
-		console.log(this.world)
 	}
 
 	createBody():RigidBody{
