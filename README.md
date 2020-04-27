@@ -7,7 +7,9 @@ AceChase Remastered
 
 ## Contribute
 ### Preparation
-Clone the repository to a local working copy:
+Fork the repository to your own space.
+
+Clone it to a local working copy:
 ```
 git clone https://github.com/aceholecousins/hoverbattle.git
 ```
@@ -32,3 +34,12 @@ npm run build
 ```
 ### Run
 Serve the folder `dist` via a web server and open the file `index.html`
+### Unit Tests
+Unit tests are defined in sub folder `tests`. In order to run them:
+```
+npm run test
+```
+### Submit changes
+Commit and push your changes.
+
+Create a Pull Request.

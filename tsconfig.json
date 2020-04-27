@@ -8,5 +8,8 @@
 		"sourceMap": true,
 		"allowJs": true,
 		"incremental": true
-	}
+	},
+	"include": [
+		"src/**/*.ts"
+	]
 }
