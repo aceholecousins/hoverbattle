@@ -1,21 +1,21 @@
 import 'mocha'
 import {expect} from 'chai'
-import {broker, EventChannel} from '../src/broker'
+import {broker, EventChannel, newChannel as newBrokerChannel} from '../src/broker'
 
 describe('Test broker', () => {
 	it('fire', () => {
 		
-		broker.newChannel('myChannel')
+		newBrokerChannel('myChannel')
 		
-		let myChannel:EventChannel = broker.myChannel
+		newBrokerChannel('myChannel')
 
 		let receivedEvent:any;
 
-		myChannel.addHandler(e => {
+		broker.myChannel.addHandler(e => {
 			receivedEvent = e
 		})
 
-		myChannel.fire( {
+		broker.myChannel.fire( {
 			name: 'eventName',
 			data: 3
 		})
