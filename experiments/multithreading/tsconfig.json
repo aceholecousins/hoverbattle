@@ -1,0 +1,7 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+		"lib": ["webworker", "es6", "scripthost"],
+		"typeRoots" : []
+    }
+}
