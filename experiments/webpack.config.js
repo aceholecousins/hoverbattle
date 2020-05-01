@@ -4,7 +4,6 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 module.exports = {
 	entry: {
 		renderstresstest: './experiments/renderstresstest/main.ts',
-		renderstresstest_assets: './experiments/renderstresstest/assets.ts',
 	},
 	module: {
 		rules: [

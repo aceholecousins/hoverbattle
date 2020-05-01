@@ -1,6 +1,6 @@
 
 import * as THREE from 'three'
-import Stats from 'stats-js/src/Stats'
+import * as Stats from 'stats.js'
 
 let stats = new Stats()
 stats.showPanel(0)
