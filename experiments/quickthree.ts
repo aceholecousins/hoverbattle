@@ -1,6 +1,6 @@
 
-import * as THREE from '../node_modules/three/build/three.module.js'
-import Stats from '../node_modules/stats-js/src/Stats.js'
+import * as THREE from 'three'
+import Stats from 'stats-js/src/Stats'
 
 let stats = new Stats()
 stats.showPanel(0)
