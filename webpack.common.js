@@ -3,7 +3,8 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
 	entry: {
-		acechase: './src/main.ts',
+		acechase_ui: './src/ui_main.ts',
+		acechase_engine: './src/engine_main.ts', 
 		assets: './src/assets.ts',
 	},
 	module: {

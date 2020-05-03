@@ -15,11 +15,21 @@ gm.setBackground(new THREE.Color("skyblue"))
 let cube = new THREE.Mesh(new THREE.BoxGeometry(), new THREE.MeshNormalMaterial())
 gm.addToScene(cube)
 
-function animate(time:number){
+let worker = new Worker('acechase_engine.js')
+
+worker.onmessage = function(e) {
+	cube.rotation.x = e.data.x;
+	cube.rotation.y = e.data.y;
+	cube.rotation.z = e.data.z;
+}
+
+function animate(time:number){	
 	requestAnimationFrame(animate)
-	cube.rotation.x += 0.01
-	cube.rotation.y += 0.02
-	cube.rotation.z += 0.03
+	worker.postMessage({
+		x: cube.rotation.x,
+		y: cube.rotation.y,
+		z: cube.rotation.z,
+	})
 	gm.render()
 	stats.update()
 }
