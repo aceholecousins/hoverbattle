@@ -2,6 +2,7 @@
 import {GraphicsManager} from "./graphics/graphicsmanager"
 import * as THREE from "three"
 import * as Stats from "stats.js"
+import {Rotation} from './rotation'
 
 let gm = new GraphicsManager("rendertarget")
 
@@ -25,11 +26,7 @@ worker.onmessage = function(e) {
 
 function animate(time:number){	
 	requestAnimationFrame(animate)
-	worker.postMessage({
-		x: cube.rotation.x,
-		y: cube.rotation.y,
-		z: cube.rotation.z,
-	})
+	worker.postMessage(new Rotation(cube.rotation))
 	gm.render()
 	stats.update()
 }

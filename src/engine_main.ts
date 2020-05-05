@@ -1,10 +1,13 @@
+import { Rotation } from "./rotation";
+import { Euler } from "three";
 
 const ctx: Worker = self as any;
 
 ctx.onmessage = function(e) {
-	ctx.postMessage({
-		x: e.data.x + 0.01,
-		y: e.data.y + 0.02,
-		z: e.data.z + 0.03,
-	})
+	let currentRotation:Rotation = e.data
+	let currentEuler:Euler = new Euler(currentRotation.x, currentRotation.y, currentRotation.z)
+	currentEuler.x += 0.01
+	currentEuler.y += 0.02
+	currentEuler.z += 0.03
+	ctx.postMessage(new Rotation(currentEuler))
 }
