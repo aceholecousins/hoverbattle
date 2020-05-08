@@ -1,6 +1,7 @@
 
-import * as THREE from 'three'
 import * as Stats from 'stats.js'
+import * as THREE from 'three'
+import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls'
 
 let stats = new Stats()
 stats.showPanel(0)
@@ -13,6 +14,10 @@ scene.background = new THREE.Color("skyblue")
 let camera = new THREE.PerspectiveCamera(50, 1.0, 0.1, 100)
 camera.position.set(0, 0, 10)
 scene.add(camera)
+scene.add(new THREE.AxesHelper())
+
+let controls = new OrbitControls(camera, renderer.domElement)
+controls.screenSpacePanning = true
 
 function resize(){
 	if(renderer !== null){

@@ -4,6 +4,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 module.exports = {
 	entry: {
 		renderstresstest: './experiments/renderstresstest/main.ts',
+		gltf: './experiments/gltf/main.ts',
 	},
 	module: {
 		rules: [
@@ -13,7 +14,7 @@ module.exports = {
 				exclude: /node_modules/,
 			},
 			{
-				test: /\.(png|jpe?g|gif|svg|html|css)$/i,
+				test: /\.(png|jpe?g|gif|svg|html|css|gltf|glb)$/i,
 				use: [
 					{
 						loader: 'file-loader',
