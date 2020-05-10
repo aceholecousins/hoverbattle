@@ -13,7 +13,7 @@
 // interface and a collision group (defined by the bit in its role).
 // Each entity has exactly one body and each body can have multiple shapes,
 // all shapes have the same collision group being composed by oring all
-// collision groups of the entity together.
+// role bits of the entity together.
 
 // The only problem is that the user has to make sure that the entity
 // classes have matching roles and interfaces.
