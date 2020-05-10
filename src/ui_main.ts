@@ -15,9 +15,6 @@ let worker = new Worker('acechase_engine.js')
 
 worker.onmessage = function(e){
 
-
-
-
 }
 worker.postMessage(1)
 
