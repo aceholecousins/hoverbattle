@@ -22,28 +22,28 @@ let P2PhysicsEngine:any
 // I is only used to associate an interface with this role
 // for type safety, it is not actually used in the role
 class Role<I>{
-    static numRoles = 0
-    index:number
+	static numRoles = 0
+	index:number
 	bit:number
-    constructor()
-    {
-        this.index = Role.numRoles
-        this.bit = 1 << (Role.numRoles)
-        Role.numRoles += 1
-    }
+	constructor()
+	{
+		this.index = Role.numRoles
+		this.bit = 1 << (Role.numRoles)
+		Role.numRoles += 1
+	}
 }
 
 class RoleSet{
-    bitmask:number = 0
-    list:Role<any>[] = []
+	bitmask:number = 0
+	list:Role<any>[] = []
 }
 
 // this function assignes a role to an entity
 // and ensures that the entity implements
 // the interface associated with that role
 function assignRole<I>(entity:Entity & I, role:Role<I>){
-    entity.roles.list[role.index] = role
-    entity.roles.bitmask |= role.bit
+	entity.roles.list[role.index] = role
+	entity.roles.bitmask |= role.bit
 }
 
 // when a collision callback is assigned to a handler,
@@ -57,50 +57,50 @@ type CollisionCallback<IA, IB> =
 // of different (or the same) roles,
 // indexed by roleA.bit | roleB.bit
 interface HandlerMap{
-    [oredBits:number]:CollisionCallback<any, any>
+	[oredBits:number]:CollisionCallback<any, any>
 }
 
 let collisionManager = {
-    handlers:{} as HandlerMap,
+	handlers:{} as HandlerMap,
 
-    // generics ensure type safety:
-    // roleA is associated with the interface IA
-    // roleB is associated with the interface IB
+	// generics ensure type safety:
+	// roleA is associated with the interface IA
+	// roleB is associated with the interface IB
 	// the callback must be implemented for entities
 	// that implement IA and IB
-    registerHandler:function<IA, IB>(
-        roleA:Role<IA>,
-        roleB:Role<IB>,
-        callback:CollisionCallback<IA, IB>
-    ){
-        P2PhysicsEngine.makeSureThatEveryShapeWithGroupBitASetHasTheMaskBitOfGroupBSetAndViceVersa()
-        this.handlers[roleA.bit | roleB.bit] = callback
-    }
+	registerHandler:function<IA, IB>(
+		roleA:Role<IA>,
+		roleB:Role<IB>,
+		callback:CollisionCallback<IA, IB>
+	){
+		P2PhysicsEngine.makeSureThatEveryShapeWithGroupBitASetHasTheMaskBitOfGroupBSetAndViceVersa()
+		this.handlers[roleA.bit | roleB.bit] = callback
+	}
 }
 
 P2PhysicsEngine.world.on(
-    "beginContact",
-    function(evt:any){
-        let entityA = P2PhysicsEngine.entityMap[evt.bodyA.id]
-        let entityB = P2PhysicsEngine.entityMap[evt.bodyB.id]
+	"beginContact",
+	function(evt:any){
+		let entityA = P2PhysicsEngine.entityMap[evt.bodyA.id]
+		let entityB = P2PhysicsEngine.entityMap[evt.bodyB.id]
 
 		// iterate through all the roles of the entities
 		// that just collided and call the associated
 		// collision handlers if defined
-        for(let roleA of entityA.roles.list){
-            for(let roleB of entityB.roles.list){
-                let handler = collisionManager.handlers[roleA.bit | roleB.bit]
-                if(handler !== undefined){
+		for(let roleA of entityA.roles.list){
+			for(let roleB of entityB.roles.list){
+				let handler = collisionManager.handlers[roleA.bit | roleB.bit]
+				if(handler !== undefined){
 					// some implicit casting happens here without a warning!!
-                    handler(entityA, entityB)
-                }
-            }
-        }
-    }
+					handler(entityA, entityB)
+				}
+			}
+		}
+	}
 )
 
 interface Entity{
-    roles:RoleSet
+	roles:RoleSet
 	//body:PhysicsBody
 	//model:GraphicsModel
 	//exert(influence:Influence)
@@ -124,7 +124,7 @@ interface Damaging{
 let damaging = new Role<Damaging>()
 
 interface Powerup{
-    oncollect():void
+	oncollect():void
 }
 let powerup = new Role<Powerup>()
 
@@ -142,31 +142,31 @@ collisionManager.registerHandler(
 // define entities:
 
 class Glider implements Entity, Destructible{
-    roles = new RoleSet()
-    hitpoints = 10
-    anotherGliderProperty = "ass-kicking"
-    constructor(){
-        assignRole(this, destructible)
-    }
+	roles = new RoleSet()
+	hitpoints = 10
+	anotherGliderProperty = "ass-kicking"
+	constructor(){
+		assignRole(this, destructible)
+	}
 }
 
 // we can (and should) list that Phaser also implements Damaging
 // but we don't have to as long as all fields of the interface
 // are there which is checked by assignRole
 class Phaser implements Entity{
-    roles = new RoleSet()
-    damage = 1
-    constructor(){
-        assignRole(this, damaging)
-    }
+	roles = new RoleSet()
+	damage = 1
+	constructor(){
+		assignRole(this, damaging)
+	}
 }
 
 class MineCrate implements Entity{
-    roles = new RoleSet()
-    oncollect(){}
-    constructor(){
-        assignRole(this, powerup)
-        assignRole(this, destructible) // uh oh, MineCrate doesn't have hitpoints
-    }
+	roles = new RoleSet()
+	oncollect(){}
+	constructor(){
+		assignRole(this, powerup)
+		assignRole(this, destructible) // uh oh, MineCrate doesn't have hitpoints
+	}
 }
 
