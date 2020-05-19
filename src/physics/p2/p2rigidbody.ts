@@ -1,43 +1,85 @@
 import * as p2 from "p2"
 import {vec2} from "gl-matrix"
-import {RigidBody} from "../rigidbody.js"
-import {P2Shape} from "./p2shapes.js"
+import {ShapeBase} from "../shapes.js"
+import {RigidBodyConfig, RigidBody} from "../rigidbody.js"
+import {P2Shape, P2Circle, P2Rectangle, createP2Shape} from "./p2shapes.js"
+
 
 export class P2RigidBody implements RigidBody{
-	p2Body:p2.Body
+	kind:"rigidbody"
+	p2body:p2.Body
+	readonly shapes: ShapeBase[]
 
-	constructor(){ this.p2Body = new p2.Body() }
+	constructor(cfg:RigidBodyConfig){
+		this.p2body = new p2.Body()
 
-	setPosition(position:vec2){
-		vec2.copy(this.p2Body.position, position)
-	}
-	getPosition(){
-		return vec2.clone(this.p2Body.position)
-	}
-	setVelocity(velocity:vec2){
-		vec2.copy(this.p2Body.velocity, velocity)
-	}
-	getVelocity(){
-		return vec2.clone(this.p2Body.position)
+		for(let shapeCfg of cfg.shapes){
+			let shape = createP2Shape(shapeCfg)
+			this.shapes.push(shape)
+			this.p2body.addShape(shape.p2shape)
+		}
 	}
 
-	setMass(mass:number){
-		this.p2Body.mass = mass
+	set mass(m: number){
+		this.p2body.mass = m
 	}
-	getMass(){
-		return this.p2Body.mass
+	get mass(){
+		return this.p2body.mass
 	}
 
-	addShape(shape:P2Shape){
-
+	set position(p: vec2){
+		vec2.copy(this.p2body.position, p)
 	}
-	getShapes(){
-
+	get position(){
+		return vec2.clone(this.p2body.position)
 	}
-	removeShape(shape:P2Shape):void
 
-	applyForce(force:vec2, localPointOfApplication?:vec2):void
-	//applyImpulse(impulse:vec2, localPointOfApplication?:vec2):void
-	applyTorque(torque:number)
+	set velocity(v: vec2){
+		vec2.copy(this.p2body.velocity, v)
+	}
+	get velocity(){
+		return vec2.clone(this.p2body.velocity)
+	}
 
+	set damping(d: number){
+		this.p2body.damping = d
+	}
+	get damping(){
+		return this.p2body.damping
+	}
+
+
+	set angle(phi: number){
+		this.p2body.angle = phi
+	}
+	get angle(){
+		return this.p2body.angle
+	}
+
+	set angularVelocity(omega: number){
+		this.p2body.angularVelocity = omega
+	}
+	get angularVelocity(){
+		return this.p2body.angularVelocity
+	}
+
+	set angularDamping(d: number){
+		this.p2body.angularDamping = d
+	}
+	get angularDamping(){
+		return this.p2body.angularDamping
+	}
+
+
+	applyForce(
+		force: vec2,
+		localPointOfApplication = vec2.fromValues(0, 0)
+	){
+		this.p2body.applyForce(
+			[force[0], force[1]],
+			[localPointOfApplication[0], localPointOfApplication[1]]
+		)
+	}
+
+	toBeDeleted = false
 }

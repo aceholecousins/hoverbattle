@@ -1,31 +1,28 @@
 import {vec2} from "gl-matrix"
-import {Shape} from "./shapes.js"
+import {ShapeConfig, ShapeBase} from "./shapes.js"
 
-export interface RigidBody{
+export interface RigidBodyConfig{
+	shapes: ShapeConfig[]
 
-	setPosition(position:vec2):void
-	getPosition():vec2
-	setVelocity(velocity:vec2):void
-	getVelocity():vec2
-	/*setDamping(damping:number)
-	getDamping():number
+	mass?: number
 
-	setAngle(angle:number)
-	getAngle():number
-	setAngularVelocity(angularVelocity:number)
-	getAngularVelocity():number
-	setAngularDamping(angularDamping:number)
-	getAngularDamping():number
-	*/
-	setMass(mass:number):void
-	getMass():number
+	position?: vec2
+	velocity?: vec2
+	damping?: number
 
-	addShape(shape:Shape):void
-	getShapes():Shape[]
-	removeShape(shape:Shape):void
+	angle?: number
+	angularVelocity?: number
+	angularDamping?: number
+}
 
+export interface RigidBody extends Required<Omit<RigidBodyConfig, "shapes">>{
+	kind:"rigidbody"
+	readonly shapes: ShapeBase[]
+	
 	applyForce(force:vec2, localPointOfApplication?:vec2):void
 	//applyImpulse(impulse:vec2, localPointOfApplication?:vec2):void
-	applyTorque(torque:number)
-	//applyAngularMomentum(angularMomentum:number)
+	//applyTorque(torque:number):void
+	//applyAngularMomentum(angularMomentum:number):void
+
+	toBeDeleted: boolean
 }
