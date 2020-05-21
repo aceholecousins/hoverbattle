@@ -1,6 +1,6 @@
 
 import {vec2} from "gl-matrix"
-import {Registry} from "../utils.js"
+import {Registry} from "../utils"
 
 // parameters that are common to all shapes
 

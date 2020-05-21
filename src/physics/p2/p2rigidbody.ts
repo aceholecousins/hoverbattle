@@ -1,8 +1,8 @@
 import * as p2 from "p2"
 import {vec2} from "gl-matrix"
-import {Shape, ShapeConfig, shapeFactory} from "../shape.js"
-import {RigidBodyConfig, RigidBody, defaultRigidBodyConfig} from "../rigidbody.js"
-import {defaultTo} from "../../utils.js"
+import {Shape, ShapeConfig, shapeFactory} from "../shape"
+import {RigidBodyConfig, RigidBody, defaultRigidBodyConfig} from "../rigidbody"
+import {defaultTo} from "../../utils"
 
 export class P2RigidBody implements RigidBody{
 	kind:"rigidbody"

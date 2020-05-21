@@ -1,7 +1,7 @@
 
-import {RigidBodyConfig, RigidBody} from "../rigidbody.js"
-import {Physics} from "../physics.js"
-import {P2RigidBody} from "./p2rigidbody.js"
+import {RigidBodyConfig, RigidBody} from "../rigidbody"
+import {Physics} from "../physics"
+import {P2RigidBody} from "./p2rigidbody"
 import * as p2 from "p2"
 
 export class P2Physics implements Physics{

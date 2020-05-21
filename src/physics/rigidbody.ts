@@ -1,6 +1,6 @@
 import {vec2} from "gl-matrix"
-import {ShapeConfig, Shape, shapeFactory} from "./shape.js"
-import { defaultCircleConfig } from "./circle.js"
+import {ShapeConfig, Shape, shapeFactory} from "./shape"
+import { defaultCircleConfig } from "./circle"
 
 export interface RigidBody{
 	kind: "rigidbody"

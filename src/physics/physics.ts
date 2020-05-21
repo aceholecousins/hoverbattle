@@ -1,5 +1,5 @@
 import { vec2 } from "gl-matrix";
-import {RigidBodyConfig, RigidBody} from "./rigidbody.js"
+import {RigidBodyConfig, RigidBody} from "./rigidbody"
 
 export interface Physics{
 
@@ -10,4 +10,3 @@ export interface Physics{
 	step(dt:number):void
 
 }
-

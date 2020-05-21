@@ -1,8 +1,8 @@
 
 import * as p2 from "p2"
-import {shapeFactory} from "../shape.js"
+import {shapeFactory} from "../shape"
 import {P2Shape} from "./p2shape"
-import {Circle, CircleConfig, defaultCircleConfig} from "../circle.js"
+import {Circle, CircleConfig, defaultCircleConfig} from "../circle"
 import { defaultTo } from "../../utils"
 
 export class P2Circle extends P2Shape implements Circle{

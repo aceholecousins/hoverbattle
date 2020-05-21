@@ -1,5 +1,5 @@
 
-import {ShapeConfig, Shape, defaultShapeConfig} from "./shape.js"
+import {ShapeConfig, Shape, defaultShapeConfig} from "./shape"
 
 export interface Circle extends Shape{
 	kind: "circle"

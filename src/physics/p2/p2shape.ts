@@ -1,7 +1,7 @@
-import {Shape, ShapeConfig, defaultShapeConfig} from "../shape.js"
+import {Shape, ShapeConfig, defaultShapeConfig} from "../shape"
 import * as p2 from "p2"
 import { vec2 } from "gl-matrix"
-import { defaultTo } from "../../utils.js"
+import { defaultTo } from "../../utils"
 
 export abstract class P2Shape implements Shape{
 	kind: string

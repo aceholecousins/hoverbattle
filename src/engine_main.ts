@@ -1,5 +1,5 @@
-import {Physics} from "./physics/physics.js"
-import {P2Physics} from "./physics/p2/p2physics.js"
+import {Physics} from "./physics/physics"
+import {P2Physics} from "./physics/p2/p2physics"
 
 const ctx: Worker = self as any
 
