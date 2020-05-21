@@ -1,14 +1,27 @@
-import { Euler } from "three";
+import {Physics} from "./physics/physics.js"
+import {P2Physics} from "./physics/p2/p2physics.js"
 
+const ctx: Worker = self as any
 
-const ctx: Worker = self as any;
+class Game{
+	physics:Physics
+
+	constructor(){
+		this.physics = new P2Physics()
+	}
+
+	update(dt:number){
+		this.physics.step(dt)
+	}
+}
+
+let dt = 1 / 100
+let game = new Game()
+
+setInterval(()=>{
+	game.update(dt)
+}, dt)
 
 ctx.onmessage = function(e) {
 	console.log(e.data)
-	/*let currentRotation:Rotation = e.data
-	let currentEuler:Euler = new Euler(currentRotation.x, currentRotation.y, currentRotation.z)
-	currentEuler.x += 0.01
-	currentEuler.y += 0.02
-	currentEuler.z += 0.03
-	ctx.postMessage(new Rotation(currentEuler))*/
 }

@@ -1,8 +1,6 @@
-import { vec2 } from "gl-matrix";
-import {ShapeBase} from "../shapes.js"
+
 import {RigidBodyConfig, RigidBody} from "../rigidbody.js"
 import {Physics} from "../physics.js"
-import {P2Shape, P2Circle, P2Rectangle} from "./p2shapes.js"
 import {P2RigidBody} from "./p2rigidbody.js"
 import * as p2 from "p2"
 
@@ -15,8 +13,8 @@ export class P2Physics implements Physics{
 		this.p2world = new p2.World({gravity:[0, 0]})
 	}
 
-	addRigidBody(bodyCfg: RigidBodyConfig):RigidBody{
-		let body = new P2RigidBody(bodyCfg)
+	addRigidBody(config: RigidBodyConfig):RigidBody{
+		let body = new P2RigidBody(config)
 		this.p2world.addBody(body.p2body)
 		return body
 	}
