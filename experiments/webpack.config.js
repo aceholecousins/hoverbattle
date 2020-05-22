@@ -5,6 +5,7 @@ module.exports = {
 	entry: {
 		renderstresstest: './experiments/renderstresstest/main.ts',
 		gltf: './experiments/gltf/main.ts',
+		overridecolor: './experiments/overridecolor/main.ts'
 	},
 	module: {
 		rules: [
