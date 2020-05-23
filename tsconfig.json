@@ -1,6 +1,7 @@
 {
 	"compilerOptions": {
 		"target": "ES6",
+		"lib": ["WebWorker", "DOM"],
 		"moduleResolution": "node",
 		"outDir": "./dist/",		
 		"noImplicitAny": true,
