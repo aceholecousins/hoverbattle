@@ -1,8 +1,5 @@
 import * as THREE from 'three'
 import { scene, run } from '../quickthree'
-import * as ASSETS from './assets'
-
-ASSETS
 
 let sun = new THREE.PointLight()
 sun.position.set(0,0,3)

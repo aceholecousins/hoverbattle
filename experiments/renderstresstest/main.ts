@@ -1,9 +1,5 @@
 import * as THREE from 'three'
 import { scene, run } from '../quickthree'
-import * as ASSETS from './assets'
-
-//ASSETS mast be used. Otherwise, assets won't be copied.
-ASSETS
 
 let nTube = 250
 let nRing = 200

@@ -1,6 +1,5 @@
 import * as THREE from 'three'
 import { scene, run } from '../quickthree'
-import * as ASSETS from './assets'
 
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 
@@ -11,15 +10,12 @@ let envmap = new THREE.CubeTextureLoader()
 scene.environment = envmap
 scene.background = envmap
 
-//ASSETS mast be used. Otherwise, assets won't be copied.
-ASSETS
-
 var loader = new GLTFLoader()
 
 scene.add(new THREE.PointLight())
 
 loader.load(
-	"../" + ASSETS.testglb,
+	'./testb.glb',
 	function(gltf){
 		scene.add(gltf.scene)
 		gltf.animations; // Array<THREE.AnimationClip>
