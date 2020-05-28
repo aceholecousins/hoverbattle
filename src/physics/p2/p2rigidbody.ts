@@ -1,24 +1,24 @@
 import * as p2 from "p2"
 import {vec2} from "gl-matrix"
+import {P2Physics} from "./p2physics"
 import {Shape, ShapeConfig, shapeFactory} from "../shape"
-import {RigidBodyConfig, RigidBody, defaultRigidBodyConfig} from "../rigidbody"
-import {defaultTo} from "../../utils"
+import {RigidBody, RigidBodyConfig, rigidBodyDefaults} from "../rigidbody"
 
 export class P2RigidBody implements RigidBody{
 	kind:"rigidbody"
+	p2world:p2.World
 	p2body:p2.Body
 	readonly shapes: Shape[]
+	toBeDeleted: boolean = false
 
-	constructor(config:RigidBodyConfig){
+	constructor(p2world:p2.World, config:RigidBodyConfig){
+		this.p2world = p2world
 		this.p2body = new p2.Body()
 
-		this.mass = defaultTo(config.mass, defaultRigidBodyConfig.mass)
-		this.position = defaultTo(config.position, defaultRigidBodyConfig.position)
-		this.velocity = defaultTo(config.velocity, defaultRigidBodyConfig.velocity)
-		this.damping = defaultTo(config.damping, defaultRigidBodyConfig.damping)
-		this.angle = defaultTo(config.angle, defaultRigidBodyConfig.angle)
-		this.angularVelocity = defaultTo(config.angularVelocity, defaultRigidBodyConfig.angularVelocity)
-		this.angularDamping = defaultTo(config.angularDamping, defaultRigidBodyConfig.angularDamping)
+		const filledConfig:Required<RigidBodyConfig> =
+			{...rigidBodyDefaults, ...config}
+
+		Object.assign(this, filledConfig)
 
 		for(let shapeCfg of config.shapes){
 			let shape = shapeFactory.createShape(shapeCfg)
@@ -126,5 +126,8 @@ export class P2RigidBody implements RigidBody{
 		this.p2body.angularVelocity += this.p2body.invInertia * angularMomentum
 	}
 
-	toBeDeleted = false
+	
+	remove(){
+		this.p2world.removeBody(this.p2body)
+	}
 }

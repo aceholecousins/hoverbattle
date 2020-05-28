@@ -2,11 +2,18 @@
 import{Registry} from "../utils"
 
 // plain old data object that can be transferred using postMessage:
-interface PodObject{
-	[index:number]:Pod
-	[index:string]:Pod
-}
-export type Pod = number | string | PodObject
+/* TODO
+type PodArray = Pod[]
+type PodObject = Partial<{ [index:string]:Pod }>
+export type Pod = number | string | PodArray | PodObject
+///////////////
+type PodObject<T> = { [K in keyof T]:Pod<T[K]> }
+type Pod<T> = T extends boolean | number | string? T:
+    T extends Function? never:
+    T extends Object? PodObject<T>:
+	never
+*/
+type Pod = any
 
 // remote procedure that wants a pod argument:
 export type RemoteProc = (arg: Pod) => void
@@ -27,9 +34,12 @@ export class WorkerBridge{
 		}
 	}
 
-	makeCaller(name:string){
+	createCaller(name:string){
 		if(this.worker === null){
 			return function(arg:Pod){
+				// postMessage has different syntax on window and worker
+				// so the call below throws a typescript error
+				//@ts-ignore
 				postMessage({fn:name, arg:arg})
 			}
 		}

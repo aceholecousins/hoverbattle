@@ -1,6 +1,7 @@
 
 import { vec2 } from "gl-matrix"
-import {ShapeConfig, Shape, defaultShapeConfig} from "./shape"
+import {ShapeConfig, Shape} from "./shape"
+import {Optionals} from "../utils"
 
 export interface Rectangle extends Shape{
 	kind: "rectangle"
@@ -12,14 +13,4 @@ export interface RectangleConfig extends ShapeConfig<Rectangle>{
 	sides?: vec2
 }
 
-export let defaultRectangleConfig:Required<RectangleConfig> = 
-	Object.assign(
-		{},
-		defaultShapeConfig,
-		{
-			kind: "rectangle",
-			sides: vec2.fromValues(0, 0)
-		},
-	)
-
-
+export const rectangleDefaults:

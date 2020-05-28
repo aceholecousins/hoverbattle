@@ -1,7 +1,6 @@
-import {Shape, ShapeConfig, defaultShapeConfig} from "../shape"
+import {Shape, ShapeConfig, shapeDefaults} from "../shape"
 import * as p2 from "p2"
 import { vec2 } from "gl-matrix"
-import { defaultTo } from "../../utils"
 
 export abstract class P2Shape implements Shape{
 	kind: string
@@ -9,9 +8,10 @@ export abstract class P2Shape implements Shape{
 	abstract p2shape: p2.Shape
 
 	constructor(config: ShapeConfig<any>){
-		this.kind = config.kind
-		this.offset = defaultTo(config.offset, defaultShapeConfig.offset)
-		this.offsetAngle = defaultTo(config.offsetAngle, defaultShapeConfig.offsetAngle)
+		const filledConfig:Required<ShapeConfig<any>> =
+			{...shapeDefaults, ...config}
+
+		Object.assign(this, filledConfig)
 	}
 	
 	updateP2(){

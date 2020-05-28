@@ -1,6 +1,6 @@
 import {vec2} from "gl-matrix"
 import {ShapeConfig, Shape, shapeFactory} from "./shape"
-import { defaultCircleConfig } from "./circle"
+import {Optionals} from "../utils"
 
 export interface RigidBody{
 	kind: "rigidbody"
@@ -24,7 +24,7 @@ export interface RigidBody{
 	applyTorque(torque:number):void
 	applyAngularMomentum(angularMomentum:number):void
 
-	toBeDeleted: boolean
+	remove():void
 }
 
 export interface RigidBodyConfig{
@@ -41,13 +41,14 @@ export interface RigidBodyConfig{
 	angularDamping?: number
 }
 
-export let defaultRigidBodyConfig:Required<RigidBodyConfig> = {
-	shapes: [defaultCircleConfig],
+export const rigidBodyDefaults:Optionals<RigidBodyConfig> = {
 	mass: 1,
+	
 	position: vec2.fromValues(0, 0),
 	velocity: vec2.fromValues(0, 0),
-	damping: 1,
+	damping: 0.1,
+
 	angle: 0,
 	angularVelocity: 0,
-	angularDamping: 1
+	angularDamping: 0.1
 }

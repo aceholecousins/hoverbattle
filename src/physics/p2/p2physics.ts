@@ -1,5 +1,5 @@
 
-import {RigidBodyConfig, RigidBody} from "../rigidbody"
+import {RigidBodyConfig, RigidBody, rigidBodyDefaults} from "../rigidbody"
 import {Physics} from "../physics"
 import {P2RigidBody} from "./p2rigidbody"
 import * as p2 from "p2"
@@ -14,13 +14,11 @@ export class P2Physics implements Physics{
 	}
 
 	addRigidBody(config: RigidBodyConfig):RigidBody{
-		let body = new P2RigidBody(config)
+		const index = this.rigidBodies.length
+		const body = new P2RigidBody(this.p2world, config)
+		this.rigidBodies.push(body)
 		this.p2world.addBody(body.p2body)
 		return body
-	}
-	removeRigidBody(body: P2RigidBody){
-		this.rigidBodies = this.rigidBodies.filter(rb => rb !== body)
-		this.p2world.removeBody(body.p2body)
 	}
 
 	step(dt:number){

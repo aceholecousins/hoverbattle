@@ -1,5 +1,6 @@
 
-import {ShapeConfig, Shape, defaultShapeConfig} from "./shape"
+import {ShapeConfig, Shape, shapeDefaults} from "./shape"
+import {Optionals} from "../utils"
 
 export interface Circle extends Shape{
 	kind: "circle"
@@ -11,14 +12,7 @@ export interface CircleConfig extends ShapeConfig<Circle>{
 	radius?: number
 }
 
-export let defaultCircleConfig:Required<CircleConfig> = 
-	Object.assign(
-		{},
-		defaultShapeConfig,
-		{
-			kind: "circle",
-			radius: 1
-		},
-	)
-
-
+export const circleDefaults:Optionals<CircleConfig> = {
+	...shapeDefaults,
+	radius: 1
+}

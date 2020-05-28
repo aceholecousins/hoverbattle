@@ -1,6 +1,7 @@
-
+/*
 import {vec3, quat} from "gl-matrix"
-import {Color} from "../utils"
+import {Color} from "../../utils"
+import {GraphicsObjectUpdate} from "../graphics"
 
 export interface GraphicsObjectUpdate{
 	index:number
@@ -9,3 +10,4 @@ export interface GraphicsObjectUpdate{
 	orientation:quat
 	scale:vec3
 }
+*/

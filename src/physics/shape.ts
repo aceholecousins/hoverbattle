@@ -1,6 +1,6 @@
 
 import {vec2} from "gl-matrix"
-import {Registry} from "../utils"
+import {Registry, Optionals} from "../utils"
 
 // parameters that are common to all shapes
 
@@ -18,9 +18,7 @@ export interface ShapeConfig<S extends Shape> extends Pick<S, "kind"> {
 	offset?: vec2
 	offsetAngle?: number
 }
-
-export let defaultShapeConfig:Required<ShapeConfig<any>> = {
-	kind: undefined,
+export const shapeDefaults:Optionals<ShapeConfig<any>> = {
 	offset: vec2.fromValues(0, 0),
 	offsetAngle: 0
 }
