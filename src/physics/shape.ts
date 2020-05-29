@@ -1,23 +1,22 @@
 
 import {vec2} from "gl-matrix"
-import {Registry, Optionals} from "../utils"
+import {Kind, Registry, Optionals} from "../utils"
 
 // parameters that are common to all shapes
 
-export interface Shape {
-    kind: string
+export interface Shape<K extends Kind> {
+    kind: K
 	offset: vec2
 	offsetAngle: number
 	boundingRadius: number
 }
 
-// the Pick<...> enforces Blob (which is a Shape)
-// and BlobConfig (which is a ShapeConfig<Blob>)
-// to have the same kind attribute
-export interface ShapeConfig<S extends Shape> extends Pick<S, "kind"> {
+export interface ShapeConfig<K extends Kind>{
+	kind: K
 	offset?: vec2
 	offsetAngle?: number
 }
+
 export const shapeDefaults:Optionals<ShapeConfig<any>> = {
 	offset: vec2.fromValues(0, 0),
 	offsetAngle: 0
@@ -25,8 +24,7 @@ export const shapeDefaults:Optionals<ShapeConfig<any>> = {
 
 // factory for distinct shape types
 // where shape modules can register their individual factories
-
-type ShapeConstructor<S extends Shape> = new(config: ShapeConfig<S>) => S
+type ShapeConstructor<K extends Kind> = new(config: ShapeConfig<K>) => Shape<K>
 
 class ShapeFactory{
 
@@ -36,7 +34,7 @@ class ShapeFactory{
         this.factories[kind] = factory
     }
 
-    createShape<S extends Shape>(config: ShapeConfig<S>): S {
+    createShape<K extends Kind>(config: ShapeConfig<K>): Shape<K> {
         return new this.factories[config.kind](config)
     }
 }

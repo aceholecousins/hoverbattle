@@ -4,7 +4,7 @@ import {shapeFactory} from "../shape"
 import {P2Shape} from "./p2shape"
 import {Circle, CircleConfig, circleDefaults} from "../circle"
 
-export class P2Circle extends P2Shape implements Circle{
+export class P2Circle extends P2Shape<"circle"> implements Circle{
 	kind:"circle"
 	p2shape:p2.Circle
 

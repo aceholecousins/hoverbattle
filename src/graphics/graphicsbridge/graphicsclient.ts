@@ -1,37 +1,40 @@
 
 import {Graphics} from "../graphics"
 import {GraphicsObjectConfig} from "../graphicsobject"
-import {ModelHandle, GraphicsObjectHandle} from "./graphicsobjecthandle"
+import {GraphicsObjectHandle} from "./graphicsobjecthandle"
+import {AssetConfig} from "../asset"
+import {AssetHandle} from "./assethandle"
 import {WorkerBridge, RemoteProc} from "../../worker/workerbridge"
 import {UpdateBundler} from "./updatebundler"
+import {Kind} from "../../utils"
 
 export class GraphicsClient implements Graphics{
 	private modelCounter = 0
 	private graphicsObjectCounter = 0
 
-	private _loadModelOnServer:RemoteProc
+	private _loadAssetOnServer:RemoteProc
 	private _addObjectOnServer:RemoteProc
 	private _syncObjectsOnServer:RemoteProc
 	private _updateBundler:UpdateBundler
 
 	constructor(bridge:WorkerBridge){
-		this._loadModelOnServer = bridge.createCaller("gfx.loadModel")
+		this._loadAssetOnServer = bridge.createCaller("gfx.loadAsset")
 		this._addObjectOnServer = bridge.createCaller("gfx.addObject")
 		this._syncObjectsOnServer = bridge.createCaller("gfx.syncObjects")
 		this._updateBundler = new UpdateBundler()
 	}
 
-	loadModel(file:string){
+	loadAsset<K extends Kind>(config:AssetConfig<K>):AssetHandle<K>{
 		const index = this.modelCounter++
-		this._loadModelOnServer({index, file})
-		let result = new ModelHandle(index)
+		this._loadAssetOnServer({index, config:config})
+		let result = {kind:config.kind, index, file:config.file}
 		return result
 	}
 
-	addObject(config:GraphicsObjectConfig){
+	addObject<K extends Kind>(config:GraphicsObjectConfig<K>):GraphicsObjectHandle<K>{
 		const index = this.graphicsObjectCounter++
-		this._addObjectOnServer({index})
-		let result = new GraphicsObjectHandle(index, this._updateBundler, config)
+		this._addObjectOnServer({index, config})
+		let result = new GraphicsObjectHandle<K>(index, this._updateBundler, config)
 		return result
 	}
 	

@@ -1,14 +1,15 @@
 import {Shape, ShapeConfig, shapeDefaults} from "../shape"
 import * as p2 from "p2"
 import { vec2 } from "gl-matrix"
+import {Kind} from "../../utils"
 
-export abstract class P2Shape implements Shape{
-	kind: string
+export abstract class P2Shape<K extends Kind> implements Shape<K>{
+	kind: K
 	
 	abstract p2shape: p2.Shape
 
-	constructor(config: ShapeConfig<any>){
-		const filledConfig:Required<ShapeConfig<any>> =
+	constructor(config: ShapeConfig<K>){
+		const filledConfig:Required<ShapeConfig<K>> =
 			{...shapeDefaults, ...config}
 
 		Object.assign(this, filledConfig)

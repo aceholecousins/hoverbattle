@@ -1,47 +1,26 @@
 
 import {vec3, quat} from "gl-matrix"
-import {Color} from "../../utils"
-import {Model, GraphicsObject, GraphicsObjectConfig, graphicsObjectDefaults} from "../graphicsobject"
+import {Kind} from "../../utils"
+import {GraphicsObject, GraphicsObjectConfig} from "../graphicsobject"
 import {UpdateBundler} from "./updatebundler"
 
-export class ModelHandle implements Model{
-	readonly index:number
-	constructor(index:number){
-		this.index = index
-	}
-}
-
-export class GraphicsObjectHandle implements GraphicsObject{
-	readonly index:number
+export class GraphicsObjectHandle<K extends Kind> implements GraphicsObject<K>{
+	kind:K
+	index:number
 	private _updateBundler:UpdateBundler
 
 	constructor(
 		index:number,
 		updateBundler:UpdateBundler,
-		config:GraphicsObjectConfig
+		config:GraphicsObjectConfig<K>
 	){
-		const filledConfig:Required<GraphicsObjectConfig> =
-			{...graphicsObjectDefaults, ...config}
-
+		this.kind = config.kind
 		this.index = index
 		this._updateBundler = updateBundler
-		this._updateBundler.addUpdate(this.index, {addMe:true, ...filledConfig})
-	}
-
-	set kind(k:string){
-		this._updateBundler.addUpdate(this.index, {kind:k})
-	}
-
-	set model(m:Model){
-		this._updateBundler.addUpdate(this.index, {model:m})
-	}
-
-	set color(c:Color){
-		this._updateBundler.addUpdate(this.index, {color:c})
 	}
 
 	set position(p:vec3){
-		this._updateBundler.addUpdate(this.index, {position:p})
+		this._updateBundler.addUpdate<K>(this.index, {position:p})
 	}
 
 	set orientation(q:quat){

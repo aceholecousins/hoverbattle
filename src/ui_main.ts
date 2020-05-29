@@ -1,5 +1,5 @@
-
-import {GraphicsManager} from "./graphics/graphicsmanager"
+/*
+import {GraphicsManager} from "../workshop/code/graphicsmanager"
 import * as THREE from "three"
 import * as Stats from "stats.js"
 
@@ -24,4 +24,4 @@ function animate(time:number){
 	stats.update()
 }
 requestAnimationFrame(animate)
-
+*/

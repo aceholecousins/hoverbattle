@@ -5,7 +5,7 @@ import {Optionals} from "../utils"
 export interface RigidBody{
 	kind: "rigidbody"
 
-	readonly shapes: Shape[]
+	readonly shapes: Shape<any>[]
 
 	mass: number
 

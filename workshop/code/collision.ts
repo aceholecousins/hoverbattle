@@ -91,7 +91,6 @@ P2PhysicsEngine.world.on(
 			for(let roleB of entityB.roles.list){
 				let handler = collisionManager.handlers[roleA.bit | roleB.bit]
 				if(handler !== undefined){
-					// some implicit casting happens here without a warning!!
 					handler(entityA, entityB)
 				}
 			}

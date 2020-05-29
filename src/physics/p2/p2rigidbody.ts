@@ -2,13 +2,14 @@ import * as p2 from "p2"
 import {vec2} from "gl-matrix"
 import {P2Physics} from "./p2physics"
 import {Shape, ShapeConfig, shapeFactory} from "../shape"
+import {P2Shape} from "./p2shape"
 import {RigidBody, RigidBodyConfig, rigidBodyDefaults} from "../rigidbody"
 
 export class P2RigidBody implements RigidBody{
 	kind:"rigidbody"
 	p2world:p2.World
 	p2body:p2.Body
-	readonly shapes: Shape[]
+	readonly shapes: Shape<any>[]
 	toBeDeleted: boolean = false
 
 	constructor(p2world:p2.World, config:RigidBodyConfig){
@@ -21,7 +22,7 @@ export class P2RigidBody implements RigidBody{
 		Object.assign(this, filledConfig)
 
 		for(let shapeCfg of config.shapes){
-			let shape = shapeFactory.createShape(shapeCfg)
+			let shape = shapeFactory.createShape<any>(shapeCfg) as P2Shape<any>
 			this.shapes.push(shape)
 			this.p2body.addShape(shape.p2shape)
 		}

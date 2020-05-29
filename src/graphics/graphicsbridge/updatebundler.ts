@@ -1,15 +1,16 @@
 
-import {GraphicsObjectConfig} from "../graphicsobject"
+import {Kind} from "../../utils"
+import {GraphicsObject} from "../graphicsobject"
 
-export interface GraphicsObjectUpdate extends GraphicsObjectConfig{
-	addMe?:boolean
+export interface GraphicsObjectUpdate<K extends Kind> extends Partial<GraphicsObject<K>>{
 	removeMe?:boolean
 }
 
 export class UpdateBundler{
-	private updates:GraphicsObjectUpdate[] = []
+	private updates:GraphicsObjectUpdate<any>[] = []
 	
-	addUpdate(index:number, update:GraphicsObjectUpdate):void{
+	// copy all fields from whatever kind of GraphicsObject
+	addUpdate<K extends Kind>(index:number, update:GraphicsObjectUpdate<K>):void{
 		if(!(index in this.updates)){
 			this.updates[index] = update
 		}
@@ -18,7 +19,7 @@ export class UpdateBundler{
 		}
 	}
 
-	popUpdates():GraphicsObjectUpdate[]{
+	popUpdates():GraphicsObjectUpdate<any>[]{
 		const result = this.updates
 		this.updates = []
 		return result

@@ -1,8 +1,10 @@
 
-import {Model, GraphicsObject, GraphicsObjectConfig} from "./graphicsobject"
+import {GraphicsObject, GraphicsObjectConfig} from "./graphicsobject"
+import {Asset, AssetConfig} from "./asset"
+import {Kind} from "../utils"
 
 export interface Graphics{
-	loadModel(file:string):Model
-	addObject(config:GraphicsObjectConfig):GraphicsObject
+	loadAsset<K extends Kind>(config:AssetConfig<K>):Asset<K>
+	addObject<K extends Kind>(config:GraphicsObjectConfig<K>):GraphicsObject<K>
 	update():void
 }
