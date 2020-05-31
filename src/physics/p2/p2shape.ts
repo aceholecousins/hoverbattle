@@ -1,19 +1,12 @@
 import {Shape, ShapeConfig, shapeDefaults} from "../shape"
 import * as p2 from "p2"
 import { vec2 } from "gl-matrix"
-import {Kind} from "../../utils"
+import {Kind, Registry} from "../../utils"
 
 export abstract class P2Shape<K extends Kind> implements Shape<K>{
 	kind: K
 	
 	abstract p2shape: p2.Shape
-
-	constructor(config: ShapeConfig<K>){
-		const filledConfig:Required<ShapeConfig<K>> =
-			{...shapeDefaults, ...config}
-
-		Object.assign(this, filledConfig)
-	}
 	
 	updateP2(){
 		this.p2shape.updateBoundingRadius()
@@ -37,3 +30,23 @@ export abstract class P2Shape<K extends Kind> implements Shape<K>{
 
 	abstract boundingRadius: number
 }
+
+
+// factory for distinct shape types
+// where shape modules can register their individual factories
+type P2ShapeConstructor<K extends Kind> = new(config: ShapeConfig<K>) => P2Shape<K>
+
+class P2ShapeFactory{
+
+    private factories: Registry<P2ShapeConstructor<any>> = {}
+
+    register(kind: string, factory: P2ShapeConstructor<any>): void {
+        this.factories[kind] = factory
+    }
+
+    createShape<K extends Kind>(config: ShapeConfig<K>): P2Shape<K> {
+        return new this.factories[config.kind](config)
+    }
+}
+
+export const p2shapeFactory = new P2ShapeFactory()

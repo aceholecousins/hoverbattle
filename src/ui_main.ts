@@ -1,27 +1,22 @@
-/*
-import {GraphicsManager} from "../workshop/code/graphicsmanager"
-import * as THREE from "three"
-import * as Stats from "stats.js"
 
-let stats = new Stats()
-stats.showPanel(0)
-document.body.appendChild(stats.dom)
+import {ThreeGraphics} from "./graphics/threegraphics/threegraphics"
+import {ModelConfig} from "./graphics/model"
 
-let graphicsManager = new GraphicsManager("rendertarget")
-graphicsManager.setup()
-graphicsManager.setBackground(new THREE.Color("skyblue"))
+let graphics = new ThreeGraphics(document.getElementById("rendertarget") as HTMLCanvasElement)
 
-let worker = new Worker('acechase_engine.js')
-
-worker.onmessage = function(e){
-
+const gliderAsset = graphics.loadAsset<"model">({kind:"model", file:"glider/glider.gltf"})
+const gliderCfg:ModelConfig = {
+	kind:"model",
+	asset:gliderAsset
 }
-worker.postMessage(1)
 
-function animate(time:number){	
+setTimeout(function(){
+	graphics.addObject(gliderCfg)
+}, 1000)
+
+function animate(time:number){
 	requestAnimationFrame(animate)
-	graphicsManager.render()
-	stats.update()
+	graphics.update(time)
 }
 requestAnimationFrame(animate)
-*/
+

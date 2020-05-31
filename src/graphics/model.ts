@@ -1,15 +1,14 @@
 
 import {Color, Optionals} from "../utils"
 import {GraphicsObject, GraphicsObjectConfig, graphicsObjectDefaults} from "./graphicsobject"
-import {Asset, AssetConfig} from "./asset"
+import {Asset} from "./asset"
 
 export interface Model extends GraphicsObject<"model">{
-	asset:Asset<"modelsrc">
 	color:Color
 }
 
 export interface ModelConfig extends GraphicsObjectConfig<"model">{
-	asset:AssetConfig<"modelsrc">
+	asset:Asset<"model">
 	color?:Color
 }
 

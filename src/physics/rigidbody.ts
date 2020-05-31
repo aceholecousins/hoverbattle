@@ -1,11 +1,11 @@
 import {vec2} from "gl-matrix"
-import {ShapeConfig, Shape, shapeFactory} from "./shape"
+import {ShapeConfig, Shape} from "./shape"
 import {Optionals} from "../utils"
 
 export interface RigidBody{
 	kind: "rigidbody"
 
-	readonly shapes: Shape<any>[]
+	//readonly shapes: Shape<any>[]
 
 	mass: number
 

@@ -1,7 +1,6 @@
 
 import * as p2 from "p2"
-import {shapeFactory} from "../shape"
-import {P2Shape} from "./p2shape"
+import {P2Shape, p2shapeFactory} from "./p2shape"
 import {Circle, CircleConfig, circleDefaults} from "../circle"
 
 export class P2Circle extends P2Shape<"circle"> implements Circle{
@@ -9,13 +8,11 @@ export class P2Circle extends P2Shape<"circle"> implements Circle{
 	p2shape:p2.Circle
 
 	constructor(config: CircleConfig){
-		const {kind, offset, offsetAngle, radius}:Required<CircleConfig> =
+		const filledConfig:Required<CircleConfig> =
 			{...circleDefaults, ...config}
-
-		super({kind, offset, offsetAngle})
-
+		super()
 		this.p2shape = new p2.Circle()
-		this.p2shape.radius = radius
+		Object.assign(this, filledConfig)
 	}
 
 	set radius(r: number){
@@ -35,6 +32,6 @@ export class P2Circle extends P2Shape<"circle"> implements Circle{
 	}
 }
 
-shapeFactory.register("circle", P2Circle)
+p2shapeFactory.register("circle", P2Circle)
 
 
