@@ -10,14 +10,22 @@ export class ThreeModelAsset implements Asset<"model">{
 	kind:"model"
 	model:THREE.Object3D
 	
-	constructor(config:AssetConfig<"model">){
-		this.model = undefined // TODO: loading manager
+	constructor(
+		config:AssetConfig<"model">,
+		onLoaded:()=>void,
+		onError:(err:ErrorEvent)=>void
+	){
+		this.model = null
 		const that = this
+		
 		gltfLoader.load(
 			config.file,
 			function(gltf){
 				that.model = gltf.scene
-			}
+				onLoaded()
+			},
+			(e)=>{},
+			onError
 		)
 	}
 }

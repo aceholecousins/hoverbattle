@@ -3,7 +3,11 @@ import {Asset, AssetConfig} from "../asset"
 import {Kind, Registry} from "../../utils"
 
 type ThreeAssetConstructor<K extends Kind> =
-	new(config: AssetConfig<K>) => Asset<K>
+	new(
+		config: AssetConfig<K>,
+		onLoaded:()=>void,
+		onError:(err:ErrorEvent)=>void	
+	) => Asset<K>
 
 class ThreeAssetFactory{
 
@@ -14,9 +18,11 @@ class ThreeAssetFactory{
     }
 
     createAsset<K extends Kind>(
-		config: AssetConfig<K>
+		config: AssetConfig<K>,
+		onLoaded: ()=>void,
+		onError: (err:ErrorEvent)=>void
 	): Asset<K> {
-        return new this.factories[config.kind](config)
+        return new this.factories[config.kind](config, onLoaded, onError)
     }
 }
 

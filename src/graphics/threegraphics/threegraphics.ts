@@ -9,12 +9,7 @@ import {cameraDefaults} from "../camera"
 import {SceneInfo} from "./sceneinfo"
 import * as THREE from "three"
 import { threeObjectFactory } from "./threegraphicsobject"
-
-// TODO: factories are imported manually here:
-import {ThreeModelAsset} from "./threemodelasset"
-ThreeModelAsset
-import {ThreeModel} from "./threemodel"
-ThreeModel
+import "./factorylist"
 
 export class ThreeGraphics implements Graphics{
 
@@ -56,8 +51,15 @@ export class ThreeGraphics implements Graphics{
 		resize()
 	}
 
-	loadAsset<K extends Kind>(config:AssetConfig<K>):Asset<K>{
-		return threeAssetFactory.createAsset(config)
+	loadAsset<K extends Kind>(
+		config:AssetConfig<K>,
+		onLoaded?:()=>void,
+		onError?:(err:ErrorEvent)=>void
+	):Asset<K>{
+		if(typeof(onLoaded) === "undefined"){onLoaded = ()=>{}}
+		if(typeof(onError) === "undefined"){onError = (err:ErrorEvent)=>{}}
+
+		return threeAssetFactory.createAsset(config, onLoaded, onError)
 	}
 
 	addObject<K extends Kind>(config:GraphicsObjectConfig<K>):GraphicsObject<K>{
