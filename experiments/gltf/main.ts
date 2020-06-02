@@ -7,8 +7,13 @@ let envmap = new THREE.CubeTextureLoader()
 	.setPath('./skatepark/')
 	.load(['px.png', 'nx.png', 'py.png', 'ny.png', 'pz.png', 'nz.png']);
 
+//window["tex"] = envmap
+
 scene.environment = envmap
 scene.background = envmap
+
+
+scene.rotateX(-Math.PI/2)
 
 var loader = new GLTFLoader()
 

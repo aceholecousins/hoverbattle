@@ -14,7 +14,7 @@ export class P2RigidBody implements RigidBody{
 
 	constructor(p2world:p2.World, config:RigidBodyConfig){
 		this.p2world = p2world
-		this.p2body = new p2.Body()
+		this.p2body = new p2.Body({mass:1}) // mass set to 1 so the body is considered DYNAMIC
 
 		const filledConfig:Required<RigidBodyConfig> =
 			{...rigidBodyDefaults, ...config}
@@ -32,6 +32,7 @@ export class P2RigidBody implements RigidBody{
 
 	set mass(m: number){
 		this.p2body.mass = m
+		this.p2body.updateMassProperties()
 	}
 	get mass(){
 		return this.p2body.mass

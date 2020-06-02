@@ -16,6 +16,9 @@ camera.position.set(0, 0, 10)
 scene.add(camera)
 scene.add(new THREE.AxesHelper())
 
+//@ts-ignore
+window.scene = scene
+
 let controls = new OrbitControls(camera, renderer.domElement)
 controls.screenSpacePanning = true
 

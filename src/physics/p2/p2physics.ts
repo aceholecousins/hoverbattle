@@ -3,6 +3,7 @@ import {RigidBodyConfig, RigidBody, rigidBodyDefaults} from "../rigidbody"
 import {Physics} from "../physics"
 import {P2RigidBody} from "./p2rigidbody"
 import * as p2 from "p2"
+import "./p2factorylist"
 
 export class P2Physics implements Physics{
 

@@ -22,6 +22,9 @@ class ThreeAssetFactory{
 		onLoaded: ()=>void,
 		onError: (err:ErrorEvent)=>void
 	): Asset<K> {
+		if(!this.factories.hasOwnProperty(config.kind)){
+			throw new Error("ThreeAssetFactory cannot create a " + config.kind)
+		}
         return new this.factories[config.kind](config, onLoaded, onError)
     }
 }

@@ -1,5 +1,5 @@
 
 interface Material{
 	elasticity:number
-	friction:number
+	roughness:number
 }

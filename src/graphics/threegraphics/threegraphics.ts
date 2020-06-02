@@ -56,9 +56,6 @@ export class ThreeGraphics implements Graphics{
 		onLoaded?:()=>void,
 		onError?:(err:ErrorEvent)=>void
 	):Asset<K>{
-		if(typeof(onLoaded) === "undefined"){onLoaded = ()=>{}}
-		if(typeof(onError) === "undefined"){onError = (err:ErrorEvent)=>{}}
-
 		return threeAssetFactory.createAsset(config, onLoaded, onError)
 	}
 

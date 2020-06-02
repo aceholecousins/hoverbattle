@@ -24,7 +24,11 @@ export class GraphicsClient implements Graphics{
 		this._updateBundler = new UpdateBundler()
 	}
 
-	loadAsset<K extends Kind>(config:AssetConfig<K>):AssetHandle<K>{
+	loadAsset<K extends Kind>(
+		config:AssetConfig<K>,
+		onLoaded?:()=>void,
+		onError?:(err:ErrorEvent)=>void
+	):AssetHandle<K>{
 		const index = this.modelCounter++
 		this._loadAssetOnServer({index, config:config})
 		let result = {kind:config.kind, index, file:config.file}

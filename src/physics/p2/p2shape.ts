@@ -10,8 +10,10 @@ export abstract class P2Shape<K extends Kind> implements Shape<K>{
 	
 	updateP2(){
 		this.p2shape.updateBoundingRadius()
-		this.p2shape.body.aabbNeedsUpdate = true
-		this.p2shape.body.updateBoundingRadius()
+		if(this.p2shape.body !== null){ // when called before the shape was added to the body
+			this.p2shape.body.aabbNeedsUpdate = true
+			this.p2shape.body.updateBoundingRadius()
+		}
 	}
 
 	set offset(p: vec2){
@@ -45,6 +47,9 @@ class P2ShapeFactory{
     }
 
     createShape<K extends Kind>(config: ShapeConfig<K>): P2Shape<K> {
+		if(!this.factories.hasOwnProperty(config.kind)){
+			throw new Error("P2ShapeFactory cannot create a " + config.kind)
+		}
         return new this.factories[config.kind](config)
     }
 }

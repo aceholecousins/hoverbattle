@@ -42,6 +42,9 @@ class ThreeObjectFactory{
 		scene: THREE.Scene,
 		config: GraphicsObjectConfig<K>
 	): ThreeGraphicsObject<K> {
+		if(!this.factories.hasOwnProperty(config.kind)){
+			throw new Error("ThreeObjectFactory cannot create a " + config.kind)
+		}
         return new this.factories[config.kind](scene, config)
     }
 }
