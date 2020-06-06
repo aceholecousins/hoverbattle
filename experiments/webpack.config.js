@@ -4,6 +4,7 @@ const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
 	entry: {
+		alphamix: './experiments/alphamix/main.ts',
 		renderstresstest: './experiments/renderstresstest/main.ts',
 		gltf: './experiments/gltf/main.ts',
 		overridecolor: './experiments/overridecolor/main.ts'
