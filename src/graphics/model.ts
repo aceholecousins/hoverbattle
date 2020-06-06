@@ -7,7 +7,7 @@ export interface Model extends GraphicsObject<"model">{
 	color:Color
 }
 
-export interface ModelConfig extends GraphicsObjectConfig<"model">{
+export interface ModelConfig extends GraphicsObjectConfig<"model", GraphicsObject<"model">>{
 	asset:Asset<"model">
 	color?:Color
 }

@@ -12,9 +12,9 @@ export interface Graphics{
 		onError?:(err:ErrorEvent)=>void
 	):Asset<K>
 
-	addObject<K extends Kind>(
-		config:GraphicsObjectConfig<K>
-	):GraphicsObject<K>
+	addObject<K extends Kind, GO extends GraphicsObject<K>>(
+		config:GraphicsObjectConfig<K, GO>
+	):GO
 	
 	update(time:number):void
 }

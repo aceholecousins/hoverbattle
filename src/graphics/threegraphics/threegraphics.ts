@@ -8,7 +8,7 @@ import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls'
 import {cameraDefaults} from "../camera"
 import {SceneInfo} from "./sceneinfo"
 import * as THREE from "three"
-import { threeObjectFactory } from "./threegraphicsobject"
+import { threeObjectFactory, ThreeGraphicsObject } from "./threegraphicsobject"
 import "./factorylist"
 
 export class ThreeGraphics implements Graphics{
@@ -59,7 +59,9 @@ export class ThreeGraphics implements Graphics{
 		return threeAssetFactory.createAsset(config, onLoaded, onError)
 	}
 
-	addObject<K extends Kind>(config:GraphicsObjectConfig<K>):GraphicsObject<K>{
+	addObject<K extends Kind, GO extends GraphicsObject<K>>(
+		config:GraphicsObjectConfig<K, GO>
+	):GO{
 		return threeObjectFactory.createObject(this.scene, config)
 	}
 

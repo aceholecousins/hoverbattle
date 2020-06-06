@@ -27,21 +27,21 @@ export abstract class ThreeGraphicsObject<K extends Kind> implements GraphicsObj
 }
 
 
-type ThreeObjectConstructor<K extends Kind> =
-	new(scene:THREE.Scene, config: GraphicsObjectConfig<K>) => ThreeGraphicsObject<K>
+type ThreeObjectConstructor<K extends Kind, GO extends GraphicsObject<K>> =
+	new(scene:THREE.Scene, config: GraphicsObjectConfig<K, GO>) => GO
 
 class ThreeObjectFactory{
 
-    private factories: Registry<ThreeObjectConstructor<any>> = {}
+    private factories: Registry<ThreeObjectConstructor<any, any>> = {}
 
-    register(kind: string, factory: ThreeObjectConstructor<any>): void {
+    register(kind: string, factory: ThreeObjectConstructor<any, any>): void {
         this.factories[kind] = factory
     }
 
-    createObject<K extends Kind>(
+    createObject<K extends Kind, GO extends GraphicsObject<K>>(
 		scene: THREE.Scene,
-		config: GraphicsObjectConfig<K>
-	): ThreeGraphicsObject<K> {
+		config: GraphicsObjectConfig<K, GO>
+	): GO {
 		if(!this.factories.hasOwnProperty(config.kind)){
 			throw new Error("ThreeObjectFactory cannot create a " + config.kind)
 		}

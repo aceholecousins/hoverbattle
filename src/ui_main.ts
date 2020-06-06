@@ -15,11 +15,9 @@ class Glider{
 	model:Model
 	constructor(bodyCfg:RigidBodyConfig, modelCfg:ModelConfig){
 		this.body = physics.addRigidBody(bodyCfg)
-		// TODO: the return type of the object factory
-		// does not pass through additional properties like color
-		// (I think it does but TypeScript doesn't know)
-		// Maybe the "kind" must carry these parameters
-		this.model = graphics.addObject(modelCfg) as Model
+		this.model = graphics.addObject(modelCfg)
+		let fart = graphics.addObject(modelCfg)
+		fart
 	}
 
 	update(){
