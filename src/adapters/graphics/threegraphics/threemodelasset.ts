@@ -1,5 +1,5 @@
 
-import {Asset, AssetConfig} from "../asset"
+import {Asset, AssetConfig} from "../../../domain/graphics/asset"
 import {threeAssetFactory} from "./threeasset"
 import * as THREE from "three"
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'

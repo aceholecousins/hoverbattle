@@ -1,7 +1,7 @@
 
 import {GraphicsObject, GraphicsObjectConfig} from "./graphicsobject"
 import {Asset, AssetConfig} from "./asset"
-import {Kind} from "../utils"
+import {Kind} from "../../utils"
 import {Camera} from "./camera"
 
 export interface Graphics{

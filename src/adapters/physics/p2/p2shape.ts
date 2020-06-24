@@ -1,7 +1,7 @@
-import {Shape, ShapeConfig, shapeDefaults} from "../shape"
+import {Shape, ShapeConfig, shapeDefaults} from "../../../domain/physics/shape"
 import * as p2 from "p2"
 import { vec2 } from "gl-matrix"
-import {Kind, Registry} from "../../utils"
+import {Kind, Registry} from "../../../utils"
 
 export abstract class P2Shape<K extends Kind> implements Shape<K>{
 	kind: K

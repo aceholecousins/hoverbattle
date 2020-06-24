@@ -1,8 +1,8 @@
 
 import * as THREE from "three"
-import {GraphicsObject, GraphicsObjectConfig, graphicsObjectDefaults} from "../graphicsobject"
+import {GraphicsObject, GraphicsObjectConfig, graphicsObjectDefaults} from "../../../domain/graphics/graphicsobject"
 import {vec3, quat} from "gl-matrix"
-import {Kind, Optionals, Color, Registry} from "../../utils"
+import {Kind, Optionals, Color, Registry} from "../../../utils"
 
 export abstract class ThreeGraphicsObject<K extends Kind> implements GraphicsObject<K>{
 	kind:K

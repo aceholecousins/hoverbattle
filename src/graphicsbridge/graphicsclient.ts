@@ -1,12 +1,12 @@
 
-import {Graphics} from "../graphics"
-import {GraphicsObjectConfig} from "../graphicsobject"
+import {Graphics} from "../domain/graphics/graphics"
+import {GraphicsObjectConfig} from "../domain/graphics/graphicsobject"
 import {GraphicsObjectHandle} from "./graphicsobjecthandle"
-import {AssetConfig} from "../asset"
+import {AssetConfig} from "../domain/graphics/asset"
 import {AssetHandle} from "./assethandle"
-import {WorkerBridge, RemoteProc} from "../../worker/workerbridge"
+import {WorkerBridge, RemoteProc} from "../worker/workerbridge"
 import {UpdateBundler} from "./updatebundler"
-import {Kind} from "../../utils"
+import {Kind} from "../utils"
 
 export class GraphicsClient implements Graphics{
 	private modelCounter = 0

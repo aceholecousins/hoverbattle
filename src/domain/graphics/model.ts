@@ -1,5 +1,5 @@
 
-import {Color, Optionals} from "../utils"
+import {Color, Optionals} from "../../utils"
 import {GraphicsObject, GraphicsObjectConfig, graphicsObjectDefaults} from "./graphicsobject"
 import {Asset} from "./asset"
 

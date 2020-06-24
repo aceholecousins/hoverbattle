@@ -1,6 +1,6 @@
 
 import {vec2} from "gl-matrix"
-import {Kind, Registry, Optionals} from "../utils"
+import {Kind, Registry, Optionals} from "../../utils"
 
 // parameters that are common to all shapes
 

@@ -1,6 +1,6 @@
 
 import {ShapeConfig, Shape, shapeDefaults} from "./shape"
-import {Optionals} from "../utils"
+import {Optionals} from "../../utils"
 
 export interface Circle extends Shape<"circle">{
 	kind: "circle"

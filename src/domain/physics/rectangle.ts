@@ -1,7 +1,7 @@
 
 import { vec2 } from "gl-matrix"
 import {ShapeConfig, Shape, shapeDefaults} from "./shape"
-import {Optionals} from "../utils"
+import {Optionals} from "../../utils"
 
 export interface Rectangle extends Shape<"rectangle">{
 	kind: "rectangle"

@@ -1,11 +1,11 @@
 
-import {ThreeGraphics} from "./graphics/threegraphics/threegraphics"
-import {ModelConfig, Model} from "./graphics/model"
+import {ThreeGraphics} from "./adapters/graphics/threegraphics/threegraphics"
+import {ModelConfig, Model} from "./domain/graphics/model"
 import {Checklist} from "./checklist"
-import { P2Physics } from "./physics/p2/p2physics"
-import { CircleConfig } from "./physics/circle"
+import { P2Physics } from "./adapters/physics/p2/p2physics"
+import { CircleConfig } from "./domain/physics/circle"
 import { vec2, quat } from "gl-matrix"
-import { RigidBody, RigidBodyConfig } from "./physics/rigidbody"
+import { RigidBody, RigidBodyConfig } from "./domain/physics/rigidbody"
 
 let graphics = new ThreeGraphics(document.getElementById("rendertarget") as HTMLCanvasElement)
 let physics = new P2Physics()
