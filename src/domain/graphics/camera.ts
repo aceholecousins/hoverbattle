@@ -1,6 +1,6 @@
 
 import {GraphicsObject, GraphicsObjectConfig, graphicsObjectDefaults} from "./graphicsobject"
-import {Optionals} from "../../utils"
+import {Optionals} from "utils"
 
 // the camera has a 90deg field of view, both horizontally
 // and vertically and a depth range from 0.0001 to 1.0

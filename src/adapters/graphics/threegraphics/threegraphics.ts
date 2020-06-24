@@ -1,11 +1,11 @@
 
-import {Kind} from "../../../utils"
-import {Graphics} from "../../../domain/graphics/graphics"
-import {GraphicsObject, GraphicsObjectConfig} from "../../../domain/graphics/graphicsobject"
-import {Asset, AssetConfig} from "../../../domain/graphics/asset"
+import {Kind} from "utils"
+import {Graphics} from "domain/graphics/graphics"
+import {GraphicsObject, GraphicsObjectConfig} from "domain/graphics/graphicsobject"
+import {Asset, AssetConfig} from "domain/graphics/asset"
 import {threeAssetFactory} from "./threeasset"
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls'
-import {cameraDefaults} from "../../../domain/graphics/camera"
+import {cameraDefaults} from "domain/graphics/camera"
 import {SceneInfo} from "./sceneinfo"
 import * as THREE from "three"
 import { threeObjectFactory } from "./threegraphicsobject"

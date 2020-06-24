@@ -1,5 +1,5 @@
 
-import {Kind} from "../../utils"
+import {Kind} from "utils"
 
 export interface Asset<K extends Kind>{
 	kind:K

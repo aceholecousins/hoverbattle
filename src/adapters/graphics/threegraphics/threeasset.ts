@@ -1,6 +1,6 @@
 
-import {Asset, AssetConfig} from "../../../domain/graphics/asset"
-import {Kind, Registry} from "../../../utils"
+import {Asset, AssetConfig} from "domain/graphics/asset"
+import {Kind, Registry} from "utils"
 
 type ThreeAssetConstructor<K extends Kind> =
 	new(

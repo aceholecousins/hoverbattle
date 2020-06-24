@@ -1,7 +1,7 @@
 
 import {vec3, quat} from "gl-matrix"
-import {Kind} from "../utils"
-import {GraphicsObject, GraphicsObjectConfig} from "../domain/graphics/graphicsobject"
+import {Kind} from "utils"
+import {GraphicsObject, GraphicsObjectConfig} from "domain/graphics/graphicsobject"
 import {UpdateBundler} from "./updatebundler"
 
 export class GraphicsObjectHandle<K extends Kind> implements GraphicsObject<K>{

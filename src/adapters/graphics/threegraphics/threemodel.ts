@@ -1,8 +1,8 @@
 
-import {Model, ModelConfig, modelDefaults} from "../../../domain/graphics/model"
+import {Model, ModelConfig, modelDefaults} from "domain/graphics/model"
 import {ThreeGraphicsObject, threeObjectFactory} from "./threegraphicsobject"
 import * as THREE from "three"
-import { Color } from "../../../utils"
+import { Color } from "utils"
 import { ThreeModelAsset } from "./threemodelasset"
 
 export class ThreeModel extends ThreeGraphicsObject<"model"> implements Model{

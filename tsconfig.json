@@ -8,7 +8,8 @@
 		"preserveConstEnums": true,
 		"sourceMap": true,
 		"allowJs": true,
-		"incremental": true
+		"incremental": true,
+		"baseUrl": "./src"
 	},
 	"include": [
 		"src/**/*.ts"

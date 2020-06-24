@@ -1,5 +1,5 @@
 
-import {Camera, CameraConfig, cameraDefaults} from "../../../domain/graphics/camera"
+import {Camera, CameraConfig, cameraDefaults} from "domain/graphics/camera"
 import {ThreeGraphicsObject, threeObjectFactory} from "./threegraphicsobject"
 import {SceneInfo} from "./sceneinfo"
 import * as THREE from "three"

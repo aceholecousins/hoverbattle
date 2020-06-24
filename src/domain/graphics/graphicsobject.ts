@@ -1,6 +1,6 @@
 
 import {vec3, quat} from "gl-matrix"
-import {Kind, Optionals, Color, Registry} from "../../utils"
+import {Kind, Optionals, Color, Registry} from "utils"
 
 export interface GraphicsObjectConfig<K extends Kind>{
 	kind:K

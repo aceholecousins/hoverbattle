@@ -1,6 +1,6 @@
 
-import {Kind} from "../utils"
-import {GraphicsObject} from "../domain/graphics/graphicsobject"
+import {Kind} from "utils"
+import {GraphicsObject} from "domain/graphics/graphicsobject"
 
 export interface GraphicsObjectUpdate<K extends Kind> extends Partial<GraphicsObject<K>>{
 	removeMe?:boolean

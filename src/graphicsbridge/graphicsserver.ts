@@ -1,8 +1,8 @@
 
-import {Graphics} from "../domain/graphics/graphics"
-import {GraphicsObject, GraphicsObjectConfig} from "../domain/graphics/graphicsobject"
+import {Graphics} from "domain/graphics/graphics"
+import {GraphicsObject, GraphicsObjectConfig} from "domain/graphics/graphicsobject"
 import {GraphicsObjectUpdate} from "./updatebundler"
-import {Asset, AssetConfig} from "../domain/graphics/asset"
+import {Asset, AssetConfig} from "domain/graphics/asset"
 import {WorkerBridge} from "../worker/workerbridge"
 
 export class GraphicsServer{

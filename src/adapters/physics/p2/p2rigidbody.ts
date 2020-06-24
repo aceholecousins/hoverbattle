@@ -1,9 +1,9 @@
 import * as p2 from "p2"
 import {vec2} from "gl-matrix"
 import {P2Physics} from "./p2physics"
-import {Shape, ShapeConfig} from "../../../domain/physics/shape"
+import {Shape, ShapeConfig} from "domain/physics/shape"
 import {P2Shape, p2shapeFactory} from "./p2shape"
-import {RigidBody, RigidBodyConfig, rigidBodyDefaults} from "../../../domain/physics/rigidbody"
+import {RigidBody, RigidBodyConfig, rigidBodyDefaults} from "domain/physics/rigidbody"
 
 export class P2RigidBody implements RigidBody{
 	kind:"rigidbody"

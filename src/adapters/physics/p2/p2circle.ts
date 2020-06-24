@@ -1,7 +1,7 @@
 
 import * as p2 from "p2"
 import {P2Shape, p2shapeFactory} from "./p2shape"
-import {Circle, CircleConfig, circleDefaults} from "../../../domain/physics/circle"
+import {Circle, CircleConfig, circleDefaults} from "domain/physics/circle"
 
 export class P2Circle extends P2Shape<"circle"> implements Circle{
 	kind:"circle"

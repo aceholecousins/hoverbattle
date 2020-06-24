@@ -1,6 +1,6 @@
 import {vec2} from "gl-matrix"
 import {ShapeConfig, Shape} from "./shape"
-import {Optionals} from "../../utils"
+import {Optionals} from "utils"
 
 export interface RigidBody{
 	kind: "rigidbody"
