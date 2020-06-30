@@ -1,4 +1,9 @@
 
+export enum ControlType {
+	RELATIVE,
+	ABSOULTE
+}
+
 /**
  * Interface for one controller which is able to control one vehicle.
  * Could be any human interface device like keyboard, mouse, game pad, touch device etc.
@@ -30,15 +35,10 @@ export interface Controller {
 	isShooting():boolean
 
 	/**
-	 * Registers a callback which is called whenever the pause button of the controller ist pressed.
+	 * Sets a callback which is called whenever the pause button of the controller ist pressed.
 	 * There is only one callback which means that each subsequent call overwrites the current callback.
 	 * 
-	 * @param callback Function which is called when the pause button is pressed.
+	 * @param callback Function which is called when the pause button is pressed. Pass null in order to remove the set callback
 	 */
-	registerPauseCallback(callback: () => void): void
-
-	/**
-	 * Removes the currently registered pause callback.
-	 */
-	removePauseCallback(): void
+	setPauseCallback(callback: () => void): void
 }
