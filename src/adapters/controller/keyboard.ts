@@ -18,10 +18,13 @@ export class Keyboard implements Controller {
 	private thrust: number = 0
 	private shooting: boolean = false
 
+	private thrustX: number = 0
+	private thrustY: number = 0
+
 	constructor(controlType: ControlType) {
 		this.controlType = controlType
 
-		if(controlType == ControlType.RELATIVE) {
+		if (controlType == ControlType.RELATIVE) {
 			this.turnRate = 0
 		} else {
 			this.absoluteDirection = 0
@@ -51,10 +54,10 @@ export class Keyboard implements Controller {
 		throw new Error("Method not implemented.");
 	}
 
-	private onKeyAction(event:KeyboardEvent, value: number) {
-		if(!event.repeat) {
+	private onKeyAction(event: KeyboardEvent, value: number) {
+		if (!event.repeat) {
 			this.onGeneralKeyAction(event.key, value)
-			if(this.controlType == ControlType.RELATIVE) {				
+			if (this.controlType == ControlType.RELATIVE) {
 				this.onRelativeKeyAction(event.key, value)
 			} else {
 				this.onAbsoluteKeyAction(event.key, value)
@@ -62,26 +65,44 @@ export class Keyboard implements Controller {
 		}
 	}
 	onGeneralKeyAction(key: string, value: number) {
-		if(key == Keys.SHOOT) {
+		if (key == Keys.SHOOT) {
 			this.shooting = (value != 0);
 		}
 	}
 
 	onRelativeKeyAction(key: string, value: number) {
-		if(key == Keys.UP) {
+		if (key == Keys.UP) {
 			this.thrust = value
 		}
 
 		this.turnRate = 0
-		if(key == "KeyA") {
+		if (key == "KeyA") {
 			this.turnRate -= value
 		}
-		if(key == "KeyD"){
+		if (key == "KeyD") {
 			this.turnRate += value
 		}
 	}
 
 	onAbsoluteKeyAction(key: string, value: number) {
-		throw new Error("Method not implemented.");
-	}	
+		let delta = (value * 2) - 1
+		switch (key) {
+			case Keys.UP:
+				this.thrustY += delta
+				break
+			case Keys.DOWN:
+				this.thrustY -= delta
+				break
+			case Keys.RIGHT:
+				this.thrustX += delta
+				break
+			case Keys.LEFT:
+				this.thrustX -= delta
+				break
+		}
+		if(this.thrustX != 0 || this.thrustY != 0) {
+			this.absoluteDirection = Math.atan2(this.thrustY, this.thrustX)
+		}
+		this.thrust = (this.thrustX != 0 || this.thrustY != 0) ? 1 : 0;
+	}
 }
