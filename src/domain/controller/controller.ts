@@ -1,9 +1,4 @@
 
-export enum ControlType {
-	RELATIVE,
-	ABSOULTE
-}
-
 /**
  * Interface for one controller which is able to control one vehicle.
  * Could be any human interface device like keyboard, mouse, game pad, touch device etc.
