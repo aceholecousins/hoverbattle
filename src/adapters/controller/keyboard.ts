@@ -45,12 +45,12 @@ export class Keyboard implements Controller {
 
 	private onKeyAction(event: KeyboardEvent, value: number) {
 		if (!event.repeat) {
-			this.onGeneralKeyAction(event.key, value)
-			this.currentStrategy.onKeyAction(event.key, value)			
+			this.onGeneralKeyAction(event.code, value)
+			this.currentStrategy.onKeyAction(event.code, value)			
 		}
 	}
-	private onGeneralKeyAction(key: string, value: number) {
-		if (key == Keys.SHOOT) {
+	private onGeneralKeyAction(keyCode: string, value: number) {
+		if (keyCode == Keys.SHOOT) {
 			this.shooting = (value != 0);
 		}
 	}	
@@ -60,7 +60,7 @@ interface ControlStrategy {
 	getAbsoluteDirection(): number
 	getTurnRate(): number
 	getThrust(): number
-	onKeyAction(key: string, value: number): void
+	onKeyAction(keyCode: string, value: number): void
 }
 
 class RelativeStrategy implements ControlStrategy {
@@ -80,17 +80,17 @@ class RelativeStrategy implements ControlStrategy {
 		return this.thrust
 	}
 
-	onKeyAction(key: string, value: number) {
-		if (key == Keys.UP) {
+	onKeyAction(keyCode: string, value: number) {
+		if (keyCode == Keys.UP) {
 			this.thrust = value
 		}
 
 		this.turnRate = 0
-		if (key == "KeyA") {
-			this.turnRate -= value
-		}
-		if (key == "KeyD") {
+		if (keyCode == Keys.LEFT) {
 			this.turnRate += value
+		}
+		if (keyCode == Keys.RIGHT) {
+			this.turnRate -= value
 		}
 	}
 }
@@ -115,9 +115,9 @@ class AbsoluteStrategy implements ControlStrategy {
 		return this.thrust
 	}
 
-	onKeyAction(key: string, value: number) {
+	onKeyAction(keyCode: string, value: number) {
 		let delta = (value * 2) - 1
-		switch (key) {
+		switch (keyCode) {
 			case Keys.UP:
 				this.thrustY += delta
 				break
