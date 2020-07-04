@@ -1,5 +1,5 @@
 
-import{Registry} from "utils"
+import{Registry} from "../utils"
 
 // plain old data object that can be transferred using postMessage:
 /* TODO

@@ -48,14 +48,11 @@ class Glider{
 
 function start(){
 
-	const gliderBodyCfg = {
-		shapes:[{
-			kind:"circle",
-			radius:1
-		} as CircleConfig],
+	const gliderBodyCfg = new RigidBodyConfig({
+		shapes:[new CircleConfig({radius:1})],
 		damping: 0.7,
 		angularDamping: 0.99
-	}
+	})
 
 	const gliderModelCfg:ModelConfig = {
 		kind:"model",

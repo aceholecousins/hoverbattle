@@ -3,7 +3,7 @@ import {vec2} from "gl-matrix"
 import {P2Physics} from "./p2physics"
 import {Shape, ShapeConfig} from "domain/physics/shape"
 import {P2Shape, p2shapeFactory} from "./p2shape"
-import {RigidBody, RigidBodyConfig, rigidBodyDefaults} from "domain/physics/rigidbody"
+import {RigidBody, RigidBodyConfig} from "domain/physics/rigidbody"
 
 export class P2RigidBody implements RigidBody{
 	kind:"rigidbody"
@@ -16,10 +16,7 @@ export class P2RigidBody implements RigidBody{
 		this.p2world = p2world
 		this.p2body = new p2.Body({mass:1}) // mass set to 1 so the body is considered DYNAMIC
 
-		const filledConfig:Required<RigidBodyConfig> =
-			{...rigidBodyDefaults, ...config}
-
-		Object.assign(this, filledConfig)
+		Object.assign(this, config)
 
 		for(let shapeCfg of config.shapes){
 			let shape = p2shapeFactory.createShape<any>(shapeCfg)

@@ -1,4 +1,4 @@
-import {Shape, ShapeConfig, shapeDefaults} from "domain/physics/shape"
+import {Shape, ShapeConfig} from "domain/physics/shape"
 import * as p2 from "p2"
 import { vec2 } from "gl-matrix"
 import {Kind, Registry} from "utils"

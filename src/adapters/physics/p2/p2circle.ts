@@ -1,18 +1,16 @@
 
 import * as p2 from "p2"
 import {P2Shape, p2shapeFactory} from "./p2shape"
-import {Circle, CircleConfig, circleDefaults} from "domain/physics/circle"
+import {Circle, CircleConfig} from "domain/physics/circle"
 
 export class P2Circle extends P2Shape<"circle"> implements Circle{
 	kind:"circle"
 	p2shape:p2.Circle
 
 	constructor(config: CircleConfig){
-		const filledConfig:Required<CircleConfig> =
-			{...circleDefaults, ...config}
 		super()
 		this.p2shape = new p2.Circle()
-		Object.assign(this, filledConfig)
+		Object.assign(this, config)
 	}
 
 	set radius(r: number){
