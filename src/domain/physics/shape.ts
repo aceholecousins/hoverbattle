@@ -1,6 +1,6 @@
 
 import {vec2} from "gl-matrix"
-import {Kind, Registry, Optionals} from "utils"
+import {Kind} from "utils"
 
 // parameters that are common to all shapes
 
@@ -11,13 +11,14 @@ export interface Shape<K extends Kind> {
 	boundingRadius: number
 }
 
-export interface ShapeConfig<K extends Kind>{
+export class ShapeConfig<K extends Kind>{
 	kind: K
-	offset?: vec2
-	offsetAngle?: number
-}
+	offset = vec2.fromValues(0, 0)
+	offsetAngle = 0
 
-export const shapeDefaults:Optionals<ShapeConfig<any>> = {
-	offset: vec2.fromValues(0, 0),
-	offsetAngle: 0
+	constructor(config:Partial<ShapeConfig<K>>){
+		this.kind = config.kind
+		if("offset" in config){this.offset = config.offset};
+		if("offsetAngle" in config){this.offsetAngle = config.offsetAngle};
+	}
 }

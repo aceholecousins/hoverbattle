@@ -1,5 +1,5 @@
 
-import {RigidBodyConfig, RigidBody, rigidBodyDefaults} from "domain/physics/rigidbody"
+import {RigidBodyConfig, RigidBody} from "domain/physics/rigidbody"
 import {Physics} from "domain/physics/physics"
 import {P2RigidBody} from "./p2rigidbody"
 import * as p2 from "p2"

@@ -1,18 +1,17 @@
 
-import {ShapeConfig, Shape, shapeDefaults} from "./shape"
-import {Optionals} from "utils"
+import {ShapeConfig, Shape} from "./shape"
 
 export interface Circle extends Shape<"circle">{
 	kind: "circle"
 	radius: number
 }
 
-export interface CircleConfig extends ShapeConfig<"circle">{
-	kind: "circle"
-	radius?: number
-}
-
-export const circleDefaults:Optionals<CircleConfig> = {
-	...shapeDefaults,
-	radius: 1
+export class CircleConfig extends ShapeConfig<"circle">{
+	kind: "circle" = "circle"
+	radius = 1
+	
+	constructor(config: Partial<CircleConfig>){
+		super(config)
+		if("radius" in config){this.radius = config.radius}
+	}
 }
