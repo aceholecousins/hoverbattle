@@ -6,6 +6,8 @@ import { P2Physics } from "adapters/physics/p2/p2physics"
 import { CircleConfig } from "domain/physics/circle"
 import { vec2, quat } from "gl-matrix"
 import { RigidBody, RigidBodyConfig } from "domain/physics/rigidbody"
+import { Controller } from "domain/controller/controller"
+import { Keyboard } from "adapters/controller/keyboard"
 
 let graphics = new ThreeGraphics(document.getElementById("rendertarget") as HTMLCanvasElement)
 let physics = new P2Physics()
@@ -13,16 +15,30 @@ let physics = new P2Physics()
 class Glider{
 	body:RigidBody
 	model:Model
-	constructor(bodyCfg:RigidBodyConfig, modelCfg:ModelConfig){
+	controller:Controller
+
+	thrust:number = 0
+	angularMomentum:number = 0
+
+	constructor(bodyCfg:RigidBodyConfig, modelCfg:ModelConfig, controller:Controller){
 		this.body = physics.addRigidBody(bodyCfg)
 		// TODO: the return type of the object factory
 		// does not pass through additional properties like color
 		// (I think it does but TypeScript doesn't know)
 		// Maybe the "kind" must carry these parameters
 		this.model = graphics.addObject(modelCfg) as Model
+		this.controller = controller
 	}
 
 	update(){
+		this.thrust = this.controller.getThrust() * 10;
+		this.body.applyLocalForce(vec2.fromValues(this.thrust, 0))
+
+		this.angularMomentum = this.controller.getTurnRate() * 0.3;
+		if(this.angularMomentum != undefined) {
+			this.body.applyAngularMomentum(this.angularMomentum)
+		}
+		
 		this.model.position = [
 			this.body.position[0], this.body.position[1], 0]
 		this.model.orientation = quat.fromEuler(
@@ -46,37 +62,20 @@ function start(){
 		asset:gliderAsset,
 		color:{r:1, g:1, b:1}
 	}
-
+	
+	const controller = new Keyboard
 	let gliders:Glider[] = []
 	for(let i=0; i<50; i++){
-		let glider = new Glider(gliderBodyCfg, gliderModelCfg)
+		let glider = new Glider(gliderBodyCfg, gliderModelCfg, controller)
 		glider.body.position = vec2.fromValues(Math.random()*20-10, Math.random()*20-10)
 		glider.body.angle = Math.random()*1000
 		gliders.push(glider)
 	}
 
-	let thrust = 0
-	let spinLeft = 0
-	let spinRight = 0
-
-	function onKeyAction(key:string, down:boolean){
-		if(key == "KeyW"){thrust = down? 1:0}
-		if(key == "KeyA"){spinLeft = down? 1:0}
-		if(key == "KeyD"){spinRight = down? 1:0}
-	}
-	document.addEventListener('keydown', function(evt:KeyboardEvent){
-		onKeyAction(evt.code, true)
-	})
-	document.addEventListener('keyup', function(evt:KeyboardEvent){
-		onKeyAction(evt.code, false)
-	})
-
 	function animate(time:number){
 		requestAnimationFrame(animate)
 
 		for(let glider of gliders){
-			glider.body.applyLocalForce(vec2.fromValues(thrust*10, 0))
-			glider.body.applyAngularMomentum((spinLeft-spinRight)*0.3)
 			glider.update()
 		}
 
