@@ -9,10 +9,10 @@ enum Keys {
 	PAUSE = "Pause"
 }
 
-abstract class Keyboard implements Controller {
+export class Keyboard implements Controller {
 
-	protected thrust: number = 0
 	private shooting: boolean = false
+	private currentStrategy: ControlStrategy = new RelativeStrategy
 
 	constructor() {
 		document.addEventListener("keydown", (event) => {
@@ -24,15 +24,15 @@ abstract class Keyboard implements Controller {
 	}
 
 	getAbsoluteDirection(): number {
-		return undefined
+		return this.currentStrategy.getAbsoluteDirection();
 	}
 
 	getTurnRate(): number {
-		return undefined
+		return this.currentStrategy.getTurnRate();
 	}
 
 	getThrust(): number {
-		return this.thrust
+		return this.currentStrategy.getThrust();
 	}
 
 	isShooting(): boolean {
@@ -43,35 +43,44 @@ abstract class Keyboard implements Controller {
 		throw new Error("Method not implemented.");
 	}
 
-	protected onKeyAction(event: KeyboardEvent, value: number) {
+	private onKeyAction(event: KeyboardEvent, value: number) {
 		if (!event.repeat) {
 			this.onGeneralKeyAction(event.key, value)
-			this.onSpecialKeyAction(event.key, value)			
+			this.currentStrategy.onKeyAction(event.key, value)			
 		}
 	}
 	private onGeneralKeyAction(key: string, value: number) {
 		if (key == Keys.SHOOT) {
 			this.shooting = (value != 0);
 		}
-	}
-
-	protected abstract onSpecialKeyAction(key: string, value: number): void
-	
+	}	
 }
 
-export class RelativeKeyboard extends Keyboard {
+interface ControlStrategy {
+	getAbsoluteDirection(): number
+	getTurnRate(): number
+	getThrust(): number
+	onKeyAction(key: string, value: number): void
+}
 
-	private turnRate: number = undefined
+class RelativeStrategy implements ControlStrategy {
 
-	constructor() {
-		super()
-	}
+	private turnRate: number = 0
+	private thrust: number = 0
 
+	getAbsoluteDirection(): number {
+		return undefined;
+	}	
+	
 	getTurnRate(): number {
 		return this.turnRate
 	}
+	
+	getThrust(): number {
+		return this.thrust
+	}
 
-	onSpecialKeyAction(key: string, value: number) {
+	onKeyAction(key: string, value: number) {
 		if (key == Keys.UP) {
 			this.thrust = value
 		}
@@ -86,22 +95,27 @@ export class RelativeKeyboard extends Keyboard {
 	}
 }
 
-export class AbsoluteKeyboard extends Keyboard {
-
+class AbsoluteStrategy implements ControlStrategy {
+	
 	private absoluteDirection: number = 0
-
+	private thrust: number = 0
+	
 	private thrustX: number = 0
 	private thrustY: number = 0
-
-	constructor() {
-		super()
-	}
-
+	
 	getAbsoluteDirection(): number {
 		return this.absoluteDirection
 	}
+	
+	getTurnRate(): number {
+		return undefined
+	}
 
-	onSpecialKeyAction(key: string, value: number) {
+	getThrust(): number {
+		return this.thrust
+	}
+
+	onKeyAction(key: string, value: number) {
 		let delta = (value * 2) - 1
 		switch (key) {
 			case Keys.UP:
