@@ -85,8 +85,8 @@ class RelativeStrategy implements ControlStrategy {
 	private turnRate: number = 0
 	private thrust: number = 0
 
-	private leftValue = 0;
-	private rightValue = 0;
+	private valueLeft = 0;
+	private valueRight = 0;
 
 	getAbsoluteDirection(): number {
 		return undefined;
@@ -105,12 +105,12 @@ class RelativeStrategy implements ControlStrategy {
 			this.thrust = value
 		}
 		if (keyCode == Keys.LEFT) {
-			this.leftValue = value
+			this.valueLeft = value
 		}
 		if (keyCode == Keys.RIGHT) {
-			this.rightValue = value
+			this.valueRight = value
 		}
-		this.turnRate = this.leftValue - this.rightValue;
+		this.turnRate = this.valueLeft - this.valueRight;
 	}
 }
 
@@ -119,8 +119,10 @@ class AbsoluteStrategy implements ControlStrategy {
 	private absoluteDirection: number = undefined
 	private thrust: number = 0
 
-	private thrustX: number = 0
-	private thrustY: number = 0
+	private valueUp: number = 0
+	private valueDown: number = 0
+	private valueLeft: number = 0
+	private valueRight: number = 0
 
 	getAbsoluteDirection(): number {
 		return this.absoluteDirection
@@ -134,27 +136,29 @@ class AbsoluteStrategy implements ControlStrategy {
 		return this.thrust
 	}
 
-	onKeyAction(keyCode: string, value: number) {
-		let delta = (value * 2) - 1
+	onKeyAction(keyCode: string, value: number) {		
 		switch (keyCode) {
 			case Keys.UP:
-				this.thrustY += delta
+				this.valueUp = value
 				break
 			case Keys.DOWN:
-				this.thrustY -= delta
+				this.valueDown = value
 				break
 			case Keys.RIGHT:
-				this.thrustX += delta
+				this.valueRight = value
 				break
 			case Keys.LEFT:
-				this.thrustX -= delta
+				this.valueLeft = value
 				break
 		}
-		if (this.thrustX != 0 || this.thrustY != 0) {
-			this.absoluteDirection = Math.atan2(this.thrustY, this.thrustX)
+		let thrustX = this.valueRight - this.valueLeft;
+		let thrustY = this.valueUp - this.valueDown;
+
+		if (thrustX != 0 || thrustY != 0) {
+			this.absoluteDirection = Math.atan2(thrustY, thrustX)
 		} else {
 			this.absoluteDirection = undefined
 		}
-		this.thrust = (this.thrustX != 0 || this.thrustY != 0) ? 1 : 0;
+		this.thrust = (thrustX != 0 || thrustY != 0) ? 1 : 0;
 	}
 }
