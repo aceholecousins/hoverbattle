@@ -1,10 +1,5 @@
 
-import {GraphicsObject, GraphicsObjectConfig, graphicsObjectDefaults} from "./graphicsobject"
-import {Optionals} from "utils"
-
-// the camera has a 90deg field of view, both horizontally
-// and vertically and a depth range from 0.0001 to 1.0
-// use scale x, y and z to modify
+import {GraphicsObject, GraphicsObjectConfig} from "./graphicsobject"
 
 export interface Camera extends GraphicsObject<"camera">{
 	kind:"camera"
@@ -14,16 +9,22 @@ export interface Camera extends GraphicsObject<"camera">{
 	activate():void
 }
 
-export interface CameraConfig extends GraphicsObjectConfig<"camera">{
-	kind:"camera"
-	nearClip?:number
-	farClip?:number
-	verticalAngleOfViewInDeg?:number
+export class CameraConfig extends GraphicsObjectConfig<"camera">{
+	kind:"camera" = "camera"
+	nearClip = 0.1
+	farClip = 1000
+	verticalAngleOfViewInDeg = 40
+
+	constructor(config:Partial<CameraConfig>){
+		super(config)
+		if("nearClip" in config){this.nearClip = config.nearClip}
+		if("farClip" in config){this.farClip = config.farClip}
+		if("verticalAngleOfViewInDeg" in config){
+			this.verticalAngleOfViewInDeg = config.verticalAngleOfViewInDeg
+		}
+	}	
 }
 
-export const cameraDefaults:Optionals<CameraConfig> = {
-	...graphicsObjectDefaults,
-	nearClip:0.1,
-	farClip:1000,
-	verticalAngleOfViewInDeg:40
+export interface CameraFactory{
+	create: (config: CameraConfig) => Camera
 }

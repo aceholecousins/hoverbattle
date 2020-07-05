@@ -1,18 +1,28 @@
 
-import {Color, Optionals} from "utils"
-import {GraphicsObject, GraphicsObjectConfig, graphicsObjectDefaults} from "./graphicsobject"
+import {Color} from "utils"
+import {GraphicsObject, GraphicsObjectConfig} from "./graphicsobject"
 import {Asset} from "./asset"
 
 export interface Model extends GraphicsObject<"model">{
-	color:Color
+	baseColor: Color
+	accentColor: Color
 }
 
-export interface ModelConfig extends GraphicsObjectConfig<"model">{
+export class ModelConfig extends GraphicsObjectConfig<"model">{
+	kind: "model" = "model"
 	asset:Asset<"model">
-	color?:Color
+
+	baseColor: Color
+	accentColor: Color
+
+	constructor(config: Partial<ModelConfig> & Pick<ModelConfig, "asset">){
+		super(config)
+		this.asset = config.asset
+		if("baseColor" in config){this.baseColor = config.baseColor}
+		if("accentColor" in config){this.accentColor = config.accentColor}
+	}
 }
 
-export const modelDefaults:Optionals<ModelConfig> = {
-	...graphicsObjectDefaults,
-	color:{r:1, g:1, b:1}
+export interface ModelFactory{
+	createModel: (config:ModelConfig) => Model
 }

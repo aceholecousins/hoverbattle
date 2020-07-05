@@ -35,22 +35,22 @@ export abstract class P2Shape<K extends Kind> implements Shape<K>{
 
 
 // factory for distinct shape types
-// where shape modules can register their individual factories
+// where shape modules can register their individual constructors
 type P2ShapeConstructor<K extends Kind> = new(config: ShapeConfig<K>) => P2Shape<K>
 
 class P2ShapeFactory{
 
-    private factories: Registry<P2ShapeConstructor<any>> = {}
+    private constructors: Registry<P2ShapeConstructor<any>> = {}
 
     register(kind: string, factory: P2ShapeConstructor<any>): void {
-        this.factories[kind] = factory
+        this.constructors[kind] = factory
     }
 
     createShape<K extends Kind>(config: ShapeConfig<K>): P2Shape<K> {
-		if(!this.factories.hasOwnProperty(config.kind)){
+		if(!this.constructors.hasOwnProperty(config.kind)){
 			throw new Error("P2ShapeFactory cannot create a " + config.kind)
 		}
-        return new this.factories[config.kind](config)
+        return new this.constructors[config.kind](config)
     }
 }
 
