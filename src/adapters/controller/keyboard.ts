@@ -114,7 +114,7 @@ class RelativeStrategy implements ControlStrategy {
 
 class AbsoluteStrategy implements ControlStrategy {
 
-	private absoluteDirection: number = 0
+	private absoluteDirection: number = undefined
 	private thrust: number = 0
 
 	private thrustX: number = 0

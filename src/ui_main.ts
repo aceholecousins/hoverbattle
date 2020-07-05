@@ -8,6 +8,7 @@ import { vec2, quat } from "gl-matrix"
 import { RigidBody, RigidBodyConfig } from "domain/physics/rigidbody"
 import { Controller } from "domain/controller/controller"
 import { Keyboard } from "adapters/controller/keyboard"
+import { wrapAngle } from "utilities/math_utils"
 
 let graphics = new ThreeGraphics(document.getElementById("rendertarget") as HTMLCanvasElement)
 let physics = new P2Physics()
@@ -18,7 +19,6 @@ class Glider{
 	controller:Controller
 
 	thrust:number = 0
-	angularMomentum:number = 0
 
 	constructor(bodyCfg:RigidBodyConfig, modelCfg:ModelConfig, controller:Controller){
 		this.body = physics.addRigidBody(bodyCfg)
@@ -34,15 +34,28 @@ class Glider{
 		this.thrust = this.controller.getThrust() * 10;
 		this.body.applyLocalForce(vec2.fromValues(this.thrust, 0))
 
-		this.angularMomentum = this.controller.getTurnRate() * 0.3;
-		if(this.angularMomentum != undefined) {
-			this.body.applyAngularMomentum(this.angularMomentum)
+		const turnRate = this.controller.getTurnRate()
+		if(turnRate != undefined) {
+			this.body.applyAngularMomentum(turnRate * 0.3)
+		}
+		const direction = this.controller.getAbsoluteDirection()
+		if(direction != undefined) {
+			this.turnToDirection(direction)
 		}
 		
 		this.model.position = [
 			this.body.position[0], this.body.position[1], 0]
 		this.model.orientation = quat.fromEuler(
 			[0,0,0,0], 0, 0, this.body.angle /Math.PI * 180)
+	}
+	turnToDirection(direction: number) {
+		let wrappedAngle = wrapAngle(this.body.angle);		
+		let directionDiff = wrapAngle(wrappedAngle - direction);
+		let threshold = 0.0001;
+		if(Math.abs(directionDiff) > threshold) {
+			let sign = Math.sign(directionDiff)
+			this.body.applyAngularMomentum(-sign * 0.3)
+		}
 	}
 }
 
