@@ -16,7 +16,7 @@ export class Keyboard implements Controller {
 	private currentStrategy: ControlStrategy = new RelativeStrategy
 
 	constructor() {
-		document.addEventListener("keydown", (event) => {			
+		document.addEventListener("keydown", (event) => {
 			this.onKeyAction(event, 1)
 		})
 		document.addEventListener("keyup", (event) => {
@@ -85,6 +85,9 @@ class RelativeStrategy implements ControlStrategy {
 	private turnRate: number = 0
 	private thrust: number = 0
 
+	private leftValue = 0;
+	private rightValue = 0;
+
 	getAbsoluteDirection(): number {
 		return undefined;
 	}
@@ -101,14 +104,13 @@ class RelativeStrategy implements ControlStrategy {
 		if (keyCode == Keys.UP) {
 			this.thrust = value
 		}
-
-		this.turnRate = 0
 		if (keyCode == Keys.LEFT) {
-			this.turnRate += value
+			this.leftValue = value
 		}
 		if (keyCode == Keys.RIGHT) {
-			this.turnRate -= value
+			this.rightValue = value
 		}
+		this.turnRate = this.rightValue - this.leftValue;
 	}
 }
 
