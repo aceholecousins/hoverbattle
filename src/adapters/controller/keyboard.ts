@@ -110,7 +110,7 @@ class RelativeStrategy implements ControlStrategy {
 		if (keyCode == Keys.RIGHT) {
 			this.rightValue = value
 		}
-		this.turnRate = this.rightValue - this.leftValue;
+		this.turnRate = this.leftValue - this.rightValue;
 	}
 }
 
