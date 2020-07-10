@@ -1,15 +1,7 @@
 
 import {Kind} from "utils"
 import {Graphics} from "domain/graphics/graphics"
-import {GraphicsObject, GraphicsObjectConfig} from "domain/graphics/graphicsobject"
-import {Asset, AssetConfig} from "domain/graphics/asset"
-import {threeAssetFactory} from "./threeasset"
-import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls'
-import {cameraDefaults} from "domain/graphics/camera"
-import {SceneInfo} from "./sceneinfo"
 import * as THREE from "three"
-import { threeObjectFactory } from "./threegraphicsobject"
-import "./factorylist"
 
 export class ThreeGraphics implements Graphics{
 
@@ -51,19 +43,4 @@ export class ThreeGraphics implements Graphics{
 		resize()
 	}
 
-	loadAsset<K extends Kind>(
-		config:AssetConfig<K>,
-		onLoaded?:()=>void,
-		onError?:(err:ErrorEvent)=>void
-	):Asset<K>{
-		return threeAssetFactory.createAsset(config, onLoaded, onError)
-	}
-
-	addObject<K extends Kind>(config:GraphicsObjectConfig<K>):GraphicsObject<K>{
-		return threeObjectFactory.createObject(this.scene, config)
-	}
-
-	update(time:number){
-		this.renderer.render(this.scene, (this.scene.userData as SceneInfo).activeCamera)
-	}
 }

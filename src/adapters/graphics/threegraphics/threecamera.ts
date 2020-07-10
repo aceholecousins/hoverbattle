@@ -1,6 +1,6 @@
 
-import {Camera, CameraConfig, cameraDefaults} from "domain/graphics/camera"
-import {ThreeGraphicsObject, threeObjectFactory} from "./threegraphicsobject"
+import {ThreeGraphicsObject} from "./threegraphicsobject"
+import {Camera, CameraConfig, CameraFactory} from "domain/graphics/camera"
 import {SceneInfo} from "./sceneinfo"
 import * as THREE from "three"
 
@@ -24,16 +24,12 @@ export class ThreeCamera extends ThreeGraphicsObject<"camera"> implements Camera
 	}
 
 	constructor(scene:THREE.Scene, config:CameraConfig){
-		const filledConfig:Required<CameraConfig> =
-			{...cameraDefaults, ...config}
-		super()
-
-		this.threeScene = scene
+		super(scene, config)
 		this.threeObject = new THREE.PerspectiveCamera()
 
-		Object.assign(this, filledConfig)
-
-		this.threeScene.add(this.threeObject)
+		this.nearClip = config.nearClip
+		this.farClip = config.farClip
+		this.verticalAngleOfViewInDeg = config.verticalAngleOfViewInDeg
 	}
 
 	activate(){
@@ -41,4 +37,16 @@ export class ThreeCamera extends ThreeGraphicsObject<"camera"> implements Camera
 	}
 }
 
-threeObjectFactory.register("camera", ThreeCamera)
+export class ThreeCameraFactory implements CameraFactory{
+	threeScene:THREE.Scene
+
+	constructor(scene:THREE.Scene){
+		this.threeScene = scene
+	}
+
+	create(config: CameraConfig){
+		let camera = new ThreeCamera(this.threeScene, config)
+		this.threeScene.add(camera.threeObject)
+		return camera
+	}
+}
