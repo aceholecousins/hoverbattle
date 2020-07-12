@@ -16,7 +16,7 @@ export class GraphicsObjectConfig<K extends Kind>{
 	orientation = quat.fromValues(0, 0, 0, 1)
 	scaling = vec3.fromValues(1, 1, 1)
 
-	constructor(config:Partial<GraphicsObjectConfig<K>>){
+	constructor(config:Partial<GraphicsObjectConfig<K>> = {}){
 		this.kind = config.kind
 		if("position" in config){this.position = config.position}
 		if("orientation" in config){this.orientation = config.orientation}

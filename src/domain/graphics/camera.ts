@@ -15,7 +15,7 @@ export class CameraConfig extends GraphicsObjectConfig<"camera">{
 	farClip = 1000
 	verticalAngleOfViewInDeg = 40
 
-	constructor(config:Partial<CameraConfig>){
+	constructor(config:Partial<CameraConfig> = {}){
 		super(config)
 		if("nearClip" in config){this.nearClip = config.nearClip}
 		if("farClip" in config){this.farClip = config.farClip}

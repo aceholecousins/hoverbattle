@@ -7,7 +7,7 @@ import {ThreeModel} from "./threemodel"
 
 function colorRecursive(obj: THREE.Object3D, col:Color){
 	if(obj.type == "mesh"){
-		((obj as THREE.Mesh).material as THREE.MeshStandardMaterial).color.copy(col as THREE.Color)
+		((obj as THREE.Mesh).material as THREE.MeshStandardMaterial).color.setRGB(col.r, col.g, col.b)
 	}
 	
 	for(let c of obj.children){
@@ -17,7 +17,7 @@ function colorRecursive(obj: THREE.Object3D, col:Color){
 
 export class ThreeMesh extends ThreeGraphicsObject<"mesh"> implements Mesh{
 
-	threeObject:THREE.Mesh
+	threeObject:THREE.Object3D
 
 	set baseColor(col:Color){
 		// TODO: proper filtering which parts to color and whether to color diffuse or emissive
@@ -28,7 +28,7 @@ export class ThreeMesh extends ThreeGraphicsObject<"mesh"> implements Mesh{
 		colorRecursive(this.threeObject, col)
 	}
 
-	constructor(scene:THREE.Scene, template:THREE.Mesh, config:MeshConfig){
+	constructor(scene:THREE.Scene, template:THREE.Object3D, config:MeshConfig){
 		super(scene, config)
 		this.threeObject = template.clone()
 		
@@ -38,8 +38,18 @@ export class ThreeMesh extends ThreeGraphicsObject<"mesh"> implements Mesh{
 }
 
 export class ThreeMeshFactory implements MeshFactory{
+
+	threeScene:THREE.Scene
+
+	constructor(scene:THREE.Scene){
+		this.threeScene = scene
+	}
+
 	createFromModel(config:ModelConfig){
-
-
+		return new ThreeMesh(
+			this.threeScene,
+			(config.asset as ThreeModel).threeObject.clone(),
+			config
+		)
 	}
 }

@@ -13,14 +13,14 @@ export class MeshConfig extends GraphicsObjectConfig<"mesh">{
 	baseColor: Color
 	accentColor: Color
 
-	constructor(config: Partial<MeshConfig>){
+	constructor(config: Partial<MeshConfig> = {}){
 		super(config)
 		if("baseColor" in config){this.baseColor = config.baseColor}
 		if("accentColor" in config){this.accentColor = config.accentColor}
 	}
 }
 
-export class ModelConfig extends GraphicsObjectConfig<"mesh">{
+export class ModelConfig extends MeshConfig{
 	asset:Asset<"model">
 	constructor(config: Partial<MeshConfig> & Pick<ModelConfig, "asset">){
 		super(config)

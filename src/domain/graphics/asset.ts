@@ -6,7 +6,6 @@ export interface Asset<K extends Kind>{
 }
 
 export type LoadAssetFunction<K extends Kind> = (
-	kind: Kind,
 	file: string,
 	onLoaded?:()=>void,
 	onError?:(err:ErrorEvent)=>void
@@ -14,6 +13,6 @@ export type LoadAssetFunction<K extends Kind> = (
 
 export interface AssetLoader{
 	loadTexture: LoadAssetFunction<"texture">
-	loadCubeTexture: LoadAssetFunction<"cubetexture">
+	//loadCubeTexture: LoadAssetFunction<"cubetexture">
 	loadModel: LoadAssetFunction<"model">
 }

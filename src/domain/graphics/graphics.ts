@@ -11,6 +11,6 @@ export interface Graphics{
 	camera: CameraFactory
 	light: LightFactory
 	mesh: MeshFactory
-	environment: EnvironmentFactory
+	//environment: EnvironmentFactory
 	control: GraphicsController
 }
