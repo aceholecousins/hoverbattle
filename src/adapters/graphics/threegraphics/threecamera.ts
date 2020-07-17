@@ -24,8 +24,7 @@ export class ThreeCamera extends ThreeGraphicsObject<"camera"> implements Camera
 	}
 
 	constructor(scene:THREE.Scene, config:CameraConfig){
-		super(scene, config)
-		this.threeObject = new THREE.PerspectiveCamera()
+		super(scene, new THREE.PerspectiveCamera(), config)
 
 		this.nearClip = config.nearClip
 		this.farClip = config.farClip
@@ -45,8 +44,6 @@ export class ThreeCameraFactory implements CameraFactory{
 	}
 
 	create(config: CameraConfig){
-		let camera = new ThreeCamera(this.threeScene, config)
-		this.threeScene.add(camera.threeObject)
-		return camera
+		return new ThreeCamera(this.threeScene, config)
 	}
 }

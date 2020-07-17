@@ -29,8 +29,7 @@ export class ThreeMesh extends ThreeGraphicsObject<"mesh"> implements Mesh{
 	}
 
 	constructor(scene:THREE.Scene, template:THREE.Object3D, config:MeshConfig){
-		super(scene, config)
-		this.threeObject = template.clone()
+		super(scene, template.clone(), config)
 		
 		this.baseColor = config.baseColor
 		this.accentColor = config.accentColor

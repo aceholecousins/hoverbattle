@@ -19,8 +19,7 @@ export class ThreePointLight extends ThreeGraphicsObject<"pointlight"> implement
 	}
 
 	constructor(scene:THREE.Scene, config:PointLightConfig){
-		super(scene, config)
-		this.threeObject = new THREE.PointLight()
+		super(scene, new THREE.PointLight(), config)
 
 		this.color = config.color
 	}
@@ -39,8 +38,7 @@ export class ThreeHemisphereLight extends ThreeGraphicsObject<"hemispherelight">
 	}
 
 	constructor(scene:THREE.Scene, config:HemisphereLightConfig){
-		super(scene, config)
-		this.threeObject = new THREE.HemisphereLight()
+		super(scene, new THREE.HemisphereLight(), config)
 
 		this.groundColor = config.groundColor
 		this.skyColor = config.skyColor
@@ -55,14 +53,10 @@ export class ThreeLightFactory implements LightFactory{
 	}
 
 	createPointLight(config: PointLightConfig){
-		let light = new ThreePointLight(this.threeScene, config)
-		this.threeScene.add(light.threeObject)
-		return light
+		return new ThreePointLight(this.threeScene, config)
 	}
 
 	createHemisphereLight(config: HemisphereLightConfig){
-		let light = new ThreeHemisphereLight(this.threeScene, config)
-		this.threeScene.add(light.threeObject)
-		return light
+		return new ThreeHemisphereLight(this.threeScene, config)
 	}
 }

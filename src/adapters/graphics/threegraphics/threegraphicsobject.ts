@@ -6,14 +6,17 @@ import {Kind} from "utils"
 
 export abstract class ThreeGraphicsObject<K extends Kind> implements GraphicsObject<K>{
 	kind:K
-	abstract threeObject:THREE.Object3D
 	threeScene:THREE.Scene
-
+	threeObject:THREE.Object3D
+	
 	constructor(
 		scene:THREE.Scene,
+		object:THREE.Object3D,
 		config:GraphicsObjectConfig<K>
 	){
 		this.threeScene = scene
+		this.threeObject = object
+		scene.add(object)
 
 		this.kind = config.kind
 		this.position = config.position
