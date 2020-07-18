@@ -1,6 +1,6 @@
 import 'mocha'
 import {expect} from 'chai'
-import {broker, EventChannel} from '../src/broker'
+import {broker, EventChannel} from 'broker'
 
 describe('Test broker', () => {
 	it('fire', () => {

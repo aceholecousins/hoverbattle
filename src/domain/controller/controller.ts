@@ -9,6 +9,7 @@ export interface Controller {
 	 * @returns the current absolute direction in rad.
 	 * 			In the mathematical sense:
 	 * 			0 pointing to the right, pi/2 pointing up.
+	 * 			Always between -pi and pi.
 	 * 			May be undefined.
 	 */
 	getAbsoluteDirection():number

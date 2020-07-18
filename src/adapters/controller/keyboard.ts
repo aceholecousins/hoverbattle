@@ -6,7 +6,8 @@ enum Keys {
 	RIGHT = "KeyD",
 	LEFT = "KeyA",
 	SHOOT = "Space",
-	PAUSE = "Pause"
+	PAUSE = "Pause",
+	SWITCH_MODE = "KeyM"
 }
 
 export class Keyboard implements Controller {
@@ -46,14 +47,30 @@ export class Keyboard implements Controller {
 	private onKeyAction(event: KeyboardEvent, value: number) {
 		if (!event.repeat) {
 			this.onGeneralKeyAction(event.code, value)
-			this.currentStrategy.onKeyAction(event.code, value)			
+			this.currentStrategy.onKeyAction(event.code, value)
 		}
 	}
 	private onGeneralKeyAction(keyCode: string, value: number) {
-		if (keyCode == Keys.SHOOT) {
-			this.shooting = (value != 0);
+		switch (keyCode) {
+			case Keys.SHOOT:
+				this.shooting = (value != 0);
+				break;
+			case Keys.SWITCH_MODE:
+				if (value != 0) {
+					this.switchStrategy();
+				}
+				break
 		}
-	}	
+	}
+	private switchStrategy() {
+		if (this.currentStrategy instanceof RelativeStrategy) {
+			console.log("Switch to absolute keyboard")
+			this.currentStrategy = new AbsoluteStrategy
+		} else {
+			console.log("Switch to relative keyboard")
+			this.currentStrategy = new RelativeStrategy
+		}
+	}
 }
 
 interface ControlStrategy {
@@ -68,14 +85,17 @@ class RelativeStrategy implements ControlStrategy {
 	private turnRate: number = 0
 	private thrust: number = 0
 
+	private valueLeft = 0;
+	private valueRight = 0;
+
 	getAbsoluteDirection(): number {
 		return undefined;
-	}	
-	
+	}
+
 	getTurnRate(): number {
 		return this.turnRate
 	}
-	
+
 	getThrust(): number {
 		return this.thrust
 	}
@@ -84,29 +104,30 @@ class RelativeStrategy implements ControlStrategy {
 		if (keyCode == Keys.UP) {
 			this.thrust = value
 		}
-
-		this.turnRate = 0
 		if (keyCode == Keys.LEFT) {
-			this.turnRate += value
+			this.valueLeft = value
 		}
 		if (keyCode == Keys.RIGHT) {
-			this.turnRate -= value
+			this.valueRight = value
 		}
+		this.turnRate = this.valueLeft - this.valueRight;
 	}
 }
 
 class AbsoluteStrategy implements ControlStrategy {
-	
-	private absoluteDirection: number = 0
+
+	private absoluteDirection: number = undefined
 	private thrust: number = 0
-	
-	private thrustX: number = 0
-	private thrustY: number = 0
-	
+
+	private valueUp: number = 0
+	private valueDown: number = 0
+	private valueLeft: number = 0
+	private valueRight: number = 0
+
 	getAbsoluteDirection(): number {
 		return this.absoluteDirection
 	}
-	
+
 	getTurnRate(): number {
 		return undefined
 	}
@@ -115,25 +136,29 @@ class AbsoluteStrategy implements ControlStrategy {
 		return this.thrust
 	}
 
-	onKeyAction(keyCode: string, value: number) {
-		let delta = (value * 2) - 1
+	onKeyAction(keyCode: string, value: number) {		
 		switch (keyCode) {
 			case Keys.UP:
-				this.thrustY += delta
+				this.valueUp = value
 				break
 			case Keys.DOWN:
-				this.thrustY -= delta
+				this.valueDown = value
 				break
 			case Keys.RIGHT:
-				this.thrustX += delta
+				this.valueRight = value
 				break
 			case Keys.LEFT:
-				this.thrustX -= delta
+				this.valueLeft = value
 				break
 		}
-		if(this.thrustX != 0 || this.thrustY != 0) {
-			this.absoluteDirection = Math.atan2(this.thrustY, this.thrustX)
+		let thrustX = this.valueRight - this.valueLeft;
+		let thrustY = this.valueUp - this.valueDown;
+
+		if (thrustX != 0 || thrustY != 0) {
+			this.absoluteDirection = Math.atan2(thrustY, thrustX)
+		} else {
+			this.absoluteDirection = undefined
 		}
-		this.thrust = (this.thrustX != 0 || this.thrustY != 0) ? 1 : 0;
+		this.thrust = (thrustX != 0 || thrustY != 0) ? 1 : 0;
 	}
 }
