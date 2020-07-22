@@ -1,10 +1,10 @@
 
 import * as THREE from "three"
-import {GraphicsObject, GraphicsObjectConfig} from "domain/graphics/graphicsobject"
+import {SceneNode, SceneNodeConfig} from "domain/graphics/scenenode"
 import {vec3, quat} from "gl-matrix"
 import {Kind} from "utils"
 
-export abstract class ThreeGraphicsObject<K extends Kind> implements GraphicsObject<K>{
+export abstract class ThreeSceneNode<K extends Kind> implements SceneNode<K>{
 	kind:K
 	threeScene:THREE.Scene
 	threeObject:THREE.Object3D
@@ -12,7 +12,7 @@ export abstract class ThreeGraphicsObject<K extends Kind> implements GraphicsObj
 	constructor(
 		scene:THREE.Scene,
 		object:THREE.Object3D,
-		config:GraphicsObjectConfig<K>
+		config:SceneNodeConfig<K>
 	){
 		this.threeScene = scene
 		this.threeObject = object

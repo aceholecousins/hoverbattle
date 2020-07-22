@@ -1,12 +1,12 @@
 
 import {Color} from "utils"
-import {GraphicsObject, GraphicsObjectConfig} from "./graphicsobject"
+import {SceneNode, SceneNodeConfig} from "./scenenode"
 
-export interface PointLight extends GraphicsObject<"pointlight">{
+export interface PointLight extends SceneNode<"pointlight">{
 	color: Color
 }
 
-export class PointLightConfig extends GraphicsObjectConfig<"pointlight">{
+export class PointLightConfig extends SceneNodeConfig<"pointlight">{
 	kind: "pointlight" = "pointlight"
 	color: Color = {r:1, g:1, b:1}
 
@@ -17,12 +17,12 @@ export class PointLightConfig extends GraphicsObjectConfig<"pointlight">{
 }
 
 
-export interface HemisphereLight extends GraphicsObject<"hemispherelight">{
+export interface HemisphereLight extends SceneNode<"hemispherelight">{
 	groundColor: Color
 	skyColor: Color
 }
 
-export class HemisphereLightConfig extends GraphicsObjectConfig<"hemispherelight">{
+export class HemisphereLightConfig extends SceneNodeConfig<"hemispherelight">{
 	kind: "hemispherelight" = "hemispherelight"
 	groundColor: Color = {r:0.8, g:0.6, b:0.4}
 	skyColor: Color = {r:0.0, g:0.5, b:1.0}

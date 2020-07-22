@@ -1,6 +1,6 @@
 
 import {Color} from "utils"
-import {ThreeGraphicsObject} from "./threegraphicsobject"
+import {ThreeSceneNode} from "./threescenenode"
 import {
 	PointLight,
 	PointLightConfig,
@@ -10,7 +10,7 @@ import {
 } from "domain/graphics/light"
 import * as THREE from "three"
 
-export class ThreePointLight extends ThreeGraphicsObject<"pointlight"> implements PointLight{
+export class ThreePointLight extends ThreeSceneNode<"pointlight"> implements PointLight{
 
 	threeObject:THREE.PointLight
 
@@ -25,7 +25,7 @@ export class ThreePointLight extends ThreeGraphicsObject<"pointlight"> implement
 	}
 }
 
-export class ThreeHemisphereLight extends ThreeGraphicsObject<"hemispherelight"> implements HemisphereLight{
+export class ThreeHemisphereLight extends ThreeSceneNode<"hemispherelight"> implements HemisphereLight{
 
 	threeObject:THREE.HemisphereLight
 

@@ -1,16 +1,16 @@
 
 import {Kind} from "utils"
-import {GraphicsObject} from "domain/graphics/graphicsobject"
+import {SceneNode} from "domain/graphics/scenenode"
 
-export interface GraphicsObjectUpdate<K extends Kind> extends Partial<GraphicsObject<K>>{
+export interface SceneNodeUpdate<K extends Kind> extends Partial<SceneNode<K>>{
 	removeMe?:boolean
 }
 
 export class UpdateBundler{
-	private updates:GraphicsObjectUpdate<any>[] = []
+	private updates:SceneNodeUpdate<any>[] = []
 	
-	// copy all fields from whatever kind of GraphicsObject
-	addUpdate<K extends Kind>(index:number, update:GraphicsObjectUpdate<K>):void{
+	// copy all fields from whatever kind of SceneNode
+	addUpdate<K extends Kind>(index:number, update:SceneNodeUpdate<K>):void{
 		if(!(index in this.updates)){
 			this.updates[index] = update
 		}
@@ -19,7 +19,7 @@ export class UpdateBundler{
 		}
 	}
 
-	popUpdates():GraphicsObjectUpdate<any>[]{
+	popUpdates():SceneNodeUpdate<any>[]{
 		const result = this.updates
 		this.updates = []
 		return result

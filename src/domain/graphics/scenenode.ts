@@ -2,7 +2,7 @@
 import {vec3, quat} from "gl-matrix"
 import {Kind} from "utils"
 
-export interface GraphicsObject<K extends Kind>{
+export interface SceneNode<K extends Kind>{
 	kind:K
 	position?:vec3
 	orientation?:quat
@@ -10,13 +10,13 @@ export interface GraphicsObject<K extends Kind>{
 	remove():void
 }
 
-export class GraphicsObjectConfig<K extends Kind>{
+export class SceneNodeConfig<K extends Kind>{
 	kind: K
 	position = vec3.fromValues(0, 0, 0)
 	orientation = quat.fromValues(0, 0, 0, 1)
 	scaling = vec3.fromValues(1, 1, 1)
 
-	constructor(config:Partial<GraphicsObjectConfig<K>> = {}){
+	constructor(config:Partial<SceneNodeConfig<K>> = {}){
 		this.kind = config.kind
 		if("position" in config){this.position = config.position}
 		if("orientation" in config){this.orientation = config.orientation}

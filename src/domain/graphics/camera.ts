@@ -1,7 +1,7 @@
 
-import {GraphicsObject, GraphicsObjectConfig} from "./graphicsobject"
+import {SceneNode, SceneNodeConfig} from "./scenenode"
 
-export interface Camera extends GraphicsObject<"camera">{
+export interface Camera extends SceneNode<"camera">{
 	kind:"camera"
 	nearClip:number
 	farClip:number
@@ -9,7 +9,7 @@ export interface Camera extends GraphicsObject<"camera">{
 	activate():void
 }
 
-export class CameraConfig extends GraphicsObjectConfig<"camera">{
+export class CameraConfig extends SceneNodeConfig<"camera">{
 	kind:"camera" = "camera"
 	nearClip = 0.1
 	farClip = 1000

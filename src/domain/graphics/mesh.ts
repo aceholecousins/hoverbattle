@@ -1,14 +1,14 @@
 
 import {Color} from "utils"
-import {GraphicsObject, GraphicsObjectConfig} from "./graphicsobject"
+import {SceneNode, SceneNodeConfig} from "./scenenode"
 import {Asset} from "./asset"
 
-export interface Mesh extends GraphicsObject<"mesh">{
+export interface Mesh extends SceneNode<"mesh">{
 	baseColor: Color
 	accentColor: Color
 }
 
-export class MeshConfig extends GraphicsObjectConfig<"mesh">{
+export class MeshConfig extends SceneNodeConfig<"mesh">{
 	kind: "mesh" = "mesh"
 	baseColor: Color
 	accentColor: Color

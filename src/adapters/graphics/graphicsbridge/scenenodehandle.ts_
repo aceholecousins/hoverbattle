@@ -1,10 +1,10 @@
 
 import {vec3, quat} from "gl-matrix"
 import {Kind} from "utils"
-import {GraphicsObject, GraphicsObjectConfig} from "domain/graphics/graphicsobject"
+import {SceneNode, SceneNodeConfig} from "domain/graphics/scenenode"
 import {UpdateBundler} from "./updatebundler"
 
-export class GraphicsObjectHandle<K extends Kind> implements GraphicsObject<K>{
+export class SceneNodeHandle<K extends Kind> implements SceneNode<K>{
 	kind:K
 	index:number
 	private _updateBundler:UpdateBundler
@@ -12,7 +12,7 @@ export class GraphicsObjectHandle<K extends Kind> implements GraphicsObject<K>{
 	constructor(
 		index:number,
 		updateBundler:UpdateBundler,
-		config:GraphicsObjectConfig<K>
+		config:SceneNodeConfig<K>
 	){
 		this.kind = config.kind
 		this.index = index

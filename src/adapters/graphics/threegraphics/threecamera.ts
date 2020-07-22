@@ -1,10 +1,10 @@
 
-import {ThreeGraphicsObject} from "./threegraphicsobject"
+import {ThreeSceneNode} from "./threescenenode"
 import {Camera, CameraConfig, CameraFactory} from "domain/graphics/camera"
 import {SceneInfo} from "./sceneinfo"
 import * as THREE from "three"
 
-export class ThreeCamera extends ThreeGraphicsObject<"camera"> implements Camera{
+export class ThreeCamera extends ThreeSceneNode<"camera"> implements Camera{
 
 	threeObject:THREE.PerspectiveCamera
 

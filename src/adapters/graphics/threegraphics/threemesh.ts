@@ -1,6 +1,6 @@
 
 import {Mesh, MeshConfig, ModelConfig, MeshFactory} from "domain/graphics/mesh"
-import {ThreeGraphicsObject} from "./threegraphicsobject"
+import {ThreeSceneNode} from "./threescenenode"
 import * as THREE from "three"
 import {Color} from "utils"
 import {ThreeModel} from "./threemodel"
@@ -15,7 +15,7 @@ function colorRecursive(obj: THREE.Object3D, col:Color){
 	}
 }
 
-export class ThreeMesh extends ThreeGraphicsObject<"mesh"> implements Mesh{
+export class ThreeMesh extends ThreeSceneNode<"mesh"> implements Mesh{
 
 	threeObject:THREE.Object3D
 

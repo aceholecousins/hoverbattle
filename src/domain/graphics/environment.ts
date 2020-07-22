@@ -1,12 +1,12 @@
 
-import {GraphicsObject, GraphicsObjectConfig} from "./graphicsobject"
+import {SceneNode, SceneNodeConfig} from "./scenenode"
 import {Asset} from "./asset"
 
-export interface Skybox extends GraphicsObject<"skybox">{
+export interface Skybox extends SceneNode<"skybox">{
 	kind:"skybox"
 }
 
-export class SkyboxConfig extends GraphicsObjectConfig<"skybox">{
+export class SkyboxConfig extends SceneNodeConfig<"skybox">{
 	kind:"skybox" = "skybox"
 	asset: Asset<"cubetexture">
 

@@ -1,14 +1,14 @@
 
 import {Graphics} from "domain/graphics/graphics"
-import {GraphicsObject, GraphicsObjectConfig} from "domain/graphics/graphicsobject"
-import {GraphicsObjectUpdate} from "./updatebundler"
+import {SceneNode, SceneNodeConfig} from "domain/graphics/scenenode"
+import {SceneNodeUpdate} from "./updatebundler"
 import {Asset, AssetConfig} from "domain/graphics/asset"
 import {WorkerBridge} from "worker/workerbridge"
 
 export class GraphicsServer{
 
 	private assets:Asset<any>[] = []
-	private objects:GraphicsObject<any>[] = []
+	private objects:SceneNode<any>[] = []
 	private engine:Graphics
 
 	constructor(bridge:WorkerBridge, engine:Graphics){
@@ -22,11 +22,11 @@ export class GraphicsServer{
 		this.assets[index] = this.engine.loadAsset<any>(config)
 	}
 
-	addObject({index, config}:{index:number, config:GraphicsObjectConfig<any>}){
+	addObject({index, config}:{index:number, config:SceneNodeConfig<any>}){
 		this.objects[index] = this.engine.addObject<any>(config)
 	}
 
-	syncObjects(updates:GraphicsObjectUpdate<any>[]){
+	syncObjects(updates:SceneNodeUpdate<any>[]){
 		for(const i in updates){
 			const update = updates[i]
 			if(update.removeMe){
