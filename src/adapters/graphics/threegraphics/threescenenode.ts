@@ -2,7 +2,7 @@
 import * as THREE from "three"
 import {SceneNode, SceneNodeConfig} from "domain/graphics/scenenode"
 import {vec3, quat} from "gl-matrix"
-import {Kind} from "utils"
+import {Kind, copy} from "utils"
 
 export abstract class ThreeSceneNode<K extends Kind> implements SceneNode<K>{
 	kind:K
@@ -18,10 +18,7 @@ export abstract class ThreeSceneNode<K extends Kind> implements SceneNode<K>{
 		this.threeObject = object
 		scene.add(object)
 
-		this.kind = config.kind
-		this.position = config.position
-		this.orientation = config.orientation
-		this.scaling = config.scaling
+		copy(this, config, ["kind", "position", "orientation", "scaling"])
 	}
 
 	set position(p:vec3){

@@ -1,6 +1,6 @@
 
 import {vec3, quat} from "gl-matrix"
-import {Kind} from "utils"
+import {Kind, copyIfPresent} from "utils"
 
 export interface SceneNode<K extends Kind>{
 	kind:K
@@ -18,8 +18,6 @@ export class SceneNodeConfig<K extends Kind>{
 
 	constructor(config:Partial<SceneNodeConfig<K>> = {}){
 		this.kind = config.kind
-		if("position" in config){this.position = config.position}
-		if("orientation" in config){this.orientation = config.orientation}
-		if("scaling" in config){this.scaling = config.scaling}
+		copyIfPresent(this, config, ["position", "orientation", "scaling"])
 	}
 }

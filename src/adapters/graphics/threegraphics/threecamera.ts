@@ -3,6 +3,7 @@ import {ThreeSceneNode} from "./threescenenode"
 import {Camera, CameraConfig, CameraFactory} from "domain/graphics/camera"
 import {SceneInfo} from "./sceneinfo"
 import * as THREE from "three"
+import {copy} from "utils"
 
 export class ThreeCamera extends ThreeSceneNode<"camera"> implements Camera{
 
@@ -25,10 +26,7 @@ export class ThreeCamera extends ThreeSceneNode<"camera"> implements Camera{
 
 	constructor(scene:THREE.Scene, config:CameraConfig){
 		super(scene, new THREE.PerspectiveCamera(), config)
-
-		this.nearClip = config.nearClip
-		this.farClip = config.farClip
-		this.verticalAngleOfViewInDeg = config.verticalAngleOfViewInDeg
+		copy(this, config, ["nearClip", "farClip", "verticalAngleOfViewInDeg"])
 	}
 
 	activate(){

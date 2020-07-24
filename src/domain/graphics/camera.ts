@@ -1,5 +1,6 @@
 
 import {SceneNode, SceneNodeConfig} from "./scenenode"
+import {copyIfPresent} from "utils"
 
 export interface Camera extends SceneNode<"camera">{
 	kind:"camera"
@@ -17,11 +18,7 @@ export class CameraConfig extends SceneNodeConfig<"camera">{
 
 	constructor(config:Partial<CameraConfig> = {}){
 		super(config)
-		if("nearClip" in config){this.nearClip = config.nearClip}
-		if("farClip" in config){this.farClip = config.farClip}
-		if("verticalAngleOfViewInDeg" in config){
-			this.verticalAngleOfViewInDeg = config.verticalAngleOfViewInDeg
-		}
+		copyIfPresent(this, config, ["nearClip", "farClip", "verticalAngleOfViewInDeg"])
 	}	
 }
 

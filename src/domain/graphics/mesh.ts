@@ -1,5 +1,5 @@
 
-import {Color} from "utils"
+import {Color, copyIfPresent} from "utils"
 import {SceneNode, SceneNodeConfig} from "./scenenode"
 import {Model} from "./model"
 
@@ -15,8 +15,7 @@ export class MeshConfig extends SceneNodeConfig<"mesh">{
 
 	constructor(config: Partial<MeshConfig> = {}){
 		super(config)
-		if("baseColor" in config){this.baseColor = config.baseColor}
-		if("accentColor" in config){this.accentColor = config.accentColor}
+		copyIfPresent(this, config, ["baseColor", "accentColor"])
 	}
 }
 

@@ -1,5 +1,5 @@
 
-import {Color} from "utils"
+import {Color, copyIfPresent} from "utils"
 import {SceneNode, SceneNodeConfig} from "./scenenode"
 
 export interface PointLight extends SceneNode<"pointlight">{
@@ -12,7 +12,7 @@ export class PointLightConfig extends SceneNodeConfig<"pointlight">{
 
 	constructor(config:Partial<PointLightConfig> = {}){
 		super(config)
-		if("color" in config){this.color = config.color}
+		copyIfPresent(this, config, ["color"])
 	}	
 }
 

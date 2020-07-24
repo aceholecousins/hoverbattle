@@ -2,7 +2,7 @@
 import {Mesh, MeshConfig, ModelMeshConfig, MeshFactory} from "domain/graphics/mesh"
 import {ThreeSceneNode} from "./threescenenode"
 import * as THREE from "three"
-import {Color} from "utils"
+import {copy, Color} from "utils"
 import {ThreeModel} from "./threemodel"
 
 function colorRecursive(obj: THREE.Object3D, col:Color){
@@ -30,9 +30,7 @@ export class ThreeMesh extends ThreeSceneNode<"mesh"> implements Mesh{
 
 	constructor(scene:THREE.Scene, template:THREE.Object3D, config:MeshConfig){
 		super(scene, template.clone(), config)
-		
-		this.baseColor = config.baseColor
-		this.accentColor = config.accentColor
+		copy(this, config, ["baseColor", "accentColor"])
 	}
 }
 

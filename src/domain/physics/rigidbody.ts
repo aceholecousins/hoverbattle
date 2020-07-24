@@ -1,5 +1,6 @@
 import {vec2} from "gl-matrix"
 import {ShapeConfig, Shape} from "./shape"
+import {copyIfPresent} from "utils"
 
 export interface RigidBody{
 	kind: "rigidbody"
@@ -40,13 +41,9 @@ export class RigidBodyConfig{
 	angularDamping = 0.1
 
 	constructor(config:Partial<RigidBodyConfig>){
-		if("shapes" in config){this.shapes = config.shapes}
-		if("mass" in config){this.mass = config.mass}
-		if("position" in config){this.position = config.position}
-		if("velocity" in config){this.velocity = config.velocity}
-		if("damping" in config){this.damping = config.damping}
-		if("angle" in config){this.angle = config.angle}
-		if("angularVelocity" in config){this.angularVelocity = config.angularVelocity}
-		if("angularDamping" in config){this.angularDamping = config.angularDamping}
+		copyIfPresent(this, config, [
+			"shapes", "mass", "position", "velocity", "damping",
+			"angle", "angularVelocity", "angularDamping"
+		])
 	}
 }
