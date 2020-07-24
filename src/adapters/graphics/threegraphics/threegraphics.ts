@@ -16,6 +16,8 @@ import {ThreeCameraFactory, ThreeCamera} from "./threecamera"
 import {ThreeLightFactory} from "./threelight"
 import {ThreeMeshFactory} from "./threemesh"
 
+import {ThreeGraphicsController} from "./threegraphicscontroller"
+
 export class ThreeGraphics implements Graphics{
 
 	canvas:HTMLCanvasElement
@@ -38,17 +40,11 @@ export class ThreeGraphics implements Graphics{
 		this.scene = new THREE.Scene()
 
 		this.model = new ThreeModelLoader()
-		
+
 		this.camera = new ThreeCameraFactory(this.scene)
 		this.light = new ThreeLightFactory(this.scene)
 		this.mesh = new ThreeMeshFactory(this.scene)
 
-		this.control = {
-			update:function(time:number){
-				that.renderer.render(
-					that.scene, (that.scene.userData as SceneInfo).activeCamera)
-			}
-		}
 
 		// controllable test camera
 		let defaultCam = this.camera.create(new CameraConfig())
@@ -58,18 +54,14 @@ export class ThreeGraphics implements Graphics{
 		const controls = new OrbitControls(defaultCam.threeObject, this.renderer.domElement)
 		controls.screenSpacePanning = true
 
+		// default lighting
 		this.scene.add(new THREE.HemisphereLight("white", "black"))
+
+		// origin
 		this.scene.add(new THREE.AxesHelper())
 
-		const resize = ()=>{
-			that.renderer.setSize(that.canvas.clientWidth, that.canvas.clientHeight, false)
-			const cam = (this.scene.userData as SceneInfo).activeCamera
-			cam.aspect = canvas.clientWidth / canvas.clientHeight
-			cam.updateProjectionMatrix()
-		}
-		
-		window.addEventListener('resize', resize)
-		resize()
+
+		this.control = new ThreeGraphicsController(this)
 	}
 
 }
