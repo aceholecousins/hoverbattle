@@ -1,4 +1,4 @@
 
 export interface GraphicsController{
-	update: (time:number) => void
+	update(time:number): void
 }

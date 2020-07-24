@@ -1,7 +1,7 @@
 
 import {Color} from "utils"
 import {SceneNode, SceneNodeConfig} from "./scenenode"
-import {Asset} from "./asset"
+import {Model} from "./model"
 
 export interface Mesh extends SceneNode<"mesh">{
 	baseColor: Color
@@ -20,14 +20,14 @@ export class MeshConfig extends SceneNodeConfig<"mesh">{
 	}
 }
 
-export class ModelConfig extends MeshConfig{
-	asset:Asset<"model">
-	constructor(config: Partial<MeshConfig> & Pick<ModelConfig, "asset">){
+export class ModelMeshConfig extends MeshConfig{
+	asset:Model
+	constructor(config: Partial<MeshConfig> & Pick<ModelMeshConfig, "asset">){
 		super(config)
 		this.asset = config.asset
 	}
 }
 
 export interface MeshFactory{
-	createFromModel: (config:ModelConfig) => Mesh
+	createFromModel: (config:ModelMeshConfig) => Mesh
 }

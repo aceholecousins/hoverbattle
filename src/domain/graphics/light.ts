@@ -36,6 +36,6 @@ export class HemisphereLightConfig extends SceneNodeConfig<"hemispherelight">{
 
 
 export interface LightFactory{
-	createPointLight: (config: PointLightConfig) => PointLight
-	createHemisphereLight: (config: HemisphereLightConfig) => HemisphereLight
+	createPointLight(config: PointLightConfig): PointLight
+	createHemisphereLight(config: HemisphereLightConfig): HemisphereLight
 }

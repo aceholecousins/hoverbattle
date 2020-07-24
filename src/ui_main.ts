@@ -1,6 +1,6 @@
 
 import {ThreeGraphics} from "adapters/graphics/threegraphics/threegraphics"
-import {ModelConfig, Mesh} from "domain/graphics/mesh"
+import {ModelMeshConfig, Mesh} from "domain/graphics/mesh"
 import {Checklist} from "./checklist"
 import { P2Physics } from "adapters/physics/p2/p2physics"
 import { CircleConfig } from "domain/physics/circle"
@@ -15,7 +15,7 @@ let physics = new P2Physics()
 let checklist = new Checklist({onComplete:start})
 
 let loadGlider = checklist.newItem()
-const gliderAsset = graphics.asset.loadModel(
+const gliderAsset = graphics.model.load(
 	"glider/glider.gltf",
 	loadGlider.check
 )
@@ -28,7 +28,7 @@ class Glider{
 	thrust:number = 0
 	angularMomentum:number = 0
 
-	constructor(bodyCfg:RigidBodyConfig, modelCfg:ModelConfig, controller:Controller){
+	constructor(bodyCfg:RigidBodyConfig, modelCfg:ModelMeshConfig, controller:Controller){
 		this.body = physics.addRigidBody(bodyCfg)
 		this.mesh = graphics.mesh.createFromModel(modelCfg)
 		this.controller = controller
@@ -58,7 +58,7 @@ function start(){
 		angularDamping: 0.99
 	})
 
-	const gliderModelCfg:ModelConfig = new ModelConfig({
+	const gliderModelCfg:ModelMeshConfig = new ModelMeshConfig({
 		asset:gliderAsset
 	})
 	

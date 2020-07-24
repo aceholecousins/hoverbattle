@@ -26,5 +26,5 @@ export class CameraConfig extends SceneNodeConfig<"camera">{
 }
 
 export interface CameraFactory{
-	create: (config: CameraConfig) => Camera
+	create(config: CameraConfig): Camera
 }

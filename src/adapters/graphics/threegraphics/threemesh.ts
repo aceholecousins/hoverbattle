@@ -1,5 +1,5 @@
 
-import {Mesh, MeshConfig, ModelConfig, MeshFactory} from "domain/graphics/mesh"
+import {Mesh, MeshConfig, ModelMeshConfig, MeshFactory} from "domain/graphics/mesh"
 import {ThreeSceneNode} from "./threescenenode"
 import * as THREE from "three"
 import {Color} from "utils"
@@ -44,7 +44,7 @@ export class ThreeMeshFactory implements MeshFactory{
 		this.threeScene = scene
 	}
 
-	createFromModel(config:ModelConfig){
+	createFromModel(config:ModelMeshConfig){
 		return new ThreeMesh(
 			this.threeScene,
 			(config.asset as ThreeModel).threeObject.clone(),

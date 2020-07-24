@@ -1,8 +1,10 @@
 
-import {Asset, LoadAssetFunction} from "domain/graphics/asset"
+yagni textures
+
+import {Texture, TextureLoader} from "domain/graphics/asset"
 import * as THREE from "three"
 
-export class ThreeTexture implements Asset<"texture">{
+export class ThreeTexture implements Texture{
 	kind:"texture" = "texture"
 	threeTexture:THREE.Texture = undefined
 }

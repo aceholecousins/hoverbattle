@@ -6,13 +6,11 @@ import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls'
 
 import {Graphics} from "domain/graphics/graphics"
 import {GraphicsController} from "domain/graphics/graphicscontroller"
-import {AssetLoader} from "domain/graphics/asset"
 import {CameraConfig} from "domain/graphics/camera"
 
 import {SceneInfo} from "./sceneinfo"
 
-import {loadThreeTexture} from "./threetexture"
-import {loadThreeModel} from "./threemodel"
+import {ThreeModelLoader} from "./threemodel"
 
 import {ThreeCameraFactory, ThreeCamera} from "./threecamera"
 import {ThreeLightFactory} from "./threelight"
@@ -24,7 +22,8 @@ export class ThreeGraphics implements Graphics{
 	renderer:THREE.WebGLRenderer
 	scene:THREE.Scene
 
-	asset: AssetLoader
+	model: ThreeModelLoader
+
 	camera: ThreeCameraFactory
 	light: ThreeLightFactory
 	mesh: ThreeMeshFactory
@@ -38,10 +37,8 @@ export class ThreeGraphics implements Graphics{
 		this.renderer = new THREE.WebGLRenderer({canvas:canvas})
 		this.scene = new THREE.Scene()
 
-		this.asset = {
-			loadTexture:loadThreeTexture,
-			loadModel:loadThreeModel
-		}
+		this.model = new ThreeModelLoader()
+		
 		this.camera = new ThreeCameraFactory(this.scene)
 		this.light = new ThreeLightFactory(this.scene)
 		this.mesh = new ThreeMeshFactory(this.scene)

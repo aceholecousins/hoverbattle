@@ -17,5 +17,5 @@ export class SkyboxConfig extends SceneNodeConfig<"skybox">{
 }
 
 export interface EnvironmentFactory{
-	create: (config: SkyboxConfig) => Skybox
+	create(config: SkyboxConfig): Skybox
 }
