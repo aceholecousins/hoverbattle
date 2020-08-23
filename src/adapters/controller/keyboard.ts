@@ -1,4 +1,5 @@
 import { Controller } from "domain/controller/controller";
+import { Registry } from "utils";
 
 enum Keys {
 	UP = "KeyW",
@@ -15,7 +16,10 @@ export class Keyboard implements Controller {
 	private shooting: boolean = false
 	private currentStrategy: ControlStrategy = new RelativeStrategy
 
+	private keyMap:Registry<number> = {}
+
 	constructor() {
+		this.initKeyMap()
 		document.addEventListener("keydown", (event) => {
 			this.onKeyAction(event, 1)
 		})
@@ -23,31 +27,36 @@ export class Keyboard implements Controller {
 			this.onKeyAction(event, 0)
 		})
 	}
-
+	
 	getAbsoluteDirection(): number {
 		return this.currentStrategy.getAbsoluteDirection();
 	}
-
+	
 	getTurnRate(): number {
 		return this.currentStrategy.getTurnRate();
 	}
-
+	
 	getThrust(): number {
 		return this.currentStrategy.getThrust();
 	}
-
+	
 	isShooting(): boolean {
 		return this.shooting
 	}
-
+	
 	setPauseCallback(callback: () => void): void {
 		throw new Error("Method not implemented.");
+	}
+	
+	private initKeyMap() {
+		
 	}
 
 	private onKeyAction(event: KeyboardEvent, value: number) {
 		if (!event.repeat) {
+			this.keyMap[event.code] = value
 			this.onGeneralKeyAction(event.code, value)
-			this.currentStrategy.onKeyAction(event.code, value)
+			this.currentStrategy.onKeyAction(event.code, value, this.keyMap)
 		}
 	}
 	private onGeneralKeyAction(keyCode: string, value: number) {
@@ -77,7 +86,7 @@ interface ControlStrategy {
 	getAbsoluteDirection(): number
 	getTurnRate(): number
 	getThrust(): number
-	onKeyAction(keyCode: string, value: number): void
+	onKeyAction(keyCode: string, value: number, keyMap:Registry<number>): void
 }
 
 class RelativeStrategy implements ControlStrategy {
@@ -100,7 +109,7 @@ class RelativeStrategy implements ControlStrategy {
 		return this.thrust
 	}
 
-	onKeyAction(keyCode: string, value: number) {
+	onKeyAction(keyCode: string, value: number, keyMap:Registry<number>) {
 		if (keyCode == Keys.UP) {
 			this.thrust = value
 		}
@@ -119,11 +128,6 @@ class AbsoluteStrategy implements ControlStrategy {
 	private absoluteDirection: number = undefined
 	private thrust: number = 0
 
-	private valueUp: number = 0
-	private valueDown: number = 0
-	private valueLeft: number = 0
-	private valueRight: number = 0
-
 	getAbsoluteDirection(): number {
 		return this.absoluteDirection
 	}
@@ -136,23 +140,9 @@ class AbsoluteStrategy implements ControlStrategy {
 		return this.thrust
 	}
 
-	onKeyAction(keyCode: string, value: number) {		
-		switch (keyCode) {
-			case Keys.UP:
-				this.valueUp = value
-				break
-			case Keys.DOWN:
-				this.valueDown = value
-				break
-			case Keys.RIGHT:
-				this.valueRight = value
-				break
-			case Keys.LEFT:
-				this.valueLeft = value
-				break
-		}
-		let thrustX = this.valueRight - this.valueLeft;
-		let thrustY = this.valueUp - this.valueDown;
+	onKeyAction(keyCode: string, value: number, keyMap:Registry<number>) {		
+		let thrustX = keyMap[Keys.RIGHT] - keyMap[Keys.LEFT];
+		let thrustY = keyMap[Keys.UP] - keyMap[Keys.DOWN];
 
 		if (thrustX != 0 || thrustY != 0) {
 			this.absoluteDirection = Math.atan2(thrustY, thrustX)
