@@ -15,8 +15,8 @@ export class Keyboard implements Controller {
 	private shooting: boolean = false
 	private currentStrategy: ControlStrategy = new RelativeStrategy()
 
-	constructor() {
-		document.addEventListener("keydown", (event) => {
+	constructor(document:Document) {
+		document.addEventListener("keydown", (event) => {			
 			this.onKeyAction(event, true)
 		})
 		document.addEventListener("keyup", (event) => {
