@@ -13,7 +13,7 @@ enum Keys {
 export class Keyboard implements Controller {
 
 	private shooting: boolean = false
-	private currentStrategy: ControlStrategy = new RelativeStrategy
+	private currentStrategy: ControlStrategy = new RelativeStrategy()
 
 	constructor() {
 		document.addEventListener("keydown", (event) => {
@@ -65,10 +65,10 @@ export class Keyboard implements Controller {
 	private switchStrategy() {
 		if (this.currentStrategy instanceof RelativeStrategy) {
 			console.log("Switch to absolute keyboard")
-			this.currentStrategy = new AbsoluteStrategy
+			this.currentStrategy = new AbsoluteStrategy()
 		} else {
 			console.log("Switch to relative keyboard")
-			this.currentStrategy = new RelativeStrategy
+			this.currentStrategy = new RelativeStrategy()
 		}
 	}
 }

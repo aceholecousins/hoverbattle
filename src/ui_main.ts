@@ -73,7 +73,7 @@ function start(){
 		color:{r:1, g:1, b:1}
 	}
 	
-	const controller = new Keyboard
+	const controller = new Keyboard()
 	let gliders:Glider[] = []
 	for(let i=0; i<50; i++){
 		let glider = new Glider(gliderBodyCfg, gliderModelCfg, controller)
