@@ -1,29 +1,32 @@
 
-import {Model, ModelConfig, modelDefaults} from "domain/graphics/model"
-import {ThreeGraphicsObject, threeObjectFactory} from "./threegraphicsobject"
+import {Model, ModelLoader} from "domain/graphics/model"
 import * as THREE from "three"
-import { Color } from "utils"
-import { ThreeModelAsset } from "./threemodelasset"
+import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader'
 
-export class ThreeModel extends ThreeGraphicsObject<"model"> implements Model{
-
-	color:Color // TODO: use color
-	threeObject:THREE.Object3D
-
-	constructor(scene:THREE.Scene, config:ModelConfig){
-		const {kind, position, orientation, scaling,
-			asset, color}:Required<ModelConfig> =
-			{...modelDefaults, ...config}
-		super()
-
-		this.threeScene = scene
-		this.threeObject = (asset as ThreeModelAsset).model.clone()
-
-		Object.assign(this, {kind, position, orientation, scaling, color})
-
-		this.threeScene.add(this.threeObject)
-	}
-
+export class ThreeModel extends Model{
+	threeObject:THREE.Object3D = undefined
 }
 
-threeObjectFactory.register("model", ThreeModel)
+const gltfLoader = new GLTFLoader()
+
+export class ThreeModelLoader implements ModelLoader{
+	load(
+		file: string,
+		onLoaded?:()=>void,
+		onError?:(err:ErrorEvent)=>void
+	){
+		let model = new ThreeModel()
+
+		gltfLoader.load(
+			file,
+			function(gltf){
+				model.threeObject = gltf.scene
+				onLoaded()
+			},
+			undefined,
+			onError
+		)
+	
+		return model
+	}
+}

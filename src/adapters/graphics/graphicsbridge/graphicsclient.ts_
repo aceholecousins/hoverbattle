@@ -1,7 +1,7 @@
 
 import {Graphics} from "domain/graphics/graphics"
-import {GraphicsObjectConfig} from "domain/graphics/graphicsobject"
-import {GraphicsObjectHandle} from "./graphicsobjecthandle"
+import {SceneNodeConfig} from "domain/graphics/scenenode"
+import {SceneNodeHandle} from "./scenenodehandle"
 import {AssetConfig} from "domain/graphics/asset"
 import {AssetHandle} from "./assethandle"
 import {WorkerBridge, RemoteProc} from "worker/workerbridge"
@@ -10,7 +10,7 @@ import {Kind} from "utils"
 
 export class GraphicsClient implements Graphics{
 	private modelCounter = 0
-	private graphicsObjectCounter = 0
+	private sceneNodeCounter = 0
 
 	private _loadAssetOnServer:RemoteProc
 	private _addObjectOnServer:RemoteProc
@@ -35,10 +35,10 @@ export class GraphicsClient implements Graphics{
 		return result
 	}
 
-	addObject<K extends Kind>(config:GraphicsObjectConfig<K>):GraphicsObjectHandle<K>{
-		const index = this.graphicsObjectCounter++
+	addObject<K extends Kind>(config:SceneNodeConfig<K>):SceneNodeHandle<K>{
+		const index = this.sceneNodeCounter++
 		this._addObjectOnServer({index, config})
-		let result = new GraphicsObjectHandle<K>(index, this._updateBundler, config)
+		let result = new SceneNodeHandle<K>(index, this._updateBundler, config)
 		return result
 	}
 	

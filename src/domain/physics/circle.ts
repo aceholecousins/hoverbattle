@@ -1,5 +1,6 @@
 
 import {ShapeConfig, Shape} from "./shape"
+import {copyIfPresent} from "utils"
 
 export interface Circle extends Shape<"circle">{
 	kind: "circle"
@@ -12,6 +13,6 @@ export class CircleConfig extends ShapeConfig<"circle">{
 	
 	constructor(config: Partial<CircleConfig>){
 		super(config)
-		if("radius" in config){this.radius = config.radius}
+		copyIfPresent(this, config, ["radius"])
 	}
 }

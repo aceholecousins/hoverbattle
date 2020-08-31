@@ -1,20 +1,19 @@
 
-import {GraphicsObject, GraphicsObjectConfig} from "./graphicsobject"
-import {Asset, AssetConfig} from "./asset"
-import {Kind} from "utils"
-import {Camera} from "./camera"
+import {ModelLoader} from "./model"
+import {CameraFactory} from "./camera"
+import {LightFactory} from "./light"
+import {MeshFactory} from "./mesh"
+import {EnvironmentFactory} from "./environment"
+import {GraphicsController} from "./graphicscontroller"
 
 export interface Graphics{
 
-	loadAsset<K extends Kind>(
-		config:AssetConfig<K>,
-		onLoaded?:()=>void,
-		onError?:(err:ErrorEvent)=>void
-	):Asset<K>
+	model: ModelLoader
 
-	addObject<K extends Kind>(
-		config:GraphicsObjectConfig<K>
-	):GraphicsObject<K>
-	
-	update(time:number):void
+	camera: CameraFactory
+	light: LightFactory
+	mesh: MeshFactory
+	//environment: EnvironmentFactory
+
+	control: GraphicsController
 }

@@ -1,18 +1,10 @@
 
-import {Color, Optionals} from "utils"
-import {GraphicsObject, GraphicsObjectConfig, graphicsObjectDefaults} from "./graphicsobject"
-import {Asset} from "./asset"
+import {Asset, LoadAssetFunction} from "./asset"
 
-export interface Model extends GraphicsObject<"model">{
-	color:Color
+export class Model implements Asset<"model">{
+	kind:"model"
 }
 
-export interface ModelConfig extends GraphicsObjectConfig<"model">{
-	asset:Asset<"model">
-	color?:Color
-}
-
-export const modelDefaults:Optionals<ModelConfig> = {
-	...graphicsObjectDefaults,
-	color:{r:1, g:1, b:1}
+export interface ModelLoader{
+	load:LoadAssetFunction<Model>
 }
