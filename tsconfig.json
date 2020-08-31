@@ -12,6 +12,6 @@
 		"baseUrl": "./src"
 	},
 	"include": [
-		"src/**/*.ts", "workshop/code/threetexture.ts"
+		"src/**/*.ts"
 	]
 }
