@@ -1,10 +1,11 @@
 
-import {Camera, CameraConfig, cameraDefaults} from "domain/graphics/camera"
-import {ThreeGraphicsObject, threeObjectFactory} from "./threegraphicsobject"
+import {ThreeSceneNode} from "./threescenenode"
+import {Camera, CameraConfig, CameraFactory} from "domain/graphics/camera"
 import {SceneInfo} from "./sceneinfo"
 import * as THREE from "three"
+import {copy} from "utils"
 
-export class ThreeCamera extends ThreeGraphicsObject<"camera"> implements Camera{
+export class ThreeCamera extends ThreeSceneNode<"camera"> implements Camera{
 
 	threeObject:THREE.PerspectiveCamera
 
@@ -24,16 +25,8 @@ export class ThreeCamera extends ThreeGraphicsObject<"camera"> implements Camera
 	}
 
 	constructor(scene:THREE.Scene, config:CameraConfig){
-		const filledConfig:Required<CameraConfig> =
-			{...cameraDefaults, ...config}
-		super()
-
-		this.threeScene = scene
-		this.threeObject = new THREE.PerspectiveCamera()
-
-		Object.assign(this, filledConfig)
-
-		this.threeScene.add(this.threeObject)
+		super(scene, new THREE.PerspectiveCamera(), config)
+		copy(this, config, ["nearClip", "farClip", "verticalAngleOfViewInDeg"])
 	}
 
 	activate(){
@@ -41,4 +34,14 @@ export class ThreeCamera extends ThreeGraphicsObject<"camera"> implements Camera
 	}
 }
 
-threeObjectFactory.register("camera", ThreeCamera)
+export class ThreeCameraFactory implements CameraFactory{
+	threeScene:THREE.Scene
+
+	constructor(scene:THREE.Scene){
+		this.threeScene = scene
+	}
+
+	create(config: CameraConfig){
+		return new ThreeCamera(this.threeScene, config)
+	}
+}

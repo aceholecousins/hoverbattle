@@ -1,6 +1,7 @@
 
 import { vec2 } from "gl-matrix"
 import {ShapeConfig, Shape} from "./shape"
+import {copyIfPresent} from "utils"
 
 export interface Rectangle extends Shape<"rectangle">{
 	kind: "rectangle"
@@ -13,6 +14,6 @@ export class RectangleConfig extends ShapeConfig<"rectangle">{
 
 	constructor(config:Partial<RectangleConfig>){
 		super(config)
-		if("sides" in config){this.sides = config.sides}
+		copyIfPresent(this, config, ["sides"])
 	}
 }
