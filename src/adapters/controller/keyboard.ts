@@ -44,19 +44,19 @@ export class Keyboard implements Controller {
 		throw new Error("Method not implemented.");
 	}
 
-	private onKeyAction(event: KeyboardEvent, value: boolean) {
+	private onKeyAction(event: KeyboardEvent, isPressed: boolean) {
 		if (!event.repeat) {
-			this.onGeneralKeyAction(event.code, value)
-			this.currentStrategy.onKeyAction(event.code, value)
+			this.onGeneralKeyAction(event.code, isPressed)
+			this.currentStrategy.onKeyAction(event.code, isPressed)
 		}
 	}
-	private onGeneralKeyAction(keyCode: string, value: boolean) {
+	private onGeneralKeyAction(keyCode: string, isPressed: boolean) {
 		switch (keyCode) {
 			case Keys.SHOOT:
-				this.shooting = value;
+				this.shooting = isPressed;
 				break;
 			case Keys.SWITCH_MODE:
-				if (value) {
+				if (isPressed) {
 					this.switchStrategy();
 				}
 				break
@@ -77,7 +77,7 @@ interface ControlStrategy {
 	getAbsoluteDirection(): number
 	getTurnRate(): number
 	getThrust(): number
-	onKeyAction(keyCode: string, value: boolean): void
+	onKeyAction(keyCode: string, isPressed: boolean): void
 }
 
 class RelativeStrategy implements ControlStrategy {
@@ -100,15 +100,15 @@ class RelativeStrategy implements ControlStrategy {
 		return this.thrust
 	}
 
-	onKeyAction(keyCode: string, value: boolean) {
+	onKeyAction(keyCode: string, isPressed: boolean) {
 		if (keyCode == Keys.UP) {
-			this.thrust = value ? 1 : 0
+			this.thrust = isPressed ? 1 : 0
 		}
 		if (keyCode == Keys.LEFT) {
-			this.valueLeft = value ? 1 : 0
+			this.valueLeft = isPressed ? 1 : 0
 		}
 		if (keyCode == Keys.RIGHT) {
-			this.valueRight = value ? 1 : 0
+			this.valueRight = isPressed ? 1 : 0
 		}
 		this.turnRate = this.valueLeft - this.valueRight;
 	}
@@ -136,19 +136,19 @@ class AbsoluteStrategy implements ControlStrategy {
 		return this.thrust
 	}
 
-	onKeyAction(keyCode: string, value: boolean) {		
+	onKeyAction(keyCode: string, isPressed: boolean) {		
 		switch (keyCode) {
 			case Keys.UP:
-				this.valueUp = value ? 1 : 0
+				this.valueUp = isPressed ? 1 : 0
 				break
 			case Keys.DOWN:
-				this.valueDown = value ? 1 : 0
+				this.valueDown = isPressed ? 1 : 0
 				break
 			case Keys.RIGHT:
-				this.valueRight = value ? 1 : 0
+				this.valueRight = isPressed ? 1 : 0
 				break
 			case Keys.LEFT:
-				this.valueLeft = value ? 1 : 0
+				this.valueLeft = isPressed ? 1 : 0
 				break
 		}
 		let thrustX = this.valueRight - this.valueLeft;
