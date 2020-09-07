@@ -1,49 +1,31 @@
 
 import {Graphics} from "domain/graphics/graphics"
-import {SceneNodeConfig} from "domain/graphics/scenenode"
-import {SceneNodeHandle} from "./scenenodehandle"
-import {AssetConfig} from "domain/graphics/asset"
-import {AssetHandle} from "./assethandle"
 import {WorkerBridge, RemoteProc} from "worker/workerbridge"
-import {UpdateBundler} from "./updatebundler"
-import {Kind} from "utils"
+import {NodeMessageBundler} from "./client/nodemessagebundler"
+import { ModelOnServerLoader } from "./client/modelhandle"
+import { CameraHandleFactory } from "./client/camerahandle"
+import { LightHandleFactory } from "./client/lighthandle"
+import { MeshHandleFactory } from "./client/meshhandle"
+import {ClientGraphicsController} from "./client/clientgraphicscontroller"
 
 export class GraphicsClient implements Graphics{
-	private modelCounter = 0
-	private sceneNodeCounter = 0
 
-	private _loadAssetOnServer:RemoteProc
-	private _addObjectOnServer:RemoteProc
-	private _syncObjectsOnServer:RemoteProc
-	private _updateBundler:UpdateBundler
+	model: ModelOnServerLoader
+
+	camera: CameraHandleFactory
+	light: LightHandleFactory
+	mesh: MeshHandleFactory
+
+	control: ClientGraphicsController
 
 	constructor(bridge:WorkerBridge){
-		this._loadAssetOnServer = bridge.createCaller("gfx.loadAsset")
-		this._addObjectOnServer = bridge.createCaller("gfx.addObject")
-		this._syncObjectsOnServer = bridge.createCaller("gfx.syncObjects")
-		this._updateBundler = new UpdateBundler()
+		let bundler = new NodeMessageBundler()
+		this.model = new ModelOnServerLoader(bridge)
+		this.camera = new CameraHandleFactory(bundler)
+		this.light = new LightHandleFactory(bundler)
+		this.mesh = new MeshHandleFactory(bundler)
+		this.control = new ClientGraphicsController(bridge, bundler)
 	}
 
-	loadAsset<K extends Kind>(
-		config:AssetConfig<K>,
-		onLoaded?:()=>void,
-		onError?:(err:ErrorEvent)=>void
-	):AssetHandle<K>{
-		const index = this.modelCounter++
-		this._loadAssetOnServer({index, config:config})
-		let result = {kind:config.kind, index, file:config.file}
-		return result
-	}
-
-	addObject<K extends Kind>(config:SceneNodeConfig<K>):SceneNodeHandle<K>{
-		const index = this.sceneNodeCounter++
-		this._addObjectOnServer({index, config})
-		let result = new SceneNodeHandle<K>(index, this._updateBundler, config)
-		return result
-	}
-	
-	update(){
-		this._syncObjectsOnServer(this._updateBundler.popUpdates())
-	}
 }
 

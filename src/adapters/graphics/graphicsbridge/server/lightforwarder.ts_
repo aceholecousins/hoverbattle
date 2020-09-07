@@ -1,0 +1,9 @@
+
+import { Graphics } from "domain/graphics/graphics"
+
+export function forwardLightCreation(engine:Graphics){
+	return {
+		pointlight: engine.light.createPointLight,
+		hemispherelight: engine.light.createHemisphereLight
+	}
+}

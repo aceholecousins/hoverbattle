@@ -1,0 +1,49 @@
+
+import {SceneNode, SceneNodeConfig, NodeKind} from "domain/graphics/scenenode"
+
+/** Convert the methods of an interface into fields,
+ * their type becomes a list of their arguments;
+ * this way we can send method calls through the bridge */
+export type ToProps<T> = {
+	[P in keyof T]: T[P] extends (...args: any) => void? Parameters<T[P]> : T[P]
+}
+
+// if this field is present, a new node is created
+export interface SceneNodeCreation<NC extends SceneNodeConfig<any>>{
+	createWithConfig:NC
+}
+
+export type SceneNodeUpdate<N extends SceneNode<any>> = Partial<ToProps<N>>
+
+export type SceneNodeMessage = SceneNodeCreation<any> | SceneNodeUpdate<any>
+
+export class NodeMessageBundler{
+	private messages:SceneNodeMessage[] = []
+	
+	addCreation<NC extends SceneNodeConfig<any>>(
+		index:number,
+		config:NC
+	):void
+	{
+		this.messages[index] = {createWithConfig:config}
+	}
+
+	// copy all fields from whatever kind of SceneNode
+	addUpdate<N extends SceneNode<any>>(
+		index:number, update:SceneNodeUpdate<N>
+	):void
+	{
+		if(!(index in this.messages)){
+			this.messages[index] = update
+		}
+		else{
+			Object.assign(this.messages[index], update)
+		}
+	}
+
+	popMessages():SceneNodeMessage[]{
+		const result = this.messages
+		this.messages = []
+		return result
+	}
+}

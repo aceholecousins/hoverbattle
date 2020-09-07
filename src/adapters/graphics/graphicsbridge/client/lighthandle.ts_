@@ -1,0 +1,42 @@
+
+import {SceneNodeHandle, SceneNodeHandleFactory} from "./scenenodehandle"
+import {Color} from "utils"
+import {
+	PointLight,
+	PointLightConfig,
+	HemisphereLight,
+	HemisphereLightConfig,
+	LightFactory
+} from "domain/graphics/light"
+
+export class PointLightHandle
+	extends SceneNodeHandle<"pointlight">
+	implements PointLight
+{
+	set color(c:Color){
+		this.bundler.addUpdate<PointLight>(this.index, {color:c})
+	}
+}
+
+export class HemisphereLightHandle
+	extends SceneNodeHandle<"hemispherelight">
+	implements HemisphereLight
+{
+	set groundColor(c:Color){
+		this.bundler.addUpdate<HemisphereLight>(this.index, {groundColor:c})
+	}
+
+	set skyColor(c:Color){
+		this.bundler.addUpdate<HemisphereLight>(this.index, {skyColor:c})
+	}
+}
+
+export class LightHandleFactory extends SceneNodeHandleFactory implements LightFactory{
+	createPointLight(config:PointLightConfig){
+		return this.createHandle(PointLightHandle, config)
+	}
+
+	createHemisphereLight(config:HemisphereLightConfig){
+		return this.createHandle(HemisphereLightHandle, config)
+	}
+}

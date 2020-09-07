@@ -1,0 +1,32 @@
+
+import {SceneNodeHandle, SceneNodeHandleFactory} from "./scenenodehandle"
+import {Camera, CameraConfig, CameraFactory} from "domain/graphics/camera"
+
+export interface CameraUpdateInfo extends Camera{
+	active:boolean
+}
+
+export class CameraHandle extends SceneNodeHandle<"camera"> implements Camera{
+
+	set nearClip(nc:number){
+		this.bundler.addUpdate<CameraUpdateInfo>(this.index, {nearClip:nc})
+	}
+
+	set farClip(fc:number){
+		this.bundler.addUpdate<CameraUpdateInfo>(this.index, {farClip:fc})
+	}
+
+	set verticalAngleOfViewInDeg(aov:number){
+		this.bundler.addUpdate<CameraUpdateInfo>(this.index, {verticalAngleOfViewInDeg:aov})
+	}
+
+	activate(){
+		this.bundler.addUpdate<CameraUpdateInfo>(this.index, {activate})
+	}
+}
+
+export class CameraHandleFactory extends SceneNodeHandleFactory implements CameraFactory{
+	create(config:CameraConfig){
+		return this.createHandle(CameraHandle, config)
+	}
+}
