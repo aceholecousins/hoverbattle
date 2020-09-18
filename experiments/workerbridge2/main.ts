@@ -5,6 +5,7 @@ let bridge = new WorkerBridge("worker.js")
 
 let myObj = {
 	property:0,
+	name:"Fred",
 
 	body:{leg:{foot:{toe:{
 		nail:"long"
@@ -34,6 +35,14 @@ let myObj = {
 			bridge.sendAll()
 			console.log("----------------------------")
 		}, 400)
+	},
+
+	sayTheName(thing:any){
+		console.log("----------------------------")
+		console.log("remote side inside sayTheName(thing):")
+		console.log('console.log(thing.name)')
+		console.log(thing.name)
+		console.log("----------------------------")
 	}
 }
 

@@ -78,3 +78,10 @@ myObj.useNestedCallback({child:{age:13, cb:ring}, misc:"0815"})
 bridge.sendAll()
 
 console.log("----------------------------")
+
+console.log('myObj.sayTheName(myObj)')
+myObj.sayTheName(myObj)
+bridge.sendAll()
+console.log(`proxy objects as arguments are resolved`)
+
+console.log("----------------------------")

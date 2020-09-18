@@ -20,6 +20,7 @@ type LazyPath = ()=>Path // for lazy evaluation
 type Reference = ID | LazyPath
 
 function makeLazyPath(parent: Reference, prop: string){
+	// a lazy path is a function that returns a path when it's called
 	return function(){
 		if(typeof(parent) === "function"){ // the parent is itself a lazy path
 			return [...parent(), prop]
@@ -237,8 +238,8 @@ export class WorkerBridge{
 			},
 
 			get(target:any, prop:string, receiver:any){
-				if(prop == "__isproxy__"){
-					return true
+				if(prop === "__ref__"){
+					return ref
 				}
 				if(!(prop in children)){
 					children[prop] = bridge._createProxy(makeLazyPath(ref, prop))
@@ -258,7 +259,7 @@ export class WorkerBridge{
 		})
 	}
 
-	private functionToReference(fn:TaggedCallback){
+	private referencifyFunction(fn:TaggedCallback){
 		if(fn.__cb__ === undefined){
 			// tag this function with a __cb__ index
 			// so that it will not be indexed multiple times
@@ -274,13 +275,24 @@ export class WorkerBridge{
 		}
 	}
 
-	private membersToReferences(obj:any){
+	private referencifyChildren(obj:any){
 		let copy:any = Array.isArray(obj)? [] : {}
+
 		for(let key in obj){
+
 			let wrapped = this.referencifyObject(obj[key])
-			if(typeof(wrapped) === "object" && "__cb__" in wrapped){
-				copy["__cb__"] = true // this object or a sub object contains callbacks
+
+			if(typeof(wrapped) === "object"){
+				if("__cb__" in wrapped){
+					// this object or a sub object contains callbacks
+					copy["__cb__"] = true
+				}
+				if("__ref__" in wrapped){
+					// this object or a sub object contains proxies
+					copy["__ref__"] = true
+				}
 			}
+
 			copy[key] = wrapped
 		}
 		return copy
@@ -296,10 +308,15 @@ export class WorkerBridge{
 			case "boolean":
 				return value
 			case "object":
-				return this.membersToReferences(value)
+				return this.referencifyChildren(value)
 			case "function":
-				return this.functionToReference(value)
-			//TODO case proxy:
+				if(value.__ref__ === undefined){
+					return this.referencifyFunction(value)
+				}
+				else{
+					// value is not a function but a proxy object
+					return {__ref__:value.__ref__}
+				}
 		}
 
 		throw new Error("unsendable type: " + typeof(value))
@@ -319,7 +336,7 @@ export class WorkerBridge{
 				return this._createProxy(this.remoteIndexCounter++)
 			}
 			else if(obj["__cb__"] === true){
-				// a child or a grandchild etc. contains a callback
+				// a child or a grandchild etc. is a callback
 				for(let field in obj){
 					obj[field] = this.resolveReferences(obj[field])
 				}
@@ -327,6 +344,25 @@ export class WorkerBridge{
 			}
 			else{
 				throw new Error("unexpected callback reference type")
+			}
+		}
+		else if("__ref__" in obj){
+			if(
+				typeof(obj["__ref__"]) === "number" ||
+				typeof(obj["__ref__"]) === "string"
+			){
+				// the remote object is a proxy, return the registry entry
+				return this.objectRegistry[obj.__ref__]
+			}
+			else if(obj["__ref__"] === true){
+				// a child or a grandchild etc. is a proxy
+				for(let field in obj){
+					obj[field] = this.resolveReferences(obj[field])
+				}
+				return obj
+			}
+			else{
+				throw new Error("unexpected reference type")
 			}
 		}
 		else{
