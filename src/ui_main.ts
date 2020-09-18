@@ -75,7 +75,7 @@ function start(){
 		asset:gliderAsset
 	})
 	
-	const controller = new Keyboard(document)
+	const controller = new Keyboard()
 	let gliders:Glider[] = []
 	for(let i=0; i<50; i++){
 		let glider = new Glider(gliderBodyCfg, gliderModelCfg, controller)

@@ -1,16 +1,14 @@
+import 'jsdom-global/register'
 import 'mocha'
-import { JSDOM } from 'jsdom'
 import { expect } from 'chai'
 import { Keyboard } from 'adapters/controller/keyboard'
 
 describe('Test keyboard', () => {
 
-	let window = new JSDOM('...').window;
-	let document: Document = window.document;
 	let keyboard: Keyboard
 
 	before(() => {
-		keyboard = new Keyboard(document);
+		keyboard = new Keyboard();
 	})
 
 	it('Shooting', () => {
