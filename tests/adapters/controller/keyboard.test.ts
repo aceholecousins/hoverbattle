@@ -1,5 +1,5 @@
 import 'jsdom-global/register'
-import 'mocha'
+import {describe, it, before} from 'mocha'
 import { expect } from 'chai'
 import { Keyboard } from 'adapters/controller/keyboard'
 
