@@ -1,5 +1,6 @@
 
 import {WorkerBridge} from "./workerbridge"
+import { assert } from "chai"
 
 let bridge = new WorkerBridge()
 
@@ -85,3 +86,10 @@ bridge.sendAll()
 console.log(`proxy objects as arguments are resolved`)
 
 console.log("----------------------------")
+
+setTimeout(function(){
+	console.log('myObj.dispose()')
+	myObj.dispose()
+	bridge.sendAll()
+	assert(myObj.__ref__ === undefined)
+}, 500)

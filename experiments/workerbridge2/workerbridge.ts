@@ -72,7 +72,16 @@ interface CallMsg extends Msg<"call">{
 	args:any[]
 }
 
-type BridgeMsg = ReadyMsg | LinkMsg | SetMsg | CallMsg
+/**
+ * registry[id].dispose() // if defined
+ * delete registry[id]
+ */
+interface DisposeMsg extends Msg<"del">{
+	id:ID
+}
+
+
+type BridgeMsg = ReadyMsg | LinkMsg | SetMsg | CallMsg | DisposeMsg
 
 export class WorkerBridge{
 	
@@ -163,6 +172,13 @@ export class WorkerBridge{
 			this.resolveReferences(msg.val)
 	}
 
+	private handleDispose(msg: DisposeMsg){
+		if(this.objectRegistry[msg.id].dispose !== undefined){
+			this.objectRegistry[msg.id].dispose()
+		}
+		delete this.objectRegistry[msg.id]
+	}
+
 	private receive(event:MessageEvent){
 		for(let i in event.data){
 			let msg = event.data[i] as BridgeMsg
@@ -180,6 +196,9 @@ export class WorkerBridge{
 					break
 				case "set":
 					this.handlePropertySet(msg)
+					break
+				case "del":
+					this.handleDispose(msg)
 					break
 			}
 		}
@@ -218,20 +237,32 @@ export class WorkerBridge{
 		// If not yet done, directly link this proxy
 		// to the corresponding object on the remote side.
 		// It gets an index entry in the remote registry.
-		function link(){
+		function resolvePath():ID {
 			if(typeof(ref) === "function"){
 				bridge.enqueueMsg({kind:"link", path:ref()})
 				ref = bridge.remoteIndexCounter++
 			}
+			return ref
+		}
+
+		// this will be a special member of the proxy that also
+		// deletes the registry entry on the remote side and
+		// sets the reference of this proxy to undefined
+		// so the GC can do its job
+		function dispose(){
+			bridge.enqueueMsg({
+				kind:"del",
+				id:resolvePath()
+			})
+			ref = undefined // ensure this proxy is not used further
 		}
 
 		return new Proxy(()=>{}, {
 
 			set(target:any, prop:string, val:any){
-				link()
 				bridge.enqueueMsg({
 					kind:"set",
-					id:ref as ID,
+					id:resolvePath(),
 					prop, val:bridge.referencifyObject(val)
 				})
 				return true
@@ -239,7 +270,10 @@ export class WorkerBridge{
 
 			get(target:any, prop:string, receiver:any){
 				if(prop === "__ref__"){
-					return ref
+					return resolvePath()
+				}
+				if(prop === "dispose"){
+					return dispose
 				}
 				if(!(prop in children)){
 					children[prop] = bridge._createProxy(makeLazyPath(ref, prop))
@@ -248,10 +282,9 @@ export class WorkerBridge{
 			},
 
 			apply(target:any, thisArg:any, args:any[]){
-				link()
 				bridge.enqueueMsg({
 					kind:"call",
-					id:ref as ID,
+					id:resolvePath(),
 					args:bridge.referencifyObject(args)
 				})
 				return bridge._createProxy(bridge.remoteIndexCounter++)
@@ -315,6 +348,7 @@ export class WorkerBridge{
 				}
 				else{
 					// value is not a function but a proxy object
+					// (all bridge proxies wrap functions so operator() works)
 					return {__ref__:value.__ref__}
 				}
 		}

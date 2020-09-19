@@ -43,6 +43,12 @@ let myObj = {
 		console.log('console.log(thing.name)')
 		console.log(thing.name)
 		console.log("----------------------------")
+	},
+
+	dispose(){
+		console.log("----------------------------")
+		console.log("remote side: dispose() called on myObj")
+		console.log("----------------------------")		
 	}
 }
 
