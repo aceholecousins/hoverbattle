@@ -93,3 +93,12 @@ setTimeout(function(){
 	bridge.sendAll()
 	assert(myObj.__ref__ === undefined)
 }, 500)
+
+console.log("----------------------------")
+
+setTimeout(function(){
+	let MyClass = bridge.createProxy("MyClass")
+	let tooter = new MyClass(3, 5)
+	tooter.toot()
+	bridge.sendAll()
+}, 1000)

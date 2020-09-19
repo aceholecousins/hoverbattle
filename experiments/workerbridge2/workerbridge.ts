@@ -73,6 +73,15 @@ interface CallMsg extends Msg<"call">{
 }
 
 /**
+ * registry[indexCounter++] = new registry[id]([...args])
+ */
+interface NewMsg extends Msg<"new">{
+	id:ID
+	args:any[]
+}
+
+
+/**
  * registry[id].dispose() // if defined
  * delete registry[id]
  */
@@ -81,7 +90,7 @@ interface DisposeMsg extends Msg<"del">{
 }
 
 
-type BridgeMsg = ReadyMsg | LinkMsg | SetMsg | CallMsg | DisposeMsg
+type BridgeMsg = ReadyMsg | LinkMsg | SetMsg | CallMsg | NewMsg | DisposeMsg
 
 export class WorkerBridge{
 	
@@ -155,7 +164,10 @@ export class WorkerBridge{
 		let result = this.objectRegistry[msg.id](
 			...this.resolveReferences(msg.args)
 		)
-		if(typeof(result) === "object"){
+		if(
+			typeof(result) === "object" ||
+			typeof(result) === "function"
+		){
 			this.objectRegistry[this.localIndexCounter++] = result
 		}
 		else{
@@ -165,6 +177,13 @@ export class WorkerBridge{
 			// the remote side will inc its counter so we also have to
 			this.localIndexCounter++
 		}
+	}
+
+	private handleNew(msg: NewMsg){
+		let result = new this.objectRegistry[msg.id](
+			...this.resolveReferences(msg.args)
+		)	
+		this.objectRegistry[this.localIndexCounter++] = result
 	}
 
 	private handlePropertySet(msg: SetMsg){
@@ -193,6 +212,9 @@ export class WorkerBridge{
 					break
 				case "call":
 					this.handleCall(msg)
+					break
+				case "new":
+					this.handleNew(msg)
 					break
 				case "set":
 					this.handlePropertySet(msg)
@@ -257,7 +279,7 @@ export class WorkerBridge{
 			ref = undefined // ensure this proxy is not used further
 		}
 
-		return new Proxy(()=>{}, {
+		return new Proxy(Object, {
 
 			set(target:any, prop:string, val:any){
 				bridge.enqueueMsg({
@@ -284,6 +306,15 @@ export class WorkerBridge{
 			apply(target:any, thisArg:any, args:any[]){
 				bridge.enqueueMsg({
 					kind:"call",
+					id:resolvePath(),
+					args:bridge.referencifyObject(args)
+				})
+				return bridge._createProxy(bridge.remoteIndexCounter++)
+			},
+
+			construct(target:any, args:any){
+				bridge.enqueueMsg({
+					kind:"new",
 					id:resolvePath(),
 					args:bridge.referencifyObject(args)
 				})

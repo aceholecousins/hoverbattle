@@ -1,9 +1,0 @@
-
-import { Graphics } from "domain/graphics/graphics"
-
-export function forwardMeshCreation(engine:Graphics){
-	return {
-		// TODO: if there are different ways to create a mesh, they need to be distinguished in the kind field
-		mesh: engine.mesh.createFromModel
-	}
-}

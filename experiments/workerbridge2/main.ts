@@ -52,10 +52,23 @@ let myObj = {
 	}
 }
 
+class MyClass{
+	constructor(arg1:number, arg2:number){
+		console.log("----------------------------")
+		console.log("remote side: new MyClass(" + arg1 + ", " + arg2 + ")")
+		console.log("----------------------------")
+	}
+
+	toot(){
+		console.log("toot")
+	}
+}
+
 console.log("----------------------------")
 console.log('remote side: bridge.register(myObj, "myObj")')
 bridge.register(myObj, "myObj")
 console.log('bridge.registry["myObj"] now points to myObj')
+bridge.register(MyClass, "MyClass")
 console.log("----------------------------")
 
 setTimeout(function(){
