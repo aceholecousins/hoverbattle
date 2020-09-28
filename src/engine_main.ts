@@ -45,7 +45,7 @@ class Glider{
 
 		const turnRate = this.controller.getTurnRate()
 		if(turnRate != undefined) {
-			this.body.applyAngularMomentum(turnRate * 0.1)
+			this.body.applyTorque(turnRate * 10)
 		}
 		const direction = this.controller.getAbsoluteDirection()
 		if(direction != undefined) {
