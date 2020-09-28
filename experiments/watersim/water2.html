@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Adaptive Infinite Water</title>
+		<style>
+			body {
+				background-color: black;
+				overflow:hidden;
+			}
+		</style>
+	</head>
+	<body>
+
+<script src="three.js"></script>
+<script src="OrbitControls.js"></script>
+<script>
+
+var whatMap = "map"
+
+var RES = 256
+var C = 2
+
+let renderer = new THREE.WebGLRenderer()
+let displace = new THREE.TextureLoader().load('water.png')
+let mask = new THREE.TextureLoader().load('mask.png')
+displace.wrapS = THREE.RepeatWrapping
+displace.wrapT = THREE.RepeatWrapping
+
+var computeVertexShader = `
+	precision highp float;
+	precision highp int;
+
+	attribute vec2 uv;
+	attribute vec3 position;
+	uniform mat4 modelViewMatrix;
+	uniform mat4 projectionMatrix;
+
+	varying vec2 texCoords;
+
+	void main()	{
+		texCoords = uv;
+		gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+	}`;
+
+
+/*
+see Game Programming Gems 1, p. 187 "Interactive Simulation of Water Surfaces" by Miguel Gomez
+
+Equation:
+
+∂²z      ⎛∂²z   ∂²z⎞
+――― = c² ⎜――― + ―――⎟
+∂t²      ⎝∂x²   ∂y²⎠
+
+Discrete solution:
+
+          ⎛zᵢ₋₁ⱼ - 2zᵢⱼ + zᵢ₊₁ⱼ   zᵢⱼ₋₁ - 2zᵢⱼ + zᵢⱼ₊₁⎞
+aₖ₊₁ = c² ⎜―――――――――――――――――――― + ――――――――――――――――――――⎟
+          ⎝         h²                     h²         ⎠
+
+vₖ₊₁ = vₖ + aₖ₊₁ ∂t
+
+zₖ₊₁ = zₖ + vₖ₊₁ ∂t
+
+Modifications:
+
+- we add disturbance
+- we smoothen the height a little to avoid ripples
+- we dampen waves at the edge of the texture with a mask
+
+*/
+
+
+var computeFragmentShader = `
+	precision highp float;
+	precision highp int;
+
+	/*
+	const float pi = 3.1415926535897932384626433832795;
+
+	uniform float dt; // delta time
+	uniform float px; // 1/resolution of texture
+	uniform float s; // = c^2 / h^2
+	// c = wave speed, h = length of px in world coordinates
+	// make sure s * dt^2 < 0.5, otherwise the water becomes unstable
+
+	varying vec2 texCoords;
+	
+	uniform sampler2D lastTex;
+	uniform sampler2D displace;
+	uniform sampler2D maskTex;
+
+	void main()	{
+		
+		vec4 last = texture2D(lastTex, texCoords);
+		float mask = texture2D(maskTex, texCoords).r;
+
+		mask = 1.0 - (1.0-mask)*0.1;
+
+		float zLast = last.r;
+		float vLast = last.g;
+		
+		float left = texture2D(lastTex, texCoords + vec2(-px, 0)).r;
+		float right = texture2D(lastTex, texCoords + vec2(px, 0)).r;
+		float top = texture2D(lastTex, texCoords + vec2(0, px)).r;
+		float bottom = texture2D(lastTex, texCoords + vec2(0, -px)).r;
+
+		float avg = 0.25 * (left + right + top + bottom);
+		
+		// smoothing to avoid numerical ripples
+		zLast = zLast * 0.95 + avg * 0.05;
+
+		float a = s*4.0*(avg - zLast);
+		float v = (vLast + a*dt) * mask;
+		float z = (zLast + v*dt) * mask;
+
+		gl_FragColor = vec4(z, v, 0.0, 1.0);
+
+	}*/
+
+	void main(){
+		gl_FragColor = vec4(0.0, 0.5, 0.0, 1.0);
+	}
+	
+	
+	`;
+
+
+class WaterSim{
+	c
+	res
+	
+	tSimLast
+	tClockLast
+
+	texScene
+	texCamera
+	texScreen
+
+	renderTargets = []
+	currentTarget = 0
+	material
+
+	buoy
+
+	constructor(waveSpeed, resolution){
+		this.c = waveSpeed
+		this.res = resolution
+
+		this.tSimLast = 0
+		this.tClockLast = performance.now()/1000
+		
+		this.texScene = new THREE.Scene()
+		this.texCamera = new THREE.OrthographicCamera(-0.5, 0.5, 0.5, -0.5, 0, 2)
+		this.texScene.add(this.texCamera)
+
+		for(let i=0; i<2; i++){
+			this.renderTargets[i] = 
+				new THREE.WebGLRenderTarget(this.res, this.res, {
+				wrapS: THREE.ClampToEdgeWrapping,
+				wrapT: THREE.ClampToEdgeWrapping,
+				minFilter: THREE.LinearFilter,
+				magFilter: THREE.LinearFilter,
+				//minFilter: THREE.NearestFilter,
+				//magFilter: THREE.NearestFilter,
+				format: THREE.RGBAFormat,
+				//type: THREE.UnsignedByteType,
+				type: THREE.FloatType,
+				depthBuffer: false
+			})
+		}
+
+		let geom = new THREE.PlaneGeometry(1, 1)
+		this.material = new THREE.RawShaderMaterial({
+			uniforms: {
+				dt:{value: 1},
+				px:{value: 1.0/this.res},
+				s:{value: 1},
+
+				lastTex:{value: null},			
+				displace:{value: displace},
+				maskTex:{value: mask}
+			},
+			vertexShader: computeVertexShader,
+			fragmentShader: computeFragmentShader
+		})
+
+		this.texScreen = new THREE.Mesh(geom, this.material)
+		this.texScene.add(this.texScreen)
+
+		/*
+		let buoyGeom = new THREE.PlaneGeometry(0.1, 0.1)
+		let buoyTex = new THREE.TextureLoader().load('gauss.png')
+		let buoyMat = new THREE.MeshBasicMaterial({
+			color:0x100000,
+			map:buoyTex,
+			//blending:THREE.SubtractiveBlending
+			blending:THREE.AdditiveBlending
+		})
+		
+		this.buoy = new THREE.Mesh(buoyGeom, buoyMat)
+		this.buoy.position.z = 0.1
+		/*/
+		this.buoy = new THREE.Mesh(
+			new THREE.SphereGeometry(0.5, 50, 50),
+			//new THREE.MeshBasicMaterial({color:"black"})
+			new THREE.MeshNormalMaterial()
+		)
+		/**/
+
+		this.texScene.add(this.buoy)
+
+	}
+
+	update(x, y, w){
+
+		this.currentTarget = 1 - this.currentTarget
+		let oldTarget = renderer.getRenderTarget()
+		renderer.setRenderTarget(this.renderTargets[this.currentTarget])
+
+		let tClockNow = performance.now()/1000
+		let dt = 1/60//tClockNow - this.tClockLast
+		if(dt > 0.1){dt = 0.1}
+		let tSimNow = this.tSimLast + dt
+
+		this.tSimLast = tSimNow
+		this.tClockLast = tClockNow
+		
+		// ensure stability
+		let wMin = (Math.SQRT2+1e-3) * this.c * this.res * dt
+		if(w < wMin){w = wMin}
+
+		this.material.uniforms.lastTex.value =
+			this.renderTargets[1-this.currentTarget].texture
+
+		this.material.uniforms.dt.value = dt
+		this.material.uniforms.px.value = 1/this.res
+		this.material.uniforms.s.value = Math.pow(this.c * dt * this.res / w, 2)
+
+		this.texCamera.position.x = x
+		this.texCamera.position.y = y
+		this.texCamera.position.z = 1
+		this.texCamera.left = -w/2
+		this.texCamera.right = w/2
+		this.texCamera.top = w/2
+		this.texCamera.bottom = -w/2
+		this.texCamera.updateProjectionMatrix()
+
+		this.buoy.position.x = 0*Math.sin(3*tSimNow)*3;
+		this.buoy.position.y = 0*Math.cos(5.2*tSimNow)*3;
+
+		renderer.render(this.texScene, this.texCamera)
+		renderer.setRenderTarget(oldTarget)
+
+		this.texScreen.position.x = x
+		this.texScreen.position.y = y
+		this.texScreen.scale.x = w
+		this.texScreen.scale.y = w
+	}
+
+	getCurrentTexture(){
+		return this.renderTargets[this.currentTarget].texture
+	}
+}
+
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+var scene = new THREE.Scene();
+var camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 100);
+var controls = new THREE.OrbitControls(camera, renderer.domElement)
+
+var geometry = new THREE.PlaneGeometry(1, 1);
+let waterSim = new WaterSim(C, RES)
+
+var waterMaterial = new THREE.MeshBasicMaterial({
+	color:"white",
+	//[whatMap]:waterSim.getCurrentTexture()
+})
+
+let sun = new THREE.PointLight()
+sun.position.set(3, 3, 3)
+scene.add(sun)
+
+var water = new THREE.Mesh(geometry, waterMaterial);
+scene.add(water);
+
+camera.position.z = 3;
+
+let t=0;
+
+function animate() {
+	requestAnimationFrame(animate);
+
+	t = performance.now()/1000
+
+	x = Math.sin(t*2)
+	y = Math.cos(t*2)
+	w = Math.cos(t*3)+3
+	/*x = 0
+	y = 0
+	w = 5*/
+
+	waterSim.update(x, y, w)
+
+	water.position.x = x
+	water.position.y = y
+	water.scale.x = w
+	water.scale.y = w
+
+	waterMaterial[whatMap] = waterSim.getCurrentTexture()
+
+	renderer.render(scene, camera);
+}
+animate();
+
+</script>
+
+	</body>
+</html>
