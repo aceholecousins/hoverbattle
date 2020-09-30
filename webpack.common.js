@@ -36,7 +36,7 @@ module.exports = {
 		new CopyPlugin({
 			patterns: [
 				{
-					from: '**/*.(png|jpe?g|gif|svg|html|css|gltf|glb|ico|js)',
+					from: '**/*.(png|jpe?g|gif|svg|html|css|gltf|glb|ico)',
 					context: 'src/'
 				}
 			],
