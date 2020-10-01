@@ -4,10 +4,12 @@ const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
 	entry: {
-		alphamix: './experiments/alphamix/main.ts',
-		renderstresstest: './experiments/renderstresstest/main.ts',
-		gltf: './experiments/gltf/main.ts',
-		overridecolor: './experiments/overridecolor/main.ts'
+		'alphamix/main.js': './experiments/alphamix/main.ts',
+		'renderstresstest/main.js': './experiments/renderstresstest/main.ts',
+		'gltf/main.js': './experiments/gltf/main.ts',
+		'overridecolor/main.js': './experiments/overridecolor/main.ts',
+		'workerbridge2/main.js': './experiments/workerbridge2/main.ts',
+		'workerbridge2/worker.js': './experiments/workerbridge2/worker.ts'
 	},
 	module: {
 		rules: [
@@ -34,7 +36,7 @@ module.exports = {
 		}),
 	],
 	output: {
-		filename: '[name]/[name].js',
+		filename: '[name]',
 		path: path.resolve(__dirname, '../dist/experiments'),
 	},
 };

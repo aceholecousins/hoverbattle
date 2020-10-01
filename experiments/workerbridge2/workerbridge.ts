@@ -9,8 +9,8 @@ Paradigms:
   going to persist in the registry and won't get garbage collected
 */
 
-import {Kind} from "utils"
 type Pod = any
+type Kind = string
 
 type Key = string // for explicitly registered objects
 type Index = number // for automatically registered objects
@@ -95,8 +95,7 @@ type BridgeMsg = ReadyMsg | LinkMsg | SetMsg | CallMsg | NewMsg | DisposeMsg
 export class WorkerBridge{
 	
 	private worker:Worker = undefined
-	private connected = false
-	private sendWhenConnected = false
+	private onReady:()=>void = undefined
 
 	// locally stored objects
 	// (typescript complains about key:Key and about key:(string | number) )
@@ -113,16 +112,16 @@ export class WorkerBridge{
 	
 	/** leave worker empty when calling from inside a worker
 	 * and building a bridge to the window */
-	constructor(workerFile?:string){
+	constructor(workerFile?:string, onReady?:()=>void){
 		if(typeof(workerFile) !== "undefined"){
 			this.worker = new Worker(workerFile)
 			this.worker.onmessage = this.receive.bind(this)
+			this.onReady = onReady
 		}
 		else{
 			onmessage = this.receive.bind(this)
 			this.enqueueMsg({kind:"ready"})
 			this.sendAll()
-			this.connected = true
 		}
 	}
 
@@ -132,54 +131,33 @@ export class WorkerBridge{
 	}
 
 	sendAll(){
-		if(this.msgQueue.length == 0){
-			return
-		}
 		if(typeof(this.worker) !== "undefined"){
-			//console.log("window -> worker:")
-			//for(let msg of this.msgQueue){
-			//	console.log("-> " + JSON.stringify(msg))
-			//}
-			if(this.connected){
-				this.worker.postMessage(this.msgQueue)
-				this.msgQueue = []
+			console.log("window -> worker:")
+			for(let msg of this.msgQueue){
+				console.log("-> " + JSON.stringify(msg))
 			}
-			else{
-				this.sendWhenConnected = true
-			}
+			this.worker.postMessage(this.msgQueue)
 		}
 		else{
-			//console.log("worker -> window:")
-			//for(let msg of this.msgQueue){
-			//	console.log("-> " + JSON.stringify(msg))
-			//}
-			// TypeScript does not know we mean postMessage from inside a worker
+			console.log("worker -> window:")
+			for(let msg of this.msgQueue){
+				console.log("-> " + JSON.stringify(msg))
+			}
 			//@ts-ignore
 			postMessage(this.msgQueue)
-			this.msgQueue = []
 		}
-	}
-
-	private handleReady(){
-		this.connected = true
-		if(this.sendWhenConnected){
-			this.sendAll()
-		}
+		this.msgQueue = []
 	}
 
 	private handleLinkage(msg: LinkMsg){
-		let obj:any = this.objectRegistry
+		let target:any = this.objectRegistry
 		for(let field of (msg as LinkMsg).path){
-			let child = obj[field]
-			if(typeof(child) === "function"){
-				child = child.bind(obj) // make sure we keep "this"
-			}
-			obj = child
+			target = target[field]
 		}
-		if(typeof(obj) !== "object" && typeof(obj) !== "function"){
+		if(typeof(target) !== "object" && typeof(target) !== "function"){
 			throw new Error("tried to link a field which is not an object or a method: " + msg.path)
 		}
-		this.objectRegistry[this.localIndexCounter++] = obj
+		this.objectRegistry[this.localIndexCounter++] = target
 	}
 
 	private handleCall(msg: CallMsg){
@@ -225,7 +203,9 @@ export class WorkerBridge{
 			let msg = event.data[i] as BridgeMsg
 			switch(msg.kind){
 				case "ready":
-					this.handleReady()
+					if(this.onReady !== undefined){
+						this.onReady()
+					}
 					break
 				case "link":
 					this.handleLinkage(msg)

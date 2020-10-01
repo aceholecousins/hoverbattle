@@ -21,3 +21,8 @@ export class SceneNodeConfig<K extends Kind>{
 		copyIfPresent(this, config, ["position", "orientation", "scaling"])
 	}
 }
+
+export type NodeKind<T> =
+	T extends SceneNode<infer K> ? K:
+	T extends SceneNodeConfig< infer K> ? K:
+	never
