@@ -1,4 +1,6 @@
 
+//*
+
 import {WorkerBridge} from "./workerbridge"
 
 let bridge:WorkerBridge
@@ -13,3 +15,12 @@ else{
 }
 
 export {bridge}
+
+/*/
+
+import {WorkerBridgeDummy} from "./workerbridgedummy"
+import "engine_main"
+
+export let bridge = new WorkerBridgeDummy()
+
+/**/

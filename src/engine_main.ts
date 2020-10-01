@@ -1,6 +1,7 @@
 
+import { bridge } from "worker/worker"
 import {Graphics} from "domain/graphics/graphics"
-import {graphicsClient} from "adapters/graphics/graphicsbridge/graphicsclient"
+import {createGraphicsClient} from "adapters/graphics/graphicsbridge/graphicsclient"
 import {ModelMeshConfig, Mesh} from "domain/graphics/mesh"
 import {Checklist} from "./checklist"
 import { P2Physics } from "adapters/physics/p2/p2physics"
@@ -9,22 +10,35 @@ import { vec2, quat } from "gl-matrix"
 import { RigidBody, RigidBodyConfig } from "domain/physics/rigidbody"
 import { Controller } from "domain/controller/controller"
 import { wrapAngle } from "utilities/math_utils"
-import { bridge } from "worker/worker"
 import { Physics } from "domain/physics/physics"
+import { Model } from "domain/graphics/model"
 
 let dt = 1/100
 
-let graphics = graphicsClient as Graphics
-let physics = new P2Physics() as Physics
+let graphics:Graphics
+let physics:Physics = new P2Physics() as Physics
+let gliderAsset:Model
 
 let checklist = new Checklist({onComplete:start})
 
+let initGraphics = checklist.newItem()
 let loadGlider = checklist.newItem()
-const gliderAsset = graphics.model.load(
-	"glider/glider.gltf",
-	loadGlider.check
-)
-bridge.sendAll()
+
+setTimeout(function(){
+	// when we are not using a worker, we have to be sure that the graphics server
+	// is registered at the bridge dummy before the client requests it
+	// so we use a timeout here
+	graphics = createGraphicsClient()
+	initGraphics.check()
+
+	gliderAsset = graphics.model.load(
+		"glider/glider.gltf",
+		loadGlider.check
+	)
+	bridge.sendAll()
+}, 0)
+
+
 
 class Glider{
 	body:RigidBody
