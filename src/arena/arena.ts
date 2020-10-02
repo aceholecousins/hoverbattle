@@ -11,7 +11,7 @@ export function loadArena(
 	url:string,
 	graphics:Graphics,
 	physics:Physics,
-	onLoaded:(arena:Arena)=>{}
+	onLoaded:(arena:Arena)=>void
 ){
 	executeFile(url, {graphics, physics}, onLoaded)
 }

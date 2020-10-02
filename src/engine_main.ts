@@ -1,39 +1,52 @@
 
-import { bridge } from "worker/worker"
+import {bridge} from "worker/worker"
 import {Graphics} from "domain/graphics/graphics"
 import {createGraphicsClient} from "adapters/graphics/graphicsbridge/graphicsclient"
 import {ModelMeshConfig, Mesh} from "domain/graphics/mesh"
 import {Checklist} from "./checklist"
-import { P2Physics } from "adapters/physics/p2/p2physics"
-import { CircleConfig } from "domain/physics/circle"
-import { vec2, quat } from "gl-matrix"
-import { RigidBody, RigidBodyConfig } from "domain/physics/rigidbody"
-import { Controller } from "domain/controller/controller"
-import { wrapAngle } from "utilities/math_utils"
-import { Physics } from "domain/physics/physics"
-import { Model } from "domain/graphics/model"
+import {P2Physics} from "adapters/physics/p2/p2physics"
+import {CircleConfig} from "domain/physics/circle"
+import {vec2, quat} from "gl-matrix"
+import {RigidBody, RigidBodyConfig} from "domain/physics/rigidbody"
+import {Controller} from "domain/controller/controller"
+import {wrapAngle} from "utilities/math_utils"
+import {Physics} from "domain/physics/physics"
+import {Model} from "domain/graphics/model"
+import {Arena, loadArena} from "arena/arena"
 
 let dt = 1/100
 
 let graphics:Graphics
 let physics:Physics = new P2Physics() as Physics
 let gliderAsset:Model
+let arena:Arena
 
 let checklist = new Checklist({onComplete:start})
 
-let initGraphics = checklist.newItem()
-let loadGlider = checklist.newItem()
+let initGraphicsItem = checklist.newItem()
+let loadGliderItem = checklist.newItem()
+let loadArenaItem = checklist.newItem()
 
 setTimeout(function(){
 	// when we are not using a worker, we have to be sure that the graphics server
 	// is registered at the bridge dummy before the client requests it
 	// so we use a timeout here
 	graphics = createGraphicsClient()
-	initGraphics.check()
+	initGraphicsItem.check()
 
 	gliderAsset = graphics.model.load(
 		"glider/glider.gltf",
-		loadGlider.check
+		loadGliderItem.check
+	)
+
+	loadArena(
+		"arenas/testarena2/script.js",
+		graphics,
+		physics,
+		function(loaded:Arena){
+			arena = loaded
+			loadArenaItem.check()
+		}
 	)
 	bridge.sendAll()
 }, 0)
@@ -101,7 +114,7 @@ function start(){
 		setPauseCallback(fn){}
 	}
 	let gliders:Glider[] = []
-	for(let i=0; i<50; i++){
+	for(let i=0; i<10; i++){
 		let glider = new Glider(gliderBodyCfg, gliderModelCfg, controller)
 		glider.body.position = vec2.fromValues(Math.random()*20-10, Math.random()*20-10)
 		glider.body.angle = Math.random()*1000
