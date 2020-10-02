@@ -7,17 +7,6 @@ export class ThreeModel extends Model{
 	threeObject:THREE.Object3D = undefined
 }
 
-class SceneProcessor{
-
-	constructor(renderer:THREE.Renderer){
-		
-	}
-
-
-
-
-}
-
 function processModel(mesh:THREE.Object3D){
 	if("material" in mesh && "normalMapType" in (mesh as THREE.Mesh).material){
 		((mesh as THREE.Mesh).material as THREE.MeshStandardMaterial).normalMapType =

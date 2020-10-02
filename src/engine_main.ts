@@ -32,6 +32,7 @@ setTimeout(function(){
 	// is registered at the bridge dummy before the client requests it
 	// so we use a timeout here
 	graphics = createGraphicsClient()
+	graphics.control.setSceneOrientation([-Math.SQRT1_2, 0, 0, Math.SQRT1_2])
 	initGraphicsItem.check()
 
 	gliderAsset = graphics.model.load(

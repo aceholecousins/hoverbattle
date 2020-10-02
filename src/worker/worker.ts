@@ -1,5 +1,5 @@
 
-//*
+/*
 
 import {WorkerBridge} from "./workerbridge"
 

@@ -17,6 +17,7 @@ import {ThreeLightFactory} from "./threelight"
 import {ThreeMeshFactory} from "./threemesh"
 
 import {ThreeGraphicsController} from "./threegraphicscontroller"
+import { ThreeSkyboxLoader } from "./threeskybox"
 
 export class ThreeGraphics implements Graphics{
 
@@ -25,11 +26,12 @@ export class ThreeGraphics implements Graphics{
 	scene:THREE.Scene
 
 	model: ThreeModelLoader
+	skybox: ThreeSkyboxLoader
 
 	camera: ThreeCameraFactory
 	light: ThreeLightFactory
 	mesh: ThreeMeshFactory
-	//environment: EnvironmentFactory
+
 	control: GraphicsController
 
 	constructor(canvas:HTMLCanvasElement){
@@ -40,6 +42,7 @@ export class ThreeGraphics implements Graphics{
 		this.scene = new THREE.Scene()
 
 		this.model = new ThreeModelLoader()
+		this.skybox = new ThreeSkyboxLoader()
 
 		this.camera = new ThreeCameraFactory(this.scene)
 		this.light = new ThreeLightFactory(this.scene)
@@ -50,6 +53,8 @@ export class ThreeGraphics implements Graphics{
 		let defaultCam = this.camera.create(new CameraConfig())
 		defaultCam.position = vec3.fromValues(0, 0, 10)
 		defaultCam.activate()
+		defaultCam.threeObject.up.set(0, 0, 1)
+		this.scene.add(defaultCam.threeObject)
 
 		const controls = new OrbitControls(defaultCam.threeObject, this.renderer.domElement)
 		controls.screenSpacePanning = true

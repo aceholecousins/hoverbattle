@@ -2,7 +2,6 @@
 let arena = graphics.model.load(
 	"arenas/testarena2/testarena2.glb",
 	function(){
-		console.log(arena)
 		graphics.mesh.createFromModel({
 			kind:"mesh",
 			asset:arena,
@@ -13,3 +12,9 @@ let arena = graphics.model.load(
 	}
 )
 
+let env = graphics.skybox.load(
+	"arenas/testarena2/environment/*.jpg",
+	function(){
+		graphics.control.setEnvironment(env)
+	}
+)
