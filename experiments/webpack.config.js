@@ -29,7 +29,7 @@ module.exports = {
 		new CopyPlugin({
 			patterns: [
 				{
-					from: '**/*.(png|jpe?g|gif|svg|html|css|gltf|glb|ico)',
+					from: '**/*.(png|jpg|jpeg|gif|svg|html|css|gltf|glb|ico)',
 					context: 'experiments/'
 				}
 			],
