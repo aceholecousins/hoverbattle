@@ -5,6 +5,8 @@ import {GraphicsController} from "domain/graphics/graphicscontroller"
 import { quat } from "gl-matrix"
 import { Skybox } from "domain/graphics/skybox"
 import { ThreeSkybox } from "./threeskybox"
+import { LightProbeGenerator } from 'three/examples/jsm/lights/LightProbeGenerator.js'
+import * as THREE from "three"
 
 export class ThreeGraphicsController implements GraphicsController{
 
@@ -34,8 +36,15 @@ export class ThreeGraphicsController implements GraphicsController{
 	}
 
 	setEnvironment(env:Skybox){
-		this.graphics.scene.background = (env as ThreeSkybox).threeCubemap
-		this.graphics.scene.environment = (env as ThreeSkybox).threeCubemap
+		let cubeMap = (env as ThreeSkybox).threeCubemap
+
+		this.graphics.scene.background = cubeMap
+		this.graphics.scene.environment = cubeMap
+
+		let lightProbe = new THREE.LightProbe()
+		this.graphics.scene.add( lightProbe )
+
+		lightProbe.copy( LightProbeGenerator.fromCubeTexture( cubeMap ) )
 	}
 
 	update(time: number){

@@ -40,6 +40,8 @@ export class ThreeGraphics implements Graphics{
 		this.canvas = canvas
 		this.renderer = new THREE.WebGLRenderer({canvas:canvas})
 		this.scene = new THREE.Scene()
+		//@ts-ignore
+		window["scene"] = this.scene
 
 		this.model = new ThreeModelLoader()
 		this.skybox = new ThreeSkyboxLoader()
@@ -60,11 +62,19 @@ export class ThreeGraphics implements Graphics{
 		controls.screenSpacePanning = true
 
 		// default lighting
-		this.scene.add(new THREE.HemisphereLight("white", "black"))
+		//this.scene.add(new THREE.HemisphereLight("white", "black"))
 
 		// origin
-		this.scene.add(new THREE.AxesHelper())
+		//this.scene.add(new THREE.AxesHelper())
 
+		/*
+		let sphere = new THREE.Mesh(
+			new THREE.SphereGeometry(10, 32, 32),
+			new THREE.MeshStandardMaterial()
+		)
+		this.scene.add(sphere)
+		*/
+		
 
 		this.control = new ThreeGraphicsController(this)
 	}
