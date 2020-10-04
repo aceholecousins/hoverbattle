@@ -1,6 +1,7 @@
 
 import {SceneInfo} from "./sceneinfo"
 import {ThreeGraphics} from "./threegraphics"
+import {renderer} from "./threerenderer"
 import {GraphicsController} from "domain/graphics/graphicscontroller"
 import { quat } from "gl-matrix"
 import { Skybox } from "domain/graphics/skybox"
@@ -16,14 +17,14 @@ export class ThreeGraphicsController implements GraphicsController{
 		this.graphics = graphics
 
 		const resize = ()=>{
-			graphics.renderer.setSize(
-				graphics.canvas.clientWidth,
-				graphics.canvas.clientHeight,
+			renderer.setSize(
+				renderer.domElement.clientWidth,
+				renderer.domElement.clientHeight,
 				false
 			)
 
 			const cam = (graphics.scene.userData as SceneInfo).activeCamera
-			cam.aspect = graphics.canvas.clientWidth / graphics.canvas.clientHeight
+			cam.aspect = renderer.domElement.clientWidth / renderer.domElement.clientHeight
 			cam.updateProjectionMatrix()
 		}
 		
@@ -36,19 +37,19 @@ export class ThreeGraphicsController implements GraphicsController{
 	}
 
 	setEnvironment(env:Skybox){
-		let cubeMap = (env as ThreeSkybox).threeCubemap
+		this.graphics.scene.background = (env as ThreeSkybox).threeCubemap
+		this.graphics.scene.environment = (env as ThreeSkybox).threePmrem
 
-		this.graphics.scene.background = cubeMap
-		this.graphics.scene.environment = cubeMap
-
+		/*
 		let lightProbe = new THREE.LightProbe()
 		this.graphics.scene.add( lightProbe )
 
 		lightProbe.copy( LightProbeGenerator.fromCubeTexture( cubeMap ) )
+		*/
 	}
 
 	update(time: number){
-		this.graphics.renderer.render(
+		renderer.render(
 			this.graphics.scene, 
 			(this.graphics.scene.userData as SceneInfo).activeCamera
 		)

@@ -18,3 +18,4 @@ let env = graphics.skybox.load(
 		graphics.control.setEnvironment(env)
 	}
 )
+

@@ -8,6 +8,7 @@ import {Graphics} from "domain/graphics/graphics"
 import {GraphicsController} from "domain/graphics/graphicscontroller"
 import {CameraConfig} from "domain/graphics/camera"
 
+import {renderer} from "./threerenderer"
 import {SceneInfo} from "./sceneinfo"
 
 import {ThreeModelLoader} from "./threemodel"
@@ -21,8 +22,6 @@ import { ThreeSkyboxLoader } from "./threeskybox"
 
 export class ThreeGraphics implements Graphics{
 
-	canvas:HTMLCanvasElement
-	renderer:THREE.WebGLRenderer
 	scene:THREE.Scene
 
 	model: ThreeModelLoader
@@ -34,11 +33,9 @@ export class ThreeGraphics implements Graphics{
 
 	control: GraphicsController
 
-	constructor(canvas:HTMLCanvasElement){
+	constructor(){
 		const that = this
 
-		this.canvas = canvas
-		this.renderer = new THREE.WebGLRenderer({canvas:canvas})
 		this.scene = new THREE.Scene()
 		//@ts-ignore
 		window["scene"] = this.scene
@@ -58,7 +55,7 @@ export class ThreeGraphics implements Graphics{
 		defaultCam.threeObject.up.set(0, 0, 1)
 		this.scene.add(defaultCam.threeObject)
 
-		const controls = new OrbitControls(defaultCam.threeObject, this.renderer.domElement)
+		const controls = new OrbitControls(defaultCam.threeObject, renderer.domElement)
 		controls.screenSpacePanning = true
 
 		// default lighting
