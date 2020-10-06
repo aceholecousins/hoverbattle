@@ -13,6 +13,7 @@ import {wrapAngle} from "utilities/math_utils"
 import {Physics} from "domain/physics/physics"
 import {Model} from "domain/graphics/model"
 import {Arena, loadArena} from "arena/arena"
+import { ActionCam, ActionCamConfig } from "domain/actioncam"
 
 let dt = 1/100
 
@@ -20,6 +21,7 @@ let graphics:Graphics
 let physics:Physics = new P2Physics() as Physics
 let gliderAsset:Model
 let arena:Arena
+let actionCam:ActionCam
 
 let checklist = new Checklist({onComplete:start})
 
@@ -34,6 +36,9 @@ setTimeout(function(){
 	graphics = createGraphicsClient()
 	graphics.control.setSceneOrientation([-Math.SQRT1_2, 0, 0, Math.SQRT1_2])
 	initGraphicsItem.check()
+
+	actionCam = new ActionCam(graphics, new ActionCamConfig())
+	actionCam.camera.activate()
 
 	gliderAsset = graphics.model.load(
 		"glider/glider.gltf",
@@ -110,7 +115,7 @@ function start(){
 	const controller:Controller = {
 		getAbsoluteDirection(){return undefined},
 		getThrust(){return 1},
-		getTurnRate(){return 1},
+		getTurnRate(){return 0.5},
 		isShooting(){return false},
 		setPauseCallback(fn){}
 	}
@@ -120,6 +125,7 @@ function start(){
 		glider.body.position = vec2.fromValues(Math.random()*20-10, Math.random()*20-10)
 		glider.body.angle = Math.random()*1000
 		gliders.push(glider)
+		actionCam.follow(glider.body, 1.5)
 	}
 
 	setInterval(()=>{
@@ -127,6 +133,7 @@ function start(){
 			glider.update()
 		}
 		physics.step(dt)
+		actionCam.update(dt)
 		bridge.sendAll()
 	}, 1000*dt)
 }

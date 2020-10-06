@@ -1,4 +1,5 @@
 
+
 let arena = graphics.model.load(
 	"arenas/testarena2/testarena2.glb",
 	function(){
@@ -11,6 +12,7 @@ let arena = graphics.model.load(
 		})
 	}
 )
+
 
 let env = graphics.skybox.load(
 	"arenas/testarena2/environment/*.jpg",

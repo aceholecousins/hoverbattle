@@ -22,10 +22,6 @@ export class ThreeGraphicsController implements GraphicsController{
 				renderer.domElement.clientHeight,
 				false
 			)
-
-			const cam = (graphics.scene.userData as SceneInfo).activeCamera
-			cam.aspect = renderer.domElement.clientWidth / renderer.domElement.clientHeight
-			cam.updateProjectionMatrix()
 		}
 		
 		window.addEventListener('resize', resize)

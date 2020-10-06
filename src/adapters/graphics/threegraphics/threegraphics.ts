@@ -34,8 +34,7 @@ export class ThreeGraphics implements Graphics{
 	control: GraphicsController
 
 	constructor(){
-		const that = this
-
+		
 		this.scene = new THREE.Scene()
 		//@ts-ignore
 		window["scene"] = this.scene
