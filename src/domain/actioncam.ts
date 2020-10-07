@@ -10,17 +10,22 @@ export class ActionCamConfig extends CameraConfig{
 	dMin = 5
 
 	/** camera will make the image higher and wider than necessary by this factor */
-	marginFactor = 1.5
+	marginFactor = 1.33
 
-	/** time constant for camera position smoothing */
-	tauCam = 0.2
+	/** time constants for camera motion smoothing */
+	tau = {
+		xy:1.0,
+		up:0.3,
+		down:2.0,
+		focus:0.3
+	}
 
 	/** time constant for camera focus point smoothing */
 	tauFocus = 0.1
 
 	constructor(config:Partial<ActionCamConfig> = {}){
 		super(config)
-		copyIfPresent(this, config, ["dMin", "tauCam", "tauFocus", "marginFactor"])
+		copyIfPresent(this, config, ["dMin", "tau", "tauFocus", "marginFactor"])
 	}	
 }
 
@@ -39,8 +44,12 @@ export class ActionCam{
 	camera:Camera
 
 	dMin:number
-	tauCam:number
-	tauFocus:number
+	tau:{
+		xy:number,
+		up:number,
+		down:number,
+		focus:number
+	}
 
 	distanceOverWidth = 1
 	distanceOverHeight = 1
@@ -65,8 +74,7 @@ export class ActionCam{
 		}
 
 		this.dMin = config.dMin
-		this.tauCam = config.tauCam
-		this.tauFocus = config.tauFocus
+		this.tau = config.tau
 
 		this.currentPosition = config.position
 		this.currentFocus = vec3.fromValues(0, 0, 0)
@@ -106,12 +114,24 @@ export class ActionCam{
 			)
 		)
 
-		let kCam = Math.exp(-dt/this.tauCam)
-		let kFocus = Math.exp(-dt/this.tauFocus)
 		
-		vec3.lerp(this.currentPosition, target, this.currentPosition, kCam)
-		target[2] = 0
-		vec3.lerp(this.currentFocus, target, this.currentFocus, kFocus)
+
+		let kxy = Math.exp(-dt/this.tau.xy)
+		let tauz = this.currentPosition[2] < target[2]? this.tau.up : this.tau.down
+		let kz = Math.exp(-dt/tauz)
+		let kxyz = vec3.fromValues(kxy, kxy, kz)
+
+		let kfocus = Math.exp(-dt/this.tau.focus)
+		
+		for(let dim=0; dim<3; dim++){
+			this.currentPosition[dim] =
+				(1-kxyz[dim]) * target[dim] +
+				kxyz[dim] * this.currentPosition[dim]
+		}
+		
+		this.currentFocus[0] = (1-kfocus) * this.currentFocus[0] + kfocus * target[0]
+		this.currentFocus[1] = (1-kfocus) * this.currentFocus[1] + kfocus * target[1]
+
 
 		let z = vec3.subtract(vec3.create(), this.currentPosition, this.currentFocus)
 		vec3.normalize(z, z)
