@@ -19,12 +19,14 @@ import {ThreeMeshFactory} from "./threemesh"
 
 import {ThreeGraphicsController} from "./threegraphicscontroller"
 import { ThreeSkyboxLoader } from "./threeskybox"
+import { ThreeArenaLoader } from "./threearena"
 
 export class ThreeGraphics implements Graphics{
 
 	scene:THREE.Scene
 
 	model: ThreeModelLoader
+	arena: ThreeArenaLoader
 	skybox: ThreeSkyboxLoader
 
 	camera: ThreeCameraFactory
@@ -40,6 +42,7 @@ export class ThreeGraphics implements Graphics{
 		window["scene"] = this.scene
 
 		this.model = new ThreeModelLoader()
+		this.arena = new ThreeArenaLoader()
 		this.skybox = new ThreeSkyboxLoader()
 
 		this.camera = new ThreeCameraFactory(this.scene)

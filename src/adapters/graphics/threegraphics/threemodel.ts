@@ -33,7 +33,9 @@ export class ThreeModelLoader implements ModelLoader{
 			function(gltf){
 				model.threeObject = gltf.scene
 				processModel(model.threeObject)
-				onLoaded()
+				if(onLoaded !== undefined){
+					onLoaded()
+				}
 			},
 			undefined,
 			onError
