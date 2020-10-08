@@ -14,6 +14,7 @@ import {Physics} from "domain/physics/physics"
 import {Model} from "domain/graphics/model"
 import {Arena, loadArena} from "arena/arena"
 import { ActionCam, ActionCamConfig } from "domain/actioncam"
+import { TriangleConfig } from "domain/physics/triangle"
 
 let dt = 1/100
 
@@ -54,6 +55,7 @@ setTimeout(function(){
 			loadArenaItem.check()
 		}
 	)
+
 	bridge.sendAll()
 }, 0)
 

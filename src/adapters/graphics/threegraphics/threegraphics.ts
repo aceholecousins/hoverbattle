@@ -1,5 +1,5 @@
 
-import {vec3} from "gl-matrix"
+import {vec2, vec3} from "gl-matrix"
 
 import * as THREE from "three"
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls'

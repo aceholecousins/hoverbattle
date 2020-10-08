@@ -14,7 +14,8 @@ export class P2RigidBody implements RigidBody{
 
 	constructor(p2world:p2.World, config:RigidBodyConfig){
 		this.p2world = p2world
-		this.p2body = new p2.Body({mass:1}) // mass set to 1 so the body is considered DYNAMIC
+
+		this.p2body = new p2.Body() // mass set to 1 so the body is considered DYNAMIC
 
 		Object.assign(this, config)
 
@@ -28,11 +29,17 @@ export class P2RigidBody implements RigidBody{
 	}
 
 	set mass(m: number){
-		this.p2body.mass = m
+		if(m === Infinity){
+			this.p2body.type = p2.Body.STATIC
+		}
+		else{
+			this.p2body.type = p2.Body.DYNAMIC
+			this.p2body.mass = m
+		}
 		this.p2body.updateMassProperties()
 	}
 	get mass(){
-		return this.p2body.mass
+		return this.p2body.type === p2.Body.STATIC? Infinity : this.p2body.mass
 	}
 
 	set position(p: vec2){

@@ -1,8 +1,27 @@
 
 
-let arena = graphics.model.load(
+let arena = graphics.arena.load(
 	"arenas/testarena2/testarena2.glb",
-	function(){
+	function(info){
+
+		for(tri of info.boundary){
+			physics.addRigidBody(
+				{
+					mass:Infinity,
+
+					position:[0, 0],
+					velocity:[0, 0],
+					damping:0,
+				
+					angle:0,
+					angularVelocity:0,
+					angularDamping:0,
+
+					shapes:[{kind:"triangle", corners:tri}]
+				}
+			)
+		}
+
 		graphics.mesh.createFromModel({
 			kind:"mesh",
 			asset:arena,

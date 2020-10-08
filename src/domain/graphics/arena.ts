@@ -1,15 +1,14 @@
 
 import {Asset, LoadAssetFunction} from "./asset"
-import { vec2 } from "gl-matrix"
+import { TriangleCorners } from "domain/physics/triangle"
+
 
 export class Arena implements Asset<"arena">{
 	kind:"arena"
 }
 
-export type Triangle = [vec2, vec2, vec2]
-
 export interface ArenaInfo{
-	boundary: Triangle[]
+	boundary: TriangleCorners[]
 }
 
 export interface ArenaLoader{
