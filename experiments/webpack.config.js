@@ -7,7 +7,9 @@ module.exports = {
 		'alphamix/main.js': './experiments/alphamix/main.ts',
 		'renderstresstest/main.js': './experiments/renderstresstest/main.ts',
 		'gltf/main.js': './experiments/gltf/main.ts',
-		'overridecolor/main.js': './experiments/overridecolor/main.ts'
+		'overridecolor/main.js': './experiments/overridecolor/main.ts',
+		'workerbridge2/main.js': './experiments/workerbridge2/main.ts',
+		'workerbridge2/worker.js': './experiments/workerbridge2/worker.ts'
 	},
 	module: {
 		rules: [

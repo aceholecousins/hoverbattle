@@ -1,8 +1,0 @@
-
-import { Graphics } from "domain/graphics/graphics"
-
-export function forwardCameraCreation(engine:Graphics){
-	return {
-		camera: engine.camera.create
-	}
-}
