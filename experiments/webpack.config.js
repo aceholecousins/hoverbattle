@@ -9,7 +9,8 @@ module.exports = {
 		'gltf/main.js': './experiments/gltf/main.ts',
 		'overridecolor/main.js': './experiments/overridecolor/main.ts',
 		'workerbridge2/main.js': './experiments/workerbridge2/main.ts',
-		'workerbridge2/worker.js': './experiments/workerbridge2/worker.ts'
+		'workerbridge2/worker.js': './experiments/workerbridge2/worker.ts',
+		'pbr/main.js': './experiments/pbr/main.ts'
 	},
 	module: {
 		rules: [
@@ -29,7 +30,7 @@ module.exports = {
 		new CopyPlugin({
 			patterns: [
 				{
-					from: '**/*.(png|jpe?g|gif|svg|html|css|gltf|glb|ico|js)',
+					from: '**/*.(png|jpg|jpeg|gif|svg|html|css|gltf|glb|ico|js)',
 					context: 'experiments/'
 				}
 			],
