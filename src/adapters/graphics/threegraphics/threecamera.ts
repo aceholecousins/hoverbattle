@@ -4,10 +4,13 @@ import {Camera, CameraConfig, CameraFactory} from "domain/graphics/camera"
 import {SceneInfo} from "./sceneinfo"
 import * as THREE from "three"
 import {copy} from "utils"
+import { renderer } from "./threerenderer"
+import { PerspectiveCamera } from "three"
 
 export class ThreeCamera extends ThreeSceneNode<"camera"> implements Camera{
 
 	threeObject:THREE.PerspectiveCamera
+	_onAspectChange: (aspect:number)=>void
 
 	set nearClip(nc:number){
 		this.threeObject.near = nc
@@ -24,9 +27,30 @@ export class ThreeCamera extends ThreeSceneNode<"camera"> implements Camera{
 		this.threeObject.updateProjectionMatrix()
 	}
 
+	set onAspectChange(cb:(aspect:number)=>void){
+		this._onAspectChange = cb
+		cb((this.threeObject as THREE.PerspectiveCamera).aspect)
+	}
+
+	get onAspectChange(){
+		return this._onAspectChange
+	}
+
 	constructor(scene:THREE.Scene, config:CameraConfig){
-		super(scene, new THREE.PerspectiveCamera(), config)
-		copy(this, config, ["nearClip", "farClip", "verticalAngleOfViewInDeg"])
+		let threeCam = new THREE.PerspectiveCamera()
+
+		super(scene, threeCam, config)
+		copy(this, config, ["nearClip", "farClip", "verticalAngleOfViewInDeg", "onAspectChange"])
+
+		const resize = ()=>{
+			let aspect = renderer.domElement.clientWidth / renderer.domElement.clientHeight
+			threeCam.aspect = aspect
+			threeCam.updateProjectionMatrix()
+			this.onAspectChange(aspect)
+		}
+		
+		window.addEventListener('resize', resize)
+		resize()		
 	}
 
 	activate(){

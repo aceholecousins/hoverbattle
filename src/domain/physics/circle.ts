@@ -11,7 +11,7 @@ export class CircleConfig extends ShapeConfig<"circle">{
 	kind: "circle" = "circle"
 	radius = 1
 	
-	constructor(config: Partial<CircleConfig>){
+	constructor(config: Partial<CircleConfig> = {}){
 		super(config)
 		copyIfPresent(this, config, ["radius"])
 	}

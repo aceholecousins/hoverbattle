@@ -7,6 +7,8 @@ export interface Camera extends SceneNode<"camera">{
 	nearClip:number
 	farClip:number
 	verticalAngleOfViewInDeg:number
+	onAspectChange: (aspect:number)=>void
+
 	activate():void
 }
 
@@ -15,6 +17,7 @@ export class CameraConfig extends SceneNodeConfig<"camera">{
 	nearClip = 0.1
 	farClip = 1000
 	verticalAngleOfViewInDeg = 40
+	onAspectChange = function(aspect:number){}
 
 	constructor(config:Partial<CameraConfig> = {}){
 		super(config)

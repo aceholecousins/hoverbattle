@@ -7,6 +7,17 @@ export class ThreeModel extends Model{
 	threeObject:THREE.Object3D = undefined
 }
 
+function processModel(mesh:THREE.Object3D){
+	if("material" in mesh && "normalMapType" in (mesh as THREE.Mesh).material){
+		((mesh as THREE.Mesh).material as THREE.MeshStandardMaterial).normalMapType =
+				THREE.ObjectSpaceNormalMap
+	}
+
+	for(let child of mesh.children){
+		processModel(child)
+	}
+}
+
 const gltfLoader = new GLTFLoader()
 
 export class ThreeModelLoader implements ModelLoader{
@@ -21,7 +32,10 @@ export class ThreeModelLoader implements ModelLoader{
 			file,
 			function(gltf){
 				model.threeObject = gltf.scene
-				onLoaded()
+				processModel(model.threeObject)
+				if(onLoaded !== undefined){
+					onLoaded()
+				}
 			},
 			undefined,
 			onError

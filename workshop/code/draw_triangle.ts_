@@ -1,0 +1,12 @@
+triangle(a:vec2, b:vec2, c:vec2){
+	var geometry = new THREE.Geometry();
+	geometry.vertices = [
+		new THREE.Vector3(a[0],a[1],0),
+		new THREE.Vector3(b[0],b[1],0),
+		new THREE.Vector3(c[0],c[1],0)
+	] 
+	geometry.faces = [new THREE.Face3(0,1,2)];
+	var mesh = new THREE.Mesh( geometry,
+		new THREE.MeshBasicMaterial({ color: 0xffff00, side: THREE.DoubleSide }) );
+	this.scene.add(mesh);
+}
