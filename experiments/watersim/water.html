@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Adaptive Infinite Water</title>
+		<style>
+			body {
+				background-color: black;
+				overflow:hidden;
+			}
+		</style>
+	</head>
+	<body>
+
+<script src="three.js"></script>
+<script src="OrbitControls.js"></script>
+<script>
+
+var inf = 1
+var whatMap = "bumpMap"
+var RES = 256
+var DT = 1/60
+var C = 7.06/8
+
+let renderer = new THREE.WebGLRenderer()
+let displace = new THREE.TextureLoader().load('water.png')
+let mask = new THREE.TextureLoader().load('mask.png')
+displace.wrapS = THREE.RepeatWrapping
+displace.wrapT = THREE.RepeatWrapping
+
+var computeVertexShader = `
+	precision highp float;
+	precision highp int;
+
+	attribute vec2 uv;
+	attribute vec3 position;
+	uniform mat4 modelMatrix;
+	uniform mat4 modelViewMatrix;
+	uniform mat4 projectionMatrix;
+
+	varying vec2 xyWorld;
+	varying vec2 texCoords;
+
+	void main()	{
+		texCoords = uv;
+		xyWorld = (modelMatrix * vec4(position, 1.0)).xy;
+
+		gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+	}`;
+
+var computeFragmentShader = `
+	precision highp float;
+	precision highp int;
+	const float pi = 3.1415926535897932384626433832795;
+
+	uniform float c;
+	uniform float t;
+	uniform float dt;
+	uniform float h;
+	uniform float dTex;
+
+	varying vec2 xyWorld;
+	varying vec2 texCoords;
+	
+	uniform sampler2D lastTex;
+	uniform sampler2D displace;
+	uniform sampler2D maskTex;
+
+	float smoothClampSym(float x, float lim){
+		return x;
+		return sin(clamp(x/lim, -0.5*pi, 0.5*pi))*lim;
+	}
+
+	mat2 rot(float phi){
+		float c = cos(phi);
+		float s = sin(phi);
+		return mat2(c, s, -s, c);
+	}
+
+	void main()	{
+		
+		float dt_clamp = dt < 0.1? dt : 0.1;
+		vec4 last = texture2D(lastTex, texCoords);
+		float mask = texture2D(maskTex, texCoords).r;
+		//mask = 1.0 - pow(1.0-mask, 10.0);
+		mask = 1.0 - (1.0-mask)*0.05;
+
+		float z_map = 0.0;
+		for(int i=0; i<7; i++){
+			float f = float(i)*1000.0;
+			z_map += texture2D(displace,
+				rot(f)*xyWorld*0.3 + vec2(c*t + 4.0*f, 0.0)
+			).r;
+		}
+		z_map = z_map/7.0 * 2.0 - 1.0;
+
+		float zSelf_1 = last.r;
+		float vSelf_1 = (last.g); 
+		float aSelf_1 = 0.0;//(last.b)*10.0;
+
+		float zLeft_1 = texture2D(lastTex, texCoords + vec2(-dTex, 0)).r;
+		float zRight_1 = texture2D(lastTex, texCoords + vec2(dTex, 0)).r;
+		float zTop_1 = texture2D(lastTex, texCoords + vec2(0, dTex)).r;
+		float zBottom_1 = texture2D(lastTex, texCoords + vec2(0, -dTex)).r;
+
+		float aSelf = aSelf_1 + c*c/h/h * (zLeft_1 + zRight_1 + zTop_1 + zBottom_1 - 4.0*zSelf_1);
+		aSelf = aSelf * mask;
+		float vSelf = smoothClampSym(vSelf_1 + aSelf*dt_clamp, 10.0);
+		vSelf = vSelf * mask;
+		vSelf = vSelf * 0.999;
+		float zSelf = smoothClampSym(zSelf_1 + vSelf*dt_clamp, 10.0);
+		zSelf = zSelf * mask;
+
+		gl_FragColor = vec4(zSelf, vSelf, 0.5, 1.0);
+		
+
+		/*
+		// Mine
+		vec4 last = texture2D(lastTex, texCoords);
+		float zLast = last.r;
+		float vLast = last.g;
+
+		float zLeftLast = texture2D(lastTex, texCoords + vec2(-dTex, 0)).r;
+		float zRightLast = texture2D(lastTex, texCoords + vec2(dTex, 0)).r;
+		float zTopLast = texture2D(lastTex, texCoords + vec2(0, dTex)).r;
+		float zBottomLast = texture2D(lastTex, texCoords + vec2(0, -dTex)).r;
+		
+		float avg = 0.25 * (zLeftLast + zRightLast + zTopLast + zBottomLast);
+		
+		// smoothing
+		zLast = zLast * 0.95 + avg * 0.05;
+
+		float a = c*c/h/h * 4.0 * (avg - zLast);
+		float v = vLast + a*dt;
+		//v = v*0.99;
+		float z = zLast + v*dt;
+
+		gl_FragColor = vec4(z, v, 0.0, 1.0);
+		/**/
+
+		/*
+		// Book
+		vec4 last = texture2D(lastTex, texCoords);
+		float zLast = last.r;
+		float zLastLast = last.g;
+
+		float zLeftLast = texture2D(lastTex, texCoords + vec2(-dTex, 0)).r;
+		float zRightLast = texture2D(lastTex, texCoords + vec2(dTex, 0)).r;
+		float zTopLast = texture2D(lastTex, texCoords + vec2(0, dTex)).r;
+		float zBottomLast = texture2D(lastTex, texCoords + vec2(0, -dTex)).r;
+
+		float k = c*c*dt*dt/h/h;
+		//k=0.501;
+		float z = k * (zLeftLast + zRightLast + zTopLast + zBottomLast) + (2.0-4.0*k)*zLast - zLastLast;
+
+		gl_FragColor = vec4(z, zLast, 0.0, 1.0);
+		/**/
+
+		/*
+		// Three.js
+		vec4 last = texture2D(lastTex, texCoords);
+		float zLast = last.r;
+		float zLastLast = last.g;
+
+		float zLeftLast = texture2D(lastTex, texCoords + vec2(-dTex, 0)).r;
+		float zRightLast = texture2D(lastTex, texCoords + vec2(dTex, 0)).r;
+		float zTopLast = texture2D(lastTex, texCoords + vec2(0, dTex)).r;
+		float zBottomLast = texture2D(lastTex, texCoords + vec2(0, -dTex)).r;
+
+		float z = (zLeftLast + zRightLast + zTopLast + zBottomLast)/2.0 - zLastLast;
+
+		gl_FragColor = vec4(z, zLast, 0.0, 1.0);
+		/**/
+
+		/*
+		// wallace
+		vec4 last = texture2D(lastTex, texCoords);
+		float zLast = last.r;
+		float vLast = last.g;
+
+		float zLeftLast = texture2D(lastTex, texCoords + vec2(-dTex, 0)).r;
+		float zRightLast = texture2D(lastTex, texCoords + vec2(dTex, 0)).r;
+		float zTopLast = texture2D(lastTex, texCoords + vec2(0, dTex)).r;
+		float zBottomLast = texture2D(lastTex, texCoords + vec2(0, -dTex)).r;
+
+		float avg = (zLeftLast + zRightLast + zTopLast + zBottomLast)*0.25;
+
+		float v = vLast + (avg - zLast) * 2.0;
+		float z = zLast + v;
+		gl_FragColor = vec4(z, v, 0.0, 1.0);
+		/**/
+	}`;
+
+
+class WaterSim{
+	res
+	t0
+	tLast
+
+	texScene
+	texCamera
+	texScreen
+
+	renderTargets = []
+	currentTarget = 0
+	material
+
+	buoy
+
+	constructor(res){
+		this.t0 = performance.now()/1000
+		this.tLast = this.t0
+		this.res = res
+		this.texScene = new THREE.Scene()
+		this.texCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 2)
+		this.texScene.add(this.texCamera)
+
+		for(let i=0; i<2; i++){
+			this.renderTargets[i] = 
+				new THREE.WebGLRenderTarget(this.res, this.res, {
+				wrapS: THREE.ClampToEdgeWrapping,
+				wrapT: THREE.ClampToEdgeWrapping,
+				minFilter: THREE.LinearFilter,
+				magFilter: THREE.LinearFilter,
+				//minFilter: THREE.NearestFilter,
+				//magFilter: THREE.NearestFilter,
+				format: THREE.RGBAFormat,
+				//type: THREE.UnsignedByteType,
+				type: THREE.FloatType,
+				depthBuffer: false
+			})
+		}
+
+		let geom = new THREE.PlaneGeometry(2, 2)
+		this.material = new THREE.RawShaderMaterial({
+			uniforms: {
+				c:{value: C},
+				lastTex:{value: null},
+				t:{value: 0},
+				dt:{value: 0},
+				h:{value: 0},
+				dTex:{value: 1.0/this.res},
+				displace:{value: displace},
+				maskTex:{value: mask}
+			},
+			vertexShader: computeVertexShader,
+			fragmentShader: computeFragmentShader
+		})
+
+		this.texScreen = new THREE.Mesh(geom, this.material)
+		this.texScene.add(this.texScreen)
+
+		//*
+		let buoyGeom = new THREE.PlaneGeometry(1, 1)
+		let buoyTex = new THREE.TextureLoader().load('gauss.png')
+		let buoyMat = new THREE.MeshBasicMaterial({
+			color:0x100000,
+			map:buoyTex,
+			//blending:THREE.SubtractiveBlending
+			blending:THREE.AdditiveBlending
+		})
+		
+		this.buoy = new THREE.Mesh(buoyGeom, buoyMat)
+		this.buoy.position.z = 0.1
+		/*/
+
+
+		this.buoy = new THREE.Mesh(
+			new THREE.SphereGeometry(0.5, 50, 50),
+			new THREE.MeshBasicMaterial({color:"black"})
+		)
+		/**/
+
+		this.texScene.add(this.buoy)
+
+	}
+
+	update(x, y, r){
+
+		this.currentTarget = 1 - this.currentTarget
+		let oldTarget = renderer.getRenderTarget()
+		renderer.setRenderTarget(this.renderTargets[this.currentTarget])
+
+		/*
+		let t = this.tLast + dt;//performance.now()/1000/LAPSE - this.t0
+		let dt = 1/60/LAPSE//t - this.tLast
+		this.tLast = t
+		/*/
+		let dt = DT//t - this.tLast
+		let t = this.tLast + dt;//performance.now()/1000/LAPSE - this.t0
+		this.tLast = t
+		/**/
+
+		this.material.uniforms.lastTex.value =
+			this.renderTargets[1-this.currentTarget].texture
+		this.material.uniforms.t.value = t
+		this.material.uniforms.dt.value = dt
+		this.material.uniforms.h.value = 2*r/this.res
+
+		this.texCamera.position.x = x
+		this.texCamera.position.y = y
+		this.texCamera.position.z = 1
+		this.texCamera.left = -r
+		this.texCamera.right = r
+		this.texCamera.top = r
+		this.texCamera.bottom = -r
+		this.texCamera.updateProjectionMatrix()
+
+		this.buoy.position.x = Math.sin(3*t)*3;
+		this.buoy.position.y = Math.cos(5.2*t)*3;
+
+		renderer.render(this.texScene, this.texCamera)
+		renderer.setRenderTarget(oldTarget)
+
+		this.texScreen.position.x = x
+		this.texScreen.position.y = y
+		this.texScreen.scale.x = r
+		this.texScreen.scale.y = r
+	}
+
+	getCurrentTexture(){
+		return this.renderTargets[this.currentTarget].texture
+	}
+}
+
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+var scene = new THREE.Scene();
+var camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 100);
+var controls = new THREE.OrbitControls(camera, renderer.domElement)
+
+var geometry = new THREE.PlaneGeometry(2, 2);
+let waterSim = new WaterSim(RES)
+
+var waterMaterial = new THREE.MeshStandardMaterial({
+	color:"white",
+	[whatMap]:waterSim.getCurrentTexture()}
+)
+
+let sun = new THREE.PointLight()
+sun.position.set(3, 3, 3)
+scene.add(sun)
+
+var water = new THREE.Mesh(geometry, waterMaterial);
+scene.add(water);
+
+camera.position.z = 3;
+
+let t=0;
+
+function animate() {
+	requestAnimationFrame(animate);
+
+	t += DT
+
+	x = Math.sin(t*2)
+	y = Math.cos(t*2)
+	r = Math.cos(t*3)+3
+	/*x = 0
+	y = 0
+	r = 5*/
+
+	waterSim.update(x, y, r)
+
+	water.position.x = x
+	water.position.y = y
+	water.scale.x = r
+	water.scale.y = r
+
+	waterMaterial[whatMap] = waterSim.getCurrentTexture()
+
+	renderer.render(scene, camera);
+}
+animate();
+
+</script>
+
+	</body>
+</html>
