@@ -37,7 +37,7 @@ let sphere = new THREE.Mesh(
 	new THREE.MeshStandardMaterial()
 )
 scene.add(sphere)
-window["sphere"] = sphere
+;(window as any)["sphere"] = sphere
 
 
 run(function(time:any){})
