@@ -3,17 +3,17 @@ import {bridge} from "worker/worker"
 import {ThreeGraphics} from "adapters/graphics/threegraphics/threegraphics"
 import {createGraphicsServer} from "adapters/graphics/graphicsbridge/graphicsserver"
 import { Keyboard } from "adapters/controller/keyboard"
-import { createControllerServer } from "adapters/controller/controllerbridge/controllerserver"
+import { ControllerServer } from "adapters/controller/controllerbridge/controllerserver"
 
 let graphics = new ThreeGraphics()
 createGraphicsServer(graphics)
 
-let keyboard = new Keyboard()
-createControllerServer(keyboard)
+let keybaordServer = new ControllerServer(new Keyboard(), "keybaord")
 
 function animate(time:number){
 	requestAnimationFrame(animate)
 	graphics.control.update(time)
+	keybaordServer.update()
 	bridge.sendAll()
 }
 requestAnimationFrame(animate)

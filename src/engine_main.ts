@@ -59,7 +59,7 @@ setTimeout(function(){
 		}
 	)
 
-	controller = createControllerClient()
+	controller = createControllerClient("keyboard")
 
 	bridge.sendAll()
 }, 0)

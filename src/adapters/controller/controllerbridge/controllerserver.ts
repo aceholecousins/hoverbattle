@@ -1,8 +1,16 @@
 import { Controller } from "domain/controller/controller";
 import { bridge } from "worker/worker";
+import { ControllerBridge } from "./controllerbridge";
 
-export const CONTROLLER_SERVER_KEY = "controllerServer"
+export class ControllerServer {
 
-export function createControllerServer(controller:Controller) {
-	bridge.register(controller, CONTROLLER_SERVER_KEY)
+	private controllerBridge:ControllerBridge
+
+	constructor(private controller:Controller, bridgeKey:string) {
+		this.controllerBridge = bridge.createProxy(bridgeKey)
+	}
+
+	update() {
+		this.controllerBridge.setThrust(this.controller.getThrust())
+	}
 }
