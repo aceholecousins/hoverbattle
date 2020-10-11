@@ -15,6 +15,7 @@ import {Model} from "domain/graphics/model"
 import {Arena, loadArena} from "arena/arena"
 import { ActionCam, ActionCamConfig } from "domain/actioncam"
 import { TriangleConfig } from "domain/physics/triangle"
+import { createControllerClient } from "adapters/controller/controllerbridge/controllerclient"
 
 let dt = 1/100
 
@@ -29,6 +30,8 @@ let checklist = new Checklist({onComplete:start})
 let initGraphicsItem = checklist.newItem()
 let loadGliderItem = checklist.newItem()
 let loadArenaItem = checklist.newItem()
+
+let controller:Controller
 
 setTimeout(function(){
 	// when we are not using a worker, we have to be sure that the graphics server
@@ -55,6 +58,8 @@ setTimeout(function(){
 			loadArenaItem.check()
 		}
 	)
+
+	controller = createControllerClient()
 
 	bridge.sendAll()
 }, 0)
@@ -114,13 +119,7 @@ function start(){
 		asset:gliderAsset
 	})
 
-	const controller:Controller = {
-		getAbsoluteDirection(){return undefined},
-		getThrust(){return 1},
-		getTurnRate(){return 0.5},
-		isShooting(){return false},
-		setPauseCallback(fn){}
-	}
+
 	let gliders:Glider[] = []
 	for(let i=0; i<10; i++){
 		let glider = new Glider(gliderBodyCfg, gliderModelCfg, controller)
