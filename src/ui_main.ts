@@ -8,7 +8,7 @@ import { ControllerServer } from "adapters/controller/controllerbridge/controlle
 let graphics = new ThreeGraphics()
 createGraphicsServer(graphics)
 
-let keybaordServer = new ControllerServer(new Keyboard(), "keybaord")
+let keybaordServer = new ControllerServer(new Keyboard(), "keyboard")
 
 function animate(time:number){
 	requestAnimationFrame(animate)
