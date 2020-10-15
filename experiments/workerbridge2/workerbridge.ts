@@ -1,4 +1,6 @@
 
+// OBSOLETE, use the bridge in src/worker
+
 /*
 Paradigms:
 
