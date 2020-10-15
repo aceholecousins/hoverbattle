@@ -6,6 +6,7 @@
 import { BridgeMsg, CallMsg, DisposeMsg, LinkMsg, NewMsg, RegisterMsg, SetMsg } from "./messages"
 import {DEBUG, DBG_ME, DBG_OTHER} from "./debug"
 import { WorkerBridge } from "./workerbridge"
+import { resolveReferences } from "./referencify"
 
 export function handleMessage(bridge:WorkerBridge, msg:BridgeMsg){
 	switch(msg.kind){
@@ -70,7 +71,7 @@ function handleLinkage(bridge:WorkerBridge, msg:LinkMsg){
 
 function handleCall(bridge:WorkerBridge, msg:CallMsg){
 	let result = bridge.localRegistry[msg.id](
-		...bridge.resolveReferences(msg.args)
+		...resolveReferences(bridge, msg.args)
 	)
 	if(
 		typeof(result) === "object" ||
@@ -98,7 +99,7 @@ function handleCall(bridge:WorkerBridge, msg:CallMsg){
 
 function handleNew(bridge:WorkerBridge, msg:NewMsg){
 	let result = new bridge.localRegistry[msg.id](
-		...bridge.resolveReferences(msg.args)
+		...resolveReferences(bridge, msg.args)
 	)
 	if(DEBUG){
 		console.log(DBG_ME, "[", bridge.localOtherIndexCounter, "] is the new", result)
@@ -108,7 +109,7 @@ function handleNew(bridge:WorkerBridge, msg:NewMsg){
 
 function handlePropertySet(bridge:WorkerBridge, msg:SetMsg){
 	bridge.localRegistry[msg.id][msg.prop] =
-		bridge.resolveReferences(msg.val)
+		resolveReferences(bridge, msg.val)
 }
 
 function handleDispose(bridge:WorkerBridge, msg: DisposeMsg){
