@@ -10,7 +10,8 @@ module.exports = {
 		'overridecolor/main.js': './experiments/overridecolor/main.ts',
 		'workerbridge2/main.js': './experiments/workerbridge2/main.ts',
 		'workerbridge2/worker.js': './experiments/workerbridge2/worker.ts',
-		'pbr/main.js': './experiments/pbr/main.ts'
+		'pbr/main.js': './experiments/pbr/main.ts',
+		'bridgetest/test.js': './experiments/bridgetest/test.ts'
 	},
 	module: {
 		rules: [

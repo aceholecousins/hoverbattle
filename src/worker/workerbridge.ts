@@ -9,119 +9,48 @@ Paradigms:
   going to persist in the registry and won't get garbage collected
 */
 
-const DEBUG = false
-const DBG_ME = window.document === undefined? "worker" : "window"
-const DBG_OTHER = window.document === undefined? "window" : "worker"
+import { DBG_LOG, DBG_ME, DBG_OTHER } from "./debug"
+import { handleMessage } from "./handlers"
+import {ID, Key, makeLazyPath, Reference} from "./path"
+import { BridgeMsg, CallMsg, DisposeMsg, LinkMsg, NewMsg, RegisterMsg, SetMsg } from "./messages"
 
-import {Kind} from "utils"
 type Pod = any
-
-type Key = string // for explicitly registered objects
-type Index = number // for automatically registered objects
-type ID = Key | Index // for all objects
-type Path = ID[] // for relating a proxy via its parent (or grandparent etc.)
-type LazyPath = ()=>Path // for lazy evaluation
-type Reference = ID | LazyPath
-
-function makeLazyPath(parent: Reference, prop: string){
-	// a lazy path is a function that returns a path when it's called
-	return function(){
-		if(typeof(parent) === "function"){ // the parent is itself a lazy path
-			return [...parent(), prop]
-		}
-		else{ // the parent is already a directly linked reference
-			return [parent, prop]
-		}
-	}
-}
 
 type TaggedCallback = Function & {__cb__?:number}
 
-// generic message
-interface Msg<K extends Kind>{
-	kind:K
-}
-
-/**
- * hand shake
- */
-interface ReadyMsg extends Msg<"ready">{}
-
-/**
- * {kind:"link", path:["myObj", "a", "b", "c"]} means \
- * registry[indexCounter++] = registry["myObj"].a.b.c \
- * so a proxy that was before only related to its remote target through its parent
- * now gets its own entry in the remote registry
- */
-interface LinkMsg extends Msg<"link">{
-	path:Path
-}
-
-/**
- * registry[id].prop = val \
- * if the value contains any callbacks, they will be registered
- */
-interface SetMsg extends Msg<"set">{
-	id:ID
-	prop:ID
-	val:any
-}
-
-/**
- * registry[indexCounter++] = registry[id]([...args])
- * if the args contain any callbacks, they will be registered
- */
-interface CallMsg extends Msg<"call">{
-	id:ID
-	args:any[]
-}
-
-/**
- * registry[indexCounter++] = new registry[id]([...args])
- */
-interface NewMsg extends Msg<"new">{
-	id:ID
-	args:any[]
-}
-
-
-/**
- * registry[id].dispose() // if defined
- * delete registry[id]
- */
-interface DisposeMsg extends Msg<"del">{
-	id:ID
-}
-
-
-type BridgeMsg = ReadyMsg | LinkMsg | SetMsg | CallMsg | NewMsg | DisposeMsg
-
 export class WorkerBridge{
 	
-	private worker:Worker = undefined
-	private connected = false
-	private sendWhenConnected = false
+	worker:Worker = undefined
+	connected = false
+	sendWhenConnected = false
 
 	// locally stored objects
 	// (typescript complains about key:Key and about key:(string | number) )
-	private objectRegistry:{
+	localRegistry:{
 		[key: string]: any,
 		[index: number]: any
+	} = {}
+
+	// remotely manually registered objects
+	remoteRegistry = new Set<string>()
+
+	pendingProxies:{
+		[key: string]: (()=>void)[] // array of promise resolver functions
 	} = {}
 	
 	// counter for locally stored anonymous objects
 	// whose creation was caused by this side, counts positive
-	private localOwnIndexCounter = 1
+	localOwnIndexCounter = 1
 	// counter for locally stored anonymous objects
 	// whose creation was caused by the other side, counts negative
-	private localOtherIndexCounter = -1
+	localOtherIndexCounter = -1
 
 	// counter for remotely stored anonymous objects
 	// whose creation was caused by the remote side itself, counts positive
-	private remoteOwnIndexCounter = 1
+	remoteOwnIndexCounter = 1
 	// counter for remotely stored anonymous objects
 	// whose creation was caused by this side, counts negative
-	private remoteOtherIndexCounter = -1
+	remoteOtherIndexCounter = -1
 
 	/** leave worker empty when calling from inside a worker
 	 * and building a bridge to the window */
@@ -138,8 +67,8 @@ export class WorkerBridge{
 		}
 	}
 
-	private msgQueue: BridgeMsg[] = []
-	private enqueueMsg(msg:BridgeMsg){
+	msgQueue: BridgeMsg[] = []
+	enqueueMsg(msg:BridgeMsg){
 		this.msgQueue.push(msg)
 	}
 
@@ -148,11 +77,9 @@ export class WorkerBridge{
 			return
 		}
 
-		if(DEBUG){
-			console.log(DBG_ME, "->", DBG_OTHER, ":")
-			for(let msg of this.msgQueue){
-				console.log("-> " + JSON.stringify(msg))
-			}
+		DBG_LOG(DBG_ME, "->", DBG_OTHER, ":")
+		for(let msg of this.msgQueue){
+			DBG_LOG("-> " + JSON.stringify(msg))
 		}
 
 		if(this.worker !== undefined){
@@ -172,132 +99,50 @@ export class WorkerBridge{
 		}
 	}
 
-	private handleReady(){
-		this.connected = true
-		if(this.sendWhenConnected){
-			this.sendAll()
-		}
-	}
-
-	private handleLinkage(msg: LinkMsg){
-		let obj:any = this.objectRegistry
-		for(let field of (msg as LinkMsg).path){
-			let child = obj[field]
-			if(typeof(child) === "function"){
-				child = child.bind(obj) // make sure we keep "this"
-			}
-			obj = child
-		}
-		if(typeof(obj) !== "object" && typeof(obj) !== "function"){
-			throw new Error("tried to link a field which is not an object or a method: " + msg.path)
-		}
-		if(DEBUG){
-			console.log(DBG_ME, "[", this.localOtherIndexCounter, "] =")
-			console.log(obj)
-		}
-		this.objectRegistry[this.localOtherIndexCounter--] = obj
-	}
-
-	private handleCall(msg: CallMsg){
-		let result = this.objectRegistry[msg.id](
-			...this.resolveReferences(msg.args)
-		)
-		if(
-			typeof(result) === "object" ||
-			typeof(result) === "function"
-		){
-			if(DEBUG){
-				console.log(DBG_ME, "[", this.localOtherIndexCounter, "] is result", result)
-			}
-			this.objectRegistry[this.localOtherIndexCounter--] = result
-		}
-		else{
-			if(result !== undefined){
-				console.warn("result of remotely called function will be ignored")
-			}
-			// the remote side will inc its counter so we also have to
-			if(DEBUG){
-				console.log(
-					DBG_ME, "discards result", result,
-					"and skips index", this.localOtherIndexCounter
-				)
-			}
-			this.localOtherIndexCounter--
-		}
-	}
-
-	private handleNew(msg: NewMsg){
-		let result = new this.objectRegistry[msg.id](
-			...this.resolveReferences(msg.args)
-		)
-		if(DEBUG){
-			console.log(DBG_ME, "[", this.localOtherIndexCounter, "] is the new", result)
-		}
-		this.objectRegistry[this.localOtherIndexCounter--] = result
-	}
-
-	private handlePropertySet(msg: SetMsg){
-		this.objectRegistry[msg.id][msg.prop] =
-			this.resolveReferences(msg.val)
-	}
-
-	private handleDispose(msg: DisposeMsg){
-		if(this.objectRegistry[msg.id].dispose !== undefined){
-			this.objectRegistry[msg.id].dispose()
-		}
-		delete this.objectRegistry[msg.id]
-	}
-
-	private receive(event:MessageEvent){
+	receive(event:MessageEvent){
 		for(let i in event.data){
 			let msg = event.data[i] as BridgeMsg
-			if(DEBUG){
-				console.log(DBG_ME, "handles")
-				console.log(msg)
-			}
-			switch(msg.kind){
-				case "ready":
-					this.handleReady()
-					break
-				case "link":
-					this.handleLinkage(msg)
-					break
-				case "call":
-					this.handleCall(msg)
-					break
-				case "new":
-					this.handleNew(msg)
-					break
-				case "set":
-					this.handlePropertySet(msg)
-					break
-				case "del":
-					this.handleDispose(msg)
-					break
-			}
+			DBG_LOG(DBG_ME, "handles")
+			DBG_LOG(msg)
+			handleMessage(this, msg)
 		}
 	}
 
 	/** register an object for being accessible by the remote side */
 	register(object:Object, name:string){
-		if(DEBUG){
-			console.log(DBG_ME, "[", name, "] =", object)
-		}
-		this.objectRegistry[name] = object
+		DBG_LOG(DBG_ME, "[", name, "] =", object)
+		this.localRegistry[name] = object
+		this.enqueueMsg({kind:"reg", id:name})
 	}
 
 	/** create a proxy for an object on the remote side */
-	createProxy(remoteKey: Key){
+	async createProxy(remoteKey: Key){
 		// this function is an interface to the outside, it only allows reference
 		// to targets that were explicitly registered on the remote side
 		if(!isNaN(remoteKey as any)){
 			throw new Error("numeric indices are reserved for anonymous objects")
 		}
-		return this._createProxy(remoteKey)
+		if(remoteKey in this.remoteRegistry){
+			return this._createProxy(remoteKey)
+		}
+		else{
+			let bridge = this
+			return new Promise(function(resolve, reject){
+				if(!(remoteKey in bridge.pendingProxies))
+				{
+					bridge.pendingProxies[remoteKey] = []
+				}
+				bridge.pendingProxies[remoteKey].push(
+					function(){
+						resolve(bridge._createProxy(remoteKey))
+					}
+				)
+			})
+		}
 	}
 
 	// more general proxy creation, also for anonymous objects and child objects
-	private _createProxy(ref: Reference):any{
+	_createProxy(ref: Reference):any{
 		// ref defines how this proxy relates to its target on the other side
 		// - ID as Key means, the proxied object was explicitly registered
 		//   on the remote side with a name
@@ -306,10 +151,8 @@ export class WorkerBridge{
 		// - LazyPath means that this proxy relates to its target by being a field
 		//   of its parent proxy
 
-		if(DEBUG){
-			console.log(DBG_ME, "creates proxy to", 
-				JSON.stringify((typeof(ref) === "function")? ref() : ref))
-		}
+		DBG_LOG(DBG_ME, "creates proxy to", 
+			JSON.stringify((typeof(ref) === "function")? ref() : ref))
 
 		// keep track of all the members that were get-ed
 		let children:{[key: string]:any}={}
@@ -321,12 +164,11 @@ export class WorkerBridge{
 		// It gets an index entry in the remote registry.
 		function resolvePath():ID {
 			if(typeof(ref) === "function"){
-				if(DEBUG){
-					console.log(
-						DBG_ME, "requests",
-						DBG_OTHER, "[", bridge.remoteOtherIndexCounter, "] =", JSON.stringify(ref())
-					)
-				}
+				DBG_LOG(
+					DBG_ME, "requests",
+					DBG_OTHER, "[", bridge.remoteOtherIndexCounter, "] =", JSON.stringify(ref())
+				)
+
 				bridge.enqueueMsg({kind:"link", path:ref()})
 				ref = bridge.remoteOtherIndexCounter--
 			}
@@ -357,6 +199,9 @@ export class WorkerBridge{
 			},
 
 			get(target:any, prop:string, receiver:any){
+				if(prop === "then"){
+					return // nothing so this proxy cannot act as a promise
+				}
 				if(prop === "__ref__"){
 					return resolvePath()
 				}
@@ -375,12 +220,10 @@ export class WorkerBridge{
 					id:resolvePath(),
 					args:bridge.referencifyObject(args)
 				})
-				if(DEBUG){
-					console.log(
-						DBG_ME, "calls", DBG_OTHER, "[", resolvePath(), "]",
-						", store result in", DBG_OTHER, "[", bridge.remoteOtherIndexCounter, "]"
-					)
-				}
+				DBG_LOG(
+					DBG_ME, "calls", DBG_OTHER, "[", resolvePath(), "]",
+					", store result in", DBG_OTHER, "[", bridge.remoteOtherIndexCounter, "]"
+				)
 				return bridge._createProxy(bridge.remoteOtherIndexCounter--)
 			},
 
@@ -390,30 +233,27 @@ export class WorkerBridge{
 					id:resolvePath(),
 					args:bridge.referencifyObject(args)
 				})
-				if(DEBUG){
-					console.log(
-						DBG_ME, "calls new on", DBG_OTHER, "[", resolvePath(), "]",
-						", store object in", DBG_OTHER, "[", bridge.remoteOtherIndexCounter, "]"
-					)
-				}
+				DBG_LOG(
+					DBG_ME, "calls new on", DBG_OTHER, "[", resolvePath(), "]",
+					", store object in", DBG_OTHER, "[", bridge.remoteOtherIndexCounter, "]"
+				)
 				return bridge._createProxy(bridge.remoteOtherIndexCounter--)
 			}
 		})
 	}
 
-	private referencifyFunction(fn:TaggedCallback){
+	referencifyFunction(fn:TaggedCallback){
 		if(fn.__cb__ === undefined){
 			// tag this function with a __cb__ index
 			// so that it will not be indexed multiple times
 			// TODO: if we allow the bridge to be reset, all tagged
 			// functions must be untagged
-			if(DEBUG){
-				console.log(DBG_ME, "[", this.localOwnIndexCounter, "] = callback")
-				console.log(fn)
-			}
+			DBG_LOG(DBG_ME, "[", this.localOwnIndexCounter, "] = callback")
+			DBG_LOG(fn)
+
 			let newIndex = this.localOwnIndexCounter++
 			fn.__cb__ = newIndex
-			this.objectRegistry[newIndex] = fn
+			this.localRegistry[newIndex] = fn
 			return {__cb__:"new"}
 		}
 		else{
@@ -421,7 +261,7 @@ export class WorkerBridge{
 		}
 	}
 
-	private referencifyChildren(obj:any){
+	referencifyChildren(obj:any){
 		let copy:any = Array.isArray(obj)? [] : {}
 
 		for(let key in obj){
@@ -447,7 +287,7 @@ export class WorkerBridge{
 	// scan an object for functions, store local references for them
 	// and replace the functions with the references
 	// this is for sending callbacks through the worker bridge
-	private referencifyObject(value:any):Pod{
+	referencifyObject(value:any):Pod{
 		switch(typeof(value)){
 			case "number":
 			case "string":
@@ -469,7 +309,7 @@ export class WorkerBridge{
 		throw new Error("unsendable type: " + typeof(value))
 	}
 
-	private resolveReferenceMembers(obj:any){
+	resolveReferenceMembers(obj:any){
 		if("__cb__" in obj){
 			if(typeof(obj["__cb__"]) === "number"){
 				// reference to a callback that was already registered before
@@ -479,12 +319,11 @@ export class WorkerBridge{
 				return this._createProxy(obj["__cb__"])
 			}
 			else if(obj["__cb__"] === "new"){
-				if(DEBUG){
-					console.log(
-						DBG_ME, "expects that",
-						DBG_OTHER, "[", this.remoteOwnIndexCounter, "] is a callback"
-					)
-				}
+				DBG_LOG(
+					DBG_ME, "expects that",
+					DBG_OTHER, "[", this.remoteOwnIndexCounter, "] is a callback"
+				)
+				
 				// return a new proxy to a newly registered callback
 				return this._createProxy(this.remoteOwnIndexCounter++)
 			}
@@ -505,7 +344,7 @@ export class WorkerBridge{
 				typeof(obj["__ref__"]) === "string"
 			){
 				// the remote object is a proxy, return the registry entry
-				return this.objectRegistry[obj.__ref__]
+				return this.localRegistry[obj.__ref__]
 			}
 			else if(obj["__ref__"] === true){
 				// a child or a grandchild etc. is a proxy
@@ -523,7 +362,7 @@ export class WorkerBridge{
 		}
 	}
 
-	private resolveReferences(value:Pod):any{
+	resolveReferences(value:Pod):any{
 		switch(typeof(value)){
 			case "number":
 			case "string":

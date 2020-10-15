@@ -114,5 +114,5 @@ const myCustomConfig:CustomThingConfig = {
 
 let myCustomThing = myManager.addThing(myCustomConfig)
 // doesn't work, type not inferred :/
-myCustomThing.customProp
+//myCustomThing.customProp
 

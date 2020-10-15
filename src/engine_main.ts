@@ -30,11 +30,11 @@ let initGraphicsItem = checklist.newItem()
 let loadGliderItem = checklist.newItem()
 let loadArenaItem = checklist.newItem()
 
-setTimeout(function(){
+async function initGraphics(){
 	// when we are not using a worker, we have to be sure that the graphics server
 	// is registered at the bridge dummy before the client requests it
 	// so we use a timeout here
-	graphics = createGraphicsClient()
+	graphics = await createGraphicsClient()
 	graphics.control.setSceneOrientation([-Math.SQRT1_2, 0, 0, Math.SQRT1_2])
 	initGraphicsItem.check()
 
@@ -57,8 +57,8 @@ setTimeout(function(){
 	)
 
 	bridge.sendAll()
-}, 0)
-
+}
+initGraphics()
 
 
 class Glider{
