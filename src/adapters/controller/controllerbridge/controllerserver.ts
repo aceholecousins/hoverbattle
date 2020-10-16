@@ -7,10 +7,14 @@ export class ControllerServer {
 	private controllerBridge:ControllerBridge
 
 	constructor(private controller:Controller, bridgeKey:string) {
-		this.controllerBridge = bridge.createProxy(bridgeKey)
+		bridge.createProxy(bridgeKey)
+			.then(it => this.controllerBridge = it)
+			.catch(reason => console.error("Failed to create ControllerBridge proxy for key " + bridgeKey + ". Reason: " + reason))
 	}
 
 	update() {
-		this.controllerBridge.setThrust(this.controller.getThrust())
+		if(this.controllerBridge !== undefined) {
+			this.controllerBridge.setThrust(this.controller.getThrust())
+		}
 	}
 }
