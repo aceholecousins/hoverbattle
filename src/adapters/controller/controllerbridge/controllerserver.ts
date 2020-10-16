@@ -14,7 +14,10 @@ export class ControllerServer {
 
 	update() {
 		if(this.controllerBridge !== undefined) {
+			this.controllerBridge.setAbsoluteDirection(this.controller.getAbsoluteDirection())
+			this.controllerBridge.setTurnRate(this.controller.getTurnRate())
 			this.controllerBridge.setThrust(this.controller.getThrust())
+			this.controllerBridge.setShooting(this.controller.isShooting())
 		}
 	}
 }

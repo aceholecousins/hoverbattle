@@ -10,25 +10,37 @@ export function createControllerClient(bridgeKey:string):Controller {
 
 class ControllerClient implements ControllerBridge, Controller {
 	
+	private absobulteDirection:number
+	private turnRate:number
 	private thrust:number = 0
-
+	private shooting:boolean = false
+	
 	getAbsoluteDirection(): number {
-		return 0
+		return this.absobulteDirection
 	}
 	getTurnRate(): number {
-		return 0
+		return this.turnRate
 	}
 	getThrust(): number {
 		return this.thrust
 	}
 	isShooting(): boolean {
-		return false
+		return this.shooting
 	}
 	setPauseCallback(callback: () => void): void {
 		
 	}
-
+	
+	setAbsoluteDirection(value: number): void {
+		this.absobulteDirection = value
+	}
+	setTurnRate(value: number): void {
+		this.turnRate = value
+	}
 	setThrust(value: number): void {
 		this.thrust = value
+	}
+	setShooting(value: boolean): void {
+		this.shooting = value
 	}
 }
