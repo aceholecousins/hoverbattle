@@ -79,12 +79,12 @@ class Glider{
 	}
 
 	update(){
-		this.thrust = this.controller.getThrust() * 10;
+		this.thrust = this.controller.getThrust() * 20;
 		this.body.applyLocalForce(vec2.fromValues(this.thrust, 0))
 
 		const turnRate = this.controller.getTurnRate()
 		if(turnRate != undefined) {
-			this.body.applyTorque(turnRate * 10)
+			this.body.applyTorque(turnRate * 20)
 		}
 		const direction = this.controller.getAbsoluteDirection()
 		if(direction != undefined) {
