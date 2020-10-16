@@ -15,6 +15,7 @@ import {Model} from "domain/graphics/model"
 import {Arena, loadArena} from "arena/arena"
 import { ActionCam, ActionCamConfig } from "domain/actioncam"
 import { TriangleConfig } from "domain/physics/triangle"
+import { createControllerClient } from "adapters/controller/controllerbridge/controllerclient"
 
 let dt = 1/100
 
@@ -30,7 +31,10 @@ let initGraphicsItem = checklist.newItem()
 let loadGliderItem = checklist.newItem()
 let loadArenaItem = checklist.newItem()
 
+let controller:Controller = createControllerClient("keyboard")
+
 async function initGraphics(){
+	
 	// when we are not using a worker, we have to be sure that the graphics server
 	// is registered at the bridge dummy before the client requests it
 	// so we use a timeout here
@@ -75,12 +79,12 @@ class Glider{
 	}
 
 	update(){
-		this.thrust = this.controller.getThrust() * 10;
+		this.thrust = this.controller.getThrust() * 20;
 		this.body.applyLocalForce(vec2.fromValues(this.thrust, 0))
 
 		const turnRate = this.controller.getTurnRate()
 		if(turnRate != undefined) {
-			this.body.applyTorque(turnRate * 10)
+			this.body.applyTorque(turnRate * 20)
 		}
 		const direction = this.controller.getAbsoluteDirection()
 		if(direction != undefined) {
@@ -114,13 +118,7 @@ function start(){
 		asset:gliderAsset
 	})
 
-	const controller:Controller = {
-		getAbsoluteDirection(){return undefined},
-		getThrust(){return 1},
-		getTurnRate(){return 0.5},
-		isShooting(){return false},
-		setPauseCallback(fn){}
-	}
+
 	let gliders:Glider[] = []
 	for(let i=0; i<10; i++){
 		let glider = new Glider(gliderBodyCfg, gliderModelCfg, controller)

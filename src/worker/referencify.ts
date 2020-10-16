@@ -54,6 +54,7 @@ export function referencifyChildren(bridge:WorkerBridge, obj:any){
 // this is for sending callbacks through the worker bridge
 export function referencifyObject(bridge:WorkerBridge, value:any):Pod{
 	switch(typeof(value)){
+		case "undefined":
 		case "number":
 		case "string":
 		case "boolean":
@@ -129,6 +130,7 @@ export function resolveReferenceMembers(bridge:WorkerBridge, obj:any){
 
 export function resolveReferences(bridge:WorkerBridge, value:Pod):any{
 	switch(typeof(value)){
+		case "undefined":
 		case "number":
 		case "string":
 		case "boolean":
