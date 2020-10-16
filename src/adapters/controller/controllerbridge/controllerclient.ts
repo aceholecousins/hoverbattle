@@ -28,7 +28,7 @@ class ControllerClient implements ControllerBridge, Controller {
 		return this.shooting
 	}
 	setPauseCallback(callback: () => void): void {
-		
+		throw new Error("Method not implemented.");
 	}
 	
 	setAbsoluteDirection(value: number): void {
