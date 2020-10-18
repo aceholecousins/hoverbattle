@@ -1,6 +1,11 @@
 import { Controller } from "domain/controller/controller";
+import { ControllerManager } from "domain/controller/controllermanager";
 import { bridge } from "worker/worker";
 import { ControllerBridge } from "./controllerbridge";
+
+export async function createControllerManagerClient():Promise<ControllerManager> {
+	return await bridge.createProxy("controllerManager") as ControllerManager
+}
 
 export function createControllerClient(bridgeKey:string):Controller {
 	let controllerClient = new ControllerClient()

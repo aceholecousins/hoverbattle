@@ -1,6 +1,11 @@
 import { Controller } from "domain/controller/controller";
+import { ControllerManager } from "domain/controller/controllermanager";
 import { bridge } from "worker/worker";
 import { ControllerBridge } from "./controllerbridge";
+
+export function createControllerManagerServer(controllerManager:ControllerManager) {
+	bridge.register(controllerManager, "controllerManager")
+}
 
 export class ControllerServer {
 
