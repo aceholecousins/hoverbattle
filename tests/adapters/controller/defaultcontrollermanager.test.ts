@@ -10,12 +10,10 @@ describe('Test DefaultControllerManager', () => {
 	let controllerManager: DefaultControllerManager
 
 	before(() => {
-		controllerManager = new DefaultControllerManager(document)
+		controllerManager = new DefaultControllerManager()
 	})
 
 	it('Initial State', () => {
-		let controllers = controllerManager.getAllConnectedControllers();
-		expect(controllers).to.be.empty
 	})
 
 	

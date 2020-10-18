@@ -1,10 +1,10 @@
 import { Controller } from "./controller";
 
+export type ConnectionListener = (controller: Controller, connected:boolean) => void
+
 export interface ControllerManager {
 
-	getAllConnectedControllers(): Controller[]
+	addConnectionListener(connectionChanged: ConnectionListener): void
 
-	addConnectionListener(connectionChanged: (controller: Controller, connected:boolean) => void): void
-
-	removeConnectionListener(callbackToBeRemoved: any): void
+	removeConnectionListener(callbackToBeRemoved: ConnectionListener): void
 }

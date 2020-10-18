@@ -1,22 +1,37 @@
-import { ControllerManager } from "domain/controller/controllermanager";
+import { ConnectionListener, ControllerManager } from "domain/controller/controllermanager";
 import { Controller } from "domain/controller/controller";
+import { Keyboard } from "./keyboard";
 
 export class DefaultControllerManager implements ControllerManager {
 
 	private connectedControllers:Map<string, Controller> = new Map()
+	private connectionListeners:Set<ConnectionListener> = new Set()
 
-	constructor(document:Document) {
+	constructor() {
+		this.initKeyboard()
 
 	}
 
-	getAllConnectedControllers(): Controller[] {
-		return Array.from(this.connectedControllers.values())
+	addConnectionListener(callback: ConnectionListener): void {
+		this.connectionListeners.add(callback)
+		for (const controller of this.connectedControllers.values()) {
+			callback(controller, true)
+		}
 	}
-	addConnectionListener(connectionChanged: (controller: Controller, connected: boolean) => void): void {
-		throw new Error("Method not implemented.");
+
+	removeConnectionListener(callbackToBeRemoved: ConnectionListener): void {
+		this.connectionListeners.delete(callbackToBeRemoved)
 	}
-	removeConnectionListener(callbackToBeRemoved: any): void {
-		throw new Error("Method not implemented.");
+
+	private initKeyboard():void {
+		this.addController("keyboard", new Keyboard())
+	}
+
+	private addController(key:string, controller:Controller) {
+		this.connectedControllers.set(key, controller)
+		for (const callback of this.connectionListeners) {
+			callback(controller, true)
+		}
 	}
 	
 }
