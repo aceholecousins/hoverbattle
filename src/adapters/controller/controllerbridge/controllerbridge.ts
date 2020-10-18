@@ -1,5 +1,3 @@
-import { Controller } from "domain/controller/controller";
-import { ControllerClient } from "./controllerclient";
 
 export interface ControllerBridge {
 

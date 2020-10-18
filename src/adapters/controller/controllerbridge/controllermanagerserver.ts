@@ -30,11 +30,15 @@ export class ControllerManagerServer{
 	}
 
 	private controllerAdded(controller: Controller) {
-		let bridgeKey = "controller" + ++this.newControllerCounter
-		this.controllerMap.set(bridgeKey, new ControllerServer(controller, bridgeKey)			)
+		let bridgeKey = this.createRandomBridgeKey()
+		this.controllerMap.set(bridgeKey, new ControllerServer(controller, bridgeKey))
 		if(this.controllerManagerBridge !== undefined) {
 			this.controllerManagerBridge.controllerAdded(bridgeKey)
 		}
+	}
+
+	private createRandomBridgeKey() {
+		return "controller" + ++this.newControllerCounter;
 	}
 
 	update() {

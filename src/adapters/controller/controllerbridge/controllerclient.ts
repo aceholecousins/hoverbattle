@@ -10,7 +10,7 @@ export function createControllerClient(bridgeKey:string):Controller {
 	return controllerClient
 }
 
-export class ControllerClient implements ControllerBridge, Controller {
+class ControllerClient implements ControllerBridge, Controller {
 	
 	private absobulteDirection:number
 	private turnRate:number
