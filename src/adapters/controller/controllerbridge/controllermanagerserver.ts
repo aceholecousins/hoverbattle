@@ -6,6 +6,8 @@ import { ControllerServer } from "./controllerserver";
 
 export class ControllerManagerServer{
 
+	private newControllerCounter = 0
+
 	private controllerManagerBridge:ControllerManagerBridge
 
 	private controllerMap:Map<string,ControllerServer> = new Map()
@@ -28,7 +30,7 @@ export class ControllerManagerServer{
 	}
 
 	private controllerAdded(controller: Controller) {
-		let bridgeKey = "randomNumber5424523"
+		let bridgeKey = "controller" + ++this.newControllerCounter
 		this.controllerMap.set(bridgeKey, new ControllerServer(controller, bridgeKey)			)
 		if(this.controllerManagerBridge !== undefined) {
 			this.controllerManagerBridge.controllerAdded(bridgeKey)
