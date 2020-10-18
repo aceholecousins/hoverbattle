@@ -4,7 +4,7 @@ import { bridge } from "worker/worker";
 import { ControllerManagerBridge } from "./controllerbridge";
 import { createControllerClient } from "./controllerclient";
 
-export async function createControllerManagerClient(bridgeKey:string):Promise<ControllerManager> {
+export function createControllerManagerClient(bridgeKey:string):ControllerManager {
 	let client = new ControllerManagerClient()
 	bridge.register(client, bridgeKey)
 	return client

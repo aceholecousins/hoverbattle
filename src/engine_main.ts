@@ -31,11 +31,8 @@ let checklist = new Checklist({onComplete:start})
 let initGraphicsItem = checklist.newItem()
 let loadGliderItem = checklist.newItem()
 let loadArenaItem = checklist.newItem()
-let initControllerItem = checklist.newItem()
 
-let controller:Controller = createControllerClient("keyboard")
-
-let controllerManager:ControllerManager
+let controllerManager:ControllerManager = createControllerManagerClient("controllerManager")
 
 async function initGraphics(){
 	
@@ -67,13 +64,7 @@ async function initGraphics(){
 	bridge.sendAll()
 }
 
-async function initController() {
-	controllerManager = await createControllerManagerClient("controllerManager")
-	initControllerItem.check()
-}
-
 initGraphics()
-initController()
 
 class Glider{
 	body:RigidBody
