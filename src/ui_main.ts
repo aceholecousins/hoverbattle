@@ -2,20 +2,18 @@
 import {bridge} from "worker/worker"
 import {ThreeGraphics} from "adapters/graphics/threegraphics/threegraphics"
 import {createGraphicsServer} from "adapters/graphics/graphicsbridge/graphicsserver"
-import { Keyboard } from "adapters/controller/keyboard"
-import { ControllerServer, createControllerManagerServer } from "adapters/controller/controllerbridge/controllerserver"
 import { DefaultControllerManager } from "adapters/controller/defaultcontrollermanager"
+import { ControllerManagerServer } from "adapters/controller/controllerbridge/controllermanagerserver"
 
 let graphics = new ThreeGraphics()
 createGraphicsServer(graphics)
 
-createControllerManagerServer(new DefaultControllerManager())
-let keybaordServer = new ControllerServer(new Keyboard(), "keyboard")
+let controllerManagerServer = new ControllerManagerServer(new DefaultControllerManager(), "controllerManager")
 
 function animate(time:number){
 	requestAnimationFrame(animate)
 	graphics.control.update(time)
-	keybaordServer.update()
+	controllerManagerServer.update()
 	bridge.sendAll()
 }
 requestAnimationFrame(animate)

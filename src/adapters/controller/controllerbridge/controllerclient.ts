@@ -3,9 +3,6 @@ import { ControllerManager } from "domain/controller/controllermanager";
 import { bridge } from "worker/worker";
 import { ControllerBridge } from "./controllerbridge";
 
-export async function createControllerManagerClient():Promise<ControllerManager> {
-	return await bridge.createProxy("controllerManager") as ControllerManager
-}
 
 export function createControllerClient(bridgeKey:string):Controller {
 	let controllerClient = new ControllerClient()
@@ -13,7 +10,7 @@ export function createControllerClient(bridgeKey:string):Controller {
 	return controllerClient
 }
 
-class ControllerClient implements ControllerBridge, Controller {
+export class ControllerClient implements ControllerBridge, Controller {
 	
 	private absobulteDirection:number
 	private turnRate:number

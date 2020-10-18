@@ -4,7 +4,7 @@ export type ConnectionListener = (controller: Controller, connected:boolean) => 
 
 export interface ControllerManager {
 
-	addConnectionListener(connectionChanged: ConnectionListener): void
+	addConnectionListener(callback: ConnectionListener): void
 
 	removeConnectionListener(callbackToBeRemoved: ConnectionListener): void
 }

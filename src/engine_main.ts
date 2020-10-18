@@ -14,8 +14,9 @@ import {Physics} from "domain/physics/physics"
 import {Model} from "domain/graphics/model"
 import {Arena, loadArena} from "arena/arena"
 import { ActionCam, ActionCamConfig } from "domain/actioncam"
-import { createControllerClient, createControllerManagerClient } from "adapters/controller/controllerbridge/controllerclient"
+import { createControllerClient } from "adapters/controller/controllerbridge/controllerclient"
 import { ControllerManager } from "domain/controller/controllermanager"
+import { createControllerManagerClient } from "adapters/controller/controllerbridge/controllermanagerclient"
 
 let dt = 1/100
 
@@ -67,7 +68,7 @@ async function initGraphics(){
 }
 
 async function initController() {
-	controllerManager = await createControllerManagerClient()
+	controllerManager = await createControllerManagerClient("controllerManager")
 	initControllerItem.check()
 }
 
@@ -130,11 +131,13 @@ function start(){
 
 	let gliders:Glider[] = []
 	controllerManager.addConnectionListener((controller, connected) => {
-		let glider = new Glider(gliderBodyCfg, gliderModelCfg, controller)
-		glider.body.position = vec2.fromValues(Math.random()*20-10, Math.random()*20-10)
-		glider.body.angle = Math.random()*1000
-		gliders.push(glider)
-		actionCam.follow(glider.body, 1.5)
+		for (let i = 0; i < 10; i++) {
+			let glider = new Glider(gliderBodyCfg, gliderModelCfg, controller)
+			glider.body.position = vec2.fromValues(Math.random()*20-10, Math.random()*20-10)
+			glider.body.angle = Math.random()*1000
+			gliders.push(glider)
+			actionCam.follow(glider.body, 1.5)
+		}
 	})
 
 	setInterval(()=>{
