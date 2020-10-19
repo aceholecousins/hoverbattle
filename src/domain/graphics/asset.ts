@@ -7,8 +7,8 @@ export interface Asset<K extends Kind>{
 
 // we want to allow to pass info about the loaded asset back via callback parameter
 // so it can travel through the worker bridge (a return value can only be a proxy, no data)
-export type LoadAssetFunction<T extends Asset<any>, I=void> = (
+export type LoadAssetFunction<T extends Asset<any>, M=void> = (
 	file: string,
-	onLoaded?: I extends void? ()=>void : (info:I)=>void,
+	onLoaded?: M extends void? ()=>void : (meta:M)=>void,
 	onError?:(err:ErrorEvent)=>void
 ) => T
