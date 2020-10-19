@@ -1,10 +1,10 @@
 
 
-let arena = graphics.arena.load(
+let arena = graphics.model.load(
 	"arenas/testarena2/testarena2.glb",
-	function(info){
+	function(meta){
 
-		for(tri of info.boundary){
+		for(tri of meta.collision){
 			physics.addRigidBody(
 				{
 					mass:Infinity,
