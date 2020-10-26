@@ -1,6 +1,6 @@
 import { Controller } from "./controller";
 
-export type ConnectionListener = (controller: Controller, connected:boolean) => void
+export type ConnectionListener = (controller: Controller) => void
 
 export interface ControllerManager {
 

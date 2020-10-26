@@ -18,7 +18,7 @@ class ControllerManagerClient implements ControllerManagerBridge, ControllerMana
 	addConnectionListener(callback: ConnectionListener): void {
 		this.connectionListeners.add(callback)
 		for (const controller of this.connectedControllers.values()) {
-			callback(controller, true)
+			callback(controller)
 		}
 	}
 	removeConnectionListener(callbackToBeRemoved: ConnectionListener): void {
@@ -29,7 +29,7 @@ class ControllerManagerClient implements ControllerManagerBridge, ControllerMana
 		const controller = createControllerClient(bridgeKey);
 		this.connectedControllers.set(bridgeKey, controller)
 		for (const callback of this.connectionListeners) {
-			callback(controller, true)
+			callback(controller)
 		}
 	}
 }

@@ -9,13 +9,12 @@ export class DefaultControllerManager implements ControllerManager {
 
 	constructor() {
 		this.initKeyboard()
-
 	}
 
 	addConnectionListener(callback: ConnectionListener): void {
 		this.connectionListeners.add(callback)
 		for (const controller of this.connectedControllers.values()) {
-			callback(controller, true)
+			callback(controller)
 		}
 	}
 
@@ -30,7 +29,7 @@ export class DefaultControllerManager implements ControllerManager {
 	private addController(key:string, controller:Controller) {
 		this.connectedControllers.set(key, controller)
 		for (const callback of this.connectionListeners) {
-			callback(controller, true)
+			callback(controller)
 		}
 	}
 	
