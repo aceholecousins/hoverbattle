@@ -4,25 +4,28 @@ import { bridge } from "worker/worker";
 import { ControllerManagerBridge } from "./controllerbridge";
 import { ControllerServer } from "./controllerserver";
 
-export class ControllerManagerServer{
+export class ControllerManagerServer {
 
 	private newControllerCounter = 0
 
-	private controllerManagerBridge:ControllerManagerBridge
+	private controllerManagerBridge: ControllerManagerBridge
 
-	private controllerMap:Map<string,ControllerServer> = new Map()
+	private controllerMap: Map<string, ControllerServer> = new Map()
 
-	constructor(controllerManager:ControllerManager, bridgeKey:string) {
-
+	constructor(controllerManager: ControllerManager, bridgeKey: string) {
 		controllerManager.addConnectionListener(this.controllerAdded.bind(this))
-
-		bridge.createProxy(bridgeKey)
-			.then(it => {
-				this.controllerManagerBridge = it
-				this.publishAllControllers()
-			})
-			.catch(reason => console.error("Failed to create ControllerManagerBridge proxy for key " + bridgeKey + ". Reason: " + reason))
+		this.initProxy(bridgeKey)
 	}
+
+	private async initProxy(bridgeKey: string) {
+		try {
+			this.controllerManagerBridge = await bridge.createProxy(bridgeKey)
+			this.publishAllControllers()
+		} catch (err) {
+			console.error("Failed to create ControllerManagerBridge proxy for key " + bridgeKey + ". Reason: " + err)
+		}
+	}
+
 	private publishAllControllers() {
 		for (const bridgeKey of this.controllerMap.keys()) {
 			this.controllerManagerBridge.controllerAdded(bridgeKey)
@@ -32,7 +35,7 @@ export class ControllerManagerServer{
 	private controllerAdded(controller: Controller) {
 		let bridgeKey = this.createRandomBridgeKey()
 		this.controllerMap.set(bridgeKey, new ControllerServer(controller, bridgeKey))
-		if(this.controllerManagerBridge !== undefined) {
+		if (this.controllerManagerBridge !== undefined) {
 			this.controllerManagerBridge.controllerAdded(bridgeKey)
 		}
 	}
