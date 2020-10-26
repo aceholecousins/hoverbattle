@@ -2,7 +2,11 @@ import { Controller } from "domain/controller/controller";
 import { bridge } from "worker/worker";
 import { ControllerBridge } from "./controllerbridge";
 
-
+/**
+ * Creates a new client in the engine for a Controller which is connected to the UI
+ * 
+ * @param bridgeKey Key to identify the Controller. Has to match the ControllerServer on the UI side.
+ */
 export function createControllerClient(bridgeKey:string):Controller {
 	let controllerClient = new ControllerClient()
 	bridge.register(controllerClient, bridgeKey)

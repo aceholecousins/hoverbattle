@@ -4,6 +4,11 @@ import { bridge } from "worker/worker";
 import { ControllerManagerBridge } from "./controllerbridge";
 import { createControllerClient } from "./controllerclient";
 
+/**
+ * Creates a client in the engine for the ControllerManager on the UI side.
+ * 
+* @param bridgeKey Key to identify the ControllerManager. Has to match the ControllerManagerServer on the UI side.
+ */
 export function createControllerManagerClient(bridgeKey:string):ControllerManager {
 	let client = new ControllerManagerClient()
 	bridge.register(client, bridgeKey)

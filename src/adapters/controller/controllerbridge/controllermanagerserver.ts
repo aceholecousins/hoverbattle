@@ -4,6 +4,10 @@ import { bridge } from "worker/worker";
 import { ControllerManagerBridge } from "./controllerbridge";
 import { ControllerServer } from "./controllerserver";
 
+/**
+ * Wraps the ControllerManager on the UI side with a layer to communication with a corresponding Client on
+ * engine side.
+ */
 export class ControllerManagerServer {
 
 	private newControllerCounter = 0
@@ -12,6 +16,10 @@ export class ControllerManagerServer {
 
 	private controllerMap: Map<string, ControllerServer> = new Map()
 
+	/**
+	 * @param controllerManager The ControllerManager to wrap
+	 * @param bridgeKey The communication key which has to match the corresponding client
+	 */
 	constructor(controllerManager: ControllerManager, bridgeKey: string) {
 		controllerManager.addConnectionListener(this.controllerAdded.bind(this))
 		this.initProxy(bridgeKey)
@@ -44,6 +52,10 @@ export class ControllerManagerServer {
 		return "controller" + ++this.newControllerCounter;
 	}
 
+	/**
+	 * Updates all managed ControllerServers.
+	 * Has to be called on a regular basis.
+	 */
 	update() {
 		for (const controllerServer of this.controllerMap.values()) {
 			controllerServer.update()
