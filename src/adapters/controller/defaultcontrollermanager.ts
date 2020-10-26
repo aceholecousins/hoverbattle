@@ -4,7 +4,7 @@ import { Keyboard } from "./keyboard";
 
 export class DefaultControllerManager implements ControllerManager {
 
-	private connectedControllers:Map<string, Controller> = new Map()
+	private connectedControllers:Set<Controller> = new Set()
 	private connectionCallbacks:Set<ConnectionCallback> = new Set()
 
 	constructor() {
@@ -13,7 +13,7 @@ export class DefaultControllerManager implements ControllerManager {
 
 	addConnectionCallback(callback: ConnectionCallback): void {
 		this.connectionCallbacks.add(callback)
-		for (const controller of this.connectedControllers.values()) {
+		for (const controller of this.connectedControllers) {
 			callback(controller)
 		}
 	}
@@ -23,11 +23,11 @@ export class DefaultControllerManager implements ControllerManager {
 	}
 
 	private initKeyboard():void {
-		this.addController("keyboard", new Keyboard())
+		this.addController(new Keyboard())
 	}
 
-	private addController(key:string, controller:Controller) {
-		this.connectedControllers.set(key, controller)
+	private addController(controller:Controller) {
+		this.connectedControllers.add(controller)
 		for (const callback of this.connectionCallbacks) {
 			callback(controller)
 		}

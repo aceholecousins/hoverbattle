@@ -17,12 +17,12 @@ export function createControllerManagerClient(bridgeKey:string):ControllerManage
 
 class ControllerManagerClient implements ControllerManagerBridge, ControllerManager{
 
-	private connectedControllers:Map<string, Controller> = new Map()
+	private connectedControllers:Set<Controller> = new Set()
 	private connectionCallbacks:Set<ConnectionCallback> = new Set()
 
 	addConnectionCallback(callback: ConnectionCallback): void {
 		this.connectionCallbacks.add(callback)
-		for (const controller of this.connectedControllers.values()) {
+		for (const controller of this.connectedControllers) {
 			callback(controller)
 		}
 	}
@@ -32,7 +32,7 @@ class ControllerManagerClient implements ControllerManagerBridge, ControllerMana
 
 	controllerAdded(bridgeKey: string): void {
 		const controller = createControllerClient(bridgeKey);
-		this.connectedControllers.set(bridgeKey, controller)
+		this.connectedControllers.add(controller)
 		for (const callback of this.connectionCallbacks) {
 			callback(controller)
 		}
