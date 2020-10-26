@@ -3,7 +3,7 @@ import { Controller } from "./controller";
 /**
  * Callback definition for getting notified about new Controllers
  */
-export type ConnectionListener = (controller: Controller) => void
+export type ConnectionCallback = (controller: Controller) => void
 
 /**
  * Interface of a manager taking care of newly connected Conrollres.
@@ -16,11 +16,11 @@ export interface ControllerManager {
 	 * Add a callback which is called whenever a new Controller is connected for the first time.
 	 * @param callback Callback to be called in that case
 	 */
-	addConnectionListener(callback: ConnectionListener): void
+	addConnectionCallback(callback: ConnectionCallback): void
 
 	/**
 	 * Remove a callback again. The callback needs to be the same that has been registered.
 	 * @param callbackToBeRemoved Callback to be removed
 	 */
-	removeConnectionListener(callbackToBeRemoved: ConnectionListener): void
+	removeConnectionCallback(callbackToBeRemoved: ConnectionCallback): void
 }

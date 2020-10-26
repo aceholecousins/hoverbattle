@@ -120,7 +120,7 @@ function start(){
 
 
 	let gliders:Glider[] = []
-	controllerManager.addConnectionListener((controller) => {
+	controllerManager.addConnectionCallback((controller) => {
 		for (let i = 0; i < 10; i++) {
 			let glider = new Glider(gliderBodyCfg, gliderModelCfg, controller)
 			glider.body.position = vec2.fromValues(Math.random()*20-10, Math.random()*20-10)

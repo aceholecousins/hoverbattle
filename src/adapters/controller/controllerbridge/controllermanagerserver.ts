@@ -21,7 +21,7 @@ export class ControllerManagerServer {
 	 * @param bridgeKey The communication key which has to match the corresponding client
 	 */
 	constructor(controllerManager: ControllerManager, bridgeKey: string) {
-		controllerManager.addConnectionListener(this.controllerAdded.bind(this))
+		controllerManager.addConnectionCallback(this.controllerAdded.bind(this))
 		this.initProxy(bridgeKey)
 	}
 

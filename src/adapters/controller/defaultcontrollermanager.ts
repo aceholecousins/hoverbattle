@@ -1,25 +1,25 @@
-import { ConnectionListener, ControllerManager } from "domain/controller/controllermanager";
+import { ConnectionCallback, ControllerManager } from "domain/controller/controllermanager";
 import { Controller } from "domain/controller/controller";
 import { Keyboard } from "./keyboard";
 
 export class DefaultControllerManager implements ControllerManager {
 
 	private connectedControllers:Map<string, Controller> = new Map()
-	private connectionListeners:Set<ConnectionListener> = new Set()
+	private connectionCallbacks:Set<ConnectionCallback> = new Set()
 
 	constructor() {
 		this.initKeyboard()
 	}
 
-	addConnectionListener(callback: ConnectionListener): void {
-		this.connectionListeners.add(callback)
+	addConnectionCallback(callback: ConnectionCallback): void {
+		this.connectionCallbacks.add(callback)
 		for (const controller of this.connectedControllers.values()) {
 			callback(controller)
 		}
 	}
 
-	removeConnectionListener(callbackToBeRemoved: ConnectionListener): void {
-		this.connectionListeners.delete(callbackToBeRemoved)
+	removeConnectionCallback(callbackToBeRemoved: ConnectionCallback): void {
+		this.connectionCallbacks.delete(callbackToBeRemoved)
 	}
 
 	private initKeyboard():void {
@@ -28,7 +28,7 @@ export class DefaultControllerManager implements ControllerManager {
 
 	private addController(key:string, controller:Controller) {
 		this.connectedControllers.set(key, controller)
-		for (const callback of this.connectionListeners) {
+		for (const callback of this.connectionCallbacks) {
 			callback(controller)
 		}
 	}

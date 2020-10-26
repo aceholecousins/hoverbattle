@@ -1,5 +1,5 @@
 import { Controller } from "domain/controller/controller";
-import { ConnectionListener, ControllerManager } from "domain/controller/controllermanager";
+import { ConnectionCallback, ControllerManager } from "domain/controller/controllermanager";
 import { bridge } from "worker/worker";
 import { ControllerManagerBridge } from "./controllerbridge";
 import { createControllerClient } from "./controllerclient";
@@ -18,22 +18,22 @@ export function createControllerManagerClient(bridgeKey:string):ControllerManage
 class ControllerManagerClient implements ControllerManagerBridge, ControllerManager{
 
 	private connectedControllers:Map<string, Controller> = new Map()
-	private connectionListeners:Set<ConnectionListener> = new Set()
+	private connectionCallbacks:Set<ConnectionCallback> = new Set()
 
-	addConnectionListener(callback: ConnectionListener): void {
-		this.connectionListeners.add(callback)
+	addConnectionCallback(callback: ConnectionCallback): void {
+		this.connectionCallbacks.add(callback)
 		for (const controller of this.connectedControllers.values()) {
 			callback(controller)
 		}
 	}
-	removeConnectionListener(callbackToBeRemoved: ConnectionListener): void {
-		this.connectionListeners.delete(callbackToBeRemoved)
+	removeConnectionCallback(callbackToBeRemoved: ConnectionCallback): void {
+		this.connectionCallbacks.delete(callbackToBeRemoved)
 	}
 
 	controllerAdded(bridgeKey: string): void {
 		const controller = createControllerClient(bridgeKey);
 		this.connectedControllers.set(bridgeKey, controller)
-		for (const callback of this.connectionListeners) {
+		for (const callback of this.connectionCallbacks) {
 			callback(controller)
 		}
 	}
