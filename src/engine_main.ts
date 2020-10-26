@@ -14,8 +14,8 @@ import {Physics} from "domain/physics/physics"
 import {Model} from "domain/graphics/model"
 import {Arena, loadArena} from "arena/arena"
 import { ActionCam, ActionCamConfig } from "domain/actioncam"
-import { TriangleConfig } from "domain/physics/triangle"
-import { createControllerClient } from "adapters/controller/controllerbridge/controllerclient"
+import { ControllerManager } from "domain/controller/controllermanager"
+import { createControllerManagerClient } from "adapters/controller/controllerbridge/controllermanagerclient"
 
 let dt = 1/100
 
@@ -31,7 +31,7 @@ let initGraphicsItem = checklist.newItem()
 let loadGliderItem = checklist.newItem()
 let loadArenaItem = checklist.newItem()
 
-let controller:Controller = createControllerClient("keyboard")
+let controllerManager = createControllerManagerClient("controllerManager")
 
 async function initGraphics(){
 	
@@ -62,8 +62,8 @@ async function initGraphics(){
 
 	bridge.sendAll()
 }
-initGraphics()
 
+initGraphics()
 
 class Glider{
 	body:RigidBody
@@ -120,13 +120,15 @@ function start(){
 
 
 	let gliders:Glider[] = []
-	for(let i=0; i<10; i++){
-		let glider = new Glider(gliderBodyCfg, gliderModelCfg, controller)
-		glider.body.position = vec2.fromValues(Math.random()*20-10, Math.random()*20-10)
-		glider.body.angle = Math.random()*1000
-		gliders.push(glider)
-		actionCam.follow(glider.body, 1.5)
-	}
+	controllerManager.addConnectionCallback((controller) => {
+		for (let i = 0; i < 10; i++) {
+			let glider = new Glider(gliderBodyCfg, gliderModelCfg, controller)
+			glider.body.position = vec2.fromValues(Math.random()*20-10, Math.random()*20-10)
+			glider.body.angle = Math.random()*1000
+			gliders.push(glider)
+			actionCam.follow(glider.body, 1.5)
+		}
+	})
 
 	setInterval(()=>{
 		for(let glider of gliders){
