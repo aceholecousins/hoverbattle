@@ -31,7 +31,7 @@ let initGraphicsItem = checklist.newItem()
 let loadGliderItem = checklist.newItem()
 let loadArenaItem = checklist.newItem()
 
-let controllerManager:ControllerManager = createControllerManagerClient("controllerManager")
+let controllerManager = createControllerManagerClient("controllerManager")
 
 async function initGraphics(){
 	
