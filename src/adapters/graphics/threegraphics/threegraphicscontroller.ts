@@ -8,6 +8,8 @@ import { Skybox } from "domain/graphics/skybox"
 import { ThreeSkybox } from "./threeskybox"
 import { LightProbeGenerator } from 'three/examples/jsm/lights/LightProbeGenerator.js'
 import * as THREE from "three"
+import { Arena } from "domain/graphics/arena"
+import { ThreeArena } from "./threearena"
 
 export class ThreeGraphicsController implements GraphicsController{
 
@@ -26,6 +28,10 @@ export class ThreeGraphicsController implements GraphicsController{
 		
 		window.addEventListener('resize', resize)
 		resize()
+	}
+
+	setArena(arena:Arena){
+		this.graphics.scene.add((arena as ThreeArena).threeObject)
 	}
 
 	setSceneOrientation(q:quat){

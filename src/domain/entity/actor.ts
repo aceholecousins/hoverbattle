@@ -19,7 +19,7 @@ export class Role<I>{
 export class RoleSet{
 	bits:number = 0
 	mask:number = 0
-	list:Role<any>[] = []
+	set:Set<Role<any>> = new Set()
 }
 
 export interface Actor{
@@ -29,7 +29,7 @@ export interface Actor{
 export function assignRole<I>(actor:Actor & I, role:Role<I>){
 	Object.freeze(role) // role must not be changed after this
 	if((actor.roles.bits & role.bit) == 0){
-		actor.roles.list[role.bit] = role
+		actor.roles.set.add(role)
 		actor.roles.bits |= role.bit
 		actor.roles.mask |= role.mask
 	}
@@ -37,10 +37,10 @@ export function assignRole<I>(actor:Actor & I, role:Role<I>){
 
 export function revokeRole<I>(actor:Actor & I, role:Role<I>){
 	if((actor.roles.bits & role.bit) == 1){
-		delete actor.roles.list[role.bit]
+		actor.roles.set.delete(role)
 		actor.roles.bits &= (0xFFFFFFFF ^ role.bit)
 		actor.roles.mask = 0
-		for (let role of actor.roles.list){
+		for (let role of actor.roles.set){
 			this.mask |= role.mask
 		}
 	}

@@ -10,8 +10,8 @@ export interface Mesh extends SceneNode<"mesh">{
 
 export class MeshConfig extends SceneNodeConfig<"mesh">{
 	kind: "mesh" = "mesh"
-	baseColor: Color
-	accentColor: Color
+	baseColor: Color = {r:1, g:1, b:1}
+	accentColor: Color = {r:1, g:1, b:1}
 
 	constructor(config: Partial<MeshConfig> = {}){
 		super(config)

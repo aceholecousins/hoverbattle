@@ -2,7 +2,7 @@ import { Actor, Role, RoleSet, assignRole, revokeRole } from "./actor"
 import { Mesh } from "../graphics/mesh"
 import { RigidBody } from "../physics/rigidbody"
 
-export abstract class Entity implements Actor{
+export class Entity implements Actor{
 
 	roles:RoleSet
 	body:RigidBody
@@ -13,5 +13,5 @@ export abstract class Entity implements Actor{
 	}
 
 	//exert(influence:Influence)
-	abstract update():void
+	update(){}
 }

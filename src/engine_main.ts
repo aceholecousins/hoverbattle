@@ -12,20 +12,22 @@ import {Controller} from "domain/controller/controller"
 import {wrapAngle} from "utilities/math_utils"
 import {Physics} from "domain/physics/physics"
 import {Model} from "domain/graphics/model"
-import {Arena, loadArena} from "arena/arena"
+//import {Arena, loadArena} from "arena/arena"
+import {Arena} from "domain/graphics/arena"
 import { ActionCam, ActionCamConfig } from "domain/actioncam"
 import { TriangleConfig } from "domain/physics/triangle"
 import { createControllerClient } from "adapters/controller/controllerbridge/controllerclient"
 import { Entity } from "domain/entity/entity"
 import { Actor, Role, assignRole, revokeRole, interact } from "domain/entity/actor"
 import { NumberKeyframeTrack } from "three"
+import { CollisionHandler, CollisionOverride } from "domain/physics/collision"
+
 
 let dt = 1/100
 
 let graphics:Graphics
 let physics:Physics = new P2Physics() as Physics
 let gliderAsset:Model
-let arena:Arena
 let actionCam:ActionCam
 
 let checklist = new Checklist({onComplete:start})
@@ -35,6 +37,43 @@ let loadGliderItem = checklist.newItem()
 let loadArenaItem = checklist.newItem()
 
 let controller:Controller = createControllerClient("keyboard")
+
+
+interface ArenaProperties{}
+let arenaRole = new Role<ArenaProperties>()
+let arenaActor = new Entity()
+
+interface GliderProperties{team:number}
+let gliderRole = new Role<GliderProperties>()
+
+interact(arenaRole, gliderRole)
+interact(gliderRole, gliderRole)
+
+physics.registerCollisionOverride(new CollisionOverride(
+	gliderRole, gliderRole, function(
+		gliderA:Glider, gliderB:Glider
+	){
+		return !(gliderA.team == 1 && gliderB.team == 1)
+	}
+))
+
+physics.registerCollisionHandler(new CollisionHandler(
+	gliderRole, gliderRole, function(
+		gliderA:Glider, gliderB:Glider
+	){
+		if(gliderA.team != gliderB.team){
+			let a2b = vec2.subtract(
+				vec2.create(),
+				gliderB.body.position,
+				gliderA.body.position
+			)
+			gliderA.body.applyImpulse(vec2.scale(vec2.create(), a2b, -10))
+			gliderB.body.applyImpulse(vec2.scale(vec2.create(), a2b, 10))
+		}
+	}
+))
+
+assignRole(arenaActor, arenaRole)
 
 async function initGraphics(){
 	
@@ -53,13 +92,37 @@ async function initGraphics(){
 		loadGliderItem.check
 	)
 
-	loadArena(
-		"arenas/testarena2/script.js",
-		graphics,
-		physics,
-		function(loaded:Arena){
-			arena = loaded
+	let arenaAsset = graphics.arena.load(
+		"arenas/testarena2/testarena2.glb",
+		function(info){
+
+			for(let tri of info.boundary){
+				physics.addRigidBody(
+					{
+						actor:arenaActor,
+						mass:Infinity,
+
+						position:[0, 0],
+						velocity:[0, 0],
+						damping:0,
+					
+						angle:0,
+						angularVelocity:0,
+						angularDamping:0,
+
+						shapes:[new TriangleConfig({corners:tri})]
+					}
+				)
+			}
 			loadArenaItem.check()
+			graphics.control.setArena(arenaAsset)
+		}
+	)
+
+	let env = graphics.skybox.load(
+		"arenas/testarena2/environment/*.jpg",
+		function(){
+			graphics.control.setEnvironment(env)
 		}
 	)
 
@@ -67,29 +130,22 @@ async function initGraphics(){
 }
 initGraphics()
 
-let terrainRole = new Role<null>()
 
-interface Thing{
-	myProperty:number
-}
-let thingRole = new Role<Thing>()
-
-interact(thingRole, thingRole)
-
-class Glider extends Entity implements Thing{
-	myProperty:number = 5
+class Glider extends Entity implements GliderProperties{
+	team:number = 0
 
 	controller:Controller
 
 	thrust:number = 0
 
-	constructor(bodyCfg:RigidBodyConfig, modelCfg:ModelMeshConfig, controller:Controller){
+	constructor(bodyCfg:RigidBodyConfig, modelCfg:ModelMeshConfig, controller:Controller, team:number){
 		super()
 		bodyCfg.actor = this
+		this.team = team
 		this.body = physics.addRigidBody(bodyCfg)
 		this.mesh = graphics.mesh.createFromModel(modelCfg)
 		this.controller = controller
-		assignRole(this, thingRole)
+		assignRole(this, gliderRole)
 	}
 
 	update(){
@@ -135,7 +191,10 @@ function start(){
 
 	let gliders:Glider[] = []
 	for(let i=0; i<10; i++){
-		let glider = new Glider(gliderBodyCfg, gliderModelCfg, controller)
+		let team = i<5? 0:1
+		let glider = new Glider(gliderBodyCfg, gliderModelCfg, controller, team)
+		glider.mesh.baseColor = team==0? {r:1, g:0.5, b:0}:{r:0, g:0.5, b:1}
+		glider.mesh.accentColor = team==0? {r:1, g:0.5, b:0}:{r:0, g:0.5, b:1}
 		glider.body.position = vec2.fromValues(Math.random()*20-10, Math.random()*20-10)
 		glider.body.angle = Math.random()*1000
 		gliders.push(glider)

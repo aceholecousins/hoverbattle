@@ -1,10 +1,10 @@
 
-import { Entity } from "domain/entity/entity"
+/*import { Entity } from "domain/entity/entity"
 import {Graphics} from "domain/graphics/graphics"
 import {Physics} from "domain/physics/physics"
 import {executeFile} from "utilities/executefile"
 
-export interface Arena extends Entity{}
+export interface Arena{}
 
 export function loadArena(
 	url:string,
@@ -14,3 +14,4 @@ export function loadArena(
 ){
 	executeFile(url, {graphics, physics}, onLoaded)
 }
+*/

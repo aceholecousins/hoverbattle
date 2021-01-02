@@ -69,8 +69,8 @@ export function collisionDispatcher(ev:any){
     
     let handlers = (ev.bodyA.world as ExtendedP2World).collisionHandlers
 
-    for(let roleA of rolesA.list){
-        for(let roleB of rolesB.list){
+    for(let roleA of rolesA.set){
+        for(let roleB of rolesB.set){
             let handler = handlers[roleA.bit | roleB.bit]
             if(handler !== undefined){
                 if(handler.roleA === roleA){
