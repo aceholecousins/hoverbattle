@@ -1,4 +1,21 @@
 
+// this is still highly prototypical
+// typescript somehow needs to be involved
+
+devlog: irgendwie muss das Level ts Zugriff auf die anderen Module bekommen (?)
+
+let terrainActor = {
+	roles:{
+		bits: 1,
+		mask: 0,
+		list:[
+			{
+				bit:1,
+				mask:0
+			}
+		]
+	}
+}
 
 let arena = graphics.arena.load(
 	"arenas/testarena2/testarena2.glb",
@@ -7,6 +24,7 @@ let arena = graphics.arena.load(
 		for(tri of info.boundary){
 			physics.addRigidBody(
 				{
+					actor:terrainActor,
 					mass:Infinity,
 
 					position:[0, 0],

@@ -4,20 +4,25 @@ import {P2Physics} from "./p2physics"
 import {Shape, ShapeConfig} from "domain/physics/shape"
 import {P2Shape, p2shapeFactory} from "./p2shape"
 import {RigidBody, RigidBodyConfig} from "domain/physics/rigidbody"
+import {Actor} from "domain/entity/actor"
+import {ExtendedP2World, ExtendedP2Body} from "./p2extensions"
 
 export class P2RigidBody implements RigidBody{
 	kind:"rigidbody"
 	p2world:p2.World
-	p2body:p2.Body
+	p2body:ExtendedP2Body
 	//readonly shapes: Shape<any>[]
 	toBeDeleted: boolean = false
 
 	constructor(p2world:p2.World, config:RigidBodyConfig){
 		this.p2world = p2world
 
-		this.p2body = new p2.Body() // mass set to 1 so the body is considered DYNAMIC
+		this.p2body = <ExtendedP2Body>new p2.Body() // mass set to 1 so the body is considered DYNAMIC
+		this.p2body.actor = config.actor
 
+		delete config.actor // delete temporarily
 		Object.assign(this, config)
+		config.actor = this.p2body.actor
 
 		for(let shapeCfg of config.shapes){
 			let shape = p2shapeFactory.createShape<any>(shapeCfg)
@@ -26,6 +31,10 @@ export class P2RigidBody implements RigidBody{
 		}
 
 		this.p2world.addBody(this.p2body)
+	}
+
+	get actor(){
+		return this.p2body.actor
 	}
 
 	set mass(m: number){

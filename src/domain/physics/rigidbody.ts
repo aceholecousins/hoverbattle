@@ -1,9 +1,12 @@
 import {vec2} from "gl-matrix"
 import {ShapeConfig, Shape} from "./shape"
 import {copyIfPresent} from "utils"
+import {Actor} from "domain/entity/actor"
 
 export interface RigidBody{
 	kind: "rigidbody"
+
+	readonly actor: Actor
 
 	//readonly shapes: Shape<any>[]
 
@@ -28,6 +31,8 @@ export interface RigidBody{
 }
 
 export class RigidBodyConfig{
+	actor: Actor
+
 	shapes: ShapeConfig<any>[]
 	
 	mass = 1
@@ -40,7 +45,8 @@ export class RigidBodyConfig{
 	angularVelocity = 0
 	angularDamping = 0.1
 
-	constructor(config:Partial<RigidBodyConfig>){
+	constructor(config: Pick<RigidBodyConfig, 'actor'> & Partial<RigidBodyConfig>){
+		this.actor = config.actor
 		copyIfPresent(this, config, [
 			"shapes", "mass", "position", "velocity", "damping",
 			"angle", "angularVelocity", "angularDamping"

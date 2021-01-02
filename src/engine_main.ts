@@ -16,6 +16,9 @@ import {Arena, loadArena} from "arena/arena"
 import { ActionCam, ActionCamConfig } from "domain/actioncam"
 import { TriangleConfig } from "domain/physics/triangle"
 import { createControllerClient } from "adapters/controller/controllerbridge/controllerclient"
+import { Entity } from "domain/entity/entity"
+import { Actor, Role, assignRole, revokeRole, interact } from "domain/entity/actor"
+import { NumberKeyframeTrack } from "three"
 
 let dt = 1/100
 
@@ -64,18 +67,29 @@ async function initGraphics(){
 }
 initGraphics()
 
+let terrainRole = new Role<null>()
 
-class Glider{
-	body:RigidBody
-	mesh:Mesh
+interface Thing{
+	myProperty:number
+}
+let thingRole = new Role<Thing>()
+
+interact(thingRole, thingRole)
+
+class Glider extends Entity implements Thing{
+	myProperty:number = 5
+
 	controller:Controller
 
 	thrust:number = 0
 
 	constructor(bodyCfg:RigidBodyConfig, modelCfg:ModelMeshConfig, controller:Controller){
+		super()
+		bodyCfg.actor = this
 		this.body = physics.addRigidBody(bodyCfg)
 		this.mesh = graphics.mesh.createFromModel(modelCfg)
 		this.controller = controller
+		assignRole(this, thingRole)
 	}
 
 	update(){
@@ -109,6 +123,7 @@ class Glider{
 
 function start(){
 	const gliderBodyCfg = new RigidBodyConfig({
+		actor:null, // will be filled by the constructed glider
 		shapes:[new CircleConfig({radius:1})],
 		damping: 0.7,
 		angularDamping: 0.99
@@ -117,7 +132,6 @@ function start(){
 	const gliderModelCfg:ModelMeshConfig = new ModelMeshConfig({
 		asset:gliderAsset
 	})
-
 
 	let gliders:Glider[] = []
 	for(let i=0; i<10; i++){
