@@ -5,14 +5,38 @@ import * as THREE from "three"
 import {copy, Color} from "utils"
 import {ThreeModel} from "./threemodel"
 
-function colorRecursive(obj: THREE.Object3D, col:Color){
-	if(obj.type == "mesh"){
+function colorRecursively(obj: THREE.Object3D, col:Color){
+	if(obj.type == "Mesh"){
 		((obj as THREE.Mesh).material as THREE.MeshStandardMaterial).color.setRGB(col.r, col.g, col.b)
 	}
 	
 	for(let c of obj.children){
-		colorRecursive(c, col)
+		colorRecursively(c, col)
 	}
+}
+
+function accentColorRecursively(obj: THREE.Object3D, col:Color){
+	if(obj.type == "Mesh"){
+		let emit = ((obj as THREE.Mesh).material as THREE.MeshStandardMaterial).emissive
+		if(emit.r>0 || emit.g>0 || emit.b>0){
+			emit.setRGB(col.r, col.g, col.b)
+		}
+	}
+	
+	for(let c of obj.children){
+		accentColorRecursively(c, col)
+	}
+}
+
+function cloneMaterialRecursively(target: THREE.Object3D, source: THREE.Object3D){
+	if(target.type == "Mesh"){
+		((target as THREE.Mesh).material as THREE.MeshStandardMaterial) =
+			((source as THREE.Mesh).material as THREE.MeshStandardMaterial).clone()
+	}
+	
+	for(let ic in target.children){
+		cloneMaterialRecursively(target.children[ic], source.children[ic])
+	}	
 }
 
 export class ThreeMesh extends ThreeSceneNode<"mesh"> implements Mesh{
@@ -21,11 +45,11 @@ export class ThreeMesh extends ThreeSceneNode<"mesh"> implements Mesh{
 
 	set baseColor(col:Color){
 		// TODO: proper filtering which parts to color and whether to color diffuse or emissive
-		colorRecursive(this.threeObject, col)
+		colorRecursively(this.threeObject, col)
 	}
 
 	set accentColor(col:Color){
-		colorRecursive(this.threeObject, col)
+		accentColorRecursively(this.threeObject, col)
 	}
 
 	constructor(scene:THREE.Scene, template:THREE.Object3D, config:MeshConfig){
@@ -43,10 +67,12 @@ export class ThreeMeshFactory implements MeshFactory{
 	}
 
 	createFromModel(config:ModelMeshConfig){
-		return new ThreeMesh(
+		let mesh = new ThreeMesh(
 			this.threeScene,
 			(config.asset as ThreeModel).threeObject.clone(),
 			config
 		)
+		cloneMaterialRecursively(mesh.threeObject, (config.asset as ThreeModel).threeObject)
+		return mesh
 	}
 }

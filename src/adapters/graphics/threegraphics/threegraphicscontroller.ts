@@ -8,6 +8,8 @@ import { Skybox } from "domain/graphics/skybox"
 import { ThreeSkybox } from "./threeskybox"
 import { LightProbeGenerator } from 'three/examples/jsm/lights/LightProbeGenerator.js'
 import * as THREE from "three"
+import { Model } from "domain/graphics/model"
+import { ThreeModel } from "./threemodel"
 
 export class ThreeGraphicsController implements GraphicsController{
 
