@@ -9,18 +9,23 @@ import {CircleConfig} from "domain/physics/circle"
 import {vec2, quat} from "gl-matrix"
 import {RigidBody, RigidBodyConfig} from "domain/physics/rigidbody"
 import {Controller} from "domain/controller/controller"
-import {wrapAngle} from "utilities/math_utils"
+import {triangle3to2, wrapAngle} from "utilities/math_utils"
 import {Physics} from "domain/physics/physics"
 import {Model} from "domain/graphics/model"
 //import {Arena, loadArena} from "arena/arena"
-import {Arena} from "domain/graphics/arena"
+//import {Arena} from "domain/graphics/arena"
 import { ActionCam, ActionCamConfig } from "domain/actioncam"
+
 import { TriangleConfig } from "domain/physics/triangle"
 import { createControllerClient } from "adapters/controller/controllerbridge/controllerclient"
 import { Entity } from "domain/entity/entity"
 import { Actor, Role, assignRole, revokeRole, interact } from "domain/entity/actor"
 import { NumberKeyframeTrack } from "three"
 import { CollisionHandler, CollisionOverride } from "domain/physics/collision"
+
+
+import { ControllerManager } from "domain/controller/controllermanager"
+import { createControllerManagerClient } from "adapters/controller/controllerbridge/controllermanagerclient"
 
 
 let dt = 1/100
@@ -36,7 +41,7 @@ let initGraphicsItem = checklist.newItem()
 let loadGliderItem = checklist.newItem()
 let loadArenaItem = checklist.newItem()
 
-let controller:Controller = createControllerClient("keyboard")
+let controllerManager = createControllerManagerClient("controllerManager")
 
 
 interface ArenaProperties{}
@@ -92,11 +97,10 @@ async function initGraphics(){
 		loadGliderItem.check
 	)
 
-	let arenaAsset = graphics.arena.load(
+	let arenaAsset = graphics.model.load(
 		"arenas/testarena2/testarena2.glb",
-		function(info){
-
-			for(let tri of info.boundary){
+		function(meta){
+			for(let tri of meta.collision){
 				physics.addRigidBody(
 					{
 						actor:arenaActor,
@@ -110,7 +114,7 @@ async function initGraphics(){
 						angularVelocity:0,
 						angularDamping:0,
 
-						shapes:[new TriangleConfig({corners:tri})]
+						shapes:[new TriangleConfig({corners:triangle3to2(tri)})]
 					}
 				)
 			}
@@ -128,8 +132,8 @@ async function initGraphics(){
 
 	bridge.sendAll()
 }
-initGraphics()
 
+initGraphics()
 
 class Glider extends Entity implements GliderProperties{
 	team:number = 0
@@ -190,16 +194,18 @@ function start(){
 	})
 
 	let gliders:Glider[] = []
-	for(let i=0; i<10; i++){
-		let team = i<5? 0:1
-		let glider = new Glider(gliderBodyCfg, gliderModelCfg, controller, team)
-		glider.mesh.baseColor = team==0? {r:1, g:0.5, b:0}:{r:0, g:0.5, b:1}
-		glider.mesh.accentColor = team==0? {r:1, g:0.5, b:0}:{r:0, g:0.5, b:1}
-		glider.body.position = vec2.fromValues(Math.random()*20-10, Math.random()*20-10)
-		glider.body.angle = Math.random()*1000
-		gliders.push(glider)
-		actionCam.follow(glider.body, 1.5)
-	}
+	controllerManager.addConnectionCallback((controller) => {
+		for(let i=0; i<10; i++){
+			let team = i<5? 0:1
+			let glider = new Glider(gliderBodyCfg, gliderModelCfg, controller, team)
+			glider.mesh.baseColor = team==0? {r:1, g:0.5, b:0}:{r:0, g:0.5, b:1}
+			glider.mesh.accentColor = team==0? {r:1, g:0.5, b:0}:{r:0, g:0.5, b:1}
+			glider.body.position = vec2.fromValues(Math.random()*20-10, Math.random()*20-10)
+			glider.body.angle = Math.random()*1000
+			gliders.push(glider)
+			actionCam.follow(glider.body, 1.5)
+		}
+	})
 
 	setInterval(()=>{
 		for(let glider of gliders){

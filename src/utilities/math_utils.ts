@@ -1,4 +1,4 @@
-import { vec3, mat3 } from "gl-matrix";
+import { vec3, mat3, vec2 } from "gl-matrix";
 
 /**
  * Wraps an angle in order to be in the limits of the wrapping point.
@@ -29,4 +29,15 @@ export function mat3fromVectors(out:mat3, x:vec3, y:vec3, z:vec3){
 	out[8] = z[2]
 
 	return out
+}
+
+export type Triangle2 = [vec2, vec2, vec2]
+export type Triangle3 = [vec3, vec3, vec3]
+
+export function triangle3to2(tri:Triangle3){
+	return [
+		vec2.fromValues(tri[0][0], tri[0][1]),
+		vec2.fromValues(tri[1][0], tri[1][1]),
+		vec2.fromValues(tri[2][0], tri[2][1])
+	]
 }

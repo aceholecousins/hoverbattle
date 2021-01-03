@@ -2,12 +2,11 @@
 import {ShapeConfig, Shape} from "./shape"
 import {copyIfPresent} from "utils"
 import { vec2 } from "gl-matrix"
-
-export type TriangleCorners = [vec2, vec2, vec2]
+import { Triangle2 } from "utilities/math_utils"
 
 export interface Triangle extends Shape<"triangle">{
 	kind: "triangle"
-	corners: TriangleCorners
+	corners: Triangle2
 }
 
 export class TriangleConfig extends ShapeConfig<"triangle">{

@@ -1,7 +1,8 @@
 
 import * as p2 from "p2"
 import {P2Shape, p2shapeFactory} from "./p2shape"
-import {Triangle, TriangleConfig, TriangleCorners} from "domain/physics/triangle"
+import {Triangle, TriangleConfig} from "domain/physics/triangle"
+import { Triangle2 } from "utilities/math_utils"
 
 export class P2Triangle extends P2Shape<"triangle"> implements Triangle{
 	kind:"triangle"
@@ -38,12 +39,12 @@ export class P2Triangle extends P2Shape<"triangle"> implements Triangle{
 		Object.assign(this, config)
 	}
 
-	set corners(c: TriangleCorners){
+	set corners(c: Triangle2){
 		this.p2shape.vertices = c as [number, number][]
 		this.updateP2()
 	}
-	get corners():TriangleCorners{
-		return this.p2shape.vertices as TriangleCorners
+	get corners():Triangle2{
+		return this.p2shape.vertices as Triangle2
 	}
 
 	set boundingRadius(r: number){
