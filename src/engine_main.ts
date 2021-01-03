@@ -119,7 +119,10 @@ async function initGraphics(){
 				)
 			}
 			loadArenaItem.check()
-			graphics.control.setArena(arenaAsset)
+			
+			graphics.mesh.createFromModel(new ModelMeshConfig({
+				asset:arenaAsset
+			}))
 		}
 	)
 
