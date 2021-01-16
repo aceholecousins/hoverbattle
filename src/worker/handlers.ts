@@ -47,6 +47,7 @@ function handleRegister(bridge:WorkerBridge, msg:RegisterMsg){
 		for(let resolve of bridge.pendingProxies[msg.id]){
 			resolve()
 		}
+		delete bridge.pendingProxies[msg.id]
 	}
 }
 

@@ -1,10 +1,10 @@
 import * as p2 from "p2"
 import {vec2} from "gl-matrix"
 import {P2Physics} from "./p2physics"
-import {Shape, ShapeConfig} from "domain/physics/shape"
+import {Shape, ShapeConfig} from "game/physics/shape"
 import {P2Shape, p2shapeFactory} from "./p2shape"
-import {RigidBody, RigidBodyConfig} from "domain/physics/rigidbody"
-import {Actor} from "domain/entity/actor"
+import {RigidBody, RigidBodyConfig} from "game/physics/rigidbody"
+import {Actor} from "game/entities/actor"
 import {ExtendedP2World, ExtendedP2Body} from "./p2extensions"
 
 export class P2RigidBody implements RigidBody{

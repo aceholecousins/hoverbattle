@@ -4,9 +4,9 @@ import {vec2, vec3} from "gl-matrix"
 import * as THREE from "three"
 import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls'
 
-import {Graphics} from "domain/graphics/graphics"
-import {GraphicsController} from "domain/graphics/graphicscontroller"
-import {CameraConfig} from "domain/graphics/camera"
+import {Graphics} from "game/graphics/graphics"
+import {GraphicsController} from "game/graphics/graphicscontroller"
+import {CameraConfig} from "game/graphics/camera"
 
 import {renderer} from "./threerenderer"
 import {SceneInfo} from "./sceneinfo"

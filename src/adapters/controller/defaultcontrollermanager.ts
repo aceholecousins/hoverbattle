@@ -1,5 +1,5 @@
-import { ConnectionCallback, ControllerManager } from "domain/controller/controllermanager";
-import { Controller } from "domain/controller/controller";
+import { ConnectionCallback, ControllerManager } from "game/controller/controllermanager";
+import { Controller } from "game/controller/controller";
 import { Keyboard } from "./keyboard";
 
 export class DefaultControllerManager implements ControllerManager {

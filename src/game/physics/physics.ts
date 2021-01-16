@@ -1,6 +1,6 @@
 
 import {RigidBodyConfig, RigidBody} from "./rigidbody"
-import {CollisionOverride, CollisionHandler} from "domain/physics/collision"
+import {CollisionOverride, CollisionHandler} from "game/physics/collision"
 
 export interface Physics{
 	addRigidBody(body: RigidBodyConfig): RigidBody

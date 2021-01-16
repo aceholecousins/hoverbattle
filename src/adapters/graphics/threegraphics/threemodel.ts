@@ -1,5 +1,5 @@
 
-import {Model, ModelLoader, ModelMetaData} from "domain/graphics/model"
+import {Model, ModelLoader, ModelMetaData} from "game/graphics/model"
 import { vec3 } from "gl-matrix"
 import * as THREE from "three"
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader'

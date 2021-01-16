@@ -1,6 +1,6 @@
 
 import {ThreeSceneNode} from "./threescenenode"
-import {Camera, CameraConfig, CameraFactory} from "domain/graphics/camera"
+import {Camera, CameraConfig, CameraFactory} from "game/graphics/camera"
 import {SceneInfo} from "./sceneinfo"
 import * as THREE from "three"
 import {copy} from "utils"

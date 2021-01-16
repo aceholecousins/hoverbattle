@@ -1,5 +1,5 @@
 
-import {Actor, Role} from "domain/entity/actor"
+import {Actor, Role} from "game/entities/actor"
 
 export class CollisionOverride<A, B>{
     /// this will only be consulted if the two roles can interact, it can veto a collision

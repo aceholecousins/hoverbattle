@@ -2,13 +2,13 @@
 import {SceneInfo} from "./sceneinfo"
 import {ThreeGraphics} from "./threegraphics"
 import {renderer} from "./threerenderer"
-import {GraphicsController} from "domain/graphics/graphicscontroller"
+import {GraphicsController} from "game/graphics/graphicscontroller"
 import { quat } from "gl-matrix"
-import { Skybox } from "domain/graphics/skybox"
+import { Skybox } from "game/graphics/skybox"
 import { ThreeSkybox } from "./threeskybox"
 import { LightProbeGenerator } from 'three/examples/jsm/lights/LightProbeGenerator.js'
 import * as THREE from "three"
-import { Model } from "domain/graphics/model"
+import { Model } from "game/graphics/model"
 import { ThreeModel } from "./threemodel"
 
 export class ThreeGraphicsController implements GraphicsController{

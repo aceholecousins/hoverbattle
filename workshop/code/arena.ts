@@ -1,4 +1,6 @@
 
+// arena plugin system
+
 /*import { Entity } from "domain/entity/entity"
 import {Graphics} from "domain/graphics/graphics"
 import {Physics} from "domain/physics/physics"

@@ -1,5 +1,5 @@
-import { Controller } from "domain/controller/controller";
-import { ControllerManager } from "domain/controller/controllermanager";
+import { Controller } from "game/controller/controller";
+import { ControllerManager } from "game/controller/controllermanager";
 import { bridge } from "worker/worker";
 import { ControllerManagerBridge } from "./controllerbridge";
 import { ControllerServer } from "./controllerserver";
