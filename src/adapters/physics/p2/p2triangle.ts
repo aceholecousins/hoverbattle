@@ -1,7 +1,7 @@
 
 import * as p2 from "p2"
 import {P2Shape, p2shapeFactory} from "./p2shape"
-import {Triangle, TriangleConfig} from "domain/physics/triangle"
+import {Triangle, TriangleConfig} from "game/physics/triangle"
 import { Triangle2 } from "utilities/math_utils"
 
 export class P2Triangle extends P2Shape<"triangle"> implements Triangle{

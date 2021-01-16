@@ -1,4 +1,4 @@
-import { Controller } from "domain/controller/controller";
+import { Controller } from "game/controller/controller";
 import { bridge } from "worker/worker";
 import { ControllerBridge } from "./controllerbridge";
 

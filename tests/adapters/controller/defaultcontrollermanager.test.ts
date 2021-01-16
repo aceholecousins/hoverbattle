@@ -2,8 +2,8 @@ import 'jsdom-global/register'
 import {describe, it, before} from 'mocha'
 import { expect } from 'chai'
 import { DefaultControllerManager } from 'adapters/controller/defaultcontrollermanager'
-import { Controller } from 'domain/controller/controller'
-import { ControllerManager } from 'domain/controller/controllermanager'
+import { Controller } from 'game/controller/controller'
+import { ControllerManager } from 'game/controller/controllermanager'
 import { Keyboard } from 'adapters/controller/keyboard'
 
 describe('Test DefaultControllerManager', () => {

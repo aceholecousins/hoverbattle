@@ -1,7 +1,7 @@
 
 import * as THREE from "three"
 import {renderer} from "./threerenderer"
-import { Skybox, SkyboxLoader } from "domain/graphics/skybox"
+import { Skybox, SkyboxLoader } from "game/graphics/skybox"
 
 export class ThreeSkybox extends Skybox{
 	threeCubemap:THREE.CubeTexture = undefined

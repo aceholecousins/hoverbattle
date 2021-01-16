@@ -1,6 +1,6 @@
-import { Graphics } from "domain/graphics/graphics";
+import { Graphics } from "game/graphics/graphics";
 import { vec3, mat3, mat4, vec2, quat} from "gl-matrix";
-import { Camera, CameraConfig } from "domain/graphics/camera";
+import { Camera, CameraConfig } from "game/graphics/camera";
 import { mat3fromVectors } from "utilities/math_utils";
 import { RigidBody } from "./physics/rigidbody";
 import { copyIfPresent } from "utils";

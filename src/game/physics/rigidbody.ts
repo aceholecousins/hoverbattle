@@ -1,7 +1,7 @@
 import {vec2} from "gl-matrix"
 import {ShapeConfig, Shape} from "./shape"
 import {copyIfPresent} from "utils"
-import {Actor} from "domain/entity/actor"
+import {Actor} from "game/entities/actor"
 
 export interface RigidBody{
 	kind: "rigidbody"

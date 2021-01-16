@@ -1,11 +1,11 @@
 
-import {RigidBodyConfig, RigidBody} from "domain/physics/rigidbody"
-import {Physics} from "domain/physics/physics"
+import {RigidBodyConfig, RigidBody} from "game/physics/rigidbody"
+import {Physics} from "game/physics/physics"
 import {P2RigidBody} from "./p2rigidbody"
 import * as p2 from "p2"
 import {ExtendedP2World, ExtendedP2Body, collisionDispatcher} from "./p2extensions"
 import "./p2factorylist"
-import { CollisionOverride, CollisionHandler} from "domain/physics/collision"
+import { CollisionOverride, CollisionHandler} from "game/physics/collision"
 
 // https://github.com/schteppe/p2.js/blob/master/build/p2.js
 // code investigation entry point: World.prototype.internalStep

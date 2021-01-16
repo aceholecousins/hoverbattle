@@ -7,7 +7,7 @@ import {
 	HemisphereLight,
 	HemisphereLightConfig,
 	LightFactory
-} from "domain/graphics/light"
+} from "game/graphics/light"
 import * as THREE from "three"
 
 export class ThreePointLight extends ThreeSceneNode<"pointlight"> implements PointLight{

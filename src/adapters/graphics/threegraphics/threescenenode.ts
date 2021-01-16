@@ -1,6 +1,6 @@
 
 import * as THREE from "three"
-import {SceneNode, SceneNodeConfig} from "domain/graphics/scenenode"
+import {SceneNode, SceneNodeConfig} from "game/graphics/scenenode"
 import {vec3, quat} from "gl-matrix"
 import {Kind, copy} from "utils"
 

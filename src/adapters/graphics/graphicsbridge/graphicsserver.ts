@@ -1,5 +1,5 @@
 
-import {Graphics} from "domain/graphics/graphics"
+import {Graphics} from "game/graphics/graphics"
 import {bridge} from "worker/worker"
 
 export function createGraphicsServer(graphics:Graphics){

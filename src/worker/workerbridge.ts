@@ -21,6 +21,7 @@ export class WorkerBridge{
 	worker:Worker = undefined
 	connected = false
 	sendWhenConnected = false
+	lastSent = 0.0
 
 	// locally stored objects
 	// (typescript complains about key:Key and about key:(string | number) )
@@ -65,6 +66,13 @@ export class WorkerBridge{
 			this.sendAll()
 			this.connected = true
 		}
+		// automatically send every 0.1s if not done from the outside
+		let bridge = this
+		setInterval(function(){
+			if(new Date().getTime()/1000 > bridge.lastSent + 0.1){
+				bridge.sendAll()
+			}
+		})
 	}
 
 	msgQueue: BridgeMsg[] = []
@@ -74,6 +82,8 @@ export class WorkerBridge{
 	}
 
 	sendAll(){
+		this.lastSent = (new Date().getTime()/1000)
+		
 		if(this.msgQueue.length == 0){
 			return
 		}

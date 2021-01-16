@@ -1,6 +1,6 @@
 
-import {Actor} from "domain/entity/actor"
-import { CollisionOverride, CollisionHandler} from "domain/physics/collision"
+import {Actor} from "game/entities/actor"
+import { CollisionOverride, CollisionHandler} from "game/physics/collision"
 import * as p2 from "p2"
 
 export interface ExtendedP2World extends p2.World{
@@ -36,7 +36,7 @@ p2.Broadphase.canCollide = function(bodyA:p2.Body, bodyB:p2.Body){
 		return true
     }
     
-    // chick individual overrides
+    // check individual overrides
     let overrides = (bodyA.world as ExtendedP2World).collisionOverrides
     for (let override of overrides){
         if(

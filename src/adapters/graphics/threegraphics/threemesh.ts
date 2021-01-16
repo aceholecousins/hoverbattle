@@ -1,5 +1,5 @@
 
-import {Mesh, MeshConfig, ModelMeshConfig, MeshFactory} from "domain/graphics/mesh"
+import {Mesh, MeshConfig, ModelMeshConfig, MeshFactory} from "game/graphics/mesh"
 import {ThreeSceneNode} from "./threescenenode"
 import * as THREE from "three"
 import {copy, Color} from "utils"
