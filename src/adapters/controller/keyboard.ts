@@ -17,7 +17,7 @@ const defaultLayout:KeyboardLayout = {
 	left:"KeyA",
 	shoot:"Space",
 	pause:"KeyP",
-	switchMode:"ShirtLeft",
+	switchMode:"ShiftLeft",
 }
 
 export class Keyboard implements Controller {

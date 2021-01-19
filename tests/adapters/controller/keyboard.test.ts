@@ -61,7 +61,7 @@ describe('Test keyboard', () => {
 	describe('Absolute Keyboard', () => {
 
 		before(() => {
-			document.dispatchEvent(new window.KeyboardEvent("keydown", { code: "KeyM" }));
+			document.dispatchEvent(new window.KeyboardEvent("keydown", { code: "ShiftLeft" }));
 		})
 
 		it('Initial state', () => {

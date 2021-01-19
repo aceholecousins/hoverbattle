@@ -17,8 +17,9 @@ describe('Test DefaultControllerManager', () => {
 	it('Test keyboard is immediately connected', () => {
 		let connectedControllers:Controller[] = new Array();
 		controllerManager.addConnectionCallback(newController => connectedControllers.push(newController))
-		expect(connectedControllers).to.have.lengthOf(1)
+		expect(connectedControllers).to.have.lengthOf(2)
 		expect(connectedControllers[0]).to.be.instanceOf(Keyboard)
+		expect(connectedControllers[1]).to.be.instanceOf(Keyboard)
 	})
 
 	it('Remove connection callback', () => {
