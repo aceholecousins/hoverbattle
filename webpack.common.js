@@ -7,6 +7,7 @@ module.exports = {
 	entry: {
 		acechase_ui: './src/ui_main.ts',
 		acechase_engine: './src/engine_main.ts',
+		acechase_all: './src/all_main.ts'
 	},
 	module: {
 		rules: [
