@@ -27,7 +27,7 @@ export class ControllerManagerServer {
 
 	private async initProxy(bridgeKey: string) {
 		try {
-			this.controllerManagerBridge = await bridge.createProxy(bridgeKey)
+			this.controllerManagerBridge = (await bridge.createProxy(bridgeKey)) as ControllerManagerBridge
 			this.publishAllControllers()
 		} catch (err) {
 			console.error("Failed to create ControllerManagerBridge proxy for key " + bridgeKey + ". Reason: " + err)

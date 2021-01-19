@@ -20,7 +20,7 @@ export class ControllerServer {
 
 	private async initProxy(bridgeKey: string) {
 		try {
-			this.controllerBridge = await bridge.createProxy(bridgeKey)
+			this.controllerBridge = (await bridge.createProxy(bridgeKey)) as ControllerBridge
 		} catch (err) {
 			console.error("Failed to create ControllerBridge proxy for key " + bridgeKey + ". Reason: " + err)
 		}

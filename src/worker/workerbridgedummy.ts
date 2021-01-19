@@ -42,7 +42,7 @@ export class WorkerBridgeDummy{
 				}
 				bridge.pendingProxies[remoteKey].push(
 					function(){
-						resolve(this.objectRegistry[remoteKey])
+						resolve(bridge.objectRegistry[remoteKey])
 					}
 				)
 			})
