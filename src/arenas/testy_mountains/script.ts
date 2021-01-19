@@ -59,9 +59,10 @@ export let createMatch:MatchFactory = async function(engine){
 
 	let gliders:Glider[] = []
 
-	engine.controllerManager.addConnectionCallback((controller) => {
-		for(let i=0; i<10; i++){
-			let team = i<5? 0:1
+	let team = 0;
+
+	engine.controllerManager.addConnectionCallback((controller) => {		
+		for(let i=0; i<5; i++){					
 			let glider = createGlider(team, controller)
 			assignRole(glider, gliderRole)
 			glider.mesh.baseColor = team==0? {r:1, g:0.5, b:0}:{r:0, g:0.5, b:1}
@@ -69,8 +70,9 @@ export let createMatch:MatchFactory = async function(engine){
 			glider.body.position = vec2.fromValues(Math.random()*20-10, Math.random()*20-10)
 			glider.body.angle = Math.random()*1000
 			engine.actionCam.follow(glider.body, 1.5)
-			gliders.push(glider)
+			gliders.push(glider)			
 		}
+		team++
 	})
 
 	return {update(dt){

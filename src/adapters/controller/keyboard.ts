@@ -1,21 +1,32 @@
 import { Controller } from "game/controller/controller";
 
-enum Keys {
-	UP = "KeyW",
-	DOWN = "KeyS",
-	RIGHT = "KeyD",
-	LEFT = "KeyA",
-	SHOOT = "Space",
-	PAUSE = "Pause",
-	SWITCH_MODE = "KeyM"
+export interface KeyboardLayout {
+	up:string
+	down:string
+	right:string
+	left:string
+	shoot:string
+	pause:string
+	switchMode:string
+}
+
+const defaultLayout:KeyboardLayout = {
+	up:"KeyW",
+	down:"KeyS",
+	right:"KeyD",
+	left:"KeyA",
+	shoot:"Space",
+	pause:"KeyP",
+	switchMode:"ShirtLeft",
 }
 
 export class Keyboard implements Controller {
 
 	private shooting: boolean = false
-	private currentStrategy: ControlStrategy = new RelativeStrategy()
+	private currentStrategy: ControlStrategy
 
-	constructor() {
+	constructor(private layout:KeyboardLayout = defaultLayout) {
+		this.currentStrategy = new RelativeStrategy(layout)
 		document.addEventListener("keydown", (event) => {
 			this.onKeyAction(event, true)
 		})
@@ -52,10 +63,10 @@ export class Keyboard implements Controller {
 	}
 	private onGeneralKeyAction(keyCode: string, isPressed: boolean) {
 		switch (keyCode) {
-			case Keys.SHOOT:
+			case this.layout.shoot:
 				this.shooting = isPressed;
 				break;
-			case Keys.SWITCH_MODE:
+			case this.layout.switchMode:
 				if (isPressed) {
 					this.switchStrategy();
 				}
@@ -65,10 +76,10 @@ export class Keyboard implements Controller {
 	private switchStrategy() {
 		if (this.currentStrategy instanceof RelativeStrategy) {
 			console.log("Switch to absolute keyboard")
-			this.currentStrategy = new AbsoluteStrategy()
+			this.currentStrategy = new AbsoluteStrategy(this.layout)
 		} else {
 			console.log("Switch to relative keyboard")
-			this.currentStrategy = new RelativeStrategy()
+			this.currentStrategy = new RelativeStrategy(this.layout)
 		}
 	}
 }
@@ -88,6 +99,9 @@ class RelativeStrategy implements ControlStrategy {
 	private valueLeft = 0;
 	private valueRight = 0;
 
+	constructor(private layout:KeyboardLayout) {
+	}
+
 	getAbsoluteDirection(): number {
 		return undefined;
 	}
@@ -101,13 +115,13 @@ class RelativeStrategy implements ControlStrategy {
 	}
 
 	onKeyAction(keyCode: string, isPressed: boolean) {
-		if (keyCode == Keys.UP) {
+		if (keyCode == this.layout.up) {
 			this.thrust = isPressed ? 1 : 0
 		}
-		if (keyCode == Keys.LEFT) {
+		if (keyCode == this.layout.left) {
 			this.valueLeft = isPressed ? 1 : 0
 		}
-		if (keyCode == Keys.RIGHT) {
+		if (keyCode == this.layout.right) {
 			this.valueRight = isPressed ? 1 : 0
 		}
 		this.turnRate = this.valueLeft - this.valueRight;
@@ -123,6 +137,9 @@ class AbsoluteStrategy implements ControlStrategy {
 	private valueDown: number = 0
 	private valueLeft: number = 0
 	private valueRight: number = 0
+	
+	constructor(private layout:KeyboardLayout) {
+	}
 
 	getAbsoluteDirection(): number {
 		return this.absoluteDirection
@@ -138,16 +155,16 @@ class AbsoluteStrategy implements ControlStrategy {
 
 	onKeyAction(keyCode: string, isPressed: boolean) {		
 		switch (keyCode) {
-			case Keys.UP:
+			case this.layout.up:
 				this.valueUp = isPressed ? 1 : 0
 				break
-			case Keys.DOWN:
+			case this.layout.down:
 				this.valueDown = isPressed ? 1 : 0
 				break
-			case Keys.RIGHT:
+			case this.layout.right:
 				this.valueRight = isPressed ? 1 : 0
 				break
-			case Keys.LEFT:
+			case this.layout.left:
 				this.valueLeft = isPressed ? 1 : 0
 				break
 		}
