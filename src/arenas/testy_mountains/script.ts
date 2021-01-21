@@ -1,6 +1,7 @@
 import { Role, interact, assignRole } from "game/entities/actor"
 import { loadArena } from "game/entities/arena/arena"
 import { createGliderFactory, Glider } from "game/entities/glider/glider"
+import { ModelMeshConfig } from "game/graphics/mesh"
 import { MatchFactory } from "game/match"
 import { CollisionOverride, CollisionHandler } from "game/physics/collision"
 import { vec2 } from "gl-matrix"
@@ -74,6 +75,13 @@ export let createMatch:MatchFactory = async function(engine){
 		}
 		team++
 	})
+
+	let sprite = engine.graphics.sprite.load("game/entities/weapons/phaser.png", () => {
+		let mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({
+			asset: sprite
+		}))	
+		mesh.position[2] = -1
+	})	
 
 	return {update(dt){
 		engine.physics.step(dt)

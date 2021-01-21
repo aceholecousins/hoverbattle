@@ -10,6 +10,7 @@ export class ThreeModel extends Model{
 }
 
 export class ThreeModelLoader implements ModelLoader{
+
 	load(
 		file: string,
 		onLoaded?:(meta:ModelMetaData)=>void,
@@ -17,7 +18,7 @@ export class ThreeModelLoader implements ModelLoader{
 	){
 		let model = new ThreeModel()
 
-		gltfLoader.load(
+		new GLTFLoader().load(
 			file,
 			function(gltf){
 				model.threeObject = gltf.scene
@@ -34,8 +35,6 @@ export class ThreeModelLoader implements ModelLoader{
 		return model
 	}
 }
-
-const gltfLoader = new GLTFLoader()
 
 function adaptModel(mesh:THREE.Object3D){
 	if("material" in mesh && "normalMapType" in (mesh as THREE.Mesh).material){
