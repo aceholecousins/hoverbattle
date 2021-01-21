@@ -9,6 +9,34 @@ export class ThreeModel extends Model{
 	threeObject:THREE.Object3D = undefined
 }
 
+export class ThreeModelLoader implements ModelLoader{
+	load(
+		file: string,
+		onLoaded?:(meta:ModelMetaData)=>void,
+		onError?:(err:ErrorEvent)=>void
+	){
+		let model = new ThreeModel()
+
+		gltfLoader.load(
+			file,
+			function(gltf){
+				model.threeObject = gltf.scene
+				adaptModel(model.threeObject)
+				let meta = extractMetaData(model.threeObject as THREE.Scene)
+				if(onLoaded !== undefined){
+					onLoaded(meta)
+				}
+			},
+			undefined,
+			onError
+		)
+	
+		return model
+	}
+}
+
+const gltfLoader = new GLTFLoader()
+
 function adaptModel(mesh:THREE.Object3D){
 	if("material" in mesh && "normalMapType" in (mesh as THREE.Mesh).material){
 		((mesh as THREE.Mesh).material as THREE.MeshStandardMaterial).normalMapType =
@@ -50,32 +78,4 @@ function extractMetaData(scene:THREE.Scene){
 	}
 
 	return meta
-}
-
-const gltfLoader = new GLTFLoader()
-
-export class ThreeModelLoader implements ModelLoader{
-	load(
-		file: string,
-		onLoaded?:(meta:ModelMetaData)=>void,
-		onError?:(err:ErrorEvent)=>void
-	){
-		let model = new ThreeModel()
-
-		gltfLoader.load(
-			file,
-			function(gltf){
-				model.threeObject = gltf.scene
-				adaptModel(model.threeObject)
-				let meta = extractMetaData(model.threeObject as THREE.Scene)
-				if(onLoaded !== undefined){
-					onLoaded(meta)
-				}
-			},
-			undefined,
-			onError
-		)
-	
-		return model
-	}
 }
