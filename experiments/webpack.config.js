@@ -11,7 +11,8 @@ module.exports = {
 		'workerbridge2/main.js': './experiments/workerbridge2/main.ts',
 		'workerbridge2/worker.js': './experiments/workerbridge2/worker.ts',
 		'pbr/main.js': './experiments/pbr/main.ts',
-		'bridgetest/test.js': './experiments/bridgetest/test.ts'
+		'bridgetest/test.js': './experiments/bridgetest/test.ts',
+		'tint/main.js': './experiments/tint/main.ts',
 	},
 	module: {
 		rules: [
