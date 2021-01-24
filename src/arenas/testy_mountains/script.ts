@@ -4,7 +4,7 @@ import { createGliderFactory, Glider } from "game/entities/glider/glider"
 import { ModelMeshConfig } from "game/graphics/mesh"
 import { MatchFactory } from "game/match"
 import { CollisionOverride, CollisionHandler } from "game/physics/collision"
-import { vec2 } from "gl-matrix"
+import { vec2, vec3 } from "gl-matrix"
 
 export let createMatch:MatchFactory = async function(engine){
 
@@ -80,7 +80,8 @@ export let createMatch:MatchFactory = async function(engine){
 		let mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({
 			asset: sprite
 		}))	
-		mesh.position[2] = -1
+		mesh.position = vec3.fromValues(0,0,1)
+		mesh.scaling = vec3.fromValues(30,30,30)
 	})	
 
 	return {update(dt){

@@ -56,7 +56,7 @@ function colorRecursively(obj: THREE.Object3D, col:Color){
 function accentColorRecursively(obj: THREE.Object3D, col:Color){
 	if(obj.type == "Mesh"){
 		let emit = ((obj as THREE.Mesh).material as THREE.MeshStandardMaterial).emissive
-		if(emit.r>0 || emit.g>0 || emit.b>0){
+		if(emit !== undefined && (emit.r>0 || emit.g>0 || emit.b>0)){
 			emit.setRGB(col.r, col.g, col.b)
 		}
 	}
