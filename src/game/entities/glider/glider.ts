@@ -4,7 +4,7 @@ import { Model } from "game/graphics/model"
 import { Engine } from "game/match"
 import { CircleConfig } from "game/physics/circle"
 import { RigidBodyConfig } from "game/physics/rigidbody"
-import { vec2, quat } from "gl-matrix"
+import { vec2, quat, vec3 } from "gl-matrix"
 import { wrapAngle } from "utilities/math_utils"
 import { assignRole } from "../actor"
 import { Entity } from "../entity"
@@ -27,6 +27,7 @@ export class Glider extends Entity{
 		this.body = engine.physics.addRigidBody(bodyCfg)
 		this.mesh = engine.graphics.mesh.createFromModel(modelCfg)
 		this.controller = controller
+		this.mesh.scaling = vec3.fromValues(3, 3, 3)
 	}
 
 	update(){
@@ -66,7 +67,8 @@ export async function createGliderFactory(engine:Engine){
 	
 	await new Promise((resolve, reject)=>{
 		gliderAsset = engine.graphics.model.load(
-			"game/entities/glider/glider.gltf", resolve, reject)
+			//"game/entities/glider/glider.gltf", resolve, reject)
+			"game/entities/glider/tori.glb", resolve, reject)
 	})
 
 	const gliderBodyCfg = new RigidBodyConfig({

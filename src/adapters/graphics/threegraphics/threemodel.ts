@@ -36,14 +36,33 @@ export class ThreeModelLoader implements ModelLoader{
 	}
 }
 
-function adaptModel(mesh:THREE.Object3D){
-	if("material" in mesh && "normalMapType" in (mesh as THREE.Mesh).material){
-		((mesh as THREE.Mesh).material as THREE.MeshStandardMaterial).normalMapType =
-				THREE.ObjectSpaceNormalMap
+function adaptModel(
+	obj:THREE.Object3D,
+	root:THREE.Object3D = obj,
+	completed:Set<THREE.Material> = new Set<THREE.Material>()
+){
+	if(obj === root){
+		obj.userData.tint = {value: new THREE.Matrix3()}
 	}
 
-	for(let child of mesh.children){
-		adaptModel(child)
+	// we don't inject the tinting mod into the template because it has to be
+	// linked to the tinting matrix uniform of each cloned material so it will
+	// be injected during cloning
+
+	if(obj.type == "Mesh"){
+		let mesh = obj as THREE.Mesh
+		let mat = mesh.material as THREE.Material
+		
+		if(mat !== undefined && !completed.has(mat)){
+			if ("normalMapType" in mat){
+				;(mat as THREE.MeshStandardMaterial).normalMapType =
+					THREE.ObjectSpaceNormalMap
+			}
+		}
+	}
+
+	for(let child of obj.children){
+		adaptModel(child, root, completed)
 	}
 }
 

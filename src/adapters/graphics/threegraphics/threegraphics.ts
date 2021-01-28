@@ -21,6 +21,9 @@ import {ThreeGraphicsController} from "./threegraphicscontroller"
 import { ThreeSkyboxLoader } from "./threeskybox"
 import { ThreeSpriteLoader } from "./threesprite"
 
+//@ts-ignore
+window.three = THREE
+
 export class ThreeGraphics implements Graphics{
 
 	scene:THREE.Scene

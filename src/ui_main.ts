@@ -16,4 +16,5 @@ function animate(time:number){
 	controllerManagerServer.update()
 	bridge.sendAll()
 }
+
 requestAnimationFrame(animate)

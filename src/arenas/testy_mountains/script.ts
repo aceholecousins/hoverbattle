@@ -67,7 +67,8 @@ export let createMatch:MatchFactory = async function(engine){
 			let glider = createGlider(team, controller)
 			assignRole(glider, gliderRole)
 			glider.mesh.baseColor = team==0? {r:1, g:0.5, b:0}:{r:0, g:0.5, b:1}
-			glider.mesh.accentColor = team==0? {r:1, g:0.5, b:0}:{r:0, g:0.5, b:1}
+			glider.mesh.accentColor1 = team==0? {r:1, g:1, b:1}:{r:0, g:0.5, b:1}
+			glider.mesh.accentColor2 = team==0? {r:0, g:0, b:0}:{r:0, g:0.5, b:1}
 			glider.body.position = vec2.fromValues(Math.random()*20-10, Math.random()*20-10)
 			glider.body.angle = Math.random()*1000
 			engine.actionCam.follow(glider.body, 1.5)
@@ -81,7 +82,7 @@ export let createMatch:MatchFactory = async function(engine){
 			asset: sprite
 		}))	
 		mesh.position = vec3.fromValues(0,0,1)
-		mesh.scaling = vec3.fromValues(30,30,30)
+		//mesh.scaling = vec3.fromValues(30,30,30)
 	})	
 
 	return {update(dt){

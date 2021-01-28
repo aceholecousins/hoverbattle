@@ -1,78 +1,120 @@
 
-import {Mesh, MeshConfig, ModelMeshConfig, MeshFactory} from "game/graphics/mesh"
-import {ThreeSceneNode} from "./threescenenode"
+import { Mesh, MeshConfig, ModelMeshConfig, MeshFactory } from "game/graphics/mesh"
+import { ThreeSceneNode } from "./threescenenode"
 import * as THREE from "three"
-import {copy, Color} from "utils"
-import {ThreeModel} from "./threemodel"
+import { copy, Color } from "utils"
+import { ThreeModel } from "./threemodel"
 
-export class ThreeMesh extends ThreeSceneNode<"mesh"> implements Mesh{
+export class ThreeMesh extends ThreeSceneNode<"mesh"> implements Mesh {
 
-	threeObject:THREE.Object3D
+	threeObject: THREE.Object3D
 
-	set baseColor(col:Color){
-		// TODO: proper filtering which parts to color and whether to color diffuse or emissive
-		colorRecursively(this.threeObject, col)
+	set baseColor(col: Color) {
+		if ("tint" in this.threeObject.userData) {
+			let tint = this.threeObject.userData.tint.value as THREE.Matrix3
+			tint.elements[0] = col.r
+			tint.elements[1] = col.g
+			tint.elements[2] = col.b
+		}
 	}
 
-	set accentColor(col:Color){
-		accentColorRecursively(this.threeObject, col)
+	set accentColor1(col: Color) {
+		if ("tint" in this.threeObject.userData) {
+			let tint = this.threeObject.userData.tint.value as THREE.Matrix3
+			tint.elements[3] = col.r
+			tint.elements[4] = col.g
+			tint.elements[5] = col.b
+		}
 	}
 
-	constructor(scene:THREE.Scene, template:THREE.Object3D, config:MeshConfig){
+	set accentColor2(col: Color) {
+		if ("tint" in this.threeObject.userData) {
+			let tint = this.threeObject.userData.tint.value as THREE.Matrix3
+			tint.elements[6] = col.r
+			tint.elements[7] = col.g
+			tint.elements[8] = col.b
+		}
+	}
+
+	constructor(scene: THREE.Scene, template: THREE.Object3D, config: MeshConfig) {
 		super(scene, template.clone(), config)
-		copy(this, config, ["baseColor", "accentColor"])
+
+		cloneMaterialRecursively(this.threeObject, template)
+		copy(this, config, ["baseColor", "accentColor1", "accentColor2"])
 	}
 }
 
-export class ThreeMeshFactory implements MeshFactory{
+export class ThreeMeshFactory implements MeshFactory {
+	threeScene: THREE.Scene
 
-	threeScene:THREE.Scene
-
-	constructor(scene:THREE.Scene){
+	constructor(scene: THREE.Scene) {
 		this.threeScene = scene
 	}
 
-	createFromModel(config:ModelMeshConfig){
+	createFromModel(config: ModelMeshConfig) {
 		let mesh = new ThreeMesh(
 			this.threeScene,
-			(config.asset as ThreeModel).threeObject.clone(),
+			(config.asset as ThreeModel).threeObject,
 			config
 		)
-		cloneMaterialRecursively(mesh.threeObject, (config.asset as ThreeModel).threeObject)
 		return mesh
 	}
 }
 
-function colorRecursively(obj: THREE.Object3D, col:Color){
-	if(obj.type == "Mesh"){
-		((obj as THREE.Mesh).material as THREE.MeshStandardMaterial).color.setRGB(col.r, col.g, col.b)
+function cloneMaterialRecursively(
+	target: THREE.Object3D,
+	source: THREE.Object3D, 
+	tintUniform?: {value: THREE.Matrix3}
+) {
+	let tint = tintUniform
+	if ("tint" in source.userData) {
+		tint = { value: source.userData.tint.value.clone() }
+		target.userData.tint = tint
 	}
-	
-	for(let c of obj.children){
-		colorRecursively(c, col)
-	}
-}
 
-function accentColorRecursively(obj: THREE.Object3D, col:Color){
-	if(obj.type == "Mesh"){
-		let emit = ((obj as THREE.Mesh).material as THREE.MeshStandardMaterial).emissive
-		if(emit !== undefined && (emit.r>0 || emit.g>0 || emit.b>0)){
-			emit.setRGB(col.r, col.g, col.b)
+	if (target.type == "Mesh") {
+		; ((target as THREE.Mesh).material as THREE.Material) =
+			((source as THREE.Mesh).material as THREE.Material).clone()
+		
+		if(
+			tint !== undefined && 
+			((target as THREE.Mesh).material as THREE.Material).name.slice(-6) == "__tint"
+		){
+			injectTint(
+				((target as THREE.Mesh).material as THREE.Material),
+				tint
+			)
 		}
 	}
-	
-	for(let c of obj.children){
-		accentColorRecursively(c, col)
+
+	for (let ic in target.children) {
+		cloneMaterialRecursively(target.children[ic], source.children[ic], tint)
 	}
 }
 
-function cloneMaterialRecursively(target: THREE.Object3D, source: THREE.Object3D){
-	if(target.type == "Mesh"){
-		((target as THREE.Mesh).material as THREE.MeshStandardMaterial) =
-			((source as THREE.Mesh).material as THREE.MeshStandardMaterial).clone()
+function injectTint(mat: THREE.Material, uniform: {value: THREE.Matrix3}){
+	if("tint" in mat.userData){ // already done
+		return
 	}
-	
-	for(let ic in target.children){
-		cloneMaterialRecursively(target.children[ic], source.children[ic])
-	}	
+
+	mat.userData.tint = uniform
+
+	let obcBefore = mat.onBeforeCompile
+	mat.onBeforeCompile = (shader, renderer)=>{
+		if(obcBefore !== undefined){
+			obcBefore(shader, renderer)
+		}
+
+		shader.uniforms['tint'] = uniform
+		shader.fragmentShader = shader.fragmentShader.replace(
+			"void main() {",
+			"uniform mat3 tint;\nvoid main() {"
+		).replace(
+			"#include <color_fragment>",
+			"#include <color_fragment>\ndiffuseColor.rgb = tint * diffuseColor.rgb;"
+		).replace(
+			"#include <emissivemap_fragment>",
+			"#include <emissivemap_fragment>\ntotalEmissiveRadiance = tint * totalEmissiveRadiance;"
+		)
+	}
 }
