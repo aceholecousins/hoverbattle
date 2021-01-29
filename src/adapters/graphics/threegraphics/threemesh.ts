@@ -76,10 +76,7 @@ function cloneMaterialRecursively(
 		; ((target as THREE.Mesh).material as THREE.Material) =
 			((source as THREE.Mesh).material as THREE.Material).clone()
 		
-		if(
-			tint !== undefined && 
-			((target as THREE.Mesh).material as THREE.Material).name.slice(-6) == "__tint"
-		){
+		if(tint !== undefined){
 			injectTint(
 				((target as THREE.Mesh).material as THREE.Material),
 				tint
@@ -93,28 +90,55 @@ function cloneMaterialRecursively(
 }
 
 function injectTint(mat: THREE.Material, uniform: {value: THREE.Matrix3}){
-	if("tint" in mat.userData){ // already done
+
+	if(
+		"tint" in mat.userData || // already tinted
+		mat.name.slice(-6) !== "__tint" // material does not use tinting
+	){
 		return
 	}
 
 	mat.userData.tint = uniform
 
-	let obcBefore = mat.onBeforeCompile
-	mat.onBeforeCompile = (shader, renderer)=>{
-		if(obcBefore !== undefined){
-			obcBefore(shader, renderer)
-		}
+	if(mat.type === "MeshBasicMaterial"){
+		let obcBefore = mat.onBeforeCompile
+		mat.onBeforeCompile = (shader, renderer)=>{
+			if(obcBefore !== undefined){
+				obcBefore(shader, renderer)
+			}
 
-		shader.uniforms['tint'] = uniform
-		shader.fragmentShader = shader.fragmentShader.replace(
-			"void main() {",
-			"uniform mat3 tint;\nvoid main() {"
-		).replace(
-			"#include <color_fragment>",
-			"#include <color_fragment>\ndiffuseColor.rgb = tint * diffuseColor.rgb;"
-		).replace(
-			"#include <emissivemap_fragment>",
-			"#include <emissivemap_fragment>\ntotalEmissiveRadiance = tint * totalEmissiveRadiance;"
-		)
+			shader.uniforms['tint'] = uniform
+			shader.fragmentShader = shader.fragmentShader.replace(
+				"void main() {",
+				"uniform mat3 tint;\n" +
+				"void main() {"
+			).replace(
+				"vec3 outgoingLight = reflectedLight.indirectDiffuse;",
+				"vec3 outgoingLight = tint * reflectedLight.indirectDiffuse;"
+			)
+		}
+	}
+	else if(mat.type === "MeshStandardMaterial"){
+		let obcBefore = mat.onBeforeCompile
+		mat.onBeforeCompile = (shader, renderer)=>{
+			if(obcBefore !== undefined){
+				obcBefore(shader, renderer)
+			}
+
+			shader.uniforms['tint'] = uniform
+			shader.fragmentShader = shader.fragmentShader.replace(
+				"void main() {",
+				"uniform mat3 tint;\n" +
+				"void main() {"
+			).replace(
+				"#include <color_fragment>",
+				"#include <color_fragment>\n" +
+				"diffuseColor.rgb = tint * diffuseColor.rgb;"
+			).replace(
+				"#include <emissivemap_fragment>",
+				"#include <emissivemap_fragment>\n" +
+				"totalEmissiveRadiance = tint * totalEmissiveRadiance;"
+			)
+		}
 	}
 }

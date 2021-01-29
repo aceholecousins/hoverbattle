@@ -15,8 +15,16 @@ export class ThreeSpriteLoader implements SpriteLoader{
 			file,
 			function(texture){
 				let geometry = new THREE.PlaneGeometry(1, 1)
-				let material = new THREE.MeshBasicMaterial({ map: texture })
+				let material = new THREE.MeshBasicMaterial({
+					map: texture,
+					name: "sprite",
+					transparent: true
+				})
 				model.threeObject = new THREE.Mesh(geometry, material)
+				if(file.indexOf(".tint.") > -1){
+					material.name = "sprite__tint"
+					model.threeObject.userData.tint = {value: new THREE.Matrix3()}
+				}
 				onLoaded()
 			},
 			undefined,

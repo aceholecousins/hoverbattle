@@ -27,7 +27,7 @@ export class Glider extends Entity{
 		this.body = engine.physics.addRigidBody(bodyCfg)
 		this.mesh = engine.graphics.mesh.createFromModel(modelCfg)
 		this.controller = controller
-		this.mesh.scaling = vec3.fromValues(3, 3, 3)
+		//this.mesh.scaling = vec3.fromValues(3, 3, 3)
 	}
 
 	update(){
@@ -67,8 +67,7 @@ export async function createGliderFactory(engine:Engine){
 	
 	await new Promise((resolve, reject)=>{
 		gliderAsset = engine.graphics.model.load(
-			//"game/entities/glider/glider.gltf", resolve, reject)
-			"game/entities/glider/tori.glb", resolve, reject)
+			"game/entities/glider/glider.gltf", resolve, reject)
 	})
 
 	const gliderBodyCfg = new RigidBodyConfig({

@@ -77,12 +77,14 @@ export let createMatch:MatchFactory = async function(engine){
 		team++
 	})
 
-	let sprite = engine.graphics.sprite.load("game/entities/weapons/phaser.png", () => {
+	let sprite = engine.graphics.sprite.load("game/entities/weapons/phaser.tint.png", () => {
 		let mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({
+			baseColor: {r:1, g:0.5, b:0},
+			accentColor1: {r:0, g:0.5, b:1},
 			asset: sprite
 		}))	
 		mesh.position = vec3.fromValues(0,0,1)
-		//mesh.scaling = vec3.fromValues(30,30,30)
+		mesh.scaling = vec3.fromValues(4,2,1)
 	})	
 
 	return {update(dt){
