@@ -63,7 +63,7 @@ export let createMatch:MatchFactory = async function(engine){
 	let team = 0;
 
 	engine.controllerManager.addConnectionCallback((controller) => {		
-		for(let i=0; i<20; i++){					
+		for(let i=0; i<5; i++){					
 			let glider = createGlider(team, controller)
 			assignRole(glider, gliderRole)
 			glider.mesh.baseColor = team==0? {r:1, g:0, b:0}:{r:0, g:0.5, b:1}
