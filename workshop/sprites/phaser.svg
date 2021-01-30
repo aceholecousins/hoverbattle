@@ -15,9 +15,9 @@
    height="64"
    viewBox="0 0 128 64"
    sodipodi:docname="phaser.svg"
-   inkscape:export-filename="/home/mirko/development/acechase/media/textures/phaser.png"
-   inkscape:export-xdpi="90"
-   inkscape:export-ydpi="90">
+   inkscape:export-filename="/home/mirko/development/hoverbattle/src/game/entities/weapons/phaser.tint.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96">
   <metadata
      id="metadata8">
     <rdf:RDF>
@@ -26,7 +26,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -59,8 +59,8 @@
      inkscape:window-height="823"
      id="namedview4"
      showgrid="false"
-     inkscape:zoom="2.625"
-     inkscape:cx="79.731378"
+     inkscape:zoom="11.054688"
+     inkscape:cx="64"
      inkscape:cy="40.23305"
      inkscape:window-x="0"
      inkscape:window-y="0"

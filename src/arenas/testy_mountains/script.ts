@@ -63,12 +63,12 @@ export let createMatch:MatchFactory = async function(engine){
 	let team = 0;
 
 	engine.controllerManager.addConnectionCallback((controller) => {		
-		for(let i=0; i<5; i++){					
+		for(let i=0; i<20; i++){					
 			let glider = createGlider(team, controller)
 			assignRole(glider, gliderRole)
-			glider.mesh.baseColor = team==0? {r:1, g:0.5, b:0}:{r:0, g:0.5, b:1}
-			glider.mesh.accentColor1 = team==0? {r:1, g:1, b:1}:{r:0, g:0.5, b:1}
-			glider.mesh.accentColor2 = team==0? {r:0, g:0, b:0}:{r:0, g:0.5, b:1}
+			glider.mesh.baseColor = team==0? {r:1, g:0, b:0}:{r:0, g:0.5, b:1}
+			glider.mesh.accentColor1 = team==0? {r:1, g:0.5, b:0}:{r:0, g:0.8, b:1}
+			glider.mesh.accentColor2 = team==0? {r:0, g:0, b:0.8}:{r:1, g:0, b:0.2}
 			glider.body.position = vec2.fromValues(Math.random()*20-10, Math.random()*20-10)
 			glider.body.angle = Math.random()*1000
 			engine.actionCam.follow(glider.body, 1.5)
@@ -79,8 +79,8 @@ export let createMatch:MatchFactory = async function(engine){
 
 	let sprite = engine.graphics.sprite.load("game/entities/weapons/phaser.tint.png", () => {
 		let mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({
-			baseColor: {r:1, g:0.5, b:0},
-			accentColor1: {r:0, g:0.5, b:1},
+			baseColor: {r:0, g:1, b:0},
+			accentColor1: {r:1, g:1, b:1},
 			asset: sprite
 		}))	
 		mesh.position = vec3.fromValues(0,0,1)

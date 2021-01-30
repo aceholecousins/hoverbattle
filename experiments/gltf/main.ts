@@ -20,7 +20,7 @@ var loader = new GLTFLoader()
 scene.add(new THREE.PointLight())
 
 loader.load(
-	'./testb.glb',
+	'./glider6.glb',
 	function(gltf){
 		scene.add(gltf.scene)
 		gltf.animations; // Array<THREE.AnimationClip>

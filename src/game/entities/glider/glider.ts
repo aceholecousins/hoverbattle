@@ -67,7 +67,7 @@ export async function createGliderFactory(engine:Engine){
 	
 	await new Promise((resolve, reject)=>{
 		gliderAsset = engine.graphics.model.load(
-			"game/entities/glider/glider.gltf", resolve, reject)
+			"game/entities/glider/glider6.glb", resolve, reject)
 	})
 
 	const gliderBodyCfg = new RigidBodyConfig({
