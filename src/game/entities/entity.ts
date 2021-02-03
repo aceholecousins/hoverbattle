@@ -13,5 +13,5 @@ export class Entity implements Actor{
 	}
 
 	//exert(influence:Influence)
-	update(){}
+	update(dt:number){}
 }

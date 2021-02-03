@@ -6,13 +6,16 @@ import { CircleConfig } from "game/physics/circle"
 import { RigidBodyConfig } from "game/physics/rigidbody"
 import { vec2, quat, vec3 } from "gl-matrix"
 import { wrapAngle } from "utilities/math_utils"
-import { assignRole } from "../actor"
 import { Entity } from "../entity"
+
+export type ShootCallback = () => void
 
 export class Glider extends Entity{
 	team:number = 0
 	controller:Controller
 	thrust:number = 0
+	shootCallback:ShootCallback
+	private weaponLoad:number = 1
 
 	constructor(
 		engine:Engine,
@@ -30,7 +33,7 @@ export class Glider extends Entity{
 		//this.mesh.scaling = vec3.fromValues(3, 3, 3)
 	}
 
-	update(){
+	update(dt:number){
 		this.thrust = this.controller.getThrust() * 20;
 		this.body.applyLocalForce(vec2.fromValues(this.thrust, 0))
 
@@ -42,11 +45,18 @@ export class Glider extends Entity{
 		if(direction != undefined) {
 			this.turnToDirection(direction)
 		}
+
+		if(this.controller.isShooting() && this.weaponLoad >= 1) {
+			this.shootCallback()
+			this.weaponLoad = 0;
+		}
 		
 		this.mesh.position = [
 			this.body.position[0], this.body.position[1], 0.1]
 		this.mesh.orientation = quat.fromEuler(
 			[0,0,0,0], 0, 0, this.body.angle /Math.PI * 180)
+
+		this.weaponLoad = Math.min(1, this.weaponLoad + dt * 5)
 	}
 
 	turnToDirection(direction: number) {
