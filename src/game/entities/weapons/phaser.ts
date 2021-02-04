@@ -3,7 +3,7 @@ import { Model } from "game/graphics/model";
 import { Engine } from "game/match";
 import { CircleConfig } from "game/physics/circle";
 import { RigidBodyConfig } from "game/physics/rigidbody";
-import { quat, vec2 } from "gl-matrix";
+import { quat, vec2, vec3 } from "gl-matrix";
 import { assignRole, Role } from "../actor";
 import { Entity } from "../entity";
 import { Glider } from "../glider/glider";
@@ -13,11 +13,16 @@ export class PhaserShot extends Entity {
 	constructor(
 		engine: Engine,
 		asset: Model,
-		public glider:Glider,
+		public glider: Glider,
 	) {
 		super();
 		this.mesh = engine.graphics.mesh.createFromModel(
-			new ModelMeshConfig({ asset }))
+			new ModelMeshConfig({
+				asset,
+				scaling: vec3.fromValues(1, 0.5, 1)				
+		}))
+		this.mesh.baseColor = glider.team == 0 ? { r: 1, g: 0.2, b: 0 } : { r: 0, g: 0.5, b: 1 }
+		this.mesh.accentColor1 = { r: 1, g: 1, b: 1 }
 
 		const bodyCfg = new RigidBodyConfig({
 			actor: this,
@@ -38,28 +43,38 @@ export class PhaserShot extends Entity {
 
 export class PhaserWeapon {
 
-	private coolDown:number = 1
+	private coolDown: number = 1
 
 	constructor(
-		private phaserManager:PhaserManager,
-		private glider:Glider,
-	) {		
+		private phaserManager: PhaserManager,
+		private glider: Glider,
+	) {
 	}
 
 	shoot() {
-		if(this.coolDown <= 0) {
-			let shot = this.phaserManager.create(this.glider)
-			let phi = this.glider.body.angle
-			shot.body.position = vec2.clone(this.glider.body.position)
-			shot.body.angle = phi
-			shot.body.velocity = vec2.fromValues(
-				Math.cos(phi) * 20,
-				Math.sin(phi) * 20)
-			this.coolDown = 0.2;
-		}		
+		if (this.coolDown <= 0) {
+			this.spawnShot(0.6);
+			this.spawnShot(-0.6);
+		}
 	}
 
-	update(dt:number) {
+	private spawnShot(offset: number) {
+		let shot = this.phaserManager.create(this.glider);
+		let phi = this.glider.body.angle;
+		let pos = this.glider.body.position;
+		shot.body.position = vec2.fromValues(
+			pos[0] - Math.sin(phi) * offset,
+			pos[1] + Math.cos(phi) * offset,
+		)
+		shot.body.angle = phi;
+		shot.body.velocity = vec2.fromValues(
+			Math.cos(phi) * 20,
+			Math.sin(phi) * 20,
+		)
+		this.coolDown = 0.2;
+	}
+
+	update(dt: number) {
 		this.coolDown = Math.max(0, this.coolDown - dt)
 	}
 }
@@ -75,26 +90,26 @@ export class PhaserManager {
 	) {
 	}
 
-	create(glider:Glider) {
+	create(glider: Glider) {
 		let shot = new PhaserShot(this.engine, this.asset, glider);
-		assignRole(shot, this.role)		
+		assignRole(shot, this.role)
 		this.phaserRegistry.add(shot)
 		return shot;
 	}
 
 	update() {
 		for (let p of this.phaserRegistry) {
-			p.update()			
+			p.update()
 		}
 
 		for (let p of this.phaserRegistry) {
-			if(p.destroyIfDisposed()) {
+			if (p.destroyIfDisposed()) {
 				this.remove(p)
 			}
 		}
 	}
 
-	remove(shot: PhaserShot) {		
+	remove(shot: PhaserShot) {
 		this.phaserRegistry.delete(shot)
 	}
 }
