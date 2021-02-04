@@ -8,10 +8,28 @@ export class Entity implements Actor{
 	body:RigidBody
 	mesh:Mesh
 
+	private disposed = false
+
 	constructor(){
 		this.roles = new RoleSet()
 	}
 
 	//exert(influence:Influence)
 	update(dt:number){}
+
+	dispose(){
+		this.disposed = true
+	}
+
+	destroyIfDisposed() {
+		if(this.disposed) {
+			this.body.destroy()
+			this.body = null
+			this.mesh.destroy()			
+			this.mesh = null
+			return true
+		} else {
+			return false
+		}
+	}
 }

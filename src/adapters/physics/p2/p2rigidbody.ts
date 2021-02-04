@@ -144,7 +144,7 @@ export class P2RigidBody implements RigidBody{
 	}
 
 	
-	remove(){
+	destroy(){
 		this.p2world.removeBody(this.p2body)
 	}
 }

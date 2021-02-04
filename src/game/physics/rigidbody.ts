@@ -27,7 +27,7 @@ export interface RigidBody{
 	applyTorque(torque:number):void
 	applyAngularMomentum(angularMomentum:number):void
 
-	remove():void
+	destroy():void
 }
 
 export class RigidBodyConfig{

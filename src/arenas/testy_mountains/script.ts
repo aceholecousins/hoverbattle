@@ -1,5 +1,6 @@
 import { Role, interact, assignRole } from "game/entities/actor"
 import { loadArena } from "game/entities/arena/arena"
+import { Entity } from "game/entities/entity"
 import { createGliderFactory, Glider } from "game/entities/glider/glider"
 import { createPhaserManager, PhaserShot, PhaserWeapon } from "game/entities/weapons/phaser"
 import { MatchFactory } from "game/match"
@@ -10,7 +11,7 @@ export let createMatch: MatchFactory = async function (engine) {
 
 	engine.graphics.control.setSceneOrientation([-Math.SQRT1_2, 0, 0, Math.SQRT1_2])
 
-	let arenaRole = new Role<{}>()
+	let arenaRole = new Role<Entity>()
 	let gliderRole = new Role<Glider>()
 	let phaserRole = new Role<PhaserShot>()
 
@@ -21,10 +22,10 @@ export let createMatch: MatchFactory = async function (engine) {
 	interact(phaserRole, phaserRole)
 
 	engine.physics.registerCollisionOverride(new CollisionOverride(
-		gliderRole, gliderRole, function (
-			gliderA: Glider, gliderB: Glider
+		gliderRole, phaserRole, function (
+			glider: Glider, phaserShot: PhaserShot
 		) {
-		return !(gliderA.team == 1 && gliderB.team == 1)
+		return glider != phaserShot.glider
 	}
 	))
 
@@ -42,6 +43,25 @@ export let createMatch: MatchFactory = async function (engine) {
 			gliderB.body.applyImpulse(vec2.scale(vec2.create(), a2b, 10))
 		}
 	}
+	))
+
+	engine.physics.registerCollisionHandler(new CollisionHandler(
+		phaserRole, arenaRole, (shot: PhaserShot, arena: Entity) => {
+			shot.dispose()
+		}
+	))
+
+	engine.physics.registerCollisionHandler(new CollisionHandler(
+		phaserRole, gliderRole, (shot: PhaserShot, glider: Glider) => {
+			shot.dispose()
+		}
+	))
+
+	engine.physics.registerCollisionHandler(new CollisionHandler(
+		phaserRole, phaserRole, (shotA: PhaserShot, shotB: PhaserShot) => {
+			shotA.dispose()
+			shotB.dispose()
+		}
 	))
 
 	let arena = await loadArena(
@@ -71,7 +91,7 @@ export let createMatch: MatchFactory = async function (engine) {
 	let team = 0;
 
 	engine.controllerManager.addConnectionCallback((controller) => {
-		for (let i = 0; i < 5; i++) {
+		for (let i = 0; i < 2; i++) {
 			let glider = createGlider(team, controller)
 			assignRole(glider, gliderRole)
 			glider.mesh.baseColor = team == 0 ? { r: 1, g: 0, b: 0 } : { r: 0, g: 0.5, b: 1 }
@@ -80,7 +100,7 @@ export let createMatch: MatchFactory = async function (engine) {
 			glider.body.position = vec2.fromValues(Math.random() * 20 - 10, Math.random() * 20 - 10)
 			glider.body.angle = Math.random() * 1000
 			engine.actionCam.follow(glider.body, 1.5)
-			
+
 			let weapon = new PhaserWeapon(phaserManager, glider);
 			weapons.push(weapon)
 

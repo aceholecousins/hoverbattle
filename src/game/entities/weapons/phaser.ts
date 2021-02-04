@@ -13,6 +13,7 @@ export class PhaserShot extends Entity {
 	constructor(
 		engine: Engine,
 		asset: Model,
+		public glider:Glider,
 	) {
 		super();
 		this.mesh = engine.graphics.mesh.createFromModel(
@@ -20,7 +21,7 @@ export class PhaserShot extends Entity {
 
 		const bodyCfg = new RigidBodyConfig({
 			actor: this,
-			shapes: [new CircleConfig({ radius: 1 })],
+			shapes: [new CircleConfig({ radius: 0.3 })],
 			damping: 0,
 			angularDamping: 0
 		})
@@ -47,8 +48,13 @@ export class PhaserWeapon {
 
 	shoot() {
 		if(this.coolDown <= 0) {
-			let shot = this.phaserManager.create()
-			shot.body.position = vec2.clone(this.glider.body.position)	
+			let shot = this.phaserManager.create(this.glider)
+			let phi = this.glider.body.angle
+			shot.body.position = vec2.clone(this.glider.body.position)
+			shot.body.angle = phi
+			shot.body.velocity = vec2.fromValues(
+				Math.cos(phi) * 20,
+				Math.sin(phi) * 20)
 			this.coolDown = 0.2;
 		}		
 	}
@@ -69,8 +75,8 @@ export class PhaserManager {
 	) {
 	}
 
-	create() {
-		let shot = new PhaserShot(this.engine, this.asset);
+	create(glider:Glider) {
+		let shot = new PhaserShot(this.engine, this.asset, glider);
 		assignRole(shot, this.role)		
 		this.phaserRegistry.add(shot)
 		return shot;
@@ -78,7 +84,13 @@ export class PhaserManager {
 
 	update() {
 		for (let p of this.phaserRegistry) {
-			p.update()
+			p.update()			
+		}
+
+		for (let p of this.phaserRegistry) {
+			if(p.destroyIfDisposed()) {
+				this.remove(p)
+			}
 		}
 	}
 

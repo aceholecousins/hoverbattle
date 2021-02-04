@@ -48,7 +48,7 @@ export class CollisionHandler<A, B>{
     ){
         this.roleA = roleA
         this.roleB = roleB
-        this.mask = roleA.bit & roleB.bit
+        this.mask = roleA.bit | roleB.bit
         this.onCollision = onCollision
     }
 }

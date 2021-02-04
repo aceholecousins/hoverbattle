@@ -7,7 +7,7 @@ export interface SceneNode<K extends Kind>{
 	position?:vec3
 	orientation?:quat
 	scaling?:vec3
-	remove():void
+	destroy():void
 }
 
 export class SceneNodeConfig<K extends Kind>{

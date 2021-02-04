@@ -33,7 +33,7 @@ export abstract class ThreeSceneNode<K extends Kind> implements SceneNode<K>{
 		this.threeObject.scale.set(s[0], s[1], s[2])
 	}
 
-	remove(){
+	destroy(){
 		this.threeScene.remove(this.threeObject)
 	}
 }
