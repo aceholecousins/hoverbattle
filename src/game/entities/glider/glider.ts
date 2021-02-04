@@ -15,7 +15,6 @@ export class Glider extends Entity{
 	controller:Controller
 	thrust:number = 0
 	shootCallback:ShootCallback
-	private weaponLoad:number = 1
 
 	constructor(
 		engine:Engine,
@@ -46,17 +45,14 @@ export class Glider extends Entity{
 			this.turnToDirection(direction)
 		}
 
-		if(this.controller.isShooting() && this.weaponLoad >= 1) {
-			this.shootCallback()
-			this.weaponLoad = 0;
+		if(this.controller.isShooting()) {
+			this.shootCallback()			
 		}
 		
 		this.mesh.position = [
 			this.body.position[0], this.body.position[1], 0.1]
 		this.mesh.orientation = quat.fromEuler(
 			[0,0,0,0], 0, 0, this.body.angle /Math.PI * 180)
-
-		this.weaponLoad = Math.min(1, this.weaponLoad + dt * 5)
 	}
 
 	turnToDirection(direction: number) {

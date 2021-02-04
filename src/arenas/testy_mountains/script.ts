@@ -1,7 +1,7 @@
 import { Role, interact, assignRole } from "game/entities/actor"
 import { loadArena } from "game/entities/arena/arena"
 import { createGliderFactory, Glider } from "game/entities/glider/glider"
-import { createPhaserManager, Phaser } from "game/entities/weapons/phaser"
+import { createPhaserManager, Phaser, PhaserWeapon } from "game/entities/weapons/phaser"
 import { MatchFactory } from "game/match"
 import { CollisionOverride, CollisionHandler } from "game/physics/collision"
 import { vec2 } from "gl-matrix"
@@ -66,6 +66,8 @@ export let createMatch: MatchFactory = async function (engine) {
 
 	let gliders: Glider[] = []
 
+	let weapons: PhaserWeapon[] = []
+
 	let team = 0;
 
 	engine.controllerManager.addConnectionCallback((controller) => {
@@ -78,7 +80,11 @@ export let createMatch: MatchFactory = async function (engine) {
 			glider.body.position = vec2.fromValues(Math.random() * 20 - 10, Math.random() * 20 - 10)
 			glider.body.angle = Math.random() * 1000
 			engine.actionCam.follow(glider.body, 1.5)
-			glider.shootCallback = () => phaserManager.create(glider)
+			
+			let weapon = new PhaserWeapon(phaserManager, glider);
+			weapons.push(weapon)
+
+			glider.shootCallback = () => weapon.shoot()
 			gliders.push(glider)
 		}
 		team++
@@ -90,6 +96,9 @@ export let createMatch: MatchFactory = async function (engine) {
 			engine.actionCam.update(dt)
 			for (let glider of gliders) {
 				glider.update(dt)
+			}
+			for (let weapon of weapons) {
+				weapon.update(dt)
 			}
 			phaserManager.update()
 		}

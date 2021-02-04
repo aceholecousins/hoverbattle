@@ -35,6 +35,29 @@ export class Phaser extends Entity {
 	}
 }
 
+export class PhaserWeapon {
+
+	private coolDown:number = 1
+
+	constructor(
+		private phaserManager:PhaserManager,
+		private glider:Glider,
+	) {		
+	}
+
+	shoot() {
+		if(this.coolDown <= 0) {
+			let phaser = this.phaserManager.create()
+			phaser.body.position = vec2.clone(this.glider.body.position)	
+			this.coolDown = 0.2;
+		}		
+	}
+
+	update(dt:number) {
+		this.coolDown = Math.max(0, this.coolDown - dt)
+	}
+}
+
 export class PhaserManager {
 
 	private phaserRegistry: Set<Phaser> = new Set()
@@ -42,14 +65,13 @@ export class PhaserManager {
 	constructor(
 		private engine: Engine,
 		private asset: Model,
-		private role: Role<Phaser>
+		private role: Role<Phaser>,
 	) {
 	}
 
-	create(glider: Glider) {
+	create() {
 		let phaser = new Phaser(this.engine, this.asset);
-		assignRole(phaser, this.role)
-		phaser.body.position = vec2.clone(glider.body.position)
+		assignRole(phaser, this.role)		
 		this.phaserRegistry.add(phaser)
 		return phaser;
 	}
@@ -60,7 +82,7 @@ export class PhaserManager {
 		}
 	}
 
-	remove(phaser: Phaser) {
+	remove(phaser: Phaser) {		
 		this.phaserRegistry.delete(phaser)
 	}
 }
