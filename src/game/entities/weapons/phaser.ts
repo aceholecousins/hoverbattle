@@ -8,7 +8,7 @@ import { assignRole, Role } from "../actor";
 import { Entity } from "../entity";
 import { Glider } from "../glider/glider";
 
-export class Phaser extends Entity {
+export class PhaserShot extends Entity {
 
 	constructor(
 		engine: Engine,
@@ -47,8 +47,8 @@ export class PhaserWeapon {
 
 	shoot() {
 		if(this.coolDown <= 0) {
-			let phaser = this.phaserManager.create()
-			phaser.body.position = vec2.clone(this.glider.body.position)	
+			let shot = this.phaserManager.create()
+			shot.body.position = vec2.clone(this.glider.body.position)	
 			this.coolDown = 0.2;
 		}		
 	}
@@ -60,20 +60,20 @@ export class PhaserWeapon {
 
 export class PhaserManager {
 
-	private phaserRegistry: Set<Phaser> = new Set()
+	private phaserRegistry: Set<PhaserShot> = new Set()
 
 	constructor(
 		private engine: Engine,
 		private asset: Model,
-		private role: Role<Phaser>,
+		private role: Role<PhaserShot>,
 	) {
 	}
 
 	create() {
-		let phaser = new Phaser(this.engine, this.asset);
-		assignRole(phaser, this.role)		
-		this.phaserRegistry.add(phaser)
-		return phaser;
+		let shot = new PhaserShot(this.engine, this.asset);
+		assignRole(shot, this.role)		
+		this.phaserRegistry.add(shot)
+		return shot;
 	}
 
 	update() {
@@ -82,12 +82,12 @@ export class PhaserManager {
 		}
 	}
 
-	remove(phaser: Phaser) {		
-		this.phaserRegistry.delete(phaser)
+	remove(shot: PhaserShot) {		
+		this.phaserRegistry.delete(shot)
 	}
 }
 
-export async function createPhaserManager(engine: Engine, role: Role<Phaser>) {
+export async function createPhaserManager(engine: Engine, role: Role<PhaserShot>) {
 
 	let phaserAsset: Model
 	await new Promise<void>((resolve, reject) => {

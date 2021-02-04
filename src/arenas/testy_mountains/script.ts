@@ -1,7 +1,7 @@
 import { Role, interact, assignRole } from "game/entities/actor"
 import { loadArena } from "game/entities/arena/arena"
 import { createGliderFactory, Glider } from "game/entities/glider/glider"
-import { createPhaserManager, Phaser, PhaserWeapon } from "game/entities/weapons/phaser"
+import { createPhaserManager, PhaserShot, PhaserWeapon } from "game/entities/weapons/phaser"
 import { MatchFactory } from "game/match"
 import { CollisionOverride, CollisionHandler } from "game/physics/collision"
 import { vec2 } from "gl-matrix"
@@ -12,7 +12,7 @@ export let createMatch: MatchFactory = async function (engine) {
 
 	let arenaRole = new Role<{}>()
 	let gliderRole = new Role<Glider>()
-	let phaserRole = new Role<Phaser>()
+	let phaserRole = new Role<PhaserShot>()
 
 	interact(arenaRole, gliderRole)
 	interact(gliderRole, gliderRole)
