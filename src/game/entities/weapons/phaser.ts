@@ -45,11 +45,14 @@ export class PhaserShot extends Entity {
 export class PhaserWeapon {
 
 	private coolDown: number = 1
+	private updateHandler = (e: any) => this.update(e.dt)
 
 	constructor(
 		private phaserManager: PhaserManager,
 		private glider: Glider,
 	) {
+		//TODO: Remove handler on disposal of Weapon
+		broker.update.addHandler(this.updateHandler)
 	}
 
 	shoot() {

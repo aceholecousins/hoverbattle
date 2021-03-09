@@ -86,8 +86,6 @@ export let createMatch: MatchFactory = async function (engine) {
 
 	let gliders: Glider[] = []
 
-	let weapons: PhaserWeapon[] = []
-
 	let team = 0;
 
 	engine.controllerManager.addConnectionCallback((controller) => {
@@ -101,8 +99,7 @@ export let createMatch: MatchFactory = async function (engine) {
 			glider.body.angle = Math.random() * 1000
 			engine.actionCam.follow(glider.body, 1.5)
 
-			let weapon = new PhaserWeapon(phaserManager, glider);
-			weapons.push(weapon)
+			let weapon = new PhaserWeapon(phaserManager, glider);			
 
 			glider.shootCallback = () => weapon.shoot()
 			gliders.push(glider)
@@ -113,13 +110,7 @@ export let createMatch: MatchFactory = async function (engine) {
 	return {
 		update(dt) {
 			engine.physics.step(dt)
-			engine.actionCam.update(dt)
-			for (let glider of gliders) {
-				glider.update(dt)
-			}
-			for (let weapon of weapons) {
-				weapon.update(dt)
-			}			
+			engine.actionCam.update(dt)						
 		}
 	}
 }
