@@ -1,3 +1,4 @@
+import { broker } from "broker";
 import { ModelMeshConfig } from "game/graphics/mesh";
 import { Model } from "game/graphics/model";
 import { Engine } from "game/match";
@@ -33,7 +34,7 @@ export class PhaserShot extends Entity {
 		this.body = engine.physics.addRigidBody(bodyCfg)
 	}
 
-	update() {
+	protected update() {
 		this.mesh.position = [
 			this.body.position[0], this.body.position[1], 0.1]
 		this.mesh.orientation = quat.fromEuler(
@@ -81,8 +82,6 @@ export class PhaserWeapon {
 
 export class PhaserManager {
 
-	private phaserRegistry: Set<PhaserShot> = new Set()
-
 	constructor(
 		private engine: Engine,
 		private asset: Model,
@@ -92,25 +91,8 @@ export class PhaserManager {
 
 	create(glider: Glider) {
 		let shot = new PhaserShot(this.engine, this.asset, glider);
-		assignRole(shot, this.role)
-		this.phaserRegistry.add(shot)
+		assignRole(shot, this.role)		
 		return shot;
-	}
-
-	update() {
-		for (let p of this.phaserRegistry) {
-			p.update()
-		}
-
-		for (let p of this.phaserRegistry) {
-			if (p.destroyIfDisposed()) {
-				this.remove(p)
-			}
-		}
-	}
-
-	remove(shot: PhaserShot) {
-		this.phaserRegistry.delete(shot)
 	}
 }
 

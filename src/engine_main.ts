@@ -8,10 +8,14 @@ import { P2Physics } from "adapters/physics/p2/p2physics"
 import { createMatch } from "arenas/testy_mountains/script"
 import { createControllerManagerClient } from "adapters/controller/controllerbridge/controllermanagerclient"
 import { Match } from "game/match"
+import { broker } from "broker"
 
 let dt = 1/100
 
 async function initMatch(){
+	broker.newChannel('update')
+	broker.newChannel('purge')
+
 	let physics = new P2Physics() as Physics
 	let graphics = await createGraphicsClient()
 	let actionCam = new ActionCam(graphics, new ActionCamConfig())
@@ -26,7 +30,9 @@ async function initMatch(){
 function start(match:Match){
 	setInterval(()=>{
 		match.update(dt)
+		broker.update.fire({dt:dt})
 		bridge.sendAll()
+		broker.purge.fire()
 	}, 1000*dt)
 }
 

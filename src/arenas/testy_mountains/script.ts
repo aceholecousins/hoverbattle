@@ -119,8 +119,7 @@ export let createMatch: MatchFactory = async function (engine) {
 			}
 			for (let weapon of weapons) {
 				weapon.update(dt)
-			}
-			phaserManager.update()
+			}			
 		}
 	}
 }

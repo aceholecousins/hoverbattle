@@ -1,6 +1,7 @@
-import { Actor, Role, RoleSet, assignRole, revokeRole } from "./actor"
+import { Actor, RoleSet } from "./actor"
 import { Mesh } from "../graphics/mesh"
 import { RigidBody } from "../physics/rigidbody"
+import { broker } from "broker"
 
 export class Entity implements Actor{
 
@@ -10,26 +11,30 @@ export class Entity implements Actor{
 
 	private disposed = false
 
+	private updateHandler = (e: any) => this.update(e.dt)
+	private purgeHandler = () => this.destroyIfDisposed()
+
 	constructor(){
 		this.roles = new RoleSet()
+		broker.update.addHandler(this.updateHandler)
+		broker.purge.addHandler(this.purgeHandler)
 	}
 
-	//exert(influence:Influence)
-	update(dt:number){}
+	protected update(dt:number){}
 
 	dispose(){
 		this.disposed = true
 	}
 
-	destroyIfDisposed() {
-		if(this.disposed) {
+	protected destroyIfDisposed() {
+		if(this.disposed) {			
+			broker.purge.removeHandler(this.purgeHandler)
+			broker.update.removeHandler(this.updateHandler)	
+			
 			this.body.destroy()
 			this.body = null
 			this.mesh.destroy()			
-			this.mesh = null
-			return true
-		} else {
-			return false
+			this.mesh = null			
 		}
 	}
 }
