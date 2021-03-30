@@ -6,6 +6,7 @@ import { CircleConfig } from "game/physics/circle"
 import { RigidBodyConfig } from "game/physics/rigidbody"
 import { vec2, quat, vec3 } from "gl-matrix"
 import { wrapAngle } from "utilities/math_utils"
+import { Constructor } from "utils"
 import { Entity } from "../entity"
 
 export type ShootCallback = () => void
@@ -13,7 +14,6 @@ export type ShootCallback = () => void
 export class Glider extends Entity{
 	team:number = 0
 	controller:Controller
-	thrust:number = 0
 	shootCallback:ShootCallback
 
 	constructor(
@@ -33,8 +33,8 @@ export class Glider extends Entity{
 	}
 
 	update(dt:number){
-		this.thrust = this.controller.getThrust() * 20;
-		this.body.applyLocalForce(vec2.fromValues(this.thrust, 0))
+		let thrust = this.controller.getThrust() * 20;
+		this.body.applyLocalForce(vec2.fromValues(thrust, 0))
 
 		const turnRate = this.controller.getTurnRate()
 		if(turnRate != undefined) {
@@ -67,9 +67,11 @@ export class Glider extends Entity{
 }
 
 
-export async function createGliderFactory(engine:Engine){
+export async function createGliderFactory<T extends Glider>(engine:Engine, applyMixins:(glider:Constructor<Glider>) => Constructor<T>){
 
 	let gliderAsset:Model
+	
+	let ExtendedGlider = applyMixins(Glider)
 	
 	await new Promise((resolve, reject)=>{
 		gliderAsset = engine.graphics.model.load(
@@ -88,7 +90,7 @@ export async function createGliderFactory(engine:Engine){
 	})
 
 	return function(team:number, controller:Controller){
-		return new Glider(
+		return new ExtendedGlider(
 			engine,
 			gliderBodyCfg,
 			gliderModelCfg,

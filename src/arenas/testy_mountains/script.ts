@@ -1,5 +1,6 @@
 import { Role, interact, assignRole } from "game/entities/actor"
 import { loadArena } from "game/entities/arena/arena"
+import { Destructible, makeDestructible } from "game/entities/destructible"
 import { Entity } from "game/entities/entity"
 import { createGliderFactory, Glider } from "game/entities/glider/glider"
 import { createPhaserManager, PhaserShot, PhaserWeapon } from "game/entities/weapons/phaser"
@@ -14,12 +15,14 @@ export let createMatch: MatchFactory = async function (engine) {
 	let arenaRole = new Role<Entity>()
 	let gliderRole = new Role<Glider>()
 	let phaserRole = new Role<PhaserShot>()
+	let destructibleRole = new Role<Destructible>()
 
 	interact(arenaRole, gliderRole)
 	interact(gliderRole, gliderRole)
 	interact(phaserRole, gliderRole)
 	interact(phaserRole, arenaRole)
 	interact(phaserRole, phaserRole)
+	interact(phaserRole, destructibleRole)
 
 	engine.physics.registerCollisionOverride(new CollisionOverride(
 		gliderRole, phaserRole, function (
@@ -64,12 +67,18 @@ export let createMatch: MatchFactory = async function (engine) {
 		}
 	))
 
+	engine.physics.registerCollisionHandler(new CollisionHandler(
+		phaserRole, destructibleRole, (shot: PhaserShot, destructible: Destructible) => {
+			destructible.hitpoints--
+		}
+	))
+
 	let arena = await loadArena(
 		engine, "arenas/testy_mountains/mountains.glb")
 
 	assignRole(arena, arenaRole)
 
-	let createGlider = await createGliderFactory(engine)
+	let createGlider = await createGliderFactory(engine, makeDestructible)
 
 	await new Promise<void>((resolve, reject) => {
 		let env = engine.graphics.skybox.load(
