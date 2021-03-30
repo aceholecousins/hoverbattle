@@ -78,7 +78,7 @@ export let createMatch: MatchFactory = async function (engine) {
 
 	assignRole(arena, arenaRole)
 
-	let createGlider = await createGliderFactory(engine, makeDestructible)
+	let createGlider = await createGliderFactory(engine, (g) => makeDestructible(g, 11))
 
 	await new Promise<void>((resolve, reject) => {
 		let env = engine.graphics.skybox.load(
@@ -100,6 +100,7 @@ export let createMatch: MatchFactory = async function (engine) {
 	engine.controllerManager.addConnectionCallback((controller) => {
 		for (let i = 0; i < 2; i++) {
 			let glider = createGlider(team, controller)
+			glider.hitpoints--
 			assignRole(glider, gliderRole)
 			glider.mesh.baseColor = team == 0 ? { r: 1, g: 0, b: 0 } : { r: 0, g: 0.5, b: 1 }
 			glider.mesh.accentColor1 = team == 0 ? { r: 1, g: 0.5, b: 0 } : { r: 0, g: 0.8, b: 1 }

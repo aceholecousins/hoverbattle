@@ -5,9 +5,9 @@ export interface Destructible {
 	hitpoints: number
 }
 
-export function makeDestructible<TBase extends Constructor<Entity>>(Base: TBase) {
+export function makeDestructible<TBase extends Constructor<Entity>>(Base: TBase, initialHitpoints:number) {
 	return class DestructibleImpl extends Base implements Destructible {
-		hitpoints: number;
+		hitpoints: number = initialHitpoints;
 	};
 }
 
