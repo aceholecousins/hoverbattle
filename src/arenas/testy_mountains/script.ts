@@ -99,9 +99,9 @@ export let createMatch: MatchFactory = async function (engine) {
 
 	engine.controllerManager.addConnectionCallback((controller) => {
 		for (let i = 0; i < 2; i++) {
-			let glider = createGlider(team, controller)
-			glider.hitpoints--
+			let glider = createGlider(team, controller)			
 			assignRole(glider, gliderRole)
+			assignRole(glider, destructibleRole)
 			glider.mesh.baseColor = team == 0 ? { r: 1, g: 0, b: 0 } : { r: 0, g: 0.5, b: 1 }
 			glider.mesh.accentColor1 = team == 0 ? { r: 1, g: 0.5, b: 0 } : { r: 0, g: 0.8, b: 1 }
 			glider.mesh.accentColor2 = team == 0 ? { r: 0, g: 0, b: 0.8 } : { r: 1, g: 0, b: 0.2 }
