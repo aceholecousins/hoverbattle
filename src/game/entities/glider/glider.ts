@@ -67,11 +67,9 @@ export class Glider extends Entity{
 }
 
 
-export async function createGliderFactory<T extends Glider>(engine:Engine, applyMixins:(glider:Constructor<Glider>) => Constructor<T>){
+export async function createGliderFactory<T extends Glider>(engine:Engine){
 
 	let gliderAsset:Model
-	
-	let ExtendedGlider = applyMixins(Glider)
 	
 	await new Promise((resolve, reject)=>{
 		gliderAsset = engine.graphics.model.load(
@@ -90,7 +88,7 @@ export async function createGliderFactory<T extends Glider>(engine:Engine, apply
 	})
 
 	return function(team:number, controller:Controller){
-		return new ExtendedGlider(
+		return new Glider(
 			engine,
 			gliderBodyCfg,
 			gliderModelCfg,

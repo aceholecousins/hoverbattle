@@ -78,7 +78,7 @@ export let createMatch: MatchFactory = async function (engine) {
 
 	assignRole(arena, arenaRole)
 
-	let createGlider = await createGliderFactory(engine, (g) => makeDestructible(g, 11))
+	let createGlider = await createGliderFactory(engine)
 
 	await new Promise<void>((resolve, reject) => {
 		let env = engine.graphics.skybox.load(
@@ -99,9 +99,8 @@ export let createMatch: MatchFactory = async function (engine) {
 
 	engine.controllerManager.addConnectionCallback((controller) => {
 		for (let i = 0; i < 2; i++) {
-			let glider = createGlider(team, controller)
-			glider.setDestroyCallback(() => {
-				console.log('destroy')
+			let glider = makeDestructible(createGlider(team, controller), 11, () => {
+				console.log('destroy')				
 			})
 			assignRole(glider, gliderRole)
 			assignRole(glider, destructibleRole)
