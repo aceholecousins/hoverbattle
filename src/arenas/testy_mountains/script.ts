@@ -69,7 +69,7 @@ export let createMatch: MatchFactory = async function (engine) {
 
 	engine.physics.registerCollisionHandler(new CollisionHandler(
 		phaserRole, destructibleRole, (shot: PhaserShot, destructible: Destructible) => {
-			destructible.hitpoints--
+			destructible.hit()
 		}
 	))
 
@@ -99,7 +99,10 @@ export let createMatch: MatchFactory = async function (engine) {
 
 	engine.controllerManager.addConnectionCallback((controller) => {
 		for (let i = 0; i < 2; i++) {
-			let glider = createGlider(team, controller)			
+			let glider = createGlider(team, controller)
+			glider.setDestroyCallback(() => {
+				console.log('destroy')
+			})
 			assignRole(glider, gliderRole)
 			assignRole(glider, destructibleRole)
 			glider.mesh.baseColor = team == 0 ? { r: 1, g: 0, b: 0 } : { r: 0, g: 0.5, b: 1 }
