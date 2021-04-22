@@ -67,7 +67,7 @@ export class Glider extends Entity{
 }
 
 
-export async function createGliderFactory<T extends Glider>(engine:Engine){
+export async function createGliderFactory(engine:Engine){
 
 	let gliderAsset:Model
 	
