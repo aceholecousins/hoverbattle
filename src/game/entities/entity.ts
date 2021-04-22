@@ -12,7 +12,7 @@ export class Entity implements Actor{
 	private disposed = false
 
 	private updateHandler = (e: any) => this.update(e.dt)
-	private purgeHandler = () => this.destroyIfDisposed()
+	private purgeHandler = () => this.removeIfDisposed()
 
 	constructor(){
 		this.roles = new RoleSet()
@@ -26,7 +26,7 @@ export class Entity implements Actor{
 		this.disposed = true
 	}
 
-	protected destroyIfDisposed() {
+	protected removeIfDisposed() {
 		if(this.disposed) {			
 			broker.purge.removeHandler(this.purgeHandler)
 			broker.update.removeHandler(this.updateHandler)	

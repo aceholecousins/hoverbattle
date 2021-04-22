@@ -1,5 +1,6 @@
 import { Role, interact, assignRole } from "game/entities/actor"
 import { loadArena } from "game/entities/arena/arena"
+import { Destructible, makeDestructible } from "game/entities/destructible"
 import { Entity } from "game/entities/entity"
 import { createGliderFactory, Glider } from "game/entities/glider/glider"
 import { createPhaserManager, PhaserShot, PhaserWeapon } from "game/entities/weapons/phaser"
@@ -14,12 +15,14 @@ export let createMatch: MatchFactory = async function (engine) {
 	let arenaRole = new Role<Entity>()
 	let gliderRole = new Role<Glider>()
 	let phaserRole = new Role<PhaserShot>()
+	let destructibleRole = new Role<Destructible>()
 
 	interact(arenaRole, gliderRole)
 	interact(gliderRole, gliderRole)
 	interact(phaserRole, gliderRole)
 	interact(phaserRole, arenaRole)
 	interact(phaserRole, phaserRole)
+	interact(phaserRole, destructibleRole)
 
 	engine.physics.registerCollisionOverride(new CollisionOverride(
 		gliderRole, phaserRole, function (
@@ -64,6 +67,12 @@ export let createMatch: MatchFactory = async function (engine) {
 		}
 	))
 
+	engine.physics.registerCollisionHandler(new CollisionHandler(
+		phaserRole, destructibleRole, (shot: PhaserShot, destructible: Destructible) => {
+			destructible.hit()
+		}
+	))
+
 	let arena = await loadArena(
 		engine, "arenas/testy_mountains/mountains.glb")
 
@@ -90,8 +99,11 @@ export let createMatch: MatchFactory = async function (engine) {
 
 	engine.controllerManager.addConnectionCallback((controller) => {
 		for (let i = 0; i < 2; i++) {
-			let glider = createGlider(team, controller)
+			let glider = makeDestructible(createGlider(team, controller), 11, () => {
+				console.log('destroy')				
+			})
 			assignRole(glider, gliderRole)
+			assignRole(glider, destructibleRole)
 			glider.mesh.baseColor = team == 0 ? { r: 1, g: 0, b: 0 } : { r: 0, g: 0.5, b: 1 }
 			glider.mesh.accentColor1 = team == 0 ? { r: 1, g: 0.5, b: 0 } : { r: 0, g: 0.8, b: 1 }
 			glider.mesh.accentColor2 = team == 0 ? { r: 0, g: 0, b: 0.8 } : { r: 1, g: 0, b: 0.2 }
