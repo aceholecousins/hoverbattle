@@ -33,6 +33,3 @@ export function copyIfPresent<T1, T2, K extends keyof T1 & keyof T2>(
 		}
 	}
 }
-
-
-export type Constructor<T> = new (...args: any[]) => T;

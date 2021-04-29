@@ -9,6 +9,10 @@ import { assignRole, Role } from "../actor";
 import { Entity } from "../entity";
 import { Glider } from "../glider/glider";
 
+const PHASER_LENGTH = 0.8;
+const PHASER_SPEED = 30;
+const PHASER_FIRE_RATE = 12;
+
 export class PhaserShot extends Entity {
 
 	constructor(
@@ -20,7 +24,7 @@ export class PhaserShot extends Entity {
 		this.mesh = engine.graphics.mesh.createFromModel(
 			new ModelMeshConfig({
 				asset,
-				scaling: vec3.fromValues(1, 0.5, 1)				
+				scaling: vec3.fromValues(PHASER_LENGTH, PHASER_LENGTH / 2, 1)				
 		}))
 		this.mesh.baseColor = glider.team == 0 ? { r: 1, g: 0.2, b: 0 } : { r: 0, g: 0.5, b: 1 }
 		this.mesh.accentColor1 = { r: 1, g: 1, b: 1 }
@@ -72,10 +76,10 @@ export class PhaserWeapon {
 		)
 		shot.body.angle = phi;
 		shot.body.velocity = vec2.fromValues(
-			Math.cos(phi) * 20,
-			Math.sin(phi) * 20,
+			Math.cos(phi) * PHASER_SPEED,
+			Math.sin(phi) * PHASER_SPEED,
 		)
-		this.coolDown = 0.2;
+		this.coolDown = 1 / PHASER_FIRE_RATE;
 	}
 
 	update(dt: number) {

@@ -6,8 +6,9 @@ import { CircleConfig } from "game/physics/circle"
 import { RigidBodyConfig } from "game/physics/rigidbody"
 import { vec2, quat, vec3 } from "gl-matrix"
 import { wrapAngle } from "utilities/math_utils"
-import { Constructor } from "utils"
 import { Entity } from "../entity"
+
+var GLIDER_RADIUS = 1;
 
 export type ShootCallback = () => void
 
@@ -29,7 +30,7 @@ export class Glider extends Entity{
 		this.body = engine.physics.addRigidBody(bodyCfg)
 		this.mesh = engine.graphics.mesh.createFromModel(modelCfg)
 		this.controller = controller
-		//this.mesh.scaling = vec3.fromValues(3, 3, 3)
+		this.mesh.scaling = vec3.fromValues(GLIDER_RADIUS, GLIDER_RADIUS, GLIDER_RADIUS)
 	}
 
 	update(dt:number){
