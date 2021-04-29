@@ -4,9 +4,10 @@ import { Destructible, makeDestructible } from "game/entities/destructible"
 import { Entity } from "game/entities/entity"
 import { createGliderFactory, Glider } from "game/entities/glider/glider"
 import { createPhaserManager, PhaserShot, PhaserWeapon } from "game/entities/weapons/phaser"
+import { ExplosionConfig } from "game/graphics/fx"
 import { MatchFactory } from "game/match"
 import { CollisionOverride, CollisionHandler } from "game/physics/collision"
-import { vec2 } from "gl-matrix"
+import { vec2, vec3 } from "gl-matrix"
 
 export let createMatch: MatchFactory = async function (engine) {
 
@@ -99,13 +100,20 @@ export let createMatch: MatchFactory = async function (engine) {
 
 	engine.controllerManager.addConnectionCallback((controller) => {
 		for (let i = 0; i < 2; i++) {
+
+			let baseColor = team == 0 ? { r: 1, g: 0, b: 0 } : { r: 0, g: 0.5, b: 1 }
+
 			let glider = makeDestructible(createGlider(team, controller), 11, (entity) => {
 				console.log('destroy')
 				entity.dispose()
+				engine.graphics.fx.createExplosion(new ExplosionConfig({
+					position: vec3.fromValues(entity.body.position[0], entity.body.position[1], 0),
+					color: baseColor
+				}))
 			})
 			assignRole(glider, gliderRole)
 			assignRole(glider, destructibleRole)
-			glider.mesh.baseColor = team == 0 ? { r: 1, g: 0, b: 0 } : { r: 0, g: 0.5, b: 1 }
+			glider.mesh.baseColor = baseColor
 			glider.mesh.accentColor1 = team == 0 ? { r: 1, g: 0.5, b: 0 } : { r: 0, g: 0.8, b: 1 }
 			glider.mesh.accentColor2 = team == 0 ? { r: 0, g: 0, b: 0.8 } : { r: 1, g: 0, b: 0.2 }
 			glider.body.position = vec2.fromValues(Math.random() * 20 - 10, Math.random() * 20 - 10)
