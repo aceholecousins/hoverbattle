@@ -10,6 +10,7 @@ import { LightProbeGenerator } from 'three/examples/jsm/lights/LightProbeGenerat
 import * as THREE from "three"
 import { Model } from "game/graphics/model"
 import { ThreeModel } from "./threemodel"
+import { broker } from "broker"
 
 export class ThreeGraphicsController implements GraphicsController{
 
@@ -17,6 +18,8 @@ export class ThreeGraphicsController implements GraphicsController{
 
 	constructor(graphics:ThreeGraphics){
 		this.graphics = graphics
+
+		broker.newChannel("graphicsUpdate")
 
 		const resize = ()=>{
 			renderer.setSize(
@@ -47,6 +50,7 @@ export class ThreeGraphicsController implements GraphicsController{
 	}
 
 	update(time: number){
+		broker["graphicsUpdate"].fire(1/60)
 		renderer.render(
 			this.graphics.scene, 
 			(this.graphics.scene.userData as SceneInfo).activeCamera

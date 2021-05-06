@@ -1,4 +1,3 @@
-import { Constructor } from "utils";
 import { Entity } from "./entity";
 
 export interface Destructible {

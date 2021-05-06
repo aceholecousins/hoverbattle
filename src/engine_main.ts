@@ -30,7 +30,7 @@ async function initMatch(){
 function start(match:Match){
 	setInterval(()=>{
 		match.update(dt)
-		broker.update.fire({dt:dt})
+		broker.update.fire({dt})
 		bridge.sendAll()
 		broker.purge.fire()
 	}, 1000*dt)

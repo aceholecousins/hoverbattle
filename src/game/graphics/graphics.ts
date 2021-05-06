@@ -6,6 +6,7 @@ import {MeshFactory} from "./mesh"
 import {GraphicsController} from "./graphicscontroller"
 import { SkyboxLoader } from "./skybox"
 import { SpriteLoader } from "./sprite"
+import { FxFactory } from "./fx"
 
 export interface Graphics{
 
@@ -16,6 +17,8 @@ export interface Graphics{
 	camera: CameraFactory
 	light: LightFactory
 	mesh: MeshFactory
+
+	fx: FxFactory
 
 	control: GraphicsController
 }
