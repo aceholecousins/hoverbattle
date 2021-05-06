@@ -75,8 +75,14 @@ export let createMatch: MatchFactory = async function (engine) {
 		}
 	))
 
+	let spawnPoints:vec2[] = []
+
 	let arena = await loadArena(
-		engine, "arenas/testy_mountains/mountains.glb")
+		engine, "arenas/testy_mountains/mountains.glb", (meta:any) => {
+			for(let tri of meta.spawn){
+				spawnPoints.push(vec2.fromValues(tri[0][0], tri[0][1]))
+			}
+		})
 
 	assignRole(arena, arenaRole)
 
@@ -102,8 +108,8 @@ export let createMatch: MatchFactory = async function (engine) {
 		let baseColor = team == 0 ? { r: 1, g: 0, b: 0 } : { r: 0, g: 0.5, b: 1 }
 		let player = new Player(controller, team, baseColor)
 
-		for (let i = 0; i < 2; i++) {
-			let glider = spawn(player)
+		for (let i = 0; i < 1; i++) {
+			spawn(player)
 		}
 		team++
 	})
@@ -134,7 +140,7 @@ export let createMatch: MatchFactory = async function (engine) {
 		glider.mesh.baseColor = player.color
 		glider.mesh.accentColor1 = player.team == 0 ? { r: 1, g: 0.5, b: 0 } : { r: 0, g: 0.8, b: 1 }
 		glider.mesh.accentColor2 = player.team == 0 ? { r: 0, g: 0, b: 0.8 } : { r: 1, g: 0, b: 0.2 }
-		glider.body.position = vec2.fromValues(Math.random() * 20 - 10, Math.random() * 20 - 10)
+		glider.body.position = determineSpawnPoint()
 		glider.body.angle = Math.random() * 1000
 		engine.actionCam.follow(glider.body, 1.5)
 	
@@ -142,6 +148,14 @@ export let createMatch: MatchFactory = async function (engine) {
 	
 		glider.shootCallback = () => weapon.shoot()
 		return glider
-	}	
+	}
+
+	function determineSpawnPoint(): vec2 {
+		let index = Math.floor(Math.random() * spawnPoints.length)
+		let point =  spawnPoints[index]
+		point[0] += Math.random() - 0.5
+		point[1] += Math.random() - 0.5
+		return point
+	}
 }
 
