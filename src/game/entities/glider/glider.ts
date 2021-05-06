@@ -4,6 +4,7 @@ import { Model } from "game/graphics/model"
 import { Engine } from "game/match"
 import { CircleConfig } from "game/physics/circle"
 import { RigidBodyConfig } from "game/physics/rigidbody"
+import { Player } from "game/player"
 import { vec2, quat, vec3 } from "gl-matrix"
 import { wrapAngle } from "utilities/math_utils"
 import { Entity } from "../entity"
@@ -13,40 +14,37 @@ var GLIDER_RADIUS = 1;
 export type ShootCallback = () => void
 
 export class Glider extends Entity{
-	team:number = 0
-	controller:Controller
+	
+	
 	shootCallback:ShootCallback
 
 	constructor(
 		engine:Engine,
 		bodyCfg:RigidBodyConfig,
 		modelCfg:ModelMeshConfig,
-		controller:Controller,
-		team:number
+		public player:Player,
 	){
 		super()
 		bodyCfg.actor = this
-		this.team = team
 		this.body = engine.physics.addRigidBody(bodyCfg)
 		this.mesh = engine.graphics.mesh.createFromModel(modelCfg)
-		this.controller = controller
 		this.mesh.scaling = vec3.fromValues(GLIDER_RADIUS, GLIDER_RADIUS, GLIDER_RADIUS)
 	}
 
 	update(dt:number){
-		let thrust = this.controller.getThrust() * 20;
+		let thrust = this.player.controller.getThrust() * 20;
 		this.body.applyLocalForce(vec2.fromValues(thrust, 0))
 
-		const turnRate = this.controller.getTurnRate()
+		const turnRate = this.player.controller.getTurnRate()
 		if(turnRate != undefined) {
 			this.body.applyTorque(turnRate * 20)
 		}
-		const direction = this.controller.getAbsoluteDirection()
+		const direction = this.player.controller.getAbsoluteDirection()
 		if(direction != undefined) {
 			this.turnToDirection(direction)
 		}
 
-		if(this.controller.isShooting()) {
+		if(this.player.controller.isShooting()) {
 			this.shootCallback()			
 		}
 		
@@ -88,13 +86,12 @@ export async function createGliderFactory(engine:Engine){
 		asset:gliderAsset
 	})
 
-	return function(team:number, controller:Controller){
+	return function(player:Player){
 		return new Glider(
 			engine,
 			gliderBodyCfg,
 			gliderModelCfg,
-			controller,
-			team
+			player
 		) 
 	}
 }

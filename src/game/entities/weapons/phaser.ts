@@ -26,7 +26,7 @@ export class PhaserShot extends Entity {
 				asset,
 				scaling: vec3.fromValues(PHASER_LENGTH, PHASER_LENGTH / 2, 1)				
 		}))
-		this.mesh.baseColor = glider.team == 0 ? { r: 1, g: 0.2, b: 0 } : { r: 0, g: 0.5, b: 1 }
+		this.mesh.baseColor = glider.player.team == 0 ? { r: 1, g: 0.2, b: 0 } : { r: 0, g: 0.5, b: 1 }
 		this.mesh.accentColor1 = { r: 1, g: 1, b: 1 }
 
 		const bodyCfg = new RigidBodyConfig({
