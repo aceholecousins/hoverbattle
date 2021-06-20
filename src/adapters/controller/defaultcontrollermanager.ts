@@ -29,7 +29,7 @@ export class DefaultControllerManager implements ControllerManager {
 			down: "ArrowDown",
 			right: "ArrowRight",
 			left: "ArrowLeft",
-			shoot: "ControlRight",
+			shoot: "Enter",
 			pause: "Pause",
 			switchMode: "ShiftRight",
 		}))
