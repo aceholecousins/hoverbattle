@@ -4,6 +4,7 @@ import { Model } from "game/graphics/model";
 import { Engine } from "game/match";
 import { CircleConfig } from "game/physics/circle";
 import { RigidBodyConfig } from "game/physics/rigidbody";
+import { Sound } from "game/sound/soundfx";
 import { quat, vec2, vec3 } from "gl-matrix";
 import { assignRole, Role } from "../actor";
 import { Entity } from "../entity";
@@ -12,6 +13,8 @@ import { Glider } from "../glider/glider";
 const PHASER_LENGTH = 0.8;
 const PHASER_SPEED = 30;
 const PHASER_FIRE_RATE = 12;
+
+let phaserSound:Sound
 
 export class PhaserShot extends Entity {
 
@@ -24,8 +27,8 @@ export class PhaserShot extends Entity {
 		this.mesh = engine.graphics.mesh.createFromModel(
 			new ModelMeshConfig({
 				asset,
-				scaling: vec3.fromValues(PHASER_LENGTH, PHASER_LENGTH / 2, 1)				
-		}))
+				scaling: vec3.fromValues(PHASER_LENGTH, PHASER_LENGTH / 2, 1)
+			}))
 		this.mesh.baseColor = glider.player.team == 0 ? { r: 1, g: 0.2, b: 0 } : { r: 0, g: 0.5, b: 1 }
 		this.mesh.accentColor1 = { r: 1, g: 1, b: 1 }
 
@@ -63,6 +66,7 @@ export class PhaserWeapon {
 		if (this.coolDown <= 0) {
 			this.spawnShot(0.6);
 			this.spawnShot(-0.6);
+			phaserSound.play()
 		}
 	}
 
@@ -98,7 +102,7 @@ export class PhaserManager {
 
 	create(glider: Glider) {
 		let shot = new PhaserShot(this.engine, this.asset, glider);
-		assignRole(shot, this.role)		
+		assignRole(shot, this.role)
 		return shot;
 	}
 }
@@ -110,6 +114,8 @@ export async function createPhaserManager(engine: Engine, role: Role<PhaserShot>
 		phaserAsset = engine.graphics.sprite.load(
 			"game/entities/weapons/phaser.tint.png", resolve, reject)
 	})
+
+	phaserSound = await engine.soundFxPlayer.loadSound("game/entities/weapons/phaser.ogg")
 
 	return new PhaserManager(
 		engine,

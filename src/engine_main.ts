@@ -9,6 +9,7 @@ import { createMatch } from "arenas/testy_mountains/script"
 import { createControllerManagerClient } from "adapters/controller/controllerbridge/controllermanagerclient"
 import { Match } from "game/match"
 import { broker } from "broker"
+import { SoundFxPlayer } from "game/sound/soundfx"
 
 let dt = 1/100
 
@@ -21,9 +22,10 @@ async function initMatch(){
 	let actionCam = new ActionCam(graphics, new ActionCamConfig())
 	actionCam.camera.activate()
 	let controllerManager = createControllerManagerClient("controllerManager")
+	let soundFxPlayer = await (bridge.createProxy("soundFxPlayer") as Promise<SoundFxPlayer>)
 
 	return createMatch({
-		physics, graphics, actionCam, controllerManager
+		physics, graphics, actionCam, controllerManager, soundFxPlayer
 	})
 }
 
