@@ -133,7 +133,7 @@ export class WorkerBridge{
 		if(!isNaN(remoteKey as any)){
 			throw new Error("numeric indices are reserved for anonymous objects")
 		}
-		if(remoteKey in this.remoteRegistry){
+		if(this.remoteRegistry.has(remoteKey)){
 			return _createProxy(this, remoteKey)
 		}
 		else{
