@@ -115,7 +115,7 @@ export async function createPhaserManager(engine: Engine, role: Role<PhaserShot>
 			"game/entities/weapons/phaser.tint.png", resolve, reject)
 	})
 
-	phaserSound = await engine.soundFxPlayer.loadSound("game/entities/weapons/phaser.ogg")
+	phaserSound = engine.soundFxPlayer.loadSound("game/entities/weapons/phaser.ogg")
 
 	return new PhaserManager(
 		engine,

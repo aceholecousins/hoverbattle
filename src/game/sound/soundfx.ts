@@ -1,6 +1,6 @@
 
 export interface SoundFxPlayer {
-	loadSound(file: string): Promise<Sound>
+	loadSound(file: string): Sound
 }
 
 export interface Sound {

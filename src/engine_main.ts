@@ -1,6 +1,5 @@
 
 import {bridge} from "worker/worker"
-import {Graphics} from "game/graphics/graphics"
 import {createGraphicsClient} from "adapters/graphics/graphicsbridge/graphicsclient"
 import {ActionCam, ActionCamConfig} from "game/actioncam"
 import { Physics } from "game/physics/physics"
@@ -24,7 +23,7 @@ async function initMatch(){
 	let controllerManager = createControllerManagerClient("controllerManager")
 	let soundFxPlayer = await (bridge.createProxy("soundFxPlayer") as Promise<SoundFxPlayer>)
 
-	return createMatch({
+	return createMatch({	
 		physics, graphics, actionCam, controllerManager, soundFxPlayer
 	})
 }
