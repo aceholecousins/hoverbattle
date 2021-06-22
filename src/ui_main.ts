@@ -4,13 +4,13 @@ import {ThreeGraphics} from "adapters/graphics/threegraphics/threegraphics"
 import {createGraphicsServer} from "adapters/graphics/graphicsbridge/graphicsserver"
 import { DefaultControllerManager } from "adapters/controller/defaultcontrollermanager"
 import { ControllerManagerServer } from "adapters/controller/controllerbridge/controllermanagerserver"
-import { VanillaSoundFxPlayer } from "adapters/sound/vanillasoundfx"
+import { WebApiSoundFxPlayer } from "adapters/sound/webapisound"
 
 let graphics = new ThreeGraphics()
 createGraphicsServer(graphics)
 
 let controllerManagerServer = new ControllerManagerServer(new DefaultControllerManager(), "controllerManager")
-bridge.register(new VanillaSoundFxPlayer(), "soundFxPlayer")
+bridge.register(new WebApiSoundFxPlayer(), "soundFxPlayer")
 
 function animate(time:number){
 	requestAnimationFrame(animate)

@@ -66,7 +66,7 @@ export class PhaserWeapon {
 		if (this.coolDown <= 0) {
 			this.spawnShot(0.6);
 			this.spawnShot(-0.6);
-			phaserSound.play()
+			phaserSound.play(0.25, Math.random()*0.1 + 0.5)
 		}
 	}
 
