@@ -35,6 +35,7 @@ export class WebApiSoundFxPlayer implements SoundFxPlayer {
 export class WebApiSound implements Sound {
 
 	buffer:AudioBuffer
+	private gainNode:GainNode
 
 	play(volume: number = 1, rate: number = 1, loop: boolean = false): void {
 		
@@ -43,12 +44,16 @@ export class WebApiSound implements Sound {
 		sourceNode.playbackRate.value = rate;
 		sourceNode.loop = loop
     	
-		let gainNode = audioContext.createGain()
-		gainNode.gain.value = volume;
+		this.gainNode = audioContext.createGain()
+		this.gainNode.gain.value = volume;
 
-		sourceNode.connect(gainNode)
-		gainNode.connect(audioContext.destination)
+		sourceNode.connect(this.gainNode)
+		this.gainNode.connect(audioContext.destination)
 
     	sourceNode.start()
+	}
+
+	changeVolume(newVolume: number): void {
+		this.gainNode.gain.value = newVolume
 	}
 }

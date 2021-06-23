@@ -1,3 +1,4 @@
+import { broker } from "broker"
 import { Controller } from "game/controller/controller"
 import { ModelMeshConfig } from "game/graphics/mesh"
 import { Model } from "game/graphics/model"
@@ -5,6 +6,7 @@ import { Engine } from "game/match"
 import { CircleConfig } from "game/physics/circle"
 import { RigidBodyConfig } from "game/physics/rigidbody"
 import { Player } from "game/player"
+import { Sound } from "game/sound/soundfx"
 import { vec2, quat, vec3 } from "gl-matrix"
 import { wrapAngle } from "utilities/math_utils"
 import { Entity } from "../entity"
@@ -23,6 +25,7 @@ export class Glider extends Entity{
 		bodyCfg:RigidBodyConfig,
 		modelCfg:ModelMeshConfig,
 		public player:Player,
+		private thrustSoundController:ThrustSoundController
 	){
 		super()
 		bodyCfg.actor = this
@@ -32,8 +35,9 @@ export class Glider extends Entity{
 	}
 
 	update(dt:number){
-		let thrust = this.player.controller.getThrust() * 20;
-		this.body.applyLocalForce(vec2.fromValues(thrust, 0))
+		let thrust = this.player.controller.getThrust();
+		this.body.applyLocalForce(vec2.fromValues(thrust * 20, 0))
+		this.thrustSoundController.addThrust(thrust)
 
 		const turnRate = this.player.controller.getTurnRate()
 		if(turnRate != undefined) {
@@ -65,6 +69,28 @@ export class Glider extends Entity{
 	}
 }
 
+class ThrustSoundController {
+
+	private thrustSquareSum:number = 0
+	private playing = false
+
+	constructor(private sound:Sound) {
+		broker.update.addHandler(() => this.update())
+	}
+
+	addThrust(thrust:number) {
+		this.thrustSquareSum += thrust * thrust
+	}
+
+	update() {
+		let volume = Math.sqrt(this.thrustSquareSum) * 0.3
+		if(volume > 0 && !this.playing) {
+			this.sound.play(0.0, 1.0, true)
+		}
+		this.sound.changeVolume(volume)
+		this.thrustSquareSum = 0;
+	}
+}
 
 export async function createGliderFactory(engine:Engine){
 
@@ -86,12 +112,16 @@ export async function createGliderFactory(engine:Engine){
 		asset:gliderAsset
 	})
 
+	let thrustSoundController = new ThrustSoundController(
+		engine.soundFxPlayer.loadSound("game/entities/glider/thrust.ogg"))
+
 	return function(player:Player){
 		return new Glider(
 			engine,
 			gliderBodyCfg,
 			gliderModelCfg,
-			player
+			player,
+			thrustSoundController
 		) 
 	}
 }
