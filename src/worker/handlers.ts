@@ -61,6 +61,7 @@ function handleLinkage(bridge:WorkerBridge, msg:LinkMsg){
 		obj = child
 	}
 	if(typeof(obj) !== "object" && typeof(obj) !== "function"){
+		console.log(typeof(obj))
 		throw new Error("tried to link a field which is not an object or a method: " + msg.path)
 	}
 	if(DEBUG){

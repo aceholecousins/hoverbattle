@@ -59,9 +59,9 @@ export function _createProxy(bridge: WorkerBridge, ref: Reference):any{
 		},
 
 		get(target:any, prop:string, receiver:any){
-			if(prop === "then"){
-				return // nothing so this proxy cannot act as a promise
-			}
+			// if(prop === "then"){
+			//  	return // nothing so this proxy cannot act as a promise
+			//  }
 			if(prop === "__ref__"){
 				return resolvePath()
 			}

@@ -127,7 +127,7 @@ export class WorkerBridge{
 	}
 
 	/** create a proxy for an object on the remote side */
-	async createProxy(remoteKey: Key){
+	createProxy(remoteKey: Key){
 		// this function is an interface to the outside, it only allows reference
 		// to targets that were explicitly registered on the remote side
 		if(!isNaN(remoteKey as any)){
@@ -138,7 +138,7 @@ export class WorkerBridge{
 		}
 		else{
 			let bridge = this
-			return new Promise(function(resolve){
+			return new Promise(function(resolve, reject){
 				if(!(remoteKey in bridge.pendingProxies))
 				{
 					bridge.pendingProxies[remoteKey] = []
