@@ -1,5 +1,6 @@
 import { ExplosionConfig, FxFactory } from "game/graphics/fx";
 import { createSmokeBall, init as initSmokeBall } from "./smokeball";
+import * as THREE from "three"
 
 export class ThreeFxFactory implements FxFactory {
 

@@ -9,7 +9,7 @@ let nLights = 50
 console.log((nTube * nRing * 2 * nObjs) / 1e6 + " mio triangles")
 console.log(nLights + " lights")
 
-let geom = new THREE.TorusKnotBufferGeometry(1, 0.1, nTube, nRing)
+let geom = new THREE.TorusKnotGeometry(1, 0.1, nTube, nRing)
 
 let models:any[] = []
 

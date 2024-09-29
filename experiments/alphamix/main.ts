@@ -43,7 +43,7 @@ let alpha = new THREE.TextureLoader().load( 'alpha.png' )
 let stdmat = new THREE.MeshStandardMaterial({map:tex, alphaMap:alpha, color:"orange", transparent:true})
 let custommat = new THREE.MeshStandardMaterial({map:tex, alphaMap:alpha, color:"orange", transparent:true})
 custommat.defines["MOD"] = ""
-let geom = new THREE.TorusKnotBufferGeometry()
+let geom = new THREE.TorusKnotGeometry()
 
 let m1 = new THREE.Mesh(geom, stdmat)
 m1.position.setX(-2)
