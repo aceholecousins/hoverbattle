@@ -28,13 +28,6 @@ module.exports = (env, argv) => {
 		},
 		plugins: [
 			new CleanWebpackPlugin(),
-			//This is necessary in order to import the common lib into the worker file
-			new webpack.BannerPlugin({
-				banner: `var window = self;importScripts("./acechase_lib.js");`,
-				raw: true,
-				entryOnly: true,
-				test: "acechase_engine.js"
-			}),
 			new CopyPlugin({
 				patterns: [
 					{
