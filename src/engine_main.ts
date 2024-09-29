@@ -10,6 +10,8 @@ import { Match } from "game/match"
 import { broker } from "broker"
 import { SoundFxPlayer } from "game/sound/soundfx"
 
+import * as Stats from 'stats.js'
+
 let dt = 1/100
 
 async function initMatch(){
@@ -28,18 +30,21 @@ async function initMatch(){
 	})
 }
 
-function start(match:Match){
+async function start(match:Match){
+	let engineStats = await (bridge.createProxy("engineStats") as Promise<Stats>)
+
 	setInterval(()=>{
 		match.update(dt)
 		broker.update.fire({dt})
 		bridge.sendAll()
 		broker.purge.fire()
+		engineStats.update()
 	}, 1000*dt)
 }
 
 async function main(){
 	let match = await initMatch()
-	start(match)
+	await start(match)
 }
 
 main()
