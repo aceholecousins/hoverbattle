@@ -12,7 +12,9 @@ import { P2Physics } from "adapters/physics/p2/p2physics"
 import { WebApiSoundFxPlayer } from "adapters/sound/webapisound"
 import { DefaultControllerManager } from "adapters/controller/defaultcontrollermanager"
 
-let dt = 1 / 100
+import * as Stats from 'stats.js'
+
+let dt = 1 / 125
 
 async function main() {
 	broker.newChannel('update')
@@ -29,15 +31,27 @@ async function main() {
 		physics, graphics, actionCam, controllerManager, soundFxPlayer
 	})
 
+	let engineStats = new Stats()
+	engineStats.showPanel(0)
+	engineStats.dom.style.cssText = 'position:absolute;top:0px;left:100px;';
+	document.body.appendChild(engineStats.dom)
+
+	let graphicsStats = new Stats()
+	graphicsStats.showPanel(0)
+	graphicsStats.dom.style.cssText = 'position:absolute;top:0px;left:0px;';
+	document.body.appendChild(graphicsStats.dom)
+
 	setInterval(() => {
 		match.update(dt)
 		broker.update.fire({ dt })
 		broker.purge.fire()
+		engineStats.update()
 	}, 1000 * dt)
 
 	function animate(time: number) {
 		requestAnimationFrame(animate)
 		graphics.control.update(time)
+		graphicsStats.update()
 	}
 
 	requestAnimationFrame(animate)
