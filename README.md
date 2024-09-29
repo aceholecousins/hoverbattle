@@ -3,43 +3,34 @@ AceChase Remastered
 
 ## Play
 
-# [>> PLAY! <<](https://aceholecousins.github.io/hoverbattle/)
+[click me!](https://aceholecousins.github.io/hoverbattle/)
 
-## Contribute
-### Preparation
-Fork the repository to your own space.
+## Develop
 
-Clone it to a local working copy:
-```
+```sh
+# install nvm, node.js and npm
+# https://nodejs.org/en/download/package-manager
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash
+nvm install 20
+
+# clone game
 git clone https://github.com/aceholecousins/hoverbattle.git
-```
-Install Nodejs from https://nodejs.org
+cd hoverbattle
 
-Go to the working copy root and download all necessary dependencies:
-```
+# install dependencies
 npm install
-```
-### Build
-Build a development version:
-```
+
+# build and run game
 npm run dev-build
-```
-Build a development version and watch files for changes:
-```
+# or
 npm run watch
-```
-Build a production version:
-```
+# or
 npm run build
-```
-### Run
-Serve the folder `dist` via a web server and open the file `index.html`
-### Unit Tests
-Unit tests are defined in sub folder `tests`. In order to run them:
-```
+
+cd dist && python3 -m http.server
+
+xdg-open http://localhost:8000
+
+# unit tests
 npm run test
 ```
-### Submit changes
-Commit and push your changes.
-
-Create a Pull Request.
