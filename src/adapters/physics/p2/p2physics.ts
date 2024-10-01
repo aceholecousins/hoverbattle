@@ -40,5 +40,9 @@ export class P2Physics implements Physics{
 		this.p2world.step(dt)
 	}
 
+	getTime(): number {
+		return this.p2world.time
+	}
+
 }
 

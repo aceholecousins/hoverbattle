@@ -21,7 +21,7 @@ export class PhaserShot extends Entity {
 	constructor(
 		engine: Engine,
 		asset: Model,
-		public glider: Glider,
+		public parent: Glider,
 	) {
 		super();
 		this.mesh = engine.graphics.mesh.createFromModel(
@@ -29,7 +29,7 @@ export class PhaserShot extends Entity {
 				asset,
 				scaling: vec3.fromValues(PHASER_LENGTH, PHASER_LENGTH / 2, 1)
 			}))
-		this.mesh.baseColor = glider.player.team == 0 ? { r: 1, g: 0.2, b: 0 } : { r: 0, g: 0.5, b: 1 }
+		this.mesh.baseColor = parent.player.team == 0 ? { r: 1, g: 0.2, b: 0 } : { r: 0, g: 0.5, b: 1 }
 		this.mesh.accentColor1 = { r: 1, g: 1, b: 1 }
 
 		const bodyCfg = new RigidBodyConfig({
@@ -56,10 +56,13 @@ export class PhaserWeapon {
 
 	constructor(
 		private phaserManager: PhaserManager,
-		private glider: Glider,
+		private parent: Glider,
 	) {
-		//TODO: Remove handler on disposal of Weapon
 		broker.update.addHandler(this.updateHandler)
+	}
+
+	dispose() {
+		broker.update.removeHandler(this.updateHandler)
 	}
 
 	shoot() {
@@ -71,9 +74,9 @@ export class PhaserWeapon {
 	}
 
 	private spawnShot(offset: number) {
-		let shot = this.phaserManager.create(this.glider);
-		let phi = this.glider.body.angle;
-		let pos = this.glider.body.position;
+		let shot = this.phaserManager.create(this.parent);
+		let phi = this.parent.body.angle;
+		let pos = this.parent.body.position;
 		shot.body.position = vec2.fromValues(
 			pos[0] - Math.sin(phi) * offset,
 			pos[1] + Math.cos(phi) * offset,
@@ -100,8 +103,8 @@ export class PhaserManager {
 	) {
 	}
 
-	create(glider: Glider) {
-		let shot = new PhaserShot(this.engine, this.asset, glider);
+	create(parent: Glider) {
+		let shot = new PhaserShot(this.engine, this.asset, parent);
 		assignRole(shot, this.role)
 		return shot;
 	}

@@ -6,7 +6,7 @@ import { vec3, mat3, vec2 } from "gl-matrix";
  * @param angle Angle to be wrapped in rad
  * @param wrapAt Wrapping point. Defaults to Math.PI
  * 
- * @returns the wrapped angle in the range between [-wrapAt, wrapAt)
+ * @returns the wrapped angle in the range between [wrapAt-2pi, wrapAt)
  */
 export function wrapAngle(angle: number, wrapAt = Math.PI): number {
 	let revs = (angle - wrapAt) / 2.0 / Math.PI;

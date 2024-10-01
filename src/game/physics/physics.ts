@@ -7,4 +7,5 @@ export interface Physics{
 	registerCollisionOverride(override:CollisionOverride<any, any>):void
 	registerCollisionHandler(handler:CollisionHandler<any, any>):void
 	step(dt:number):void
+	getTime():number
 }
