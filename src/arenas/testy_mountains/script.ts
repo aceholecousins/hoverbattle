@@ -6,6 +6,7 @@ import { createGliderFactory, Glider } from "game/entities/glider/glider"
 import { Powerup, createPowerupBoxFactory, PowerupBox } from "game/entities/powerup"
 import { createPhaserManager, PhaserShot, PhaserWeapon } from "game/entities/weapons/phaser"
 import { createMissileManager, MissilePowerup, Missile, MissileLauncher } from "game/entities/weapons/missile"
+import { createMineManager, MinePowerup, Mine, MineThrower } from "game/entities/weapons/mine"
 import { ExplosionConfig } from "game/graphics/fx"
 import { MatchFactory } from "game/match"
 import { CollisionOverride, CollisionHandler } from "game/physics/collision"
@@ -21,7 +22,6 @@ export let createMatch: MatchFactory = async function (engine) {
 	engine.graphics.control.setSceneOrientation([-Math.SQRT1_2, 0, 0, Math.SQRT1_2])
 
 	let collideWithEverythingRole = new Role<Entity>()
-	let arenaRole = new Role<Entity>()
 	let gliderRole = new Role<Glider>()
 	let phaserRole = new Role<PhaserShot>()
 	let powerupBoxRole = new Role<PowerupBox>()
@@ -51,9 +51,9 @@ export let createMatch: MatchFactory = async function (engine) {
 		phaserRole, phaserRole, function (
 			shotA: PhaserShot, shotB: PhaserShot
 		) {
-			shotA.dispose()
-			shotB.dispose()
-		}
+		shotA.dispose()
+		shotB.dispose()
+	}
 	))
 
 	engine.physics.registerCollisionHandler(new CollisionHandler(
@@ -88,7 +88,12 @@ export let createMatch: MatchFactory = async function (engine) {
 
 	engine.physics.registerCollisionHandler(new CollisionHandler(
 		gliderRole, powerupBoxRole, (glider: Glider, powerupBox: PowerupBox) => {
-			glider.readyPowerups = [new MissilePowerup()]
+			if (powerupBox.kind == "missile") {
+				glider.readyPowerups = [new MissilePowerup()]
+			}
+			else if (powerupBox.kind == "mine") {
+				glider.readyPowerups = [new MinePowerup()]
+			}
 			remove(powerupBoxes, powerupBox)
 			powerupBox.dispose()
 		}
@@ -105,7 +110,6 @@ export let createMatch: MatchFactory = async function (engine) {
 
 	// destructible but with infinite hitpoints, absorbs things that damage
 	let arena = makeDestructible(tempArena, Infinity, () => { })
-	assignRole(arena, arenaRole)
 	assignRole(arena, collideWithEverythingRole)
 	assignRole(arena, destructibleRole)
 
@@ -125,6 +129,7 @@ export let createMatch: MatchFactory = async function (engine) {
 
 	let phaserManager = await createPhaserManager(engine)
 	let missileManager = await createMissileManager(engine)
+	let mineManager = await createMineManager(engine)
 
 	let team = 0;
 
@@ -150,8 +155,9 @@ export let createMatch: MatchFactory = async function (engine) {
 
 	function spawnPowerup() {
 		if (powerupBoxes.length < 3) {
+			const powerupKind = ["missile", "mine"][Math.floor(Math.random() * 2)];
 			let powerupBox = makeDestructible(
-				createPowerupBox("missiles"),
+				createPowerupBox(powerupKind),
 				7,
 				() => {
 					remove(powerupBoxes, powerupBox)
@@ -164,7 +170,7 @@ export let createMatch: MatchFactory = async function (engine) {
 			powerupBoxes.push(powerupBox)
 			powerupBox.body.position = determineSpawnPoint()
 		}
-		setTimeout(spawnPowerup, Math.random() * 5000 + 3000)
+		setTimeout(spawnPowerup, Math.random() * 3000 + 7000)
 	}
 
 	function spawnGlider(player: Player) {
@@ -193,34 +199,62 @@ export let createMatch: MatchFactory = async function (engine) {
 
 		let phaserWeapon = new PhaserWeapon(phaserManager, glider);
 		let missileLauncher = new MissileLauncher(missileManager, glider);
+		let mineThrower = new MineThrower(mineManager, glider);
 
 		glider.onPressTrigger = () => {
-			if (
-				glider.readyPowerups.length > 0
-				&& glider.readyPowerups[0].kind == "missile"
-			) {
-				let maybeMissile = missileLauncher.tryShoot(gliders)
-				if (maybeMissile) {
-					let missilePowerup = glider.readyPowerups[0] as MissilePowerup
-					missilePowerup.stock -= 1
-					glider.requireTriggerRelease()
-					if (missilePowerup.stock == 0) {
-						glider.readyPowerups = []
-					}
+			if (glider.readyPowerups.length > 0) {
+				if (glider.readyPowerups[0].kind == "missile") {
+					let maybeMissile = missileLauncher.tryShoot(gliders)
+					if (maybeMissile) {
+						let missilePowerup = glider.readyPowerups[0] as MissilePowerup
+						missilePowerup.stock -= 1
+						glider.requireTriggerRelease()
+						if (missilePowerup.stock == 0) {
+							glider.readyPowerups = []
+						}
 
-					let missile1 = maybeMissile as Missile
-					let explode = () => {
-						missile1.dispose()
-						engine.graphics.fx.createExplosion(new ExplosionConfig({
-							position: vec3.fromValues(missile1.body.position[0], missile1.body.position[1], 0)
-						}))
+						let missile1 = maybeMissile as Missile
+						let explode = () => {
+							missile1.dispose()
+							engine.graphics.fx.createExplosion(new ExplosionConfig({
+								position: vec3.fromValues(missile1.body.position[0], missile1.body.position[1], 0)
+							}))
+						}
+						let missile2 = makeDamaging(missile1, 17, () => { explode() })
+						let missile3 = makeDestructible(missile2, 3, () => { explode() })
+						assignRole(missile3, missileRole)
+						assignRole(missile3, collideWithEverythingRole)
+						assignRole(missile3, damagingRole)
+						assignRole(missile3, destructibleRole)
 					}
-					let missile2 = makeDamaging(missile1, 17, () => { explode() })
-					let missile3 = makeDestructible(missile2, 3, () => { explode() })
-					assignRole(missile3, missileRole)
-					assignRole(missile3, collideWithEverythingRole)
-					assignRole(missile3, damagingRole)
-					assignRole(missile3, destructibleRole)
+				}
+
+				else if (glider.readyPowerups[0].kind == "mine") {
+					let maybeMine = mineThrower.tryShoot()
+					if (maybeMine) {
+						let minePowerup = glider.readyPowerups[0] as MinePowerup
+						minePowerup.stock -= 1
+						glider.requireTriggerRelease()
+						if (minePowerup.stock == 0) {
+							glider.readyPowerups = []
+						}
+
+						let mine1 = maybeMine as Mine
+						let explode = () => {
+							mine1.dispose()
+							engine.graphics.fx.createExplosion(new ExplosionConfig({
+								position: vec3.fromValues(mine1.body.position[0], mine1.body.position[1], 0)
+							}))
+						}
+						let mine2 = makeDestructible(mine1, 3, () => { explode() })
+						assignRole(mine2, collideWithEverythingRole)
+						assignRole(mine2, destructibleRole)
+
+						mine2.onPrime = () => {
+							let mine3 = makeDamaging(mine2, 17, () => { explode() }) 
+							assignRole(mine3, damagingRole)
+						}
+					}
 				}
 			}
 		}

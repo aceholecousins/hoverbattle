@@ -9,7 +9,7 @@ import { wrapAngle } from "utilities/math_utils"
 import { Entity } from "../entity"
 import { Powerup } from "../powerup"
 
-var GLIDER_RADIUS = 1;
+export const GLIDER_RADIUS = 1;
 
 export class Glider extends Entity {
 	public readyPowerups: Powerup[] = []
