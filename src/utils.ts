@@ -40,3 +40,10 @@ export function angleDelta(a: number, b: number): number {
 	if (diff < -Math.PI) diff += 2 * Math.PI;;
 	return diff;
 }
+
+export function remove<T>(a: Array<T>, b: T) {
+	let index = a.indexOf(b);
+	if (index >= 0) {
+		a.splice(index, 1);
+	}
+}

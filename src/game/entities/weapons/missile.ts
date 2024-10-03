@@ -9,6 +9,7 @@ import { quat, vec2, vec3 } from "gl-matrix";
 import { assignRole, Role } from "../actor";
 import { Entity } from "../entity";
 import { Glider } from "../glider/glider";
+import { Powerup } from "../powerup";
 import { wrapAngle } from "utilities/math_utils";
 
 const MISSILE_LENGTH = 1.3;
@@ -18,6 +19,11 @@ const MISSILE_DAMPING = 0.8;
 const MISSILE_ANGULAR_DAMPING = 0.999;
 const MISSILE_HOMING_TORQUE = 1.2;
 const MISSILE_FIRE_RATE = 1;
+
+export class MissilePowerup implements Powerup {
+	public readonly kind = "missile"
+	public stock = 3
+}
 
 export class Missile extends Entity {
 	public target: Entity | null;
@@ -90,9 +96,8 @@ export class Missile extends Entity {
 		this.mesh.position = [
 			this.body.position[0], this.body.position[1], 0.1]
 		this.roll += dt * 300;
-		console.log(this.roll)
 		this.mesh.orientation = quat.fromEuler(
-			[0, 0, 0, 0], this.roll, 0, this.body.angle / Math.PI * 180)
+			quat.create(), this.roll, 0, this.body.angle / Math.PI * 180)
 	}
 }
 
@@ -103,8 +108,7 @@ export class MissileLauncher {
 
 	constructor(
 		private missileManager: MissileManager,
-		private parent: Glider,
-		public ammo: number
+		private parent: Glider
 	) {
 		broker.update.addHandler(this.updateHandler)
 	}
@@ -113,12 +117,13 @@ export class MissileLauncher {
 		broker.update.removeHandler(this.updateHandler)
 	}
 
-	shoot(possibleTargets: Entity[]): Missile | null {
-		if (this.coolDown <= 0 && this.ammo > 0) {
-			this.ammo--;
+	tryShoot(possibleTargets: Entity[]): Missile | null {
+		if (this.coolDown <= 0) {
 			return this.spawnMissile(possibleTargets);
 		}
-		return null
+		else {
+			return null
+		}
 	}
 
 	private spawnMissile(possibleTargets: Entity[]): Missile {
@@ -141,19 +146,16 @@ export class MissileManager {
 
 	constructor(
 		private engine: Engine,
-		private asset: Model,
-		private role: Role<Missile>,
+		private asset: Model
 	) {
 	}
 
 	create(parent: Glider, possibleTargets: Entity[]): Missile {
-		let shot = new Missile(this.engine, this.asset, parent, possibleTargets);
-		assignRole(shot, this.role)
-		return shot;
+		return new Missile(this.engine, this.asset, parent, possibleTargets);
 	}
 }
 
-export async function createMissileManager(engine: Engine, role: Role<Missile>) {
+export async function createMissileManager(engine: Engine) {
 
 	let missileAsset: Model
 	await new Promise((resolve, reject) => {
@@ -163,7 +165,6 @@ export async function createMissileManager(engine: Engine, role: Role<Missile>) 
 
 	return new MissileManager(
 		engine,
-		missileAsset,
-		role
+		missileAsset
 	)
 }

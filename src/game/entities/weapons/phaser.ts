@@ -14,7 +14,7 @@ const PHASER_LENGTH = 0.8;
 const PHASER_SPEED = 30;
 const PHASER_FIRE_RATE = 12;
 
-let phaserSound:Sound
+let phaserSound: Sound
 
 export class PhaserShot extends Entity {
 
@@ -45,7 +45,7 @@ export class PhaserShot extends Entity {
 		this.mesh.position = [
 			this.body.position[0], this.body.position[1], 0.1]
 		this.mesh.orientation = quat.fromEuler(
-			[0, 0, 0, 0], 0, 0, this.body.angle / Math.PI * 180)
+			quat.create(), 0, 0, this.body.angle / Math.PI * 180)
 	}
 }
 
@@ -65,11 +65,13 @@ export class PhaserWeapon {
 		broker.update.removeHandler(this.updateHandler)
 	}
 
-	shoot() {
+	tryShoot(): PhaserShot[] | null {
 		if (this.coolDown <= 0) {
-			this.spawnShot(0.6);
-			this.spawnShot(-0.6);
-			phaserSound.play(0.25, Math.random()*0.1 + 0.5)
+			phaserSound.play(0.25, Math.random() * 0.1 + 0.5)
+			return [this.spawnShot(0.6), this.spawnShot(-0.6)]
+		}
+		else {
+			return null
 		}
 	}
 
@@ -87,6 +89,7 @@ export class PhaserWeapon {
 			Math.sin(phi) * PHASER_SPEED,
 		)
 		this.coolDown = 1 / PHASER_FIRE_RATE;
+		return shot
 	}
 
 	update(dt: number) {
@@ -99,18 +102,15 @@ export class PhaserManager {
 	constructor(
 		private engine: Engine,
 		private asset: Model,
-		private role: Role<PhaserShot>,
 	) {
 	}
 
 	create(parent: Glider) {
-		let shot = new PhaserShot(this.engine, this.asset, parent);
-		assignRole(shot, this.role)
-		return shot;
+		return new PhaserShot(this.engine, this.asset, parent);
 	}
 }
 
-export async function createPhaserManager(engine: Engine, role: Role<PhaserShot>) {
+export async function createPhaserManager(engine: Engine) {
 
 	let phaserAsset: Model
 	await new Promise<void>((resolve, reject) => {
@@ -122,7 +122,6 @@ export async function createPhaserManager(engine: Engine, role: Role<PhaserShot>
 
 	return new PhaserManager(
 		engine,
-		phaserAsset,
-		role
+		phaserAsset
 	)
 }
