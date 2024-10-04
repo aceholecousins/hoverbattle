@@ -1,6 +1,6 @@
 
 import {quat} from "gl-matrix"
-import {Skybox} from "./skybox";
+import {Skybox} from "./asset";
 
 export interface GraphicsController{
 	update(time:number): void

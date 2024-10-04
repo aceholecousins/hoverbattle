@@ -1,18 +1,16 @@
 
-import {ModelLoader} from "./model"
-import {CameraFactory} from "./camera"
-import {LightFactory} from "./light"
-import {MeshFactory} from "./mesh"
-import {GraphicsController} from "./graphicscontroller"
-import { SkyboxLoader } from "./skybox"
-import { SpriteLoader } from "./sprite"
+import { ModelLoader, SpriteLoader, SkyboxLoader } from "./asset"
+import { CameraFactory } from "./camera"
+import { LightFactory } from "./light"
+import { MeshFactory } from "./mesh"
+import { GraphicsController } from "./graphicscontroller"
 import { FxFactory } from "./fx"
 
-export interface Graphics{
+export interface Graphics {
 
-	model: ModelLoader
-	skybox: SkyboxLoader
-	sprite: SpriteLoader
+	loadModel: ModelLoader
+	loadSprite: SpriteLoader
+	loadSkybox: SkyboxLoader
 
 	camera: CameraFactory
 	light: LightFactory

@@ -54,7 +54,7 @@ export class ThreeMeshFactory implements MeshFactory {
 	createFromModel(config: ModelMeshConfig) {
 		let mesh = new ThreeMesh(
 			this.threeScene,
-			(config.asset as ThreeModel).threeObject,
+			(config.model as ThreeModel).threeObject,
 			config
 		)
 		return mesh

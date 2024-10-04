@@ -4,13 +4,14 @@ import { Damaging, makeDamaging, Destructible, makeDestructible } from "game/ent
 import { Entity } from "game/entities/entity"
 import { createGliderFactory, Glider } from "game/entities/glider/glider"
 import { Powerup, createPowerupBoxFactory, PowerupBox } from "game/entities/powerup"
-import { createPhaserManager, PhaserShot, PhaserWeapon } from "game/entities/weapons/phaser"
-import { createMissileManager, MissilePowerup, Missile, MissileLauncher } from "game/entities/weapons/missile"
-import { createMineManager, MinePowerup, Mine, MineThrower } from "game/entities/weapons/mine"
+import { createPhaserFactory, PhaserShot, PhaserWeapon } from "game/entities/weapons/phaser"
+import { createMissileFactory, MissilePowerup, Missile, MissileLauncher } from "game/entities/weapons/missile"
+import { createMineFactory, MinePowerup, Mine, MineThrower } from "game/entities/weapons/mine"
 import { ExplosionConfig } from "game/graphics/fx"
 import { MatchFactory } from "game/match"
 import { CollisionOverride, CollisionHandler } from "game/physics/collision"
 import { Player } from "game/player"
+import { SceneNodeConfig } from "game/graphics/scenenode"
 import { vec2, vec3 } from "gl-matrix"
 import { remove } from "utils"
 
@@ -101,35 +102,30 @@ export let createMatch: MatchFactory = async function (engine) {
 
 	let spawnPoints: vec2[] = []
 
-	let tempArena = await loadArena(
-		engine, "arenas/testy_mountains/mountains.glb", (meta: any) => {
-			for (let tri of meta.spawn) {
-				spawnPoints.push(vec2.fromValues(tri[0][0], tri[0][1]))
-			}
-		})
+	let arena_meta = await loadArena("arenas/testy_mountains/mountains.glb", engine)
+
+	for (const [key, value] of Object.entries(arena_meta.meta)) {
+		if (key.startsWith("spawn")) {
+			const spawn = value as SceneNodeConfig<"empty">
+			spawnPoints.push(vec2.fromValues(spawn.position[0], spawn.position[1]))
+		}
+	}
 
 	// destructible but with infinite hitpoints, absorbs things that damage
-	let arena = makeDestructible(tempArena, Infinity, () => { })
+	let arena = makeDestructible(arena_meta.arena, Infinity, () => { })
 	assignRole(arena, collideWithEverythingRole)
 	assignRole(arena, destructibleRole)
 
 	let createGlider = await createGliderFactory(engine)
 	let createPowerupBox = await createPowerupBoxFactory(engine)
 
-	await new Promise<void>((resolve, reject) => {
-		let env = engine.graphics.skybox.load(
-			"arenas/testy_mountains/environment/*.jpg",
-			function () {
-				engine.graphics.control.setEnvironment(env)
-				resolve()
-			},
-			reject
-		)
-	})
+	let skybox = await engine.graphics.loadSkybox(
+		"arenas/testy_mountains/environment/*.jpg")
+	engine.graphics.control.setEnvironment(skybox)
 
-	let phaserManager = await createPhaserManager(engine)
-	let missileManager = await createMissileManager(engine)
-	let mineManager = await createMineManager(engine)
+	let phaserFactory = await createPhaserFactory(engine)
+	let missileFactory = await createMissileFactory(engine)
+	let mineFactory = await createMineFactory(engine)
 
 	let team = 0;
 
@@ -197,9 +193,9 @@ export let createMatch: MatchFactory = async function (engine) {
 		glider.body.angle = Math.random() * 1000
 		engine.actionCam.follow(glider.body, 1.5)
 
-		let phaserWeapon = new PhaserWeapon(phaserManager, glider);
-		let missileLauncher = new MissileLauncher(missileManager, glider);
-		let mineThrower = new MineThrower(mineManager, glider);
+		let phaserWeapon = new PhaserWeapon(phaserFactory, glider);
+		let missileLauncher = new MissileLauncher(missileFactory, glider);
+		let mineThrower = new MineThrower(mineFactory, glider);
 
 		glider.onPressTrigger = () => {
 			if (glider.readyPowerups.length > 0) {
@@ -251,7 +247,7 @@ export let createMatch: MatchFactory = async function (engine) {
 						assignRole(mine2, destructibleRole)
 
 						mine2.onPrime = () => {
-							let mine3 = makeDamaging(mine2, 17, () => { explode() }) 
+							let mine3 = makeDamaging(mine2, 17, () => { explode() })
 							assignRole(mine3, damagingRole)
 						}
 					}

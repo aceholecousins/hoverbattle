@@ -1,38 +1,39 @@
 
-import {vec2, vec3} from "gl-matrix"
+import { vec2, vec3 } from "gl-matrix"
 
 import * as THREE from "three"
-import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
-import {Graphics} from "game/graphics/graphics"
-import {GraphicsController} from "game/graphics/graphicscontroller"
-import {CameraConfig} from "game/graphics/camera"
+import { Graphics } from "game/graphics/graphics"
+import { GraphicsController } from "game/graphics/graphicscontroller"
+import { CameraConfig } from "game/graphics/camera"
 
-import {renderer} from "./threerenderer"
-import {SceneInfo} from "./sceneinfo"
+import { renderer } from "./threerenderer"
+import { SceneInfo } from "./sceneinfo"
 
-import {ThreeModelLoader} from "./threemodel"
+import { ThreeModelLoader, loadThreeModel } from "./threemodel"
+import { ThreeSkyboxLoader, loadThreeSkybox } from "./threeskybox"
+import { ThreeSpriteLoader, loadThreeSprite } from "./threesprite"
 
-import {ThreeCameraFactory, ThreeCamera} from "./threecamera"
-import {ThreeLightFactory} from "./threelight"
-import {ThreeMeshFactory} from "./threemesh"
+import { ThreeCameraFactory, ThreeCamera } from "./threecamera"
+import { ThreeLightFactory } from "./threelight"
+import { ThreeMeshFactory } from "./threemesh"
 
-import {ThreeGraphicsController} from "./threegraphicscontroller"
-import { ThreeSkyboxLoader } from "./threeskybox"
-import { ThreeSpriteLoader } from "./threesprite"
+import { ThreeGraphicsController } from "./threegraphicscontroller"
+
 import { FxFactory } from "game/graphics/fx"
 import { ThreeFxFactory } from "./threefx"
 
 //@ts-ignore
 window.three = THREE
 
-export class ThreeGraphics implements Graphics{
+export class ThreeGraphics implements Graphics {
 
-	scene:THREE.Scene
+	scene: THREE.Scene
 
-	model: ThreeModelLoader
-	skybox: ThreeSkyboxLoader
-	sprite: ThreeSpriteLoader
+	loadModel: ThreeModelLoader
+	loadSprite: ThreeSpriteLoader
+	loadSkybox: ThreeSkyboxLoader
 
 	camera: ThreeCameraFactory
 	light: ThreeLightFactory
@@ -42,15 +43,15 @@ export class ThreeGraphics implements Graphics{
 
 	control: GraphicsController
 
-	constructor(){
-		
+	constructor() {
+
 		this.scene = new THREE.Scene()
 		//@ts-ignore
 		window["scene"] = this.scene
 
-		this.model = new ThreeModelLoader()
-		this.skybox = new ThreeSkyboxLoader()
-		this.sprite = new ThreeSpriteLoader()
+		this.loadModel = loadThreeModel
+		this.loadSprite = loadThreeSprite
+		this.loadSkybox = loadThreeSkybox
 
 		this.camera = new ThreeCameraFactory(this.scene)
 		this.light = new ThreeLightFactory(this.scene)
@@ -81,7 +82,7 @@ export class ThreeGraphics implements Graphics{
 		)
 		this.scene.add(sphere)
 		*/
-		
+
 
 		this.control = new ThreeGraphicsController(this)
 	}

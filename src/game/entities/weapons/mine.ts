@@ -1,10 +1,10 @@
 import { broker } from "broker";
 import { ModelMeshConfig } from "game/graphics/mesh";
-import { Model } from "game/graphics/model";
-import { Engine } from "game/match";
+import { Model } from "game/graphics/asset";
+import { Engine } from "game/engine";
 import { CircleConfig } from "game/physics/circle";
 import { RigidBodyConfig } from "game/physics/rigidbody";
-import { Sound } from "game/sound/soundfx";
+import { Sound } from "game/sound";
 import { quat, vec2, vec3 } from "gl-matrix";
 import { assignRole, Role } from "../actor";
 import { Entity } from "../entity";
@@ -30,13 +30,13 @@ export class Mine extends Entity {
 
 	constructor(
 		engine: Engine,
-		asset: Model,
+		model: Model,
 		public parent: Glider,
 	) {
 		super();
 		this.mesh = engine.graphics.mesh.createFromModel(
 			new ModelMeshConfig({
-				asset,
+				model,
 				scaling: vec3.fromValues(MINE_RADIUS, MINE_RADIUS, MINE_RADIUS)
 			}))
 		this.mesh.baseColor = { r: 0, g: 0, b: 0 }
@@ -65,7 +65,7 @@ export class Mine extends Entity {
 			this.body.angle / Math.PI * 180
 		)
 
-		if(this.time > MINE_PRIME_DELAY) {
+		if (this.time > MINE_PRIME_DELAY) {
 			this.onPrime()
 		}
 	}
@@ -77,7 +77,7 @@ export class MineThrower {
 	private updateHandler = (e: any) => this.update(e.dt)
 
 	constructor(
-		private mineManager: MineManager,
+		private createMine: MineFactory,
 		private parent: Glider
 	) {
 		broker.update.addHandler(this.updateHandler)
@@ -97,7 +97,7 @@ export class MineThrower {
 	}
 
 	private spawnMine(): Mine {
-		let mine = this.mineManager.create(this.parent);
+		let mine = this.createMine(this.parent);
 		let pos = this.parent.body.position;
 		const d = MINE_RADIUS + GLIDER_RADIUS
 		pos[0] -= Math.cos(this.parent.body.angle) * d
@@ -113,29 +113,14 @@ export class MineThrower {
 	}
 }
 
-export class MineManager {
+export type MineFactory = (parent: Glider) => Mine
 
-	constructor(
-		private engine: Engine,
-		private asset: Model
-	) {
+export async function createMineFactory(engine: Engine): Promise<MineFactory> {
+
+	let { model, meta } = await engine.graphics.loadModel(
+		"game/entities/weapons/seamine.glb")
+
+	return function (parent: Glider): Mine {
+		return new Mine(engine, model, parent);
 	}
-
-	create(parent: Glider): Mine {
-		return new Mine(this.engine, this.asset, parent);
-	}
-}
-
-export async function createMineManager(engine: Engine) {
-
-	let mineAsset: Model
-	await new Promise((resolve, reject) => {
-		mineAsset = engine.graphics.model.load(
-			"game/entities/weapons/seamine.glb", resolve, reject)
-	})
-
-	return new MineManager(
-		engine,
-		mineAsset
-	)
 }

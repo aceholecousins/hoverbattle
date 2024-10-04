@@ -1,10 +1,10 @@
-import { Sound, SoundFxPlayer } from "game/sound/soundfx";
+import { Sound, SoundHandle, SoundLoader } from "game/sound";
 
 let audioContext = new AudioContext()
 
-export class WebApiSoundFxPlayer implements SoundFxPlayer {
+export const loadWebApiSound: SoundLoader = function(file:string){
 
-	loadSound(file: string): Sound {
+	return new Promise((resolve, reject) => {
 		const sound = new WebApiSound();
 		
 		var request = new XMLHttpRequest();
@@ -13,30 +13,28 @@ export class WebApiSoundFxPlayer implements SoundFxPlayer {
 
 		request.onload = () => {
 			audioContext.decodeAudioData(request.response).then(data => {
-				sound.buffer = data
+				sound.buffer = data;
+				resolve(sound);
 			}).catch(e => {
-				//TODO handle error
-				console.error("Error decoding sound " + e)
-			})
-		}
+				console.error("Error decoding sound " + e);
+				reject(e);
+			});
+		};
 
 		request.onerror = e => {
-			//TODO handle error
-			console.error("Error loading sound " + e)
-		}
+			console.error("Error loading sound " + e);
+			reject(e);
+		};
 
 		request.send();
-
-		return sound
-	}
-
+	});
 }
 
 export class WebApiSound implements Sound {
 
 	buffer:AudioBuffer
 
-	play(volume: number = 1, rate: number = 1, loop: boolean = false): void {
+	play(volume: number = 1, rate: number = 1, loop: boolean = false): SoundHandle {
 		
 		let sourceNode = audioContext.createBufferSource()
 		sourceNode.buffer = this.buffer
@@ -50,5 +48,11 @@ export class WebApiSound implements Sound {
 		gainNode.connect(audioContext.destination)
 
     	sourceNode.start()
+
+		return {
+			stop: () => {
+				sourceNode.stop(0)
+			}
+		}
 	}
 }

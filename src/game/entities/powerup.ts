@@ -1,6 +1,6 @@
 import { ModelMeshConfig } from "game/graphics/mesh"
-import { Model } from "game/graphics/model"
-import { Engine } from "game/match"
+import { Model } from "game/graphics/asset"
+import { Engine } from "game/engine"
 import { CircleConfig } from "game/physics/circle"
 import { RigidBodyConfig } from "game/physics/rigidbody"
 import { quat, vec3 } from "gl-matrix"
@@ -44,12 +44,8 @@ export class PowerupBox extends Entity {
 
 export async function createPowerupBoxFactory(engine: Engine) {
 
-	let powerupBoxAsset: Model
-
-	await new Promise((resolve, reject) => {
-		powerupBoxAsset = engine.graphics.model.load(
-			"game/entities/crate.glb", resolve, reject)
-	})
+	let { model, meta } = await engine.graphics.loadModel(
+		"game/entities/crate.glb")
 
 	const powerupBoxBodyCfg = new RigidBodyConfig({
 		actor: null, // will be filled by the constructed box
@@ -58,9 +54,7 @@ export async function createPowerupBoxFactory(engine: Engine) {
 		angularDamping: 0.5
 	})
 
-	const powerupBoxModelCfg: ModelMeshConfig = new ModelMeshConfig({
-		asset: powerupBoxAsset
-	})
+	const powerupBoxModelCfg: ModelMeshConfig = new ModelMeshConfig({ model })
 
 	return function (kind: string) {
 		return new PowerupBox(

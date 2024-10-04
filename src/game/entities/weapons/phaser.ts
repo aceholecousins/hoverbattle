@@ -1,10 +1,10 @@
 import { broker } from "broker";
 import { ModelMeshConfig } from "game/graphics/mesh";
-import { Model } from "game/graphics/model";
-import { Engine } from "game/match";
+import { Model } from "game/graphics/asset";
+import { Engine } from "game/engine";
 import { CircleConfig } from "game/physics/circle";
 import { RigidBodyConfig } from "game/physics/rigidbody";
-import { Sound } from "game/sound/soundfx";
+import { Sound } from "game/sound";
 import { quat, vec2, vec3 } from "gl-matrix";
 import { assignRole, Role } from "../actor";
 import { Entity } from "../entity";
@@ -14,19 +14,17 @@ const PHASER_LENGTH = 0.8;
 const PHASER_SPEED = 30;
 const PHASER_FIRE_RATE = 12;
 
-let phaserSound: Sound
-
 export class PhaserShot extends Entity {
 
 	constructor(
 		engine: Engine,
-		asset: Model,
+		model: Model,
 		public parent: Glider,
 	) {
 		super();
 		this.mesh = engine.graphics.mesh.createFromModel(
 			new ModelMeshConfig({
-				asset,
+				model,
 				scaling: vec3.fromValues(PHASER_LENGTH, PHASER_LENGTH / 2, 1)
 			}))
 		this.mesh.baseColor = parent.player.team == 0 ? { r: 1, g: 0.2, b: 0 } : { r: 0, g: 0.5, b: 1 }
@@ -55,7 +53,7 @@ export class PhaserWeapon {
 	private updateHandler = (e: any) => this.update(e.dt)
 
 	constructor(
-		private phaserManager: PhaserManager,
+		private phaserFactory: PhaserFactory,
 		private parent: Glider,
 	) {
 		broker.update.addHandler(this.updateHandler)
@@ -67,7 +65,7 @@ export class PhaserWeapon {
 
 	tryShoot(): PhaserShot[] | null {
 		if (this.coolDown <= 0) {
-			phaserSound.play(0.25, Math.random() * 0.1 + 0.5)
+			this.phaserFactory.playPhaserSound()
 			return [this.spawnShot(0.6), this.spawnShot(-0.6)]
 		}
 		else {
@@ -76,7 +74,7 @@ export class PhaserWeapon {
 	}
 
 	private spawnShot(offset: number) {
-		let shot = this.phaserManager.create(this.parent);
+		let shot = this.phaserFactory.createShot(this.parent);
 		let phi = this.parent.body.angle;
 		let pos = this.parent.body.position;
 		shot.body.position = vec2.fromValues(
@@ -97,31 +95,25 @@ export class PhaserWeapon {
 	}
 }
 
-export class PhaserManager {
+export type PhaserFactory = {
+	createShot: (parent: Glider) => PhaserShot;
+	playPhaserSound: () => void;
+};
 
-	constructor(
-		private engine: Engine,
-		private asset: Model,
-	) {
-	}
+export async function createPhaserFactory(engine: Engine): Promise<PhaserFactory> {
 
-	create(parent: Glider) {
-		return new PhaserShot(this.engine, this.asset, parent);
-	}
-}
-
-export async function createPhaserManager(engine: Engine) {
-
-	let phaserAsset: Model
-	await new Promise<void>((resolve, reject) => {
-		phaserAsset = engine.graphics.sprite.load(
-			"game/entities/weapons/phaser.tint.png", resolve, reject)
-	})
-
-	phaserSound = engine.soundFxPlayer.loadSound("game/entities/weapons/phaser.ogg")
-
-	return new PhaserManager(
-		engine,
-		phaserAsset
+	let phaserSprite = await engine.graphics.loadSprite(
+		"game/entities/weapons/phaser.tint.png"
 	)
+
+	const phaserSound = await engine.loadSound("game/entities/weapons/phaser.ogg")
+
+	return {
+		createShot: function (parent: Glider) {
+			return new PhaserShot(engine, phaserSprite, parent)
+		},
+		playPhaserSound: function () {
+			phaserSound.play(0.25, Math.random() * 0.1 + 0.5)
+		}
+	}
 }

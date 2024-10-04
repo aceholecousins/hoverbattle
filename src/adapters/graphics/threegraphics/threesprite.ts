@@ -1,19 +1,19 @@
-import { SpriteLoader } from "game/graphics/sprite"
+import { SpriteLoader } from "game/graphics/asset"
 import * as THREE from "three"
 import { ThreeModel } from "./threemodel"
 
-export class ThreeSpriteLoader implements SpriteLoader{
+export interface ThreeSpriteLoader extends SpriteLoader {
+	(file: string): Promise<ThreeModel>;
+}
 
-	load(
-		file: string,
-		onLoaded?:(meta:void)=>void,
-		onError?:(err:ErrorEvent)=>void
-	){
+export const loadThreeSprite: ThreeSpriteLoader = function (file: string) {
+	return new Promise<ThreeModel>((resolve, reject) => {
+
 		let model = new ThreeModel()
 
 		new THREE.TextureLoader().load(
 			file,
-			function(texture){
+			function (texture) {
 				let geometry = new THREE.PlaneGeometry(1, 1)
 				let material = new THREE.MeshBasicMaterial({
 					map: texture,
@@ -21,16 +21,14 @@ export class ThreeSpriteLoader implements SpriteLoader{
 					transparent: true
 				})
 				model.threeObject = new THREE.Mesh(geometry, material)
-				if(file.indexOf(".tint.") > -1){
+				if (file.indexOf(".tint.") > -1) {
 					material.name = "sprite__tint"
-					model.threeObject.userData.tint = {value: new THREE.Matrix3()}
+					model.threeObject.userData.tint = { value: new THREE.Matrix3() }
 				}
-				onLoaded()
+				resolve(model)
 			},
 			undefined,
-			onError
+			reject
 		)
-	
-		return model
-	}
+	})
 }

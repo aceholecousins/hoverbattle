@@ -4,11 +4,11 @@ import {ThreeGraphics} from "./threegraphics"
 import {renderer} from "./threerenderer"
 import {GraphicsController} from "game/graphics/graphicscontroller"
 import { quat } from "gl-matrix"
-import { Skybox } from "game/graphics/skybox"
+import { Skybox } from "game/graphics/asset"
 import { ThreeSkybox } from "./threeskybox"
 import { LightProbeGenerator } from 'three/examples/jsm/lights/LightProbeGenerator.js'
 import * as THREE from "three"
-import { Model } from "game/graphics/model"
+import { Model } from "game/graphics/asset"
 import { ThreeModel } from "./threemodel"
 import { broker } from "broker"
 

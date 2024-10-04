@@ -1,10 +1,10 @@
 import { broker } from "broker";
 import { ModelMeshConfig } from "game/graphics/mesh";
-import { Model } from "game/graphics/model";
-import { Engine } from "game/match";
+import { Model } from "game/graphics/asset";
+import { Engine } from "game/engine";
 import { CircleConfig } from "game/physics/circle";
 import { RigidBodyConfig } from "game/physics/rigidbody";
-import { Sound } from "game/sound/soundfx";
+import { Sound } from "game/sound";
 import { quat, vec2, vec3 } from "gl-matrix";
 import { assignRole, Role } from "../actor";
 import { Entity } from "../entity";
@@ -31,14 +31,14 @@ export class Missile extends Entity {
 
 	constructor(
 		engine: Engine,
-		asset: Model,
+		model: Model,
 		public parent: Glider,
 		public possibleTargets: Entity[]
 	) {
 		super();
 		this.mesh = engine.graphics.mesh.createFromModel(
 			new ModelMeshConfig({
-				asset,
+				model,
 				scaling: vec3.fromValues(MISSILE_LENGTH / 2, MISSILE_LENGTH / 2, MISSILE_LENGTH / 2)
 			}))
 		this.mesh.baseColor = { r: 0, g: 0, b: 0 }
@@ -107,7 +107,7 @@ export class MissileLauncher {
 	private updateHandler = (e: any) => this.update(e.dt)
 
 	constructor(
-		private missileManager: MissileManager,
+		private createMissile: MissileFactory,
 		private parent: Glider
 	) {
 		broker.update.addHandler(this.updateHandler)
@@ -127,7 +127,7 @@ export class MissileLauncher {
 	}
 
 	private spawnMissile(possibleTargets: Entity[]): Missile {
-		let missile = this.missileManager.create(this.parent, possibleTargets);
+		let missile = this.createMissile(this.parent, possibleTargets);
 		let phi = this.parent.body.angle;
 		let pos = this.parent.body.position;
 		missile.body.position = vec2.copy([0, 0], pos)
@@ -142,29 +142,14 @@ export class MissileLauncher {
 	}
 }
 
-export class MissileManager {
+export type MissileFactory = (parent: Glider, possibleTargets: Entity[]) => Missile
 
-	constructor(
-		private engine: Engine,
-		private asset: Model
-	) {
+export async function createMissileFactory(engine: Engine): Promise<MissileFactory> {
+
+	let { model, meta } = await engine.graphics.loadModel(
+		"game/entities/weapons/missile.glb")
+
+	return function(parent: Glider, possibleTargets: Entity[]): Missile {
+		return new Missile(engine, model, parent, possibleTargets)
 	}
-
-	create(parent: Glider, possibleTargets: Entity[]): Missile {
-		return new Missile(this.engine, this.asset, parent, possibleTargets);
-	}
-}
-
-export async function createMissileManager(engine: Engine) {
-
-	let missileAsset: Model
-	await new Promise((resolve, reject) => {
-		missileAsset = engine.graphics.model.load(
-			"game/entities/weapons/missile.glb", resolve, reject)
-	})
-
-	return new MissileManager(
-		engine,
-		missileAsset
-	)
 }

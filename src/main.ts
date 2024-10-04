@@ -5,11 +5,11 @@ import { broker } from "broker"
 import { Graphics } from "game/graphics/graphics"
 import { ActionCam, ActionCamConfig } from "game/actioncam"
 import { Physics } from "game/physics/physics"
-import { SoundFxPlayer } from "game/sound/soundfx"
+import { SoundLoader } from "game/sound"
 
 import { ThreeGraphics } from "adapters/graphics/threegraphics/threegraphics"
 import { P2Physics } from "adapters/physics/p2/p2physics"
-import { WebApiSoundFxPlayer } from "adapters/sound/webapisound"
+import { loadWebApiSound } from "adapters/sound/webapisound"
 import { DefaultControllerManager } from "adapters/controller/defaultcontrollermanager"
 
 import * as Stats from 'stats.js'
@@ -25,10 +25,10 @@ async function main() {
 	let actionCam = new ActionCam(graphics, new ActionCamConfig())
 	actionCam.camera.activate()
 	let controllerManager = new DefaultControllerManager()
-	let soundFxPlayer = new WebApiSoundFxPlayer() as SoundFxPlayer
+	let loadSound = loadWebApiSound as SoundLoader
 
 	let match = await createMatch({
-		physics, graphics, actionCam, controllerManager, soundFxPlayer
+		physics, graphics, actionCam, controllerManager, loadSound
 	})
 
 	let engineStats = new Stats()

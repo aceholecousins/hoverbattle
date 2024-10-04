@@ -1,14 +1,22 @@
 
-import {Kind} from "utils"
+import { Triangle3 } from "utilities/math_utils"
+import { SceneNodeConfig } from "./scenenode"
 
-export interface Asset<K extends Kind>{
-	kind:K
+export class Model {readonly kind = "model"}
+export class Skybox {readonly kind = "skybox"}
+
+export class ModelMetaData{
+	[key:string]:Triangle3[] | SceneNodeConfig<"empty">
 }
 
-// we want to allow to pass info about the loaded asset back via callback parameter
-// so it can travel through the worker bridge (a return value can only be a proxy, no data)
-export type LoadAssetFunction<T extends Asset<any>, M=void> = (
-	file: string,
-	onLoaded?: M extends void? ()=>void : (meta:M)=>void,
-	onError?:(err:ErrorEvent)=>void
-) => T
+export interface ModelLoader {
+	(file: string): Promise<{ model: Model; meta: ModelMetaData }>;
+}
+
+export interface SpriteLoader {
+	(file: string): Promise<Model>;
+}
+
+export interface SkyboxLoader {
+	(file: string): Promise<Skybox>;
+}

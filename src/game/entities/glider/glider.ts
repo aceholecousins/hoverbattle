@@ -1,6 +1,6 @@
 import { ModelMeshConfig } from "game/graphics/mesh"
-import { Model } from "game/graphics/model"
-import { Engine } from "game/match"
+import { Model } from "game/graphics/asset"
+import { Engine } from "game/engine"
 import { CircleConfig } from "game/physics/circle"
 import { RigidBodyConfig } from "game/physics/rigidbody"
 import { Player } from "game/player"
@@ -84,12 +84,8 @@ export async function createGliderFactory(engine: Engine) {
 
 	// TODO: some creation logic is in this factory, some is in the constructor
 
-	let gliderAsset: Model
-
-	await new Promise((resolve, reject) => {
-		gliderAsset = engine.graphics.model.load(
-			"game/entities/glider/glider6.glb", resolve, reject)
-	})
+	let { model, meta } = await engine.graphics.loadModel(
+		"game/entities/glider/glider6.glb")
 
 	const gliderBodyCfg = new RigidBodyConfig({
 		actor: null, // will be filled by the constructed glider
@@ -98,9 +94,7 @@ export async function createGliderFactory(engine: Engine) {
 		angularDamping: 0.99
 	})
 
-	const gliderModelCfg: ModelMeshConfig = new ModelMeshConfig({
-		asset: gliderAsset
-	})
+	const gliderModelCfg: ModelMeshConfig = new ModelMeshConfig({ model })
 
 	return function (player: Player) {
 		return new Glider(
