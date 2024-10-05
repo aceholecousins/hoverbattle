@@ -1,5 +1,5 @@
 import 'jsdom-global/register'
-import {describe, it, before} from 'mocha'
+import { describe, it, before } from 'mocha'
 import { expect } from 'chai'
 import { DefaultControllerManager } from 'adapters/controller/defaultcontrollermanager'
 import { Controller } from 'game/controller/controller'
@@ -15,7 +15,7 @@ describe('Test DefaultControllerManager', () => {
 	})
 
 	it('Test keyboard is immediately connected', () => {
-		let connectedControllers:Controller[] = new Array();
+		let connectedControllers: Controller[] = new Array();
 		controllerManager.addConnectionCallback(newController => connectedControllers.push(newController))
 		expect(connectedControllers).to.have.lengthOf(2)
 		expect(connectedControllers[0]).to.be.instanceOf(Keyboard)
@@ -23,10 +23,10 @@ describe('Test DefaultControllerManager', () => {
 	})
 
 	it('Remove connection callback', () => {
-		let callback = (controller:Controller) => {}
+		let callback = (controller: Controller) => { }
 		controllerManager.addConnectionCallback(callback)
 		controllerManager.removeConnectionCallback(callback)
 	})
 
-	
+
 })

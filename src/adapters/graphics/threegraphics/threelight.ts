@@ -1,6 +1,6 @@
 
-import {Color} from "utils"
-import {ThreeSceneNode} from "./threescenenode"
+import { Color } from "utils"
+import { ThreeSceneNode } from "./threescenenode"
 import {
 	PointLight,
 	PointLightConfig,
@@ -10,34 +10,34 @@ import {
 } from "game/graphics/light"
 import * as THREE from "three"
 
-export class ThreePointLight extends ThreeSceneNode<"pointlight"> implements PointLight{
+export class ThreePointLight extends ThreeSceneNode<"pointlight"> implements PointLight {
 
-	threeObject:THREE.PointLight
+	threeObject: THREE.PointLight
 
-	set color(col:Color){
+	set color(col: Color) {
 		this.threeObject.color.setRGB(col.r, col.g, col.b)
 	}
 
-	constructor(scene:THREE.Scene, config:PointLightConfig){
+	constructor(scene: THREE.Scene, config: PointLightConfig) {
 		super(scene, new THREE.PointLight(), config)
 
 		this.color = config.color
 	}
 }
 
-export class ThreeHemisphereLight extends ThreeSceneNode<"hemispherelight"> implements HemisphereLight{
+export class ThreeHemisphereLight extends ThreeSceneNode<"hemispherelight"> implements HemisphereLight {
 
-	threeObject:THREE.HemisphereLight
+	threeObject: THREE.HemisphereLight
 
-	set groundColor(col:Color){
+	set groundColor(col: Color) {
 		this.threeObject.groundColor.setRGB(col.r, col.g, col.b)
 	}
 
-	set skyColor(col:Color){
+	set skyColor(col: Color) {
 		this.threeObject.color.setRGB(col.r, col.g, col.b)
 	}
 
-	constructor(scene:THREE.Scene, config:HemisphereLightConfig){
+	constructor(scene: THREE.Scene, config: HemisphereLightConfig) {
 		super(scene, new THREE.HemisphereLight(), config)
 
 		this.groundColor = config.groundColor
@@ -45,18 +45,18 @@ export class ThreeHemisphereLight extends ThreeSceneNode<"hemispherelight"> impl
 	}
 }
 
-export class ThreeLightFactory implements LightFactory{
-	threeScene:THREE.Scene
+export class ThreeLightFactory implements LightFactory {
+	threeScene: THREE.Scene
 
-	constructor(scene:THREE.Scene){
+	constructor(scene: THREE.Scene) {
 		this.threeScene = scene
 	}
 
-	createPointLight(config: PointLightConfig){
+	createPointLight(config: PointLightConfig) {
 		return new ThreePointLight(this.threeScene, config)
 	}
 
-	createHemisphereLight(config: HemisphereLightConfig){
+	createHemisphereLight(config: HemisphereLightConfig) {
 		return new ThreeHemisphereLight(this.threeScene, config)
 	}
 }

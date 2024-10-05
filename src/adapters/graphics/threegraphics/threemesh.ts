@@ -63,8 +63,8 @@ export class ThreeMeshFactory implements MeshFactory {
 
 function cloneMaterialRecursively(
 	target: THREE.Object3D,
-	source: THREE.Object3D, 
-	tintUniform?: {value: THREE.Matrix3}
+	source: THREE.Object3D,
+	tintUniform?: { value: THREE.Matrix3 }
 ) {
 	let tint = tintUniform
 	if ("tint" in source.userData) {
@@ -75,8 +75,8 @@ function cloneMaterialRecursively(
 	if (target.type == "Mesh") {
 		; ((target as THREE.Mesh).material as THREE.Material) =
 			((source as THREE.Mesh).material as THREE.Material).clone()
-		
-		if(tint !== undefined){
+
+		if (tint !== undefined) {
 			injectTint(
 				((target as THREE.Mesh).material as THREE.Material),
 				tint
@@ -89,21 +89,21 @@ function cloneMaterialRecursively(
 	}
 }
 
-function injectTint(mat: THREE.Material, uniform: {value: THREE.Matrix3}){
+function injectTint(mat: THREE.Material, uniform: { value: THREE.Matrix3 }) {
 
-	if(
+	if (
 		"tint" in mat.userData || // already tinted
 		mat.name.slice(-6) !== "__tint" // material does not use tinting
-	){
+	) {
 		return
 	}
 
 	mat.userData.tint = uniform
 
-	if(mat.type === "MeshBasicMaterial"){
+	if (mat.type === "MeshBasicMaterial") {
 		let obcBefore = mat.onBeforeCompile
-		mat.onBeforeCompile = (shader, renderer)=>{
-			if(obcBefore !== undefined){
+		mat.onBeforeCompile = (shader, renderer) => {
+			if (obcBefore !== undefined) {
 				obcBefore(shader, renderer)
 			}
 
@@ -118,10 +118,10 @@ function injectTint(mat: THREE.Material, uniform: {value: THREE.Matrix3}){
 			)
 		}
 	}
-	else if(mat.type === "MeshStandardMaterial"){
+	else if (mat.type === "MeshStandardMaterial") {
 		let obcBefore = mat.onBeforeCompile
-		mat.onBeforeCompile = (shader, renderer)=>{
-			if(obcBefore !== undefined){
+		mat.onBeforeCompile = (shader, renderer) => {
+			if (obcBefore !== undefined) {
 				obcBefore(shader, renderer)
 			}
 

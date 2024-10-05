@@ -7,9 +7,9 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 
 
 
-var pmremGenerator = new THREE.PMREMGenerator( new THREE.WebGLRenderer() );
+var pmremGenerator = new THREE.PMREMGenerator(new THREE.WebGLRenderer());
 pmremGenerator.compileCubemapShader();
-let pmrem:any
+let pmrem: any
 
 let envmap = new THREE.CubeTextureLoader()
 	.setPath('./')
@@ -17,9 +17,9 @@ let envmap = new THREE.CubeTextureLoader()
 		'blue.png', 'green.png',
 		'blue.png', 'green.png',
 		'blue.png', 'green.png'
-	], function(){
+	], function () {
 		//envmap.encoding = THREE.sRGBEncoding
-		pmrem = pmremGenerator.fromCubemap( envmap );
+		pmrem = pmremGenerator.fromCubemap(envmap);
 		//pmrem.texture.magFilter = THREE.LinearFilter;
 		//pmrem.needsUpdate = true;
 		scene.environment = pmrem.texture
@@ -37,7 +37,7 @@ let sphere = new THREE.Mesh(
 	new THREE.MeshStandardMaterial()
 )
 scene.add(sphere)
-;(window as any)["sphere"] = sphere
+	; (window as any)["sphere"] = sphere
 
 
-run(function(time:any){})
+run(function (time: any) { })

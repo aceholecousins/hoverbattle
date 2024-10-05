@@ -9,7 +9,7 @@ const ASSET_PATH = "adapters/graphics/assets/"
 
 let graphicsScene: THREE.Scene
 
-let smokeBallMesh:THREE.Mesh;
+let smokeBallMesh: THREE.Mesh;
 let smokeballNormalmap: THREE.Texture
 let smokeballAOmap: THREE.Texture
 
@@ -28,7 +28,7 @@ export async function init(scene: THREE.Scene) {
 
 	smokeballNormalmap = await new THREE.TextureLoader().loadAsync(ASSET_PATH + 'smokeball_normal_lq.png');
 	smokeballNormalmap.minFilter = THREE.LinearFilter // mip mapping causes a seam in the pacific
-	
+
 	smokeballAOmap = await new THREE.TextureLoader().loadAsync(ASSET_PATH + 'smokeball_ao_hc_mq.png');
 	smokeballAOmap.minFilter = THREE.LinearFilter
 
@@ -118,10 +118,10 @@ export async function init(scene: THREE.Scene) {
 		}`;
 
 	smokeBallMesh = (await new GLTFLoader().loadAsync(ASSET_PATH + 'smokeball.glb')).scene.children[0] as THREE.Mesh
-	if(EXPLOSION_DEBUG && false){
+	if (EXPLOSION_DEBUG && false) {
 		smokeBallMesh.scale.x = smokeBallMesh.scale.y = smokeBallMesh.scale.z = 10
 	}
-	else{
+	else {
 		smokeBallMesh.scale.x = smokeBallMesh.scale.y = smokeBallMesh.scale.z = 0.0001
 	}
 
@@ -143,26 +143,26 @@ export async function init(scene: THREE.Scene) {
 
 }
 
-export function createSmokeBall(config: ExplosionConfig){
+export function createSmokeBall(config: ExplosionConfig) {
 
-	let color = new THREE.Color( config.color.r, config.color.g, config.color.b )
+	let color = new THREE.Color(config.color.r, config.color.g, config.color.b)
 
 	let mesh = smokeBallMesh.clone() as THREE.Mesh;
 	mesh.position.set(config.position[0], config.position[1], config.position[2])
 	mesh.renderOrder = smokeBallMesh.renderOrder; // TODO: maybe remove if fixed in three.js
 	let material = (smokeBallMesh.material as THREE.Material).clone() as THREE.ShaderMaterial; // so we can change the color without changing the color of all smokeballs
-	material.uniforms.strength = { value: 1.1};
-	material.uniforms.coreColor = { value: new THREE.Color(0xffffff)};
-	material.uniforms.coreGlowStrength = { value: 1.0};
-	material.uniforms.smokeColor = { value: color.clone()};
-	material.uniforms.smokeEmissiveness = { value: 1.0};
-	material.uniforms.smokeNormal = { value: smokeballNormalmap};
-	material.uniforms.smokeAO = { value: smokeballAOmap};
-	material.uniforms.opacity = { value: 1.0};
+	material.uniforms.strength = { value: 1.1 };
+	material.uniforms.coreColor = { value: new THREE.Color(0xffffff) };
+	material.uniforms.coreGlowStrength = { value: 1.0 };
+	material.uniforms.smokeColor = { value: color.clone() };
+	material.uniforms.smokeEmissiveness = { value: 1.0 };
+	material.uniforms.smokeNormal = { value: smokeballNormalmap };
+	material.uniforms.smokeAO = { value: smokeballAOmap };
+	material.uniforms.opacity = { value: 1.0 };
 	mesh.material = material
-	mesh.rotation.x = Math.random()*1000;
-	mesh.rotation.y = Math.random()*1000;
-	mesh.rotation.z = Math.random()*1000;
+	mesh.rotation.x = Math.random() * 1000;
+	mesh.rotation.y = Math.random() * 1000;
+	mesh.rotation.z = Math.random() * 1000;
 
 	graphicsScene.add(mesh)
 
@@ -172,23 +172,23 @@ export function createSmokeBall(config: ExplosionConfig){
 
 	let smokeTarget = new THREE.Color(0xbbbbbb)
 
-	let update = function(dt:number){
-		strength -= decay*dt;
-		mesh.scale.x += growth*dt;
-		mesh.scale.y += growth*dt;
-		mesh.scale.z += growth*dt;
+	let update = function (dt: number) {
+		strength -= decay * dt;
+		mesh.scale.x += growth * dt;
+		mesh.scale.y += growth * dt;
+		mesh.scale.z += growth * dt;
 
 		let cappedStrength = THREE.MathUtils.clamp(strength, 0.0, 1.0)
 		material.uniforms.coreGlowStrength.value = cappedStrength + 0.5
-		material.uniforms.coreColor.value.setRGB(1.0, 1.0, 1.0).lerp(color, 1.0-cappedStrength)
-		material.uniforms.smokeColor.value.copy(color).lerp(smokeTarget, 1.0-cappedStrength)
-		material.uniforms.smokeEmissiveness.value = 0.7*cappedStrength
+		material.uniforms.coreColor.value.setRGB(1.0, 1.0, 1.0).lerp(color, 1.0 - cappedStrength)
+		material.uniforms.smokeColor.value.copy(color).lerp(smokeTarget, 1.0 - cappedStrength)
+		material.uniforms.smokeEmissiveness.value = 0.7 * cappedStrength
 		material.uniforms.opacity.value = Math.pow(cappedStrength, 0.25)
 
-		if(strength <= 0){
+		if (strength <= 0) {
 			graphicsScene.remove(mesh)
 			broker["graphicsUpdate"].removeHandler(update)
-		}		
+		}
 	}
 
 	broker["graphicsUpdate"].addHandler(update)

@@ -4,7 +4,7 @@ import * as THREE from "three"
 
 export class ThreeFxFactory implements FxFactory {
 
-	constructor(scene:THREE.Scene) {
+	constructor(scene: THREE.Scene) {
 		initSmokeBall(scene)
 	}
 

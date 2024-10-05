@@ -13,7 +13,7 @@ scene.environment = envmap
 scene.background = envmap
 
 
-scene.rotateX(-Math.PI/2)
+scene.rotateX(-Math.PI / 2)
 
 var loader = new GLTFLoader()
 
@@ -21,7 +21,7 @@ scene.add(new THREE.PointLight())
 
 loader.load(
 	'./glider6.glb',
-	function(gltf){
+	function (gltf) {
 		scene.add(gltf.scene)
 		gltf.animations; // Array<THREE.AnimationClip>
 		gltf.scene; // THREE.Group
@@ -30,13 +30,13 @@ loader.load(
 		gltf.asset; // Object
 	},
 	// called while loading is progressing
-	function(xhr) {
-		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+	function (xhr) {
+		console.log((xhr.loaded / xhr.total * 100) + '% loaded');
 	},
 	// called when loading has errors
-	function(error) {
-		console.log( 'An error happened' );
+	function (error) {
+		console.log('An error happened');
 	}
 )
 
-run(function(time:any){})
+run(function (time: any) { })

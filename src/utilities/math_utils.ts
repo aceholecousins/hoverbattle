@@ -10,10 +10,10 @@ import { vec3, mat3, vec2 } from "gl-matrix";
  */
 export function wrapAngle(angle: number, wrapAt = Math.PI): number {
 	let revs = (angle - wrapAt) / 2.0 / Math.PI;
-  return (revs - Math.floor(revs) - 1) * 2.0 * Math.PI + wrapAt
+	return (revs - Math.floor(revs) - 1) * 2.0 * Math.PI + wrapAt
 }
 
-export function mat3fromVectors(out:mat3, x:vec3, y:vec3, z:vec3){
+export function mat3fromVectors(out: mat3, x: vec3, y: vec3, z: vec3) {
 	// note that matrices are stored column-wise
 
 	out[0] = x[0]
@@ -34,7 +34,7 @@ export function mat3fromVectors(out:mat3, x:vec3, y:vec3, z:vec3){
 export type Triangle2 = [vec2, vec2, vec2]
 export type Triangle3 = [vec3, vec3, vec3]
 
-export function triangle3to2(tri:Triangle3){
+export function triangle3to2(tri: Triangle3) {
 	return [
 		vec2.fromValues(tri[0][0], tri[0][1]),
 		vec2.fromValues(tri[1][0], tri[1][1]),

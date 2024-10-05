@@ -2,11 +2,11 @@ import { Sound, SoundHandle, SoundLoader } from "game/sound";
 
 let audioContext = new AudioContext()
 
-export const loadWebApiSound: SoundLoader = function(file:string){
+export const loadWebApiSound: SoundLoader = function (file: string) {
 
 	return new Promise((resolve, reject) => {
 		const sound = new WebApiSound();
-		
+
 		var request = new XMLHttpRequest();
 		request.open("GET", file, true);
 		request.responseType = "arraybuffer";
@@ -32,22 +32,22 @@ export const loadWebApiSound: SoundLoader = function(file:string){
 
 export class WebApiSound implements Sound {
 
-	buffer:AudioBuffer
+	buffer: AudioBuffer
 
 	play(volume: number = 1, rate: number = 1, loop: boolean = false): SoundHandle {
-		
+
 		let sourceNode = audioContext.createBufferSource()
 		sourceNode.buffer = this.buffer
 		sourceNode.playbackRate.value = rate;
 		sourceNode.loop = loop
-    	
+
 		let gainNode = audioContext.createGain()
 		gainNode.gain.value = volume;
 
 		sourceNode.connect(gainNode)
 		gainNode.connect(audioContext.destination)
 
-    	sourceNode.start()
+		sourceNode.start()
 
 		return {
 			stop: () => {

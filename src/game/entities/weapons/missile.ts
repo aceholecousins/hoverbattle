@@ -149,7 +149,7 @@ export async function createMissileFactory(engine: Engine): Promise<MissileFacto
 	let { model, meta } = await engine.graphics.loadModel(
 		"game/entities/weapons/missile.glb")
 
-	return function(parent: Glider, possibleTargets: Entity[]): Missile {
+	return function (parent: Glider, possibleTargets: Entity[]): Missile {
 		return new Missile(engine, model, parent, possibleTargets)
 	}
 }

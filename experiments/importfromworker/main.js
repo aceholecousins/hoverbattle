@@ -3,12 +3,12 @@ var worker = new Worker('worker.js')
 
 import("./import.js")
 	.then(
-		function(){
+		function () {
 			console.log("imported in window")
 		}
 	)
 	.catch(
-		function(){
+		function () {
 			console.log("!!!! CATCH IN WINDOW !!!!")
 		}
 	)

@@ -1,28 +1,28 @@
 
 type EventHandler = (event: any) => any
 
-class EventChannel{
+class EventChannel {
 	private handlers = new Set<EventHandler>()
 
-	addHandler(handler: EventHandler){
+	addHandler(handler: EventHandler) {
 		this.handlers.add(handler)
 	}
 
-	removeHandler(handler: EventHandler){
+	removeHandler(handler: EventHandler) {
 		this.handlers.delete(handler)
 	}
 
-	fire(event: any){
-		this.handlers.forEach(function(handler){
+	fire(event: any) {
+		this.handlers.forEach(function (handler) {
 			handler(event)
 		})
 	}
 
-	fetch(request: any){
-		let responses:any[] = []
-		this.handlers.forEach(function(handler){
-			let response:any = handler(request)
-			if(response !== undefined){
+	fetch(request: any) {
+		let responses: any[] = []
+		this.handlers.forEach(function (handler) {
+			let response: any = handler(request)
+			if (response !== undefined) {
 				responses.push(response)
 			}
 		})
@@ -30,14 +30,14 @@ class EventChannel{
 	}
 }
 
-let broker:any = {}
-broker.newChannel = function(name:string){
-	if(broker.hasOwnProperty(name)){
+let broker: any = {}
+broker.newChannel = function (name: string) {
+	if (broker.hasOwnProperty(name)) {
 		throw new Error('channel "' + name + '" already exists')
 	}
-	else{
+	else {
 		broker[name] = new EventChannel()
 	}
 }
 
-export {EventChannel, broker}
+export { EventChannel, broker }

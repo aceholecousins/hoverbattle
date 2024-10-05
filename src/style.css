@@ -1,9 +1,9 @@
-body{
+body {
 	background-color: gray;
 	margin: 0px;
 }
 
-#rendertarget{
+#rendertarget {
 	position: absolute;
 	top: 0px;
 	left: 0px;

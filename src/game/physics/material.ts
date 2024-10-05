@@ -1,5 +1,5 @@
 
-interface Material{
-	elasticity:number
-	roughness:number
+interface Material {
+	elasticity: number
+	roughness: number
 }

@@ -1,21 +1,21 @@
-import {describe, it} from 'mocha'
-import {expect} from 'chai'
-import {broker, EventChannel} from 'broker'
+import { describe, it } from 'mocha'
+import { expect } from 'chai'
+import { broker, EventChannel } from 'broker'
 
 describe('Test broker', () => {
 	it('fire', () => {
-		
-		broker.newChannel('myChannel')
-		
-		let myChannel:EventChannel = broker.myChannel
 
-		let receivedEvent:any;
+		broker.newChannel('myChannel')
+
+		let myChannel: EventChannel = broker.myChannel
+
+		let receivedEvent: any;
 
 		myChannel.addHandler(e => {
 			receivedEvent = e
 		})
 
-		myChannel.fire( {
+		myChannel.fire({
 			name: 'eventName',
 			data: 3
 		})

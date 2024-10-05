@@ -1,6 +1,6 @@
 
 import * as THREE from "three"
 
-export interface SceneInfo{
-	activeCamera:THREE.PerspectiveCamera
+export interface SceneInfo {
+	activeCamera: THREE.PerspectiveCamera
 }

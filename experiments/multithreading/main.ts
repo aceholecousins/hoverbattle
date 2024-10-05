@@ -1,14 +1,14 @@
 
 let inWorker = false
-if(typeof window === "undefined"){
+if (typeof window === "undefined") {
 	inWorker = true
 }
 
-if(!inWorker){
+if (!inWorker) {
 
-	let divs:any[] = []
+	let divs: any[] = []
 
-	for(let i = 0; i < window.numObjects; i++){
+	for (let i = 0; i < window.numObjects; i++) {
 		let div = document.createElement("div")
 		div.style.position = "absolute"
 		div.style.left = "0px"
@@ -23,21 +23,21 @@ if(!inWorker){
 		document.body.appendChild(div)
 	}
 
-	window.updateDivs = function(positions){
-		for(let i = 0; i < window.numObjects; i++){
-			divs[i].style.left = window.innerWidth/2 + positions[i].x*5 + "px"
-			divs[i].style.top = window.innerHeight/2 + positions[i].y*5 + "px"
+	window.updateDivs = function (positions) {
+		for (let i = 0; i < window.numObjects; i++) {
+			divs[i].style.left = window.innerWidth / 2 + positions[i].x * 5 + "px"
+			divs[i].style.top = window.innerHeight / 2 + positions[i].y * 5 + "px"
 		}
 	}
 
 	// start this script again as a worker
 	window.worker = new Worker("main.js")
 
-	window.worker.onmessage = function(e){
+	window.worker.onmessage = function (e) {
 		updateDivs(e.data)
 	}
 }
-else{ // inWorker
+else { // inWorker
 	importScripts("physics.js", "p2.js", "p2physics.js")
 }
 
@@ -45,48 +45,48 @@ else{ // inWorker
 
 let phys = new P2Physics()
 
-let bodies:RigidBody[] = []
-let positions:Vec2[] = []
+let bodies: RigidBody[] = []
+let positions: Vec2[] = []
 
-function setupAndRun(fps:number, nObjs:number){
+function setupAndRun(fps: number, nObjs: number) {
 
-	for(let i = 0; i < nObjs; i++){
+	for (let i = 0; i < nObjs; i++) {
 		let bod = phys.createBody()
-		let x = Math.random()*100-50
-		let y = Math.random()*100-50
+		let x = Math.random() * 100 - 50
+		let y = Math.random() * 100 - 50
 		let vx = -y * Math.random()
 		let vy = x * Math.random()
 
-		bod.setPosition({x:x, y:y})
-		bod.setVelocity({x:vx, y:vy})
+		bod.setPosition({ x: x, y: y })
+		bod.setVelocity({ x: vx, y: vy })
 		bod.setShape({
-			kind:"circle",
-			radius:1
+			kind: "circle",
+			radius: 1
 		})
 		bodies.push(bod)
-		positions.push({x:0, y:0})
+		positions.push({ x: 0, y: 0 })
 	}
 
-	setInterval(function(){
-		for(let i = 0; i < nObjs; i++){
+	setInterval(function () {
+		for (let i = 0; i < nObjs; i++) {
 			let pos = bodies[i].getPosition()
-			bodies[i].applyForce({x:-pos.x, y:-pos.y})
+			bodies[i].applyForce({ x: -pos.x, y: -pos.y })
 		}
-		phys.step(1.0/fps)
-		for(let i = 0; i < nObjs; i++){
+		phys.step(1.0 / fps)
+		for (let i = 0; i < nObjs; i++) {
 			positions[i] = bodies[i].getPosition()
 		}
-		if(inWorker){
+		if (inWorker) {
 			postMessage(positions)
 		}
-		else{
+		else {
 			window.updateDivs(positions)
 		}
-	}, 1000/fps)
+	}, 1000 / fps)
 }
 
-if(inWorker){
-	onmessage = function(e){
+if (inWorker) {
+	onmessage = function (e) {
 		setupAndRun(e.data.fps, e.data.nObjs)
 	}
 }

@@ -38,10 +38,10 @@ THREE.ShaderChunk.emissivemap_fragment = `
 #endif
 `
 
-let tex = new THREE.TextureLoader().load( 'test.png' )
-let alpha = new THREE.TextureLoader().load( 'alpha.png' )
-let stdmat = new THREE.MeshStandardMaterial({map:tex, alphaMap:alpha, color:"orange", transparent:true})
-let custommat = new THREE.MeshStandardMaterial({map:tex, alphaMap:alpha, color:"orange", transparent:true})
+let tex = new THREE.TextureLoader().load('test.png')
+let alpha = new THREE.TextureLoader().load('alpha.png')
+let stdmat = new THREE.MeshStandardMaterial({ map: tex, alphaMap: alpha, color: "orange", transparent: true })
+let custommat = new THREE.MeshStandardMaterial({ map: tex, alphaMap: alpha, color: "orange", transparent: true })
 custommat.defines["MOD"] = ""
 let geom = new THREE.TorusKnotGeometry()
 
@@ -53,6 +53,6 @@ let m2 = new THREE.Mesh(geom, custommat)
 m2.position.setX(2)
 scene.add(m2)
 
-scene.add(new THREE.HemisphereLight(0xffffff,0x000000))
+scene.add(new THREE.HemisphereLight(0xffffff, 0x000000))
 
-run(function(time:any){})
+run(function (time: any) { })

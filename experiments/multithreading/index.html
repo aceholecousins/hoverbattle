@@ -1,44 +1,47 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<title>Multithreading</title>
-		<link rel="stylesheet" type="text/css" href="../../src/style.css">
-	</head>
-	<body>
-		<script>
-			var urlParams = new URLSearchParams(window.location.search)
-			window.updatesPerSecond = urlParams.get("updatesPerSecond")
-			window.numObjects = urlParams.get("numObjects")
-			window.useWorker = urlParams.get("useWorker")
-			if(
-				window.updatesPerSecond === null ||
-				window.numObjects === null ||
-				window.useWorker === null
-			){
-				window.valid = false
+
+<head>
+	<meta charset="utf-8">
+	<title>Multithreading</title>
+	<link rel="stylesheet" type="text/css" href="../../src/style.css">
+</head>
+
+<body>
+	<script>
+		var urlParams = new URLSearchParams(window.location.search)
+		window.updatesPerSecond = urlParams.get("updatesPerSecond")
+		window.numObjects = urlParams.get("numObjects")
+		window.useWorker = urlParams.get("useWorker")
+		if (
+			window.updatesPerSecond === null ||
+			window.numObjects === null ||
+			window.useWorker === null
+		) {
+			window.valid = false
+		}
+		else {
+			window.valid = true
+		}
+	</script>
+	<canvas id="rendertarget"></canvas>
+	<script src="p2.js"></script>
+	<script src="physics.js"></script>
+	<script src="p2physics.js"></script>
+	<script src="main.js"></script>
+	<script>
+		if (window.valid) {
+			if (window.useWorker === "true") {
+				window.worker.postMessage({ fps: window.updatesPerSecond, nObjs: window.numObjects })
 			}
-			else{
-				window.valid = true
+			else {
+				setupAndRun(window.updatesPerSecond, window.numObjects)
 			}
-		</script>
-		<canvas id="rendertarget"></canvas>
-		<script src="p2.js"></script>
-		<script src="physics.js"></script>
-		<script src="p2physics.js"></script>
-		<script src="main.js"></script>
-		<script>
-			if(window.valid){
-				if(window.useWorker === "true"){
-					window.worker.postMessage({fps:window.updatesPerSecond, nObjs:window.numObjects})
-				}
-				else{
-					setupAndRun(window.updatesPerSecond, window.numObjects)
-				}
-			}
-			else{
-				document.body.innerHTML = "usage: <a href='index.html?updatesPerSecond=100&numObjects=1000&useWorker=true'>index.html?updatesPerSecond=100&numObjects=1000&useWorker=true</a>"
-			}
-		</script>
-	</body>
+		}
+		else {
+			document.body.innerHTML = "usage: <a href='index.html?updatesPerSecond=100&numObjects=1000&useWorker=true'>index.html?updatesPerSecond=100&numObjects=1000&useWorker=true</a>"
+		}
+	</script>
+</body>
+
 </html>

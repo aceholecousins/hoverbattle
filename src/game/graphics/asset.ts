@@ -2,11 +2,11 @@
 import { Triangle3 } from "utilities/math_utils"
 import { SceneNodeConfig } from "./scenenode"
 
-export class Model {readonly kind = "model"}
-export class Skybox {readonly kind = "skybox"}
+export class Model { readonly kind = "model" }
+export class Skybox { readonly kind = "skybox" }
 
-export class ModelMetaData{
-	[key:string]:Triangle3[] | SceneNodeConfig<"empty">
+export class ModelMetaData {
+	[key: string]: Triangle3[] | SceneNodeConfig<"empty">
 }
 
 export interface ModelLoader {

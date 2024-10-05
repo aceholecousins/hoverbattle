@@ -1,9 +1,9 @@
-import {vec2} from "gl-matrix"
-import {ShapeConfig, Shape} from "./shape"
-import {copyIfPresent} from "utils"
-import {Actor} from "game/entities/actor"
+import { vec2 } from "gl-matrix"
+import { ShapeConfig, Shape } from "./shape"
+import { copyIfPresent } from "utils"
+import { Actor } from "game/entities/actor"
 
-export interface RigidBody{
+export interface RigidBody {
 	kind: "rigidbody"
 
 	readonly actor: Actor
@@ -20,21 +20,21 @@ export interface RigidBody{
 	angularVelocity: number
 	angularDamping: number
 
-	applyForce(force:vec2, localPointOfApplication?:vec2):void
-	applyLocalForce(force:vec2, localPointOfApplication?:vec2):void
-	applyImpulse(impulse:vec2, localPointOfApplication?:vec2):void
-	applyLocalImpulse(impulse:vec2, localPointOfApplication?:vec2):void
-	applyTorque(torque:number):void
-	applyAngularMomentum(angularMomentum:number):void
+	applyForce(force: vec2, localPointOfApplication?: vec2): void
+	applyLocalForce(force: vec2, localPointOfApplication?: vec2): void
+	applyImpulse(impulse: vec2, localPointOfApplication?: vec2): void
+	applyLocalImpulse(impulse: vec2, localPointOfApplication?: vec2): void
+	applyTorque(torque: number): void
+	applyAngularMomentum(angularMomentum: number): void
 
-	destroy():void
+	destroy(): void
 }
 
-export class RigidBodyConfig{
+export class RigidBodyConfig {
 	actor: Actor
 
 	shapes: ShapeConfig<any>[]
-	
+
 	mass = 1
 
 	position = vec2.fromValues(0, 0)
@@ -45,7 +45,7 @@ export class RigidBodyConfig{
 	angularVelocity = 0
 	angularDamping = 0.1
 
-	constructor(config: Pick<RigidBodyConfig, 'actor'> & Partial<RigidBodyConfig>){
+	constructor(config: Pick<RigidBodyConfig, 'actor'> & Partial<RigidBodyConfig>) {
 		this.actor = config.actor
 		copyIfPresent(this, config, [
 			"shapes", "mass", "position", "velocity", "damping",

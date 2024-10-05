@@ -1,23 +1,23 @@
 import { Controller } from "game/controller/controller";
 
 export interface KeyboardLayout {
-	up:string
-	down:string
-	right:string
-	left:string
-	shoot:string
-	pause:string
-	switchMode:string
+	up: string
+	down: string
+	right: string
+	left: string
+	shoot: string
+	pause: string
+	switchMode: string
 }
 
-const defaultLayout:KeyboardLayout = {
-	up:"KeyW",
-	down:"KeyS",
-	right:"KeyD",
-	left:"KeyA",
-	shoot:"Space",
-	pause:"KeyP",
-	switchMode:"ShiftLeft",
+const defaultLayout: KeyboardLayout = {
+	up: "KeyW",
+	down: "KeyS",
+	right: "KeyD",
+	left: "KeyA",
+	shoot: "Space",
+	pause: "KeyP",
+	switchMode: "ShiftLeft",
 }
 
 export class Keyboard implements Controller {
@@ -25,7 +25,7 @@ export class Keyboard implements Controller {
 	private shooting: boolean = false
 	private currentStrategy: ControlStrategy
 
-	constructor(private layout:KeyboardLayout = defaultLayout) {
+	constructor(private layout: KeyboardLayout = defaultLayout) {
 		this.currentStrategy = new RelativeStrategy(layout)
 		document.addEventListener("keydown", (event) => {
 			this.onKeyAction(event, true)
@@ -99,7 +99,7 @@ class RelativeStrategy implements ControlStrategy {
 	private valueLeft = 0;
 	private valueRight = 0;
 
-	constructor(private layout:KeyboardLayout) {
+	constructor(private layout: KeyboardLayout) {
 	}
 
 	getAbsoluteDirection(): number {
@@ -137,8 +137,8 @@ class AbsoluteStrategy implements ControlStrategy {
 	private valueDown: number = 0
 	private valueLeft: number = 0
 	private valueRight: number = 0
-	
-	constructor(private layout:KeyboardLayout) {
+
+	constructor(private layout: KeyboardLayout) {
 	}
 
 	getAbsoluteDirection(): number {
@@ -153,7 +153,7 @@ class AbsoluteStrategy implements ControlStrategy {
 		return this.thrust
 	}
 
-	onKeyAction(keyCode: string, isPressed: boolean) {		
+	onKeyAction(keyCode: string, isPressed: boolean) {
 		switch (keyCode) {
 			case this.layout.up:
 				this.valueUp = isPressed ? 1 : 0

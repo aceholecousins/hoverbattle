@@ -1,14 +1,14 @@
 
 import * as Stats from 'stats.js'
 import * as THREE from 'three'
-import {OrbitControls} from 'three/examples/jsm/controls/OrbitControls'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 let stats = new Stats()
 stats.showPanel(0)
 document.body.appendChild(stats.dom)
 
 let canvas = <HTMLCanvasElement>document.getElementById("rendertarget")
-let renderer = new THREE.WebGLRenderer({canvas:canvas})
+let renderer = new THREE.WebGLRenderer({ canvas: canvas })
 let scene = new THREE.Scene()
 scene.background = new THREE.Color("skyblue")
 let camera = new THREE.PerspectiveCamera(50, 1.0, 0.1, 100)
@@ -24,11 +24,11 @@ window.renderer = renderer
 let controls = new OrbitControls(camera, renderer.domElement)
 controls.screenSpacePanning = true
 
-function resize(){
-	if(renderer !== null){
+function resize() {
+	if (renderer !== null) {
 		renderer.setSize(canvas.clientWidth, canvas.clientHeight, false)
 	}
-	if(camera !== null && camera instanceof THREE.PerspectiveCamera){
+	if (camera !== null && camera instanceof THREE.PerspectiveCamera) {
 		let perspectiveCamera = camera as THREE.PerspectiveCamera
 		perspectiveCamera.aspect = canvas.clientWidth / canvas.clientHeight
 		perspectiveCamera.updateProjectionMatrix()
@@ -38,14 +38,14 @@ function resize(){
 window.addEventListener('resize', resize)
 resize()
 
-function run(update:(time:number) => void){
-	let animate = function(millisecs:number){
+function run(update: (time: number) => void) {
+	let animate = function (millisecs: number) {
 		stats.update()
 		requestAnimationFrame(animate)
-		update(millisecs/1000.0)
+		update(millisecs / 1000.0)
 		renderer.render(scene, camera)
 	}
 	animate(performance.now())
 }
 
-export {renderer, scene, camera, run}
+export { renderer, scene, camera, run }

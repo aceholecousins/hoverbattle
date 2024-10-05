@@ -2,12 +2,12 @@ console.log("hi from worker!")
 
 import("./import.js")
 	.then(
-		function(){
+		function () {
 			console.log("imported in worker")
 		}
 	)
 	.catch(
-		function(){
+		function () {
 			console.log("!!!! CATCH IN WORKER !!!!")
 		}
 	)
@@ -17,7 +17,7 @@ importScripts('./import.js')
 console.log("synchronous import done.")
 
 console.log("asynchronous import:")
-setTimeout(function(){
+setTimeout(function () {
 	importScripts('./import.js')
 	console.log("asynchronous import done.")
 }, 0)
@@ -30,7 +30,7 @@ console.log(evalstring)
 
 
 let counter = 5
-for(let i=0; i<100; i++){
+for (let i = 0; i < 100; i++) {
 	importScripts('./increaser.js')
 }
 console.log(counter)
