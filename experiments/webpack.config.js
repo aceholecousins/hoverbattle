@@ -10,6 +10,7 @@ module.exports = {
 		'overridecolor/main.js': './experiments/overridecolor/main.ts',
 		'pbr/main.js': './experiments/pbr/main.ts',
 		'tint/main.js': './experiments/tint/main.ts',
+		'buggy/main.js': './experiments/buggy/main.ts',
 	},
 	module: {
 		rules: [

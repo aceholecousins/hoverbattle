@@ -24,6 +24,7 @@
 	"homepage": "https://github.com/aceholecousins/hoverbattle#readme",
 	"devDependencies": {
 		"@types/chai": "^5.0.0",
+		"@types/dat.gui": "^0.7.13",
 		"@types/jsdom": "^21.1.7",
 		"@types/jsdom-global": "^3.0.7",
 		"@types/mocha": "^10.0.8",
@@ -43,6 +44,7 @@
 		"webpack-cli": "^5.1.4"
 	},
 	"dependencies": {
+		"dat.gui": "^0.7.9",
 		"gl-matrix": "^3.4.3",
 		"p2": "^0.7.1",
 		"stats.js": "^0.17.0",
