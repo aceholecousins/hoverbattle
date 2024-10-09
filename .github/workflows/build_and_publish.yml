@@ -23,7 +23,7 @@ jobs:
 #    - run: npm test
 #      env:
 #        CI: true
-#    - run: npm run build-experiments
+    - run: npm run build-experiments
     - name: Deploy
       uses: JamesIves/github-pages-deploy-action@releases/v3
       with:
