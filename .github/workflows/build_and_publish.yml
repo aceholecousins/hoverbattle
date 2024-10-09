@@ -23,7 +23,7 @@ jobs:
 #    - run: npm test
 #      env:
 #        CI: true
-    - run: npm run build-experiments && ls -la experiments/buggy && cp experiments/buggy/index.html dist/experiments/buggy/index.html
+    - run: npm run build-experiments
     - name: Deploy
       uses: JamesIves/github-pages-deploy-action@releases/v3
       with:
