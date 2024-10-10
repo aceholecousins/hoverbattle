@@ -23,19 +23,19 @@ chassisBody.addShape(boxShape)
 world.addBody(chassisBody)
 
 let chassisParams = {
-	mass: 1,
-	momentOfInertia: 0.1
+	mass: 1, // t
+	momentOfInertia: 0.1 // t*m^2
 }
 
 let wheels = [
 	{
 		label: "FrontWheel",
 		maxSteeringAngle: 30, // deg
-		steeringSpeed: 2.0, // rad/s
+		steeringSpeed: 2.0, // fraction/s
 		lateralDamping: 20, // reaction force over sliding velocity (up to gripping force limit)
-		maxGripForce: 30, // N
+		maxGripForce: 30, // kN
 		slidingForceFraction: 0.75, // reaction force when sliding faster
-		motorForce: 0, // N between wheel and ground
+		motorForce: 0, // kN between wheel and ground
 		brakeForce: 0,
 		position: 0.5,
 
@@ -48,11 +48,11 @@ let wheels = [
 	{
 		label: "RearWheel",
 		maxSteeringAngle: 0, // deg
-		steeringSpeed: -1.0, // rad/s
+		steeringSpeed: 0, // fraction/s
 		lateralDamping: 20, // reaction force over sliding velocity (up to gripping force limit)
-		maxGripForce: 30, // N
+		maxGripForce: 30, // kN
 		slidingForceFraction: 0.75, // reaction force when sliding faster
-		motorForce: 15, // N between wheel and ground
+		motorForce: 15, // kN between wheel and ground
 		brakeForce: 30,
 		position: -0.5,
 
@@ -79,8 +79,8 @@ for (let i = 0; i < 2; i++) {
 	let otherWheel = wheels[1 - i]
 
 	let wheelFolder = gui.addFolder(wheel.label)
-	wheelFolder.add(wheel, 'maxSteeringAngle', 0, 90)
-	wheelFolder.add(wheel, 'steeringSpeed', -10, 10)
+	wheelFolder.add(wheel, 'maxSteeringAngle', -90, 90)
+	wheelFolder.add(wheel, 'steeringSpeed', 0, 10)
 	wheelFolder.add(wheel, 'motorForce', 0, 100)
 	wheelFolder.add(wheel, 'brakeForce', 0, 100)
 	wheelFolder.add(wheel, 'lateralDamping', 0, 100).onChange((value) => {
@@ -184,6 +184,8 @@ function update(time: number) {
 	let elapsedTime = lastTime == 0 ? 0.01 : time - lastTime
 	lastTime = time
 
+	const gamepads = navigator.getGamepads();
+
 	scene.children = scene.children.filter(child => !(child.userData.deleteMe));
 
 	for (let i = 0; i < options.superSample; i++) {
@@ -210,21 +212,29 @@ function update(time: number) {
 			chassisBody.invMass = 1 / chassisParams.mass
 			chassisBody.invInertia = 1 / chassisParams.momentOfInertia
 
-			if (keys.ArrowLeft || keys.ArrowRight) {
-				wheel.steering += (keys.ArrowLeft - keys.ArrowRight) * steeringSpeed * dt
-				wheel.steering = Math.max(-maxSteeringAngle, Math.min(maxSteeringAngle, wheel.steering))
+			if (gamepads[0]) {
+				let gp = gamepads[0]
+				wheel.steering = -gp.axes[0]
+				wheel.thrust = gp.buttons[7].value
+				wheel.braking = gp.buttons[6].value
 			}
-			else if (wheel.steering > 0) {
-				wheel.steering = Math.max(0, wheel.steering - Math.abs(steeringSpeed) * dt)
+			else {
+				if (keys.ArrowLeft || keys.ArrowRight) {
+					wheel.steering += (keys.ArrowLeft - keys.ArrowRight) * steeringSpeed * dt
+					wheel.steering = Math.max(-1, Math.min(1, wheel.steering))
+				}
+				else if (wheel.steering > 0) {
+					wheel.steering = Math.max(0, wheel.steering - steeringSpeed * dt)
+				}
+				else if (wheel.steering < 0) {
+					wheel.steering = Math.min(0, wheel.steering + steeringSpeed * dt)
+				}
+				wheel.thrust = keys.ArrowUp
+				wheel.braking = keys.ArrowDown
 			}
-			else if (wheel.steering < 0) {
-				wheel.steering = Math.min(0, wheel.steering + Math.abs(steeringSpeed) * dt)
-			}
-			wheel.thrust = keys.ArrowUp * motorForce
-			wheel.braking = keys.ArrowDown * brakeForce
 
 			const wheelPosition = vec2.fromValues(wheel.position, 0)
-			const wheelAngle = chassisBody.angle + wheel.steering
+			const wheelAngle = chassisBody.angle + wheel.steering * maxSteeringAngle
 
 			let radius = vec2.create();
 			vec2.rotate(radius, wheelPosition, [0, 0], chassisBody.angle);
@@ -247,10 +257,10 @@ function update(time: number) {
 			)
 
 			const forwardVelocity = vec2.dot(motion, forwardDirection)
-			let drive = wheel.thrust
+			let drive = wheel.thrust * motorForce
 			if (wheel.braking) {
 				if (Math.abs(forwardVelocity) > 0.03) {
-					drive = -Math.sign(forwardVelocity) * wheel.braking
+					drive = -Math.sign(forwardVelocity) * wheel.braking * brakeForce
 				}
 			}
 
@@ -331,7 +341,7 @@ function update(time: number) {
 				arrow(globalWheelPosition, wheelForce, 0.03, new THREE.Color(0xff00ff))
 				circle(globalWheelPosition, maxWheelForceAbs * 0.03, new THREE.Color(0xff00ff))
 
-				wheel.mesh.rotation.z = wheel.steering
+				wheel.mesh.rotation.z = wheel.steering * maxSteeringAngle
 				wheel.mesh.position.x = wheel.position
 			}
 		}
