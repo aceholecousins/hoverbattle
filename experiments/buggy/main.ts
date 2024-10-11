@@ -18,13 +18,14 @@ const chassisBody = new p2.Body({
 	damping: 0.3,
 	angularDamping: 0.3
 })
-const boxShape = new p2.Box({ width: 1.0, height: 0.5 })
+const boxShape = new p2.Box({ width: 1.7, height: 4.0 })
 chassisBody.addShape(boxShape)
 world.addBody(chassisBody)
 
 let chassisParams = {
-	mass: 1, // t
-	momentOfInertia: 0.1 // t*m^2
+	mass: 1.2, // t
+	momentOfInertia: 1.7, // t*m^2
+	adaptiveSteering: true
 }
 
 let wheels = [
@@ -33,11 +34,11 @@ let wheels = [
 		maxSteeringAngle: 30, // deg
 		steeringSpeed: 2.0, // fraction/s
 		lateralDamping: 20, // reaction force over sliding velocity (up to gripping force limit)
-		maxGripForce: 30, // kN
+		maxGripForce: 50, // kN
 		slidingForceFraction: 0.75, // reaction force when sliding faster
 		motorForce: 0, // kN between wheel and ground
 		brakeForce: 0,
-		position: 0.5,
+		position: 1.2,
 
 		steering: 0,
 		thrust: 0,
@@ -52,9 +53,9 @@ let wheels = [
 		lateralDamping: 20, // reaction force over sliding velocity (up to gripping force limit)
 		maxGripForce: 30, // kN
 		slidingForceFraction: 0.75, // reaction force when sliding faster
-		motorForce: 15, // kN between wheel and ground
+		motorForce: 35, // kN between wheel and ground
 		brakeForce: 30,
-		position: -0.5,
+		position: -1.2,
 
 		steering: 0,
 		thrust: 0,
@@ -73,6 +74,7 @@ let options = {
 let carFolder = gui.addFolder("Car")
 carFolder.add(chassisParams, 'mass', 0.1, 20)
 carFolder.add(chassisParams, 'momentOfInertia', 0.01, 5)
+carFolder.add(chassisParams, 'adaptiveSteering')
 
 for (let i = 0; i < 2; i++) {
 	let wheel = wheels[i]
@@ -118,7 +120,7 @@ gridHelper.rotation.x = Math.PI / 2
 scene.add(gridHelper);
 
 const chassisMesh = new THREE.Mesh(
-	new THREE.BoxGeometry(1.6, 0.8, 0.1),
+	new THREE.BoxGeometry(4, 1.7, 0.1),
 	new THREE.MeshBasicMaterial({ color: 0x101010 })
 )
 scene.add(chassisMesh)
@@ -178,6 +180,13 @@ function circle(position: vec2, radius: number, color: THREE.Color) {
 	return circle;
 }
 
+function angleDelta(a: number, b: number): number {
+	let diff = (a - b) % (2 * Math.PI);
+	if (diff > Math.PI) diff -= 2 * Math.PI;
+	if (diff < -Math.PI) diff += 2 * Math.PI;;
+	return diff;
+}
+
 let lastTime = 0
 function update(time: number) {
 
@@ -234,7 +243,7 @@ function update(time: number) {
 			}
 
 			const wheelPosition = vec2.fromValues(wheel.position, 0)
-			const wheelAngle = chassisBody.angle + wheel.steering * maxSteeringAngle
+			let wheelAngle = chassisBody.angle + wheel.steering * maxSteeringAngle
 
 			let radius = vec2.create();
 			vec2.rotate(radius, wheelPosition, [0, 0], chassisBody.angle);
@@ -251,6 +260,16 @@ function update(time: number) {
 
 			const motion = vec2.add(vec2.create(), chassisBody.velocity, turningComponent)
 
+			if (chassisParams.adaptiveSteering) {
+				let adaptiveSteering = angleDelta(
+					Math.atan2(motion[1], motion[0]) + wheel.steering * maxSteeringAngle,
+					chassisBody.angle
+				)
+				if (adaptiveSteering > Math.PI / 2) { adaptiveSteering -= Math.PI }
+				if (adaptiveSteering < -Math.PI / 2) { adaptiveSteering += Math.PI }
+				adaptiveSteering = Math.max(-maxSteeringAngle, Math.min(maxSteeringAngle, adaptiveSteering))
+				wheelAngle = chassisBody.angle + adaptiveSteering
+			}
 			const forwardDirection = vec2.fromValues(
 				Math.cos(wheelAngle),
 				Math.sin(wheelAngle),
@@ -274,22 +293,13 @@ function update(time: number) {
 
 			let forwardForceAbs = Math.abs(drive)
 			let sideForceAbs = sideSpeed < slipThresholdSpeed ?
-				lateralDamping * sideSpeed : slidingForce
+				lateralDamping * sideSpeed : maxGripForce
 
 			let sliding = false
 
-			let maxWheelForceAbs = maxGripForce
-			if (
-				sideSpeed > slipThresholdSpeed
-				|| forwardForceAbs ** 2 + sideForceAbs ** 2 > maxGripForce ** 2
-			) {
-				maxWheelForceAbs = slidingForce
-				sliding = true
-			}
-
 			let totalWheelForceAbs = Math.sqrt(forwardForceAbs ** 2 + sideForceAbs ** 2)
-			if (totalWheelForceAbs > maxWheelForceAbs) {
-				const scale = maxWheelForceAbs / totalWheelForceAbs
+			if (totalWheelForceAbs > maxGripForce) {
+				const scale = slidingForce / totalWheelForceAbs
 				forwardForceAbs *= scale
 				sideForceAbs *= scale
 				sliding = true
@@ -300,7 +310,7 @@ function update(time: number) {
 			}
 			else {
 				wheel.mesh.material.color.setHex(0x00aa00)
-				let q = totalWheelForceAbs / maxWheelForceAbs
+				let q = totalWheelForceAbs / maxGripForce
 				wheel.mesh.material.color.r = q
 			}
 
@@ -339,9 +349,10 @@ function update(time: number) {
 			if (i == options.superSample - 1) {
 				arrow(globalWheelPosition, motion, 0.1, new THREE.Color(0x0000ff))
 				arrow(globalWheelPosition, wheelForce, 0.03, new THREE.Color(0xff00ff))
-				circle(globalWheelPosition, maxWheelForceAbs * 0.03, new THREE.Color(0xff00ff))
+				let kammForce = sliding ? slidingForce : maxGripForce
+				circle(globalWheelPosition, kammForce * 0.03, new THREE.Color(0xff00ff))
 
-				wheel.mesh.rotation.z = wheel.steering * maxSteeringAngle
+				wheel.mesh.rotation.z = wheelAngle - chassisBody.angle
 				wheel.mesh.position.x = wheel.position
 			}
 		}
@@ -352,5 +363,30 @@ function update(time: number) {
 	camera.position.set(chassisBody.position[0], chassisBody.position[1], 15)
 
 }
+
+const copyButton = document.createElement('button');
+copyButton.innerText = 'copy parameters';
+copyButton.style.position = 'absolute';
+copyButton.style.bottom = '10px';
+copyButton.style.left = '10px';
+document.body.appendChild(copyButton);
+
+copyButton.addEventListener('click', () => {
+	let wheelsCopy = JSON.parse(JSON.stringify(wheels));
+	wheelsCopy.forEach((wheel: any) => {
+		delete wheel.mesh;
+	});
+	const params = {
+		chassis:chassisParams,
+		wheels:wheelsCopy,
+		options
+	};
+	const paramsString = JSON.stringify(params);
+	navigator.clipboard.writeText(paramsString).then(() => {
+		alert('Parameters copied to clipboard');
+	}).catch(err => {
+		console.error('Failed to copy parameters: ', err);
+	});
+});
 
 run(update)
