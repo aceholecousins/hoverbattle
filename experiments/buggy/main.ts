@@ -25,7 +25,7 @@ world.addBody(chassisBody)
 let chassisParams = {
 	mass: 1.2, // t
 	momentOfInertia: 1.7, // t*m^2
-	adaptiveSteering: true
+	adaptiveSteering: false
 }
 
 let wheels = [
