@@ -31,11 +31,11 @@ let chassisParams = {
 let wheels = [
 	{
 		label: "FrontWheel",
-		maxSteeringAngle: 30, // deg
-		steeringSpeed: 2.0, // fraction/s
+		maxSteeringAngle: 45, // deg
+		steeringSpeed: 2.5, // fraction/s
 		lateralDamping: 20, // reaction force over sliding velocity (up to gripping force limit)
 		maxGripForce: 50, // kN
-		slidingForceFraction: 0.75, // reaction force when sliding faster
+		slidingForceFraction: 0.7, // reaction force when sliding faster
 		motorForce: 0, // kN between wheel and ground
 		brakeForce: 0,
 		position: 1.2,
@@ -52,7 +52,7 @@ let wheels = [
 		steeringSpeed: 0, // fraction/s
 		lateralDamping: 20, // reaction force over sliding velocity (up to gripping force limit)
 		maxGripForce: 30, // kN
-		slidingForceFraction: 0.75, // reaction force when sliding faster
+		slidingForceFraction: 0.7, // reaction force when sliding faster
 		motorForce: 35, // kN between wheel and ground
 		brakeForce: 30,
 		position: -1.2,
