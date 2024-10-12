@@ -26,6 +26,8 @@ for (let i = 0; i < nObjs; i++) {
 			roughness: Math.random()
 		})
 	)
+	model.material.color.convertSRGBToLinear()
+	model.material.emissive.convertSRGBToLinear()
 	model.position.set(x, y, 0)
 	models.push(model)
 	scene.add(model)
@@ -44,7 +46,7 @@ for (let i = 0; i < nLights; i++) {
 	let b = Math.sin(q + 4 * Math.PI / 3) * 0.5 + 0.5
 
 	let light = new THREE.PointLight(
-		new THREE.Color(r, g, b), 0.1
+		new THREE.Color(r, g, b), 10
 	)
 	light.position.set(x, y, z)
 
