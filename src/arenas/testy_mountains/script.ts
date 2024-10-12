@@ -20,8 +20,6 @@ export let createMatch: MatchFactory = async function (engine) {
 	let gliders: Glider[] = []
 	let powerupBoxes: PowerupBox[] = []
 
-	engine.graphics.control.setSceneOrientation([-Math.SQRT1_2, 0, 0, Math.SQRT1_2])
-
 	let collideWithEverythingRole = new Role<Entity>()
 	let gliderRole = new Role<Glider>()
 	let phaserRole = new Role<PhaserShot>()
@@ -122,6 +120,7 @@ export let createMatch: MatchFactory = async function (engine) {
 	let skybox = await engine.graphics.loadSkybox(
 		"arenas/testy_mountains/environment/*.jpg")
 	engine.graphics.control.setEnvironment(skybox)
+	engine.graphics.control.setEnvironmentOrientation([0, 0, Math.PI / 2])
 
 	let phaserFactory = await createPhaserFactory(engine)
 	let missileFactory = await createMissileFactory(engine)

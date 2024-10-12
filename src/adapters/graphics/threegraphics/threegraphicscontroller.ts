@@ -3,7 +3,7 @@ import { SceneInfo } from "./sceneinfo"
 import { ThreeGraphics } from "./threegraphics"
 import { renderer } from "./threerenderer"
 import { GraphicsController } from "game/graphics/graphicscontroller"
-import { quat } from "gl-matrix"
+import { vec3 } from "gl-matrix"
 import { Skybox } from "game/graphics/asset"
 import { ThreeSkybox } from "./threeskybox"
 import { LightProbeGenerator } from 'three/examples/jsm/lights/LightProbeGenerator.js'
@@ -33,20 +33,14 @@ export class ThreeGraphicsController implements GraphicsController {
 		resize()
 	}
 
-	setSceneOrientation(q: quat) {
-		this.graphics.scene.quaternion.set(q[0], q[1], q[2], q[3])
-	}
-
 	setEnvironment(env: Skybox) {
 		this.graphics.scene.background = (env as ThreeSkybox).threeCubemap
 		this.graphics.scene.environment = (env as ThreeSkybox).threePmrem
+	}
 
-		/*
-		let lightProbe = new THREE.LightProbe()
-		this.graphics.scene.add( lightProbe )
-
-		lightProbe.copy( LightProbeGenerator.fromCubeTexture( cubeMap ) )
-		*/
+	setEnvironmentOrientation(ypr: vec3) {
+		this.graphics.scene.backgroundRotation.set(ypr[2], ypr[1], ypr[0], "XYZ")
+		this.graphics.scene.environmentRotation.set(ypr[2], ypr[1], ypr[0], "XYZ")
 	}
 
 	update(time: number) {

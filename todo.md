@@ -1,7 +1,9 @@
 * testy_mountains arena looks different since the arena meta data system has gotten a refactory, find out why
-* use the new background orientation feature from the newer three.js version
 * powerup box jumps around after spawning
 * await stuff in parallel
+* action cam should include powerups
+* action cam should be second order low passed
+* action cam should wait until an explosion is finished
 
 for Dani:
 
