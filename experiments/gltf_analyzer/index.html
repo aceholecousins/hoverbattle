@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<title>threejs debug</title>
+	<style>
+		body {
+			margin: 0;
+		}
+	</style>
+
+	<script type="importmap">
+		{
+		  "imports": {
+			"three": "https://cdn.jsdelivr.net/npm/three@v0.169.0/build/three.module.js",
+			"three/addons/": "https://cdn.jsdelivr.net/npm/three@v0.169.0/examples/jsm/"
+		  }
+		}
+	  </script>
+</head>
+
+<body>
+	<script type="module">
+		import * as THREE from 'three';
+		import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+		import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+		let canvas = document.getElementById("rendertarget")
+		let renderer = new THREE.WebGLRenderer()
+		document.body.appendChild(renderer.domElement)
+		let scene = new THREE.Scene()
+		scene.background = new THREE.Color("skyblue")
+		let camera = new THREE.PerspectiveCamera(60, 1.0, 0.1, 1000)
+		camera.position.set(0, 0, 5)
+		scene.add(camera)
+		scene.add(new THREE.AxesHelper())
+
+		window.scene = scene
+		window.renderer = renderer
+
+		let controls = new OrbitControls(camera, renderer.domElement)
+		controls.screenSpacePanning = true
+
+		function resize() {
+			if (renderer !== null) {
+				renderer.setSize(window.innerWidth, window.innerHeight, false)
+			}
+			if (camera !== null && camera instanceof THREE.PerspectiveCamera) {
+				let perspectiveCamera = camera
+				perspectiveCamera.aspect = window.innerWidth / window.innerHeight
+				perspectiveCamera.updateProjectionMatrix()
+			}
+		}
+
+		window.addEventListener('resize', resize)
+		resize()
+
+		const params = new URLSearchParams(window.location.search);
+		const modelUrl = params.get('model').replaceAll("~", "/");
+
+		function setVertexCoordinatesToUV(node) {
+			if (node.isMesh) {
+				node.geometry.attributes.position.array.forEach((_, index, array) => {
+					const uv = node.geometry.attributes.uv;
+					if (uv) {
+						array[index * 3] = uv.array[index * 2]; // u coordinate
+						array[index * 3 + 1] = uv.array[index * 2 + 1]; // v coordinate
+						array[index * 3 + 2] = 0; // z coordinate
+					}
+				});
+				node.geometry.attributes.position.needsUpdate = true;
+				console.log(node.material)
+			}
+			if (node.children) {
+				node.children.forEach(child => setVertexCoordinatesToUV(child));
+			}
+		}
+
+		function setObjectSpaceNormalMap(node) {
+			if (node.isMesh) {
+				if (!node.geometry.attributes.normal) {
+					if ("normalMapType" in node.material) {
+						node.material.normalMapType = THREE.ObjectSpaceNormalMap
+						node.material.needsUpdate = true
+					}
+				}
+			}
+			if (node.children) {
+				node.children.forEach(child => setObjectSpaceNormalMap(child));
+			}
+		}
+
+		let gltf = null
+		const loader = new GLTFLoader();
+		loader.load(modelUrl, function (loaded) {
+			scene.add(loaded.scene);
+			gltf = loaded.scene
+			setObjectSpaceNormalMap(gltf);
+			window.gltf = gltf
+		});
+
+		const pmremGenerator = new THREE.PMREMGenerator(renderer);
+		pmremGenerator.compileCubemapShader()
+
+		const cubeLoader = new THREE.CubeTextureLoader();
+		const envMap = cubeLoader.load(['px.png', 'nx.png', 'py.png', 'ny.png', 'pz.png', 'nz.png'],
+			function (texture) {
+				const pmremTexture = pmremGenerator.fromCubemap(texture).texture;
+				scene.environment = texture;
+				scene.background = texture;
+			}
+		);
+
+		function animate() {
+			requestAnimationFrame(animate)
+			renderer.render(scene, camera)
+		}
+		animate()
+	</script>
+</body>
+
+</html>
