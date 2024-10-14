@@ -1,12 +1,10 @@
-* testy_mountains arena looks different since the arena meta data system has gotten a refactory, find out why
+
 * powerup box jumps around after spawning
 * await stuff in parallel
 * action cam should include powerups
 * action cam should be second order low passed
 * action cam should wait until an explosion is finished
 * powerups should not be bounced against when collected
-* if I blender glb export suzanne, the normals are messed up in the three editor
-* if I reimport the pigment texture, the UV are also messed up
 
 for Dani:
 

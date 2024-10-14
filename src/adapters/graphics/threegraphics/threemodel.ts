@@ -52,11 +52,14 @@ function adaptModel(
 		let mesh = obj as THREE.Mesh
 		let mat = mesh.material as THREE.Material
 
-		if (mat !== undefined && !completed.has(mat)) {
-			if ("normalMapType" in mat) {
-				; (mat as THREE.MeshStandardMaterial).normalMapType =
-					THREE.ObjectSpaceNormalMap
-			}
+		if (
+			mat !== undefined
+			&& !completed.has(mat)
+			&& "objectSpaceNormalMap" in mat.userData
+			&& mat.userData.objectSpaceNormalMap
+			&& "normalMapType" in mat
+		) {
+			mat.normalMapType = THREE.ObjectSpaceNormalMap
 		}
 	}
 
