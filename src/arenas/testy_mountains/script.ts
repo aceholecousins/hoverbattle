@@ -100,7 +100,23 @@ export let createMatch: MatchFactory = async function (engine) {
 
 	let spawnPoints: vec2[] = []
 
-	let arena_meta = await loadArena("arenas/testy_mountains/mountains.glb", engine)
+	let [
+		arena_meta,
+		createGlider,
+		createPowerupBox,
+		skybox,
+		phaserFactory,
+		missileFactory,
+		mineFactory
+	] = await Promise.all([
+		loadArena("arenas/testy_mountains/mountains.glb", engine),
+		createGliderFactory(engine),
+		createPowerupBoxFactory(engine),
+		engine.graphics.loadSkybox("arenas/testy_mountains/environment/*.jpg"),
+		createPhaserFactory(engine),
+		createMissileFactory(engine),
+		createMineFactory(engine)
+	]);
 
 	for (const [key, value] of Object.entries(arena_meta.meta)) {
 		if (key.startsWith("spawn")) {
@@ -114,17 +130,8 @@ export let createMatch: MatchFactory = async function (engine) {
 	assignRole(arena, collideWithEverythingRole)
 	assignRole(arena, destructibleRole)
 
-	let createGlider = await createGliderFactory(engine)
-	let createPowerupBox = await createPowerupBoxFactory(engine)
-
-	let skybox = await engine.graphics.loadSkybox(
-		"arenas/testy_mountains/environment/*.jpg")
 	engine.graphics.control.setEnvironment(skybox)
 	engine.graphics.control.setEnvironmentOrientation([0, 0, Math.PI / 2])
-
-	let phaserFactory = await createPhaserFactory(engine)
-	let missileFactory = await createMissileFactory(engine)
-	let mineFactory = await createMineFactory(engine)
 
 	let team = 0;
 

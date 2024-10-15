@@ -1,4 +1,3 @@
-* await stuff in parallel
 * action cam should include powerups
 * action cam should be second order low passed
 * action cam should wait until an explosion is finished
