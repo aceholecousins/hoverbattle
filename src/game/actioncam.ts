@@ -4,6 +4,7 @@ import { Camera, CameraConfig } from "game/graphics/camera";
 import { mat3fromVectors } from "utilities/math_utils";
 import { RigidBody } from "./physics/rigidbody";
 import { copyIfPresent } from "utils";
+import { LowPass } from "utilities/math_utils";
 
 export class ActionCamConfig extends CameraConfig {
 	/** camera will not move closer to scene than this */
@@ -13,19 +14,15 @@ export class ActionCamConfig extends CameraConfig {
 	marginFactor = 1.33
 
 	/** time constants for camera motion smoothing */
-	tau = {
-		xy: 1.0,
-		up: 0.3,
-		down: 2.0,
-		focus: 0.3
-	}
+	tauXY = 1.5
+	tauZ = 0.5
 
 	/** time constant for camera focus point smoothing */
-	tauFocus = 0.1
+	tauFocus = 0.3
 
 	constructor(config: Partial<ActionCamConfig> = {}) {
 		super(config)
-		copyIfPresent(this, config, ["dMin", "tau", "tauFocus", "marginFactor"])
+		copyIfPresent(this, config, ["dMin", "tauXY", "tauZ", "tauFocus", "marginFactor"])
 	}
 }
 
@@ -44,18 +41,15 @@ export class ActionCam {
 	camera: Camera
 
 	dMin: number
-	tau: {
-		xy: number,
-		up: number,
-		down: number,
-		focus: number
-	}
+
+	positionX: LowPass
+	positionY: LowPass
+	positionZ: LowPass
+	focusX: LowPass
+	focusY: LowPass
 
 	distanceOverWidth = 1
 	distanceOverHeight = 1
-
-	currentPosition: vec3
-	currentFocus: vec3
 
 	locks: Set<Lock> = new Set()
 
@@ -74,10 +68,15 @@ export class ActionCam {
 		}
 
 		this.dMin = config.dMin
-		this.tau = config.tau
 
-		this.currentPosition = config.position
-		this.currentFocus = vec3.fromValues(0, 0, 0)
+		const order = 3
+
+		this.positionX = new LowPass(order, config.tauXY/order, 0)
+		this.positionY = new LowPass(order, config.tauXY/order, 0)
+		this.positionZ = new LowPass(order, config.tauZ/order, 100)
+
+		this.focusX = new LowPass(order, config.tauFocus/order, 0)
+		this.focusY = new LowPass(order, config.tauFocus/order, 0)
 	}
 
 	follow(body: RigidBody, radius: number) {
@@ -114,26 +113,17 @@ export class ActionCam {
 			)
 		)
 
+		this.positionX.update(target[0], dt)
+		this.positionY.update(target[1], dt)
+		this.positionZ.update(target[2], dt)
+		this.focusX.update(target[0], dt)
+		this.focusY.update(target[1], dt)
 
-
-		let kxy = Math.exp(-dt / this.tau.xy)
-		let tauz = this.currentPosition[2] < target[2] ? this.tau.up : this.tau.down
-		let kz = Math.exp(-dt / tauz)
-		let kxyz = vec3.fromValues(kxy, kxy, kz)
-
-		let kfocus = Math.exp(-dt / this.tau.focus)
-
-		for (let dim = 0; dim < 3; dim++) {
-			this.currentPosition[dim] =
-				(1 - kxyz[dim]) * target[dim] +
-				kxyz[dim] * this.currentPosition[dim]
-		}
-
-		this.currentFocus[0] = (1 - kfocus) * this.currentFocus[0] + kfocus * target[0]
-		this.currentFocus[1] = (1 - kfocus) * this.currentFocus[1] + kfocus * target[1]
-
-
-		let z = vec3.subtract(vec3.create(), this.currentPosition, this.currentFocus)
+		let z = vec3.fromValues(
+			this.positionX.get() - this.focusX.get(),
+			this.positionY.get() - this.focusY.get(),
+			this.positionZ.get()
+		)
 		vec3.normalize(z, z)
 		let y = vec3.fromValues(0, 1, 0)
 		let x = vec3.cross(vec3.create(), y, z)
@@ -142,7 +132,11 @@ export class ActionCam {
 
 		let ori = mat3fromVectors(mat3.create(), x, y, z)
 
-		this.camera.position = this.currentPosition
+		this.camera.position = vec3.fromValues(
+			this.positionX.get(),
+			this.positionY.get(),
+			this.positionZ.get()
+		)
 		this.camera.orientation = quat.fromMat3(quat.create(), ori)
 	}
 

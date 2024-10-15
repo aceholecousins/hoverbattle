@@ -41,3 +41,27 @@ export function triangle3to2(tri: Triangle3) {
 		vec2.fromValues(tri[2][0], tri[2][1])
 	]
 }
+
+export class LowPass {
+	private state: number[]
+	
+	constructor(
+		order: number,
+		public tau: number,
+		initialValue: number
+	) {
+		this.state = Array(order).fill(initialValue);
+	}
+
+	update(input: number, dt: number) {
+		const k = Math.exp(-dt / this.tau)
+		this.state[0] = k * this.state[0] + (1 - k) * input
+		for (let i = 1; i < this.state.length; i++) {
+			this.state[i] = k * this.state[i] + (1 - k) * this.state[i - 1]
+		}
+	}
+
+	get() {
+		return this.state[this.state.length - 1]
+	}
+}

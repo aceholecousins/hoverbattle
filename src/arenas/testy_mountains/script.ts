@@ -93,6 +93,7 @@ export let createMatch: MatchFactory = async function (engine) {
 			else if (powerupBox.kind == "mine") {
 				glider.readyPowerups = [new MinePowerup()]
 			}
+			engine.actionCam.unfollow(powerupBox.body)
 			remove(powerupBoxes, powerupBox)
 			powerupBox.dispose()
 		}
@@ -155,6 +156,7 @@ export let createMatch: MatchFactory = async function (engine) {
 				createPowerupBox(powerupKind),
 				7,
 				() => {
+					engine.actionCam.unfollow(powerupBox.body)
 					remove(powerupBoxes, powerupBox)
 					powerupBox.dispose()
 				}
@@ -165,24 +167,29 @@ export let createMatch: MatchFactory = async function (engine) {
 			powerupBoxes.push(powerupBox)
 			powerupBox.body.position = determineSpawnPoint()
 			powerupBox.update(0)
+			engine.actionCam.follow(powerupBox.body, 1.5)
 		}
 		setTimeout(spawnPowerup, Math.random() * 3000 + 7000)
 	}
 
 	function spawnGlider(player: Player) {
-		let glider = makeDestructible(createGlider(player), 20, () => {
-			engine.actionCam.unfollow(glider.body)
-			remove(gliders, glider)
-			glider.dispose()
+		let glider = makeDestructible(
+			createGlider(player),
+			20,
+			() => {
+				engine.actionCam.unfollow(glider.body)
+				remove(gliders, glider)
+				glider.dispose()
 
-			engine.graphics.fx.createExplosion(new ExplosionConfig({
-				position: vec3.fromValues(glider.body.position[0], glider.body.position[1], 0),
-				color: player.color
-			}))
-			setTimeout(() => {
-				spawnGlider(player)
-			}, 2000)
-		})
+				engine.graphics.fx.createExplosion(new ExplosionConfig({
+					position: vec3.fromValues(glider.body.position[0], glider.body.position[1], 0),
+					color: player.color
+				}))
+				setTimeout(() => {
+					spawnGlider(player)
+				}, 2000)
+			}
+		)
 		assignRole(glider, gliderRole)
 		assignRole(glider, collideWithEverythingRole)
 		assignRole(glider, destructibleRole)
@@ -192,7 +199,7 @@ export let createMatch: MatchFactory = async function (engine) {
 		glider.body.position = determineSpawnPoint()
 		glider.body.angle = Math.random() * 1000
 		glider.update(0)
-		engine.actionCam.follow(glider.body, 1.5)
+		engine.actionCam.follow(glider.body, 5)
 
 		let phaserWeapon = new PhaserWeapon(phaserFactory, glider);
 		let missileLauncher = new MissileLauncher(missileFactory, glider);
