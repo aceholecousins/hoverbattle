@@ -141,13 +141,6 @@ export let createMatch: MatchFactory = async function (engine) {
 
 	setTimeout(spawnPowerup, Math.random() * 5000 + 3000)
 
-	return {
-		update(dt) {
-			engine.physics.step(dt)
-			engine.actionCam.update(dt)
-		}
-	}
-
 	function spawnPowerup() {
 		if (powerupBoxes.length < 3) {
 			const powerupKind = ["missile", "mine"][Math.floor(Math.random() * 2)];
@@ -164,6 +157,7 @@ export let createMatch: MatchFactory = async function (engine) {
 			assignRole(powerupBox, destructibleRole)
 			powerupBoxes.push(powerupBox)
 			powerupBox.body.position = determineSpawnPoint()
+			powerupBox.update(0)
 		}
 		setTimeout(spawnPowerup, Math.random() * 3000 + 7000)
 	}
@@ -190,6 +184,7 @@ export let createMatch: MatchFactory = async function (engine) {
 		glider.mesh.accentColor2 = player.team == 0 ? { r: 0, g: 0, b: 0.8 } : { r: 1, g: 0, b: 0.2 }
 		glider.body.position = determineSpawnPoint()
 		glider.body.angle = Math.random() * 1000
+		glider.update(0)
 		engine.actionCam.follow(glider.body, 1.5)
 
 		let phaserWeapon = new PhaserWeapon(phaserFactory, glider);
@@ -279,5 +274,7 @@ export let createMatch: MatchFactory = async function (engine) {
 		point[1] += Math.random() - 0.5
 		return point
 	}
+
+	return {}
 }
 

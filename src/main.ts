@@ -41,16 +41,19 @@ async function main() {
 	graphicsStats.dom.style.cssText = 'position:absolute;top:0px;left:0px;';
 	document.body.appendChild(graphicsStats.dom)
 
+	let time = 0
 	setInterval(() => {
-		match.update(dt)
+		time += dt
+		physics.step(dt)
+		actionCam.update(dt)
 		broker.update.fire({ dt })
 		broker.purge.fire()
 		engineStats.update()
 	}, 1000 * dt)
 
-	function animate(time: number) {
+	function animate() {
 		requestAnimationFrame(animate)
-		graphics.control.update(time)
+		graphics.control.update()
 		graphicsStats.update()
 	}
 

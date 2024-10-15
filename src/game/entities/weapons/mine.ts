@@ -53,7 +53,7 @@ export class Mine extends Entity {
 		this.body = engine.physics.addRigidBody(bodyCfg)
 	}
 
-	protected update(dt: number) {
+	update(dt: number) {
 		this.time += dt
 
 		this.mesh.position = [
@@ -105,6 +105,7 @@ export class MineThrower {
 		mine.body.position = vec2.copy([0, 0], pos)
 		mine.body.angle = Math.random() * Math.PI * 2;
 		this.coolDown = MINE_COOLDOWN
+		mine.update(0)
 		return mine
 	}
 

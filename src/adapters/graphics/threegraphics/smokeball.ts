@@ -187,9 +187,9 @@ export function createSmokeBall(config: ExplosionConfig) {
 
 		if (strength <= 0) {
 			graphicsScene.remove(mesh)
-			broker["graphicsUpdate"].removeHandler(update)
+			broker.update.removeHandler(update)
 		}
 	}
 
-	broker["graphicsUpdate"].addHandler(update)
+	broker.update.addHandler(update)
 }

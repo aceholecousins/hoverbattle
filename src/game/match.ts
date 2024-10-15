@@ -1,8 +1,6 @@
 import { Engine } from "./engine"
 
-export interface Match {
-	update(dt: number): void
-}
+export interface Match {}
 
 export type MatchFactory = (
 	engine: Engine

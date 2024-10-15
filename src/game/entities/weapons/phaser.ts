@@ -39,7 +39,7 @@ export class PhaserShot extends Entity {
 		this.body = engine.physics.addRigidBody(bodyCfg)
 	}
 
-	protected update() {
+	update(dt: number) {
 		this.mesh.position = [
 			this.body.position[0], this.body.position[1], 0.1]
 		this.mesh.orientation = quat.fromEuler(
@@ -87,6 +87,7 @@ export class PhaserWeapon {
 			Math.sin(phi) * PHASER_SPEED,
 		)
 		this.coolDown = 1 / PHASER_FIRE_RATE;
+		shot.update(0)
 		return shot
 	}
 

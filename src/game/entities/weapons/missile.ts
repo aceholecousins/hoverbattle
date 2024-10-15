@@ -82,7 +82,7 @@ export class Missile extends Entity {
 		return bestTarget;
 	}
 
-	protected update(dt: number) {
+	update(dt: number) {
 
 		if (this.target != null) {
 			const toTarget = vec2.sub(vec2.create(), this.target.body.position, this.body.position);
@@ -134,6 +134,7 @@ export class MissileLauncher {
 		missile.body.angle = phi;
 		missile.body.velocity = vec2.copy([0, 0], this.parent.body.velocity)
 		this.coolDown = 1 / MISSILE_FIRE_RATE
+		missile.update(0)
 		return missile
 	}
 

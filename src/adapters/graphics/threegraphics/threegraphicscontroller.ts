@@ -19,8 +19,6 @@ export class ThreeGraphicsController implements GraphicsController {
 	constructor(graphics: ThreeGraphics) {
 		this.graphics = graphics
 
-		broker.newChannel("graphicsUpdate")
-
 		const resize = () => {
 			renderer.setSize(
 				renderer.domElement.clientWidth,
@@ -43,8 +41,7 @@ export class ThreeGraphicsController implements GraphicsController {
 		this.graphics.scene.environmentRotation.set(ypr[2], ypr[1], ypr[0], "XYZ")
 	}
 
-	update(time: number) {
-		broker["graphicsUpdate"].fire(1 / 60)
+	update() {
 		renderer.render(
 			this.graphics.scene,
 			(this.graphics.scene.userData as SceneInfo).activeCamera
