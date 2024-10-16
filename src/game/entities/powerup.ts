@@ -3,7 +3,7 @@ import { Model } from "game/graphics/asset"
 import { Engine } from "game/engine"
 import { CircleConfig } from "game/physics/circle"
 import { RigidBodyConfig } from "game/physics/rigidbody"
-import { quat, vec3 } from "gl-matrix"
+import { vec2, vec3, quat } from "gl-matrix"
 import { Entity } from "./entity"
 
 const POWERUP_BOX_SIZE = 1
@@ -17,15 +17,22 @@ export class PowerupBox extends Entity {
 
 	constructor(
 		public kind: string,
-		engine: Engine,
-		bodyCfg: RigidBodyConfig,
-		modelCfg: ModelMeshConfig,
+		position: vec2,
+		model: Model,
+		engine: Engine
 	) {
 		super()
-		bodyCfg.actor = this
-		this.body = engine.physics.addRigidBody(bodyCfg)
-		this.mesh = engine.graphics.mesh.createFromModel(modelCfg)
+
+		this.body = engine.physics.addRigidBody(new RigidBodyConfig({
+			actor: this,
+			shapes: [new CircleConfig({ radius: POWERUP_BOX_SIZE * 0.6 })],
+			damping: 0.5,
+			angularDamping: 0.5
+		}))
+		this.body.position = position
+		this.mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
 		this.mesh.scaling = vec3.fromValues(POWERUP_BOX_SIZE, POWERUP_BOX_SIZE, POWERUP_BOX_SIZE)
+		this.update(0)
 	}
 
 	update(dt: number) {
@@ -47,21 +54,12 @@ export async function createPowerupBoxFactory(engine: Engine) {
 	let { model, meta } = await engine.graphics.loadModel(
 		"game/entities/crate.glb")
 
-	const powerupBoxBodyCfg = new RigidBodyConfig({
-		actor: null, // will be filled by the constructed box
-		shapes: [new CircleConfig({ radius: POWERUP_BOX_SIZE * 0.6 })],
-		damping: 0.5,
-		angularDamping: 0.5
-	})
-
-	const powerupBoxModelCfg: ModelMeshConfig = new ModelMeshConfig({ model })
-
-	return function (kind: string) {
+	return function (kind: string, position: vec2) {
 		return new PowerupBox(
 			kind,
-			engine,
-			powerupBoxBodyCfg,
-			powerupBoxModelCfg
+			position,
+			model,
+			engine
 		)
 	}
 }

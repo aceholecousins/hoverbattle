@@ -93,8 +93,6 @@ export let createMatch: MatchFactory = async function (engine) {
 			else if (powerupBox.kind == "mine") {
 				glider.readyPowerups = [new MinePowerup()]
 			}
-			engine.actionCam.unfollow(powerupBox.body)
-			remove(powerupBoxes, powerupBox)
 			powerupBox.dispose()
 		}
 	))
@@ -153,20 +151,21 @@ export let createMatch: MatchFactory = async function (engine) {
 		if (powerupBoxes.length < 3) {
 			const powerupKind = ["missile", "mine"][Math.floor(Math.random() * 2)];
 			let powerupBox = makeDestructible(
-				createPowerupBox(powerupKind),
+				createPowerupBox(
+					powerupKind,
+					determineSpawnPoint(),
+				),
 				7,
-				() => {
-					engine.actionCam.unfollow(powerupBox.body)
-					remove(powerupBoxes, powerupBox)
-					powerupBox.dispose()
-				}
+				() => { powerupBox.dispose() }
 			)
+			powerupBox.onDispose = () => {
+				engine.actionCam.unfollow(powerupBox.body)
+				remove(powerupBoxes, powerupBox)
+			}
 			assignRole(powerupBox, powerupBoxRole)
 			assignRole(powerupBox, collideWithEverythingRole)
 			assignRole(powerupBox, destructibleRole)
 			powerupBoxes.push(powerupBox)
-			powerupBox.body.position = determineSpawnPoint()
-			powerupBox.update(0)
 			engine.actionCam.follow(powerupBox.body, 1.5)
 		}
 		setTimeout(spawnPowerup, Math.random() * 3000 + 7000)
@@ -174,11 +173,12 @@ export let createMatch: MatchFactory = async function (engine) {
 
 	function spawnGlider(player: Player) {
 		let glider = makeDestructible(
-			createGlider(player),
+			createGlider(
+				player,
+				determineSpawnPoint()
+			),
 			20,
 			() => {
-				engine.actionCam.unfollow(glider.body)
-				remove(gliders, glider)
 				glider.dispose()
 
 				engine.graphics.fx.createExplosion(new ExplosionConfig({
@@ -190,6 +190,10 @@ export let createMatch: MatchFactory = async function (engine) {
 				}, 2000)
 			}
 		)
+		glider.onDispose = () => {
+			engine.actionCam.unfollow(glider.body)
+			remove(gliders, glider)
+		}
 		assignRole(glider, gliderRole)
 		assignRole(glider, collideWithEverythingRole)
 		assignRole(glider, destructibleRole)
@@ -198,7 +202,6 @@ export let createMatch: MatchFactory = async function (engine) {
 		glider.mesh.accentColor2 = player.team == 0 ? { r: 0, g: 0, b: 0.8 } : { r: 1, g: 0, b: 0.2 }
 		glider.body.position = determineSpawnPoint()
 		glider.body.angle = Math.random() * 1000
-		glider.update(0)
 		engine.actionCam.follow(glider.body, 5)
 
 		let phaserWeapon = new PhaserWeapon(phaserFactory, glider);

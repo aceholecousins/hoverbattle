@@ -17,9 +17,10 @@ const PHASER_FIRE_RATE = 12;
 export class PhaserShot extends Entity {
 
 	constructor(
-		engine: Engine,
-		model: Model,
 		public parent: Glider,
+		position: vec2,
+		model: Model,
+		engine: Engine
 	) {
 		super();
 		this.mesh = engine.graphics.mesh.createFromModel(
@@ -37,6 +38,8 @@ export class PhaserShot extends Entity {
 			angularDamping: 0
 		})
 		this.body = engine.physics.addRigidBody(bodyCfg)
+		this.body.position = position
+		this.update(0)
 	}
 
 	update(dt: number) {
@@ -74,20 +77,19 @@ export class PhaserWeapon {
 	}
 
 	private spawnShot(offset: number) {
-		let shot = this.phaserFactory.createShot(this.parent);
 		let phi = this.parent.body.angle;
 		let pos = this.parent.body.position;
-		shot.body.position = vec2.fromValues(
+		pos = vec2.fromValues(
 			pos[0] - Math.sin(phi) * offset,
 			pos[1] + Math.cos(phi) * offset,
 		)
+		let shot = this.phaserFactory.createShot(this.parent, pos);
 		shot.body.angle = phi;
 		shot.body.velocity = vec2.fromValues(
 			Math.cos(phi) * PHASER_SPEED,
 			Math.sin(phi) * PHASER_SPEED,
 		)
 		this.coolDown = 1 / PHASER_FIRE_RATE;
-		shot.update(0)
 		return shot
 	}
 
@@ -97,7 +99,7 @@ export class PhaserWeapon {
 }
 
 export type PhaserFactory = {
-	createShot: (parent: Glider) => PhaserShot;
+	createShot: (parent: Glider, position: vec2) => PhaserShot;
 	playPhaserSound: () => void;
 };
 
@@ -110,8 +112,8 @@ export async function createPhaserFactory(engine: Engine): Promise<PhaserFactory
 	const phaserSound = await engine.loadSound("game/entities/weapons/phaser.ogg")
 
 	return {
-		createShot: function (parent: Glider) {
-			return new PhaserShot(engine, phaserSprite, parent)
+		createShot: function (parent: Glider, position: vec2) {
+			return new PhaserShot(parent, position, phaserSprite, engine)
 		},
 		playPhaserSound: function () {
 			phaserSound.play(0.25, Math.random() * 0.1 + 0.5)

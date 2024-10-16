@@ -22,16 +22,22 @@ export class Glider extends Entity {
 	private requiresRelease: boolean = false
 
 	constructor(
-		engine: Engine,
-		bodyCfg: RigidBodyConfig,
-		modelCfg: ModelMeshConfig,
 		public player: Player,
+		position: vec2,
+		model: Model,
+		engine: Engine
 	) {
 		super()
-		bodyCfg.actor = this
-		this.body = engine.physics.addRigidBody(bodyCfg)
-		this.mesh = engine.graphics.mesh.createFromModel(modelCfg)
+		this.body = engine.physics.addRigidBody(new RigidBodyConfig({
+			actor: this,
+			shapes: [new CircleConfig({ radius: 1 })],
+			damping: 0.7,
+			angularDamping: 0.99
+		}))
+		this.body.position = position
+		this.mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
 		this.mesh.scaling = vec3.fromValues(GLIDER_RADIUS, GLIDER_RADIUS, GLIDER_RADIUS)
+		this.update(0)
 	}
 
 	update(dt: number) {
@@ -82,26 +88,15 @@ export class Glider extends Entity {
 
 export async function createGliderFactory(engine: Engine) {
 
-	// TODO: some creation logic is in this factory, some is in the constructor
-
 	let { model, meta } = await engine.graphics.loadModel(
 		"game/entities/glider/glider6.glb")
 
-	const gliderBodyCfg = new RigidBodyConfig({
-		actor: null, // will be filled by the constructed glider
-		shapes: [new CircleConfig({ radius: 1 })],
-		damping: 0.7,
-		angularDamping: 0.99
-	})
-
-	const gliderModelCfg: ModelMeshConfig = new ModelMeshConfig({ model })
-
-	return function (player: Player) {
+	return function (player: Player, position: vec2) {
 		return new Glider(
-			engine,
-			gliderBodyCfg,
-			gliderModelCfg,
-			player
+			player,
+			position,
+			model,
+			engine
 		)
 	}
 }

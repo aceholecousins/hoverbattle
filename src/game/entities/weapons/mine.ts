@@ -29,9 +29,10 @@ export class Mine extends Entity {
 	public onPrime = () => { }
 
 	constructor(
-		engine: Engine,
-		model: Model,
 		public parent: Glider,
+		position: vec2,
+		model: Model,
+		engine: Engine
 	) {
 		super();
 		this.mesh = engine.graphics.mesh.createFromModel(
@@ -51,6 +52,8 @@ export class Mine extends Entity {
 			angularDamping: MINE_ANGULAR_DAMPING
 		})
 		this.body = engine.physics.addRigidBody(bodyCfg)
+		this.body.position = position
+		this.update(0)
 	}
 
 	update(dt: number) {
@@ -97,15 +100,13 @@ export class MineThrower {
 	}
 
 	private spawnMine(): Mine {
-		let mine = this.createMine(this.parent);
 		let pos = this.parent.body.position;
 		const d = MINE_RADIUS + GLIDER_RADIUS
 		pos[0] -= Math.cos(this.parent.body.angle) * d
 		pos[1] -= Math.sin(this.parent.body.angle) * d
-		mine.body.position = vec2.copy([0, 0], pos)
+		let mine = this.createMine(this.parent, pos);
 		mine.body.angle = Math.random() * Math.PI * 2;
 		this.coolDown = MINE_COOLDOWN
-		mine.update(0)
 		return mine
 	}
 
@@ -114,14 +115,13 @@ export class MineThrower {
 	}
 }
 
-export type MineFactory = (parent: Glider) => Mine
+export type MineFactory = Awaited<ReturnType<typeof createMineFactory>>
 
-export async function createMineFactory(engine: Engine): Promise<MineFactory> {
-
+export async function createMineFactory(engine: Engine) {
 	let { model, meta } = await engine.graphics.loadModel(
 		"game/entities/weapons/seamine.glb")
 
-	return function (parent: Glider): Mine {
-		return new Mine(engine, model, parent);
+	return function (parent: Glider, position: vec2): Mine {
+		return new Mine(parent, position, model, engine);
 	}
 }

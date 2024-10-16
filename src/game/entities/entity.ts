@@ -8,6 +8,7 @@ export class Entity implements Actor {
 	roles: RoleSet
 	body: RigidBody
 	mesh: Mesh
+	onDispose = () => { }
 
 	private disposed = false
 
@@ -23,6 +24,7 @@ export class Entity implements Actor {
 	protected update(dt: number) { }
 
 	dispose() {
+		this.onDispose()
 		this.disposed = true
 	}
 

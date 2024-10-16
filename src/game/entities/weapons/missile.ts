@@ -30,10 +30,11 @@ export class Missile extends Entity {
 	public roll: number = 0;
 
 	constructor(
-		engine: Engine,
-		model: Model,
 		public parent: Glider,
-		public possibleTargets: Entity[]
+		position: vec2,
+		public possibleTargets: Entity[],
+		model: Model,
+		engine: Engine
 	) {
 		super();
 		this.mesh = engine.graphics.mesh.createFromModel(
@@ -53,8 +54,11 @@ export class Missile extends Entity {
 			angularDamping: MISSILE_ANGULAR_DAMPING
 		})
 		this.body = engine.physics.addRigidBody(bodyCfg)
+		this.body.position = position
 
 		this.target = this.lockOnTarget(parent);
+
+		this.update(0)
 	}
 
 	private lockOnTarget(self: Entity): Entity | null {
@@ -127,14 +131,12 @@ export class MissileLauncher {
 	}
 
 	private spawnMissile(possibleTargets: Entity[]): Missile {
-		let missile = this.createMissile(this.parent, possibleTargets);
 		let phi = this.parent.body.angle;
 		let pos = this.parent.body.position;
-		missile.body.position = vec2.copy([0, 0], pos)
+		let missile = this.createMissile(this.parent, pos, possibleTargets);
 		missile.body.angle = phi;
 		missile.body.velocity = vec2.copy([0, 0], this.parent.body.velocity)
 		this.coolDown = 1 / MISSILE_FIRE_RATE
-		missile.update(0)
 		return missile
 	}
 
@@ -143,14 +145,14 @@ export class MissileLauncher {
 	}
 }
 
-export type MissileFactory = (parent: Glider, possibleTargets: Entity[]) => Missile
+export type MissileFactory = Awaited<ReturnType<typeof createMissileFactory>>
 
-export async function createMissileFactory(engine: Engine): Promise<MissileFactory> {
+export async function createMissileFactory(engine: Engine) {
 
 	let { model, meta } = await engine.graphics.loadModel(
 		"game/entities/weapons/missile.glb")
 
-	return function (parent: Glider, possibleTargets: Entity[]): Missile {
-		return new Missile(engine, model, parent, possibleTargets)
+	return function (parent: Glider, position:vec2, possibleTargets: Entity[]): Missile {
+		return new Missile(parent, position, possibleTargets, model, engine)
 	}
 }
