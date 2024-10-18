@@ -44,7 +44,7 @@ export class Missile extends Entity {
 			}))
 		this.mesh.baseColor = { r: 0, g: 0, b: 0 }
 		this.mesh.accentColor1 = { r: 1, g: 1, b: 1 }
-		this.mesh.accentColor2 = parent.player.team == 0 ? { r: 1, g: 0.2, b: 0 } : { r: 0, g: 0.5, b: 1 }
+		this.mesh.accentColor2 = parent.player.color
 
 		const bodyCfg = new RigidBodyConfig({
 			actor: this,

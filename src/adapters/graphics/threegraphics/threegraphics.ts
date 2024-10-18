@@ -21,9 +21,6 @@ import { ThreeMeshFactory } from "./threemesh"
 
 import { ThreeGraphicsController } from "./threegraphicscontroller"
 
-import { FxFactory } from "game/graphics/fx"
-import { ThreeFxFactory } from "./threefx"
-
 //@ts-ignore
 window.three = THREE
 
@@ -38,8 +35,6 @@ export class ThreeGraphics implements Graphics {
 	camera: ThreeCameraFactory
 	light: ThreeLightFactory
 	mesh: ThreeMeshFactory
-
-	fx: ThreeFxFactory
 
 	control: GraphicsController
 
@@ -56,8 +51,6 @@ export class ThreeGraphics implements Graphics {
 		this.camera = new ThreeCameraFactory(this.scene)
 		this.light = new ThreeLightFactory(this.scene)
 		this.mesh = new ThreeMeshFactory(this.scene)
-
-		this.fx = new ThreeFxFactory(this.scene)
 
 		// controllable test camera
 		let defaultCam = this.camera.create(new CameraConfig())

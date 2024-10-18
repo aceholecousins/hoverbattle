@@ -7,13 +7,13 @@ import { Powerup, createPowerupBoxFactory, PowerupBox } from "game/entities/powe
 import { createPhaserFactory, PhaserShot, PhaserWeapon } from "game/entities/weapons/phaser"
 import { createMissileFactory, MissilePowerup, Missile, MissileLauncher } from "game/entities/weapons/missile"
 import { createMineFactory, MinePowerup, Mine, MineThrower } from "game/entities/weapons/mine"
-import { ExplosionConfig } from "game/graphics/fx"
 import { MatchFactory } from "game/match"
 import { CollisionOverride, CollisionHandler } from "game/physics/collision"
 import { Player } from "game/player"
 import { SceneNodeConfig } from "game/graphics/scenenode"
 import { vec2, vec3 } from "gl-matrix"
 import { remove } from "utils"
+import { createSmokeballFactory } from "game/graphics/explosion/smokeball"
 
 export let createMatch: MatchFactory = async function (engine) {
 
@@ -106,7 +106,8 @@ export let createMatch: MatchFactory = async function (engine) {
 		skybox,
 		phaserFactory,
 		missileFactory,
-		mineFactory
+		mineFactory,
+		createSmokeBall
 	] = await Promise.all([
 		loadArena("arenas/testy_mountains/mountains.glb", engine),
 		createGliderFactory(engine),
@@ -114,7 +115,8 @@ export let createMatch: MatchFactory = async function (engine) {
 		engine.graphics.loadSkybox("arenas/testy_mountains/environment/*.jpg"),
 		createPhaserFactory(engine),
 		createMissileFactory(engine),
-		createMineFactory(engine)
+		createMineFactory(engine),
+		createSmokeballFactory(engine)
 	]);
 
 	for (const [key, value] of Object.entries(arena_meta.meta)) {
@@ -177,14 +179,14 @@ export let createMatch: MatchFactory = async function (engine) {
 				player,
 				determineSpawnPoint()
 			),
-			20,
+			10,
 			() => {
 				glider.dispose()
 
-				engine.graphics.fx.createExplosion(new ExplosionConfig({
-					position: vec3.fromValues(glider.body.position[0], glider.body.position[1], 0),
-					color: player.color
-				}))
+				createSmokeBall(
+					vec3.fromValues(glider.body.position[0], glider.body.position[1], 0),
+					player.color
+				)
 				setTimeout(() => {
 					spawnGlider(player)
 				}, 2000)
@@ -223,9 +225,10 @@ export let createMatch: MatchFactory = async function (engine) {
 						let missile1 = maybeMissile as Missile
 						let explode = () => {
 							missile1.dispose()
-							engine.graphics.fx.createExplosion(new ExplosionConfig({
-								position: vec3.fromValues(missile1.body.position[0], missile1.body.position[1], 0)
-							}))
+							createSmokeBall(
+								vec3.fromValues(missile1.body.position[0], missile1.body.position[1], 0),
+								missile1.parent.player.color
+							)
 						}
 						let missile2 = makeDamaging(missile1, 17, () => { explode() })
 						let missile3 = makeDestructible(missile2, 3, () => { explode() })
@@ -249,9 +252,9 @@ export let createMatch: MatchFactory = async function (engine) {
 						let mine1 = maybeMine as Mine
 						let explode = () => {
 							mine1.dispose()
-							engine.graphics.fx.createExplosion(new ExplosionConfig({
-								position: vec3.fromValues(mine1.body.position[0], mine1.body.position[1], 0)
-							}))
+							// engine.graphics.fx.createExplosion(new ExplosionConfig({
+							// 	position: vec3.fromValues(mine1.body.position[0], mine1.body.position[1], 0)
+							// }))
 						}
 						let mine2 = makeDestructible(mine1, 3, () => { explode() })
 						assignRole(mine2, collideWithEverythingRole)

@@ -4,6 +4,7 @@ import { vec3, quat } from "gl-matrix"
 import * as THREE from "three"
 import { Vector3 } from "three"
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
+// `import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader"
 import { Triangle3 } from "utilities/math_utils"
 import { SceneNodeConfig } from "game/graphics/scenenode"
 
@@ -20,7 +21,13 @@ export const loadThreeModel: ThreeModelLoader = function (file: string) {
 		(resolve, reject) => {
 			let model = new ThreeModel()
 
-			new GLTFLoader().load(
+			let gltfLoader = new GLTFLoader();
+
+			// let dracoLoader = new DRACOLoader();
+			// dracoLoader.setDecoderPath('three/examples/jsm/libs/draco')
+			// gltfLoader.setDRACOLoader(dracoLoader);
+
+			gltfLoader.load(
 				file,
 				function (gltf) {
 					model.threeObject = gltf.scene
@@ -55,8 +62,7 @@ function adaptModel(
 		if (
 			mat !== undefined
 			&& !completed.has(mat)
-			&& "objectSpaceNormalMap" in mat.userData
-			&& mat.userData.objectSpaceNormalMap
+			&& mat.userData.useObjectSpaceNormalMap
 			&& "normalMapType" in mat
 		) {
 			mat.normalMapType = THREE.ObjectSpaceNormalMap

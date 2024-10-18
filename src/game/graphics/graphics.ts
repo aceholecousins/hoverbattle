@@ -4,7 +4,6 @@ import { CameraFactory } from "./camera"
 import { LightFactory } from "./light"
 import { MeshFactory } from "./mesh"
 import { GraphicsController } from "./graphicscontroller"
-import { FxFactory } from "./fx"
 
 export interface Graphics {
 
@@ -15,8 +14,6 @@ export interface Graphics {
 	camera: CameraFactory
 	light: LightFactory
 	mesh: MeshFactory
-
-	fx: FxFactory
 
 	control: GraphicsController
 }

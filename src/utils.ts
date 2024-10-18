@@ -7,6 +7,14 @@ export interface Color {
 	b: number
 }
 
+export function colorLerp(a: Color, b: Color, q: number): Color {
+	return {
+		r: a.r + (b.r - a.r) * q,
+		g: a.g + (b.g - a.g) * q,
+		b: a.b + (b.b - a.b) * q
+	}
+}
+
 export type Kind = string
 
 // https://stackoverflow.com/a/49579497/3825996
