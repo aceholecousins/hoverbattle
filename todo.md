@@ -1,6 +1,8 @@
 * action cam should wait until an explosion is finished
 * powerups should not be bounced against when collected
-* smokeball no longer working
+* setTimeout, setInterval with ingame time
+* glider jumps around after spawning
+* order transparent sprites by z
 
 for Dani:
 

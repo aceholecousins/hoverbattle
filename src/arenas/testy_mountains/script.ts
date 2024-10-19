@@ -13,7 +13,7 @@ import { Player } from "game/player"
 import { SceneNodeConfig } from "game/graphics/scenenode"
 import { vec2, vec3 } from "gl-matrix"
 import { remove } from "utils"
-import { createSmokeballFactory } from "game/graphics/explosion/smokeball"
+import { createExplosionFactory } from "game/graphics/explosion/explosion"
 
 export let createMatch: MatchFactory = async function (engine) {
 
@@ -107,7 +107,7 @@ export let createMatch: MatchFactory = async function (engine) {
 		phaserFactory,
 		missileFactory,
 		mineFactory,
-		createSmokeBall
+		createExplosion
 	] = await Promise.all([
 		loadArena("arenas/testy_mountains/mountains.glb", engine),
 		createGliderFactory(engine),
@@ -116,7 +116,7 @@ export let createMatch: MatchFactory = async function (engine) {
 		createPhaserFactory(engine),
 		createMissileFactory(engine),
 		createMineFactory(engine),
-		createSmokeballFactory(engine)
+		createExplosionFactory(engine)
 	]);
 
 	for (const [key, value] of Object.entries(arena_meta.meta)) {
@@ -183,7 +183,7 @@ export let createMatch: MatchFactory = async function (engine) {
 			() => {
 				glider.dispose()
 
-				createSmokeBall(
+				createExplosion(
 					vec3.fromValues(glider.body.position[0], glider.body.position[1], 0),
 					player.color
 				)
@@ -225,7 +225,7 @@ export let createMatch: MatchFactory = async function (engine) {
 						let missile1 = maybeMissile as Missile
 						let explode = () => {
 							missile1.dispose()
-							createSmokeBall(
+							createExplosion(
 								vec3.fromValues(missile1.body.position[0], missile1.body.position[1], 0),
 								missile1.parent.player.color
 							)
@@ -252,9 +252,10 @@ export let createMatch: MatchFactory = async function (engine) {
 						let mine1 = maybeMine as Mine
 						let explode = () => {
 							mine1.dispose()
-							// engine.graphics.fx.createExplosion(new ExplosionConfig({
-							// 	position: vec3.fromValues(mine1.body.position[0], mine1.body.position[1], 0)
-							// }))
+							createExplosion(
+								[mine1.body.position[0], mine1.body.position[1], 1],
+								mine1.parent.player.color
+							)
 						}
 						let mine2 = makeDestructible(mine1, 3, () => { explode() })
 						assignRole(mine2, collideWithEverythingRole)

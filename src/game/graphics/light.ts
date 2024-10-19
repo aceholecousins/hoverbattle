@@ -3,16 +3,18 @@ import { Color, copyIfPresent } from "utils"
 import { SceneNode, SceneNodeConfig } from "./scenenode"
 
 export interface PointLight extends SceneNode<"pointlight"> {
-	color: Color
+	color: Color,
+	intensity: number
 }
 
 export class PointLightConfig extends SceneNodeConfig<"pointlight"> {
 	kind: "pointlight" = "pointlight"
 	color: Color = { r: 1, g: 1, b: 1 }
+	intensity: number = 1
 
 	constructor(config: Partial<PointLightConfig> = {}) {
 		super(config)
-		copyIfPresent(this, config, ["color"])
+		copyIfPresent(this, config, ["color", "intensity"])
 	}
 }
 

@@ -14,6 +14,10 @@ export class ThreePointLight extends ThreeSceneNode<"pointlight"> implements Poi
 
 	threeObject: THREE.PointLight
 
+	set intensity(intensity: number) {
+		this.threeObject.intensity = intensity
+	}
+
 	set color(col: Color) {
 		this.threeObject.color.setRGB(col.r, col.g, col.b)
 	}
