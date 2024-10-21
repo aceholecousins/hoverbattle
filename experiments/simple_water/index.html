@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<title>threejs debug</title>
+	<style>
+		body {
+			margin: 0;
+		}
+	</style>
+
+	<script type="importmap">
+		{
+		  "imports": {
+			"three": "https://cdn.jsdelivr.net/npm/three@v0.169.0/build/three.module.js",
+			"three/addons/": "https://cdn.jsdelivr.net/npm/three@v0.169.0/examples/jsm/"
+		  }
+		}
+	  </script>
+</head>
+
+<body>
+	<script type="module">
+		import * as THREE from 'three';
+		import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+		import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+		import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+
+		function handleColorChange(color) {
+			return function (value) {
+				if (typeof value === 'string') {
+					value = value.replace('#', '0x');
+				}
+				color.setHex(value);
+			};
+		}
+
+		function guiMeshPhysicalMaterial(gui, material) {
+
+			const data = {
+				color: material.color.getHex(),
+				emissive: material.emissive.getHex(),
+				sheenColor: material.sheenColor.getHex(),
+				specularColor: material.specularColor.getHex()
+			};
+
+			const folder = gui.addFolder('THREE.MeshPhysicalMaterial');
+
+			folder.addColor(data, 'color').onChange(handleColorChange(material.color));
+			folder.addColor(data, 'emissive').onChange(handleColorChange(material.emissive));
+
+			folder.add(material, 'roughness', 0, 1);
+			folder.add(material, 'metalness', 0, 1);
+			folder.add(material, 'ior', 1, 2.333);
+			folder.add(material, 'reflectivity', 0, 1);
+			folder.add(material, 'iridescence', 0, 1);
+			folder.add(material, 'iridescenceIOR', 1, 2.333);
+			folder.add(material, 'sheen', 0, 1);
+			folder.add(material, 'sheenRoughness', 0, 1);
+			folder.addColor(data, 'sheenColor').onChange(handleColorChange(material.sheenColor));
+			folder.add(material, 'clearcoat', 0, 1).step(0.01);
+			folder.add(material, 'clearcoatRoughness', 0, 1).step(0.01);
+			folder.add(material, 'specularIntensity', 0, 1);
+			folder.addColor(data, 'specularColor').onChange(handleColorChange(material.specularColor));
+			folder.add(material, 'wireframe');
+
+		}
+
+
+
+		let canvas = document.getElementById("rendertarget")
+		let renderer = new THREE.WebGLRenderer()
+		document.body.appendChild(renderer.domElement)
+		let scene = new THREE.Scene()
+		scene.background = new THREE.Color("skyblue")
+		scene.backgroundRotation.set(Math.PI / 2, 0, 0, "XYZ")
+		scene.environmentRotation.set(Math.PI / 2, 0, 0, "XYZ")
+
+		let camera = new THREE.PerspectiveCamera(60, 1.0, 0.1, 1000)
+		camera.position.set(0, 0, 20)
+		scene.add(camera)
+		scene.add(new THREE.AxesHelper())
+
+		window.scene = scene
+		window.renderer = renderer
+
+		let controls = new OrbitControls(camera, renderer.domElement)
+		controls.screenSpacePanning = true
+
+		function resize() {
+			if (renderer !== null) {
+				renderer.setSize(window.innerWidth, window.innerHeight, false)
+			}
+			if (camera !== null && camera instanceof THREE.PerspectiveCamera) {
+				let perspectiveCamera = camera
+				perspectiveCamera.aspect = window.innerWidth / window.innerHeight
+				perspectiveCamera.updateProjectionMatrix()
+			}
+		}
+
+		window.addEventListener('resize', resize)
+		resize()
+
+		const modelUrl = "water.glb";
+
+		let gltf = null
+		let timeUniform = { value: 0.0 }
+		const loader = new GLTFLoader();
+		loader.load(modelUrl, function (loaded) {
+			scene.add(loaded.scene);
+			gltf = loaded.scene
+
+			// let oldMaterial = gltf.children[0].material
+			// gltf.children[0].material = new THREE.MeshPhysicalMaterial()
+			// for (let key in oldMaterial) {
+			// 	console.log(key)
+			// 	if (key in ["type"]) {
+			// 		continue
+			// 	}
+			// 	if (oldMaterial.hasOwnProperty(key)) {
+			// 		gltf.children[0].material[key] = oldMaterial[key]
+			// 	}
+			// }
+			// guiMeshPhysicalMaterial(new GUI(), gltf.children[0].material)
+
+			gltf.children[0].material.onBeforeCompile = (shader, renderer) => {
+				console.log(shader)
+				shader.uniforms['time'] = timeUniform
+
+				let dirs = 3
+
+				let chunk = ""
+				for (let dir = 0.001; dir < 2 * Math.PI; dir += 2 * Math.PI / dirs) {
+					chunk += `{
+						mat2 rot2d = mat2(${Math.cos(dir)}, ${-Math.sin(dir)}, ${Math.sin(dir)}, ${Math.cos(dir)});
+						vec3 subNormal = texture2D( normalMap, rot2d * vNormalMapUv + vec2(time*0.03, ${dir}) ).xyz * 2.0 - 1.0;
+						subNormal.xy = rot2d * subNormal.xy;
+						subNormal.z *= 1.0;
+						normal += subNormal;
+					}
+					`
+				}
+				// chunk = `
+				// 		float dir = time;
+				// 		mat2 rot2d = mat2(cos(dir), -sin(dir), sin(dir), cos(dir));
+				// 		vec3 subNormal = texture2D( normalMap, rot2d * vNormalMapUv ).xyz * 2.0 - 1.0;
+				// 		subNormal.xy = rot2d * subNormal.xy;
+				// 		normal = subNormal;
+				// 	`
+				shader.fragmentShader = "#define USE_NORMALMAP_OBJECTSPACE\nuniform float time;\n"
+					+ shader.fragmentShader.replace(
+						"\t#include <normal_fragment_maps>",
+						chunk + `
+					#ifdef FLIP_SIDED
+						normal = - normal;
+					#endif
+					#ifdef DOUBLE_SIDED
+						normal = normal * faceDirection;
+					#endif
+					normal = normalize( normalMatrix * normal );
+					`
+					)
+
+				shader.vertexShader = "\nuniform float time;\n"
+					+ shader.vertexShader.replace(
+						"#include <displacementmap_vertex>",
+						"transformed += vec3( 0.0, 0.0, 0.0*sin(sin(1000.0*position.x) + sin(2000.0*position.y) + time) );"
+					)
+
+			}
+			window.gltf = gltf
+		});
+
+		const pmremGenerator = new THREE.PMREMGenerator(renderer);
+		pmremGenerator.compileCubemapShader()
+
+		const cubeLoader = new THREE.CubeTextureLoader();
+		const envMap = cubeLoader.load(['px.jpg', 'nx.jpg', 'py.jpg', 'ny.jpg', 'pz.jpg', 'nz.jpg'],
+			function (texture) {
+				const pmremTexture = pmremGenerator.fromCubemap(texture).texture;
+				scene.environment = texture;
+				scene.background = texture;
+			}
+		);
+
+		function animate() {
+			timeUniform.value = performance.now() / 1000
+			requestAnimationFrame(animate)
+			renderer.render(scene, camera)
+		}
+		animate()
+	</script>
+</body>
+
+</html>

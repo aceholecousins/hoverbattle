@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<title>threejs debug</title>
+	<style>
+		body {
+			margin: 0;
+		}
+	</style>
+
+	<script type="importmap">
+		{
+		  "imports": {
+			"three": "https://cdn.jsdelivr.net/npm/three@v0.169.0/build/three.module.js",
+			"three/addons/": "https://cdn.jsdelivr.net/npm/three@v0.169.0/examples/jsm/"
+		  }
+		}
+	  </script>
+</head>
+
+<body>
+	<script type="module">
+		import * as THREE from 'three';
+		import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+		import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+		let canvas = document.getElementById("rendertarget")
+		let renderer = new THREE.WebGLRenderer()
+		document.body.appendChild(renderer.domElement)
+		let scene = new THREE.Scene()
+		scene.background = new THREE.Color("skyblue")
+		let camera = new THREE.PerspectiveCamera(60, 1.0, 0.1, 1000)
+		camera.position.set(0, 0, 20)
+		scene.add(camera)
+		scene.add(new THREE.AxesHelper())
+
+		window.scene = scene
+		window.renderer = renderer
+
+		let controls = new OrbitControls(camera, renderer.domElement)
+		controls.screenSpacePanning = true
+
+		function resize() {
+			if (renderer !== null) {
+				renderer.setSize(window.innerWidth, window.innerHeight, false)
+			}
+			if (camera !== null && camera instanceof THREE.PerspectiveCamera) {
+				let perspectiveCamera = camera
+				perspectiveCamera.aspect = window.innerWidth / window.innerHeight
+				perspectiveCamera.updateProjectionMatrix()
+			}
+		}
+
+		window.addEventListener('resize', resize)
+		resize()
+
+		const modelUrl = "water.glb";
+
+		let gltf = null
+		let timeUniform = { value: 0.0 }
+		const loader = new GLTFLoader();
+		loader.load(modelUrl, function (loaded) {
+			scene.add(loaded.scene);
+			gltf = loaded.scene
+			gltf.children[0].material.onBeforeCompile = (shader, renderer) => {
+				console.log(shader)
+				shader.uniforms['time'] = timeUniform
+				shader.vertexShader = shader.vertexShader.replace(
+					"varying vec3 vViewPosition;",
+					"varying vec3 vViewPosition;\nvarying vec3 vPixelPosition;"
+				).replace(
+					"void main() {",
+					"void main() {\nvPixelPosition = vec3(position);"
+				)
+
+				/*
+				   h = sin(w * (x * cos(dir) + y * sin(dir)) + k * t + phi);
+				dhdx = cos(w * (x * cos(dir) + y * sin(dir)) + k * t + phi) * w * cos(dir);
+				dhdy = cos(w * (x * cos(dir) + y * sin(dir)) + k * t + phi) * w * sin(dir);
+				*/
+
+				let chunk = "float dhdx=0.0, dhdy=0.0;\n"
+				const x = "vPixelPosition.x"
+				const y = "vPixelPosition.y"
+				let amp = 1.001
+				let w = 1.001
+				for (let i = 1; i < 30; i++) {
+					const dir = Math.random() * Math.PI * 2
+					const k = Math.random() * 5
+					const phi = Math.random() * Math.PI * 2
+					chunk += `{
+						float outer = ${amp} * cos(${w} * (${x} * ${Math.cos(dir)} + ${y} * ${Math.sin(dir)}) + ${k} * time + ${phi});
+						dhdx += outer * ${w * Math.cos(dir)};
+						dhdy += outer * ${w * Math.sin(dir)};
+					}\n`
+					amp = amp * 0.85
+					w = w * 1.14
+				}
+
+				shader.fragmentShader = shader.fragmentShader.replace(
+					"varying vec3 vViewPosition;",
+					"varying vec3 vViewPosition;\nvarying vec3 vPixelPosition;\nuniform float time;"
+				).replace(
+					"\t#include <normal_fragment_maps>",
+					chunk + "\tnormal = normalize(vec3(-dhdx, -dhdy, 1.0));"
+				)
+			}
+			window.gltf = gltf
+		});
+
+		const pmremGenerator = new THREE.PMREMGenerator(renderer);
+		pmremGenerator.compileCubemapShader()
+
+		const cubeLoader = new THREE.CubeTextureLoader();
+		const envMap = cubeLoader.load(['px.jpg', 'nx.jpg', 'py.jpg', 'ny.jpg', 'pz.jpg', 'nz.jpg'],
+			function (texture) {
+				const pmremTexture = pmremGenerator.fromCubemap(texture).texture;
+				scene.environment = texture;
+				scene.background = texture;
+			}
+		);
+
+		function animate() {
+			timeUniform.value = performance.now() / 1000
+			requestAnimationFrame(animate)
+			renderer.render(scene, camera)
+		}
+		animate()
+	</script>
+</body>
+
+</html>
