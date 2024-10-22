@@ -3,7 +3,7 @@
 
 <head>
 	<meta charset="utf-8">
-	<title>threejs debug</title>
+	<title>keep it simple and stupid water</title>
 	<style>
 		body {
 			margin: 0;
@@ -111,18 +111,18 @@
 			scene.add(loaded.scene);
 			gltf = loaded.scene
 
-			// let oldMaterial = gltf.children[0].material
-			// gltf.children[0].material = new THREE.MeshPhysicalMaterial()
-			// for (let key in oldMaterial) {
-			// 	console.log(key)
-			// 	if (key in ["type"]) {
-			// 		continue
-			// 	}
-			// 	if (oldMaterial.hasOwnProperty(key)) {
-			// 		gltf.children[0].material[key] = oldMaterial[key]
-			// 	}
-			// }
-			// guiMeshPhysicalMaterial(new GUI(), gltf.children[0].material)
+			let oldMaterial = gltf.children[0].material
+			gltf.children[0].material = new THREE.MeshPhysicalMaterial()
+			for (let key in oldMaterial) {
+				console.log(key)
+				if (key in ["type"]) {
+					continue
+				}
+				if (oldMaterial.hasOwnProperty(key)) {
+					gltf.children[0].material[key] = oldMaterial[key]
+				}
+			}
+			guiMeshPhysicalMaterial(new GUI(), gltf.children[0].material)
 
 			gltf.children[0].material.onBeforeCompile = (shader, renderer) => {
 				console.log(shader)
@@ -165,7 +165,8 @@
 				shader.vertexShader = "\nuniform float time;\n"
 					+ shader.vertexShader.replace(
 						"#include <displacementmap_vertex>",
-						"transformed += vec3( 0.0, 0.0, 0.0*sin(sin(1000.0*position.x) + sin(2000.0*position.y) + time) );"
+						"float w = 2.0 + 0.3 * rand(position.xy);\nfloat phi = 100.0 * rand(position.yx);\n"
+						+ "transformed += vec3( 0.1*sin(w * time + phi), 0.1*cos(w * time + phi), 0.3*sin(w * time + phi) );"
 					)
 
 			}
