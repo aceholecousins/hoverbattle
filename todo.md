@@ -3,6 +3,7 @@
 * setTimeout, setInterval with ingame time
 * glider jumps around after spawning
 * order transparent sprites by z
+* fake some water reaction
 
 for Dani:
 

@@ -184,7 +184,7 @@ export let createMatch: MatchFactory = async function (engine) {
 				glider.dispose()
 
 				createExplosion(
-					vec3.fromValues(glider.body.position[0], glider.body.position[1], 0),
+					vec3.fromValues(glider.body.position[0], glider.body.position[1], 1),
 					player.color
 				)
 				setTimeout(() => {
@@ -226,7 +226,7 @@ export let createMatch: MatchFactory = async function (engine) {
 						let explode = () => {
 							missile1.dispose()
 							createExplosion(
-								vec3.fromValues(missile1.body.position[0], missile1.body.position[1], 0),
+								vec3.fromValues(missile1.body.position[0], missile1.body.position[1], 1),
 								missile1.parent.player.color
 							)
 						}

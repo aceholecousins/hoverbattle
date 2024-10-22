@@ -242,9 +242,18 @@ export class Shard extends Visual {
 export class Flash {
 	time = 0
 	active = false
+	private light: PointLight
 	private updateHandler = (e: any) => this.update(e.dt)
 
-	constructor(private light: PointLight) { }
+	constructor(engine: Engine) { 
+		this.light = engine.graphics.light.createPointLight(
+			new PointLightConfig({
+				position: vec3.fromValues(NaN, NaN, NaN),
+				color: { r: 0, g: 0, b: 0 },
+				intensity: 0
+			})
+		)
+	}
 
 	flash(position: vec3, color: Color) {
 		this.time = 0
@@ -268,6 +277,8 @@ export class Flash {
 		this.active = false
 		broker.update.removeHandler(this.updateHandler)
 		this.light.intensity = 0
+		this.light.color = { r: 0, g: 0, b: 0 }
+		this.light.position = vec3.fromValues(NaN, NaN, NaN)
 	}
 }
 
@@ -290,15 +301,7 @@ export async function createExplosionFactory(engine: Engine) {
 	// so we create a pool of them and reuse them
 	let flashes: Flash[] = []
 	for (let i = 0; i < 3; i++) {
-		flashes.push(new Flash(
-			engine.graphics.light.createPointLight(
-				new PointLightConfig({
-					position: vec3.create(),
-					color: { r: 1, g: 1, b: 1 },
-					intensity: 0
-				})
-			)
-		))
+		flashes.push(new Flash(engine))
 	}
 	let nextFlash = 0
 
