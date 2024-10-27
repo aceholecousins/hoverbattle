@@ -1,6 +1,8 @@
 import numpy as np
 from PIL import Image
 from scipy.ndimage import sobel
+import os
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 def bump_to_normal(bump_map_path, strength=1.0):
     bump_map = Image.open(bump_map_path).convert('L')
@@ -19,11 +21,12 @@ def bump_to_normal(bump_map_path, strength=1.0):
     norm = np.linalg.norm(normal_map, axis=2)
     normal_map[..., 0] /= norm
     normal_map[..., 1] /= norm
-    normal_map[..., 2] /= norm
+    # normal_map[..., 2] /= norm
+    normal_map[..., 2] = 0
 
-    normal_map = (normal_map * 0.5 + 0.5) * 255.0
+    normal_map = np.ceil((normal_map * 0.5 + 0.5) * 255.0)
     normal_map = normal_map.astype(np.uint8)
 
-    Image.fromarray(normal_map).save(f'perlin_normal.png')
+    Image.fromarray(normal_map).save(f'ripl.png')
 
-bump_to_normal('perlin_bump.png', strength=0.02)
+bump_to_normal('radial_sin_heightmap.png', strength=0.003)

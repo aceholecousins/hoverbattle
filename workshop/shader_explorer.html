@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<title>THREE Shader Explorer</title>
+	<style></style>
+
+	<script type="importmap">
+		{"imports": {"three": "https://cdn.jsdelivr.net/npm/three@v0.169.0/build/three.module.js"}}
+	</script>
+
+</head>
+
+<body>
+	<script type="module">
+		import * as THREE from 'three'
+
+		let renderer = new THREE.WebGLRenderer()
+		let scene = new THREE.Scene()
+		let camera = new THREE.PerspectiveCamera()
+
+		for (let materialName in THREE) {
+			if (materialName === 'Material' || !materialName.endsWith('Material')) {
+				continue
+			}
+
+			let material = new THREE[materialName]()
+
+			material.onBeforeCompile = function (shader) {
+				for (let kind of ['vertexShader', 'fragmentShader']) {
+					shader[kind] = `\n\n//begin ${materialName}\n\n`
+						+ shader[kind].replace(
+							/#include <(.*?)>/g,
+							(match, p1) => `//begin <${p1}>\n${match}\n//end <${p1}>`
+						)
+						+ `\n\n//end ${materialName}\n`
+				}
+			}
+
+			let object = new THREE.Mesh(new THREE.PlaneGeometry(), material)
+			scene.add(object)
+
+			renderer.compile(scene, camera)
+			let programs = renderer.properties.get(material).programs
+			for (let program of programs) {
+				for (let kind of ['vertexShader', 'fragmentShader']) {
+					let code = renderer.getContext().getShaderSource(program[1][kind])
+
+					let details = document.createElement('details')
+					let summary = document.createElement('summary')
+					summary.textContent = `${materialName} ${kind}`
+					details.appendChild(summary)
+
+					let pre = document.createElement('pre')
+					pre.textContent = code
+					details.appendChild(pre)
+
+					let button = document.createElement('button')
+					button.textContent = 'Copy'
+					button.addEventListener('click', () => {
+						navigator.clipboard.writeText(code)
+					})
+					summary.appendChild(button)
+					document.body.appendChild(details)
+				}
+			}
+		}
+	</script>
+</body>
+
+</html>
