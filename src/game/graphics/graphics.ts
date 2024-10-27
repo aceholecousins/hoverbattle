@@ -3,7 +3,8 @@ import { ModelLoader, SpriteLoader, SkyboxLoader } from "./asset"
 import { CameraFactory } from "./camera"
 import { LightFactory } from "./light"
 import { MeshFactory } from "./mesh"
-import { GraphicsController } from "./graphicscontroller"
+import { Skybox } from "./asset";
+import { vec3 } from "gl-matrix"
 
 export interface Graphics {
 
@@ -15,5 +16,8 @@ export interface Graphics {
 	light: LightFactory
 	mesh: MeshFactory
 
-	control: GraphicsController
+	setEnvironment(env: Skybox): void
+	setEnvironmentOrientation(ypr: vec3): void
+
+	update(): void
 }

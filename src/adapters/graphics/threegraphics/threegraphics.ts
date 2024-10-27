@@ -1,11 +1,10 @@
 
-import { vec2, vec3 } from "gl-matrix"
+import { vec3 } from "gl-matrix"
 
 import * as THREE from "three"
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 import { Graphics } from "game/graphics/graphics"
-import { GraphicsController } from "game/graphics/graphicscontroller"
 import { CameraConfig } from "game/graphics/camera"
 
 import { renderer } from "./threerenderer"
@@ -15,11 +14,12 @@ import { ThreeModelLoader, loadThreeModel } from "./threemodel"
 import { ThreeSkyboxLoader, loadThreeSkybox } from "./threeskybox"
 import { ThreeSpriteLoader, loadThreeSprite } from "./threesprite"
 
-import { ThreeCameraFactory, ThreeCamera } from "./threecamera"
+import { ThreeCameraFactory } from "./threecamera"
 import { ThreeLightFactory } from "./threelight"
 import { ThreeMeshFactory } from "./threemesh"
 
-import { ThreeGraphicsController } from "./threegraphicscontroller"
+import { Skybox } from "game/graphics/asset"
+import { ThreeSkybox } from "./threeskybox"
 
 //@ts-ignore
 window.three = THREE
@@ -36,7 +36,22 @@ export class ThreeGraphics implements Graphics {
 	light: ThreeLightFactory
 	mesh: ThreeMeshFactory
 
-	control: GraphicsController
+	setEnvironment(env: Skybox) {
+		this.scene.background = (env as ThreeSkybox).threeCubemap
+		this.scene.environment = (env as ThreeSkybox).threePmrem
+	}
+
+	setEnvironmentOrientation(ypr: vec3) {
+		this.scene.backgroundRotation.set(ypr[2], ypr[1], ypr[0], "XYZ")
+		this.scene.environmentRotation.set(ypr[2], ypr[1], ypr[0], "XYZ")
+	}
+
+	update() {
+		renderer.render(
+			this.scene,
+			(this.scene.userData as SceneInfo).activeCamera
+		)
+	}
 
 	constructor() {
 
@@ -62,22 +77,19 @@ export class ThreeGraphics implements Graphics {
 		const controls = new OrbitControls(defaultCam.threeObject, renderer.domElement)
 		controls.screenSpacePanning = true
 
-		// default lighting
-		//this.scene.add(new THREE.HemisphereLight("white", "black"))
-
 		// origin
 		//this.scene.add(new THREE.AxesHelper())
 
-		/*
-		let sphere = new THREE.Mesh(
-			new THREE.SphereGeometry(10, 32, 32),
-			new THREE.MeshStandardMaterial()
-		)
-		this.scene.add(sphere)
-		*/
+		const resize = () => {
+			renderer.setSize(
+				renderer.domElement.clientWidth,
+				renderer.domElement.clientHeight,
+				false
+			)
+		}
 
-
-		this.control = new ThreeGraphicsController(this)
+		window.addEventListener('resize', resize)
+		resize()
 	}
 
 }

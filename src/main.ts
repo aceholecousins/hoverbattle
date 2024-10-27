@@ -53,7 +53,7 @@ async function main() {
 
 	function animate() {
 		requestAnimationFrame(animate)
-		graphics.control.update()
+		graphics.update()
 		graphicsStats.update()
 	}
 

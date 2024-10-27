@@ -131,8 +131,8 @@ export let createMatch: MatchFactory = async function (engine) {
 	assignRole(arena, collideWithEverythingRole)
 	assignRole(arena, destructibleRole)
 
-	engine.graphics.control.setEnvironment(skybox)
-	engine.graphics.control.setEnvironmentOrientation([0, 0, Math.PI / 2])
+	engine.graphics.setEnvironment(skybox)
+	engine.graphics.setEnvironmentOrientation([0, 0, Math.PI / 2])
 
 	let team = 0;
 
