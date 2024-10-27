@@ -1,8 +1,13 @@
 
 import * as THREE from "three"
 import { broker } from "broker"
+import { ThreeWater } from "./threewater"
 
-export function modMaterials(object: THREE.Object3D, tintUniform: { value: THREE.Matrix3 }) {
+export function modMaterials(
+	object: THREE.Object3D,
+	tintUniform: { value: THREE.Matrix3 },
+	water: ThreeWater
+) {
 
 	if (object.type === "Mesh") {
 		let mesh = object as THREE.Mesh
@@ -16,6 +21,7 @@ export function modMaterials(object: THREE.Object3D, tintUniform: { value: THREE
 		mat = mesh.material
 
 		if (mat.userData.isWater) {
+			water.sceneHasWater = true
 
 			if (mat.type === "MeshStandardMaterial") {
 				let frequency = mat.userData.waveFrequency ?? 0.5
@@ -33,6 +39,8 @@ export function modMaterials(object: THREE.Object3D, tintUniform: { value: THREE
 					}
 
 					shader.uniforms['time'] = timeUniform
+					shader.uniforms['resolution'] = water.resolutionUniform
+					shader.uniforms['rippleMap'] = water.normalTextureUniform
 
 					let chunk = ""
 					for (let angle = 0.001; angle < 2 * Math.PI; angle += 2 * Math.PI / 3) {
@@ -45,10 +53,16 @@ export function modMaterials(object: THREE.Object3D, tintUniform: { value: THREE
 						`
 					}
 
-					shader.fragmentShader = "#define USE_NORMALMAP_OBJECTSPACE\nuniform float time;\n"
+					shader.fragmentShader = `#define USE_NORMALMAP_OBJECTSPACE
+						uniform float time;
+						uniform vec2 resolution;
+						uniform sampler2D rippleMap;
+						`
 						+ shader.fragmentShader.replace(
 							"\t#include <normal_fragment_maps>",
 							chunk + `
+								vec3 ripple = texture2D( rippleMap, gl_FragCoord.xy / resolution ).rgb * 2.0 - 1.0;
+								normal += 3.0 * ripple;
 								#ifdef FLIP_SIDED
 									normal = - normal;
 								#endif
@@ -144,6 +158,6 @@ export function modMaterials(object: THREE.Object3D, tintUniform: { value: THREE
 	}
 
 	for (let child of object.children) {
-		modMaterials(child, tintUniform)
+		modMaterials(child, tintUniform, water)
 	}
 }

@@ -18,8 +18,10 @@ export class Glider extends Entity {
 	public onReleaseTrigger = () => { }
 	public onUpdate = () => { }
 
+	private engine: Engine
 	private holdsTrigger: boolean = false
 	private requiresRelease: boolean = false
+	private tNextRipple = 0
 
 	constructor(
 		public player: Player,
@@ -28,6 +30,7 @@ export class Glider extends Entity {
 		engine: Engine
 	) {
 		super()
+		this.engine = engine
 		this.body = engine.physics.addRigidBody(new RigidBodyConfig({
 			actor: this,
 			shapes: [new CircleConfig({ radius: 1 })],
@@ -67,6 +70,21 @@ export class Glider extends Entity {
 			this.body.position[0], this.body.position[1], 0.1]
 		this.mesh.orientation = quat.fromEuler(
 			quat.create(), 0, 0, this.body.angle / Math.PI * 180)
+
+		this.tNextRipple -= dt
+		if (this.tNextRipple < 0) {
+			this.tNextRipple = 0.03
+			let v = vec2.length(this.body.velocity)
+			this.engine.graphics.water.makeRipple(
+				vec3.fromValues(
+					this.body.position[0],
+					this.body.position[1], 
+					0
+				),
+				Math.min(v/10, 3),
+				1.0
+			)
+		}
 
 		this.onUpdate()
 	}

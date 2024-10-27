@@ -4,6 +4,7 @@ import { CameraFactory } from "./camera"
 import { LightFactory } from "./light"
 import { MeshFactory } from "./mesh"
 import { Skybox } from "./asset";
+import { Water } from "./water";
 import { vec3 } from "gl-matrix"
 
 export interface Graphics {
@@ -15,6 +16,8 @@ export interface Graphics {
 	camera: CameraFactory
 	light: LightFactory
 	mesh: MeshFactory
+
+	water: Water
 
 	setEnvironment(env: Skybox): void
 	setEnvironmentOrientation(ypr: vec3): void

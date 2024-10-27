@@ -5,16 +5,22 @@ import * as THREE from "three"
 import { copy, Color } from "utils"
 import { ThreeModel } from "./threemodel"
 import { modMaterials } from "./shadermods"
+import { ThreeWater } from "./threewater"
 
 export class ThreeMesh extends ThreeSceneNode<"mesh"> implements Mesh {
 
 	threeObject: THREE.Object3D
 
-	constructor(scene: THREE.Scene, template: THREE.Object3D, config: MeshConfig) {
+	constructor(
+		scene: THREE.Scene,
+		template: THREE.Object3D,
+		config: MeshConfig,
+		water: ThreeWater
+	) {
 		super(scene, template.clone(), config)
 
 		this.threeObject.userData.tintMatrix = { value: new THREE.Matrix3() }
-		modMaterials(this.threeObject, this.threeObject.userData.tintMatrix)
+		modMaterials(this.threeObject, this.threeObject.userData.tintMatrix, water)
 
 		copy(this, config, ["baseColor", "accentColor1", "accentColor2"])
 	}
@@ -60,16 +66,19 @@ export class ThreeMesh extends ThreeSceneNode<"mesh"> implements Mesh {
 
 export class ThreeMeshFactory implements MeshFactory {
 	threeScene: THREE.Scene
+	water: ThreeWater
 
-	constructor(scene: THREE.Scene) {
+	constructor(scene: THREE.Scene, water: ThreeWater) {
 		this.threeScene = scene
+		this.water = water
 	}
 
 	createFromModel(config: ModelMeshConfig) {
 		let mesh = new ThreeMesh(
 			this.threeScene,
 			(config.model as ThreeModel).threeObject,
-			config
+			config,
+			this.water
 		)
 		return mesh
 	}

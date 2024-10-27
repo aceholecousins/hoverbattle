@@ -18,6 +18,8 @@ import { ThreeCameraFactory } from "./threecamera"
 import { ThreeLightFactory } from "./threelight"
 import { ThreeMeshFactory } from "./threemesh"
 
+import { ThreeWater } from "./threewater"
+
 import { Skybox } from "game/graphics/asset"
 import { ThreeSkybox } from "./threeskybox"
 
@@ -35,6 +37,8 @@ export class ThreeGraphics implements Graphics {
 	camera: ThreeCameraFactory
 	light: ThreeLightFactory
 	mesh: ThreeMeshFactory
+	
+	water: ThreeWater
 
 	setEnvironment(env: Skybox) {
 		this.scene.background = (env as ThreeSkybox).threeCubemap
@@ -47,6 +51,9 @@ export class ThreeGraphics implements Graphics {
 	}
 
 	update() {
+		this.water.render(
+			(this.scene.userData as SceneInfo).activeCamera
+		)
 		renderer.render(
 			this.scene,
 			(this.scene.userData as SceneInfo).activeCamera
@@ -64,8 +71,6 @@ export class ThreeGraphics implements Graphics {
 		this.loadSkybox = loadThreeSkybox
 
 		this.camera = new ThreeCameraFactory(this.scene)
-		this.light = new ThreeLightFactory(this.scene)
-		this.mesh = new ThreeMeshFactory(this.scene)
 
 		// controllable test camera
 		let defaultCam = this.camera.create(new CameraConfig())
@@ -74,6 +79,11 @@ export class ThreeGraphics implements Graphics {
 		defaultCam.threeObject.up.set(0, 0, 1)
 		this.scene.add(defaultCam.threeObject)
 
+		this.water = new ThreeWater()
+
+		this.light = new ThreeLightFactory(this.scene)
+		this.mesh = new ThreeMeshFactory(this.scene, this.water)
+
 		const controls = new OrbitControls(defaultCam.threeObject, renderer.domElement)
 		controls.screenSpacePanning = true
 
@@ -81,11 +91,10 @@ export class ThreeGraphics implements Graphics {
 		//this.scene.add(new THREE.AxesHelper())
 
 		const resize = () => {
-			renderer.setSize(
-				renderer.domElement.clientWidth,
-				renderer.domElement.clientHeight,
-				false
-			)
+			let w = renderer.domElement.clientWidth
+			let h = renderer.domElement.clientHeight
+			renderer.setSize(w, h, false)
+			this.water.setSize(w, h)
 		}
 
 		window.addEventListener('resize', resize)
