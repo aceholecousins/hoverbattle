@@ -57,6 +57,20 @@ async function main() {
 		graphicsStats.update()
 	}
 
+	window.addEventListener('keydown', (event) => {
+		switch (event.key) {
+			case '0':
+				dt = 0
+				break
+			case '1':
+				dt = 1 / 125
+				break
+			case '9':
+				dt = 1 / 1250
+				break
+		}
+	})
+
 	requestAnimationFrame(animate)
 
 }

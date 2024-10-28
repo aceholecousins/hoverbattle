@@ -245,7 +245,7 @@ export class Flash {
 	private light: PointLight
 	private updateHandler = (e: any) => this.update(e.dt)
 
-	constructor(engine: Engine) { 
+	constructor(engine: Engine) {
 		this.light = engine.graphics.light.createPointLight(
 			new PointLightConfig({
 				position: vec3.fromValues(NaN, NaN, NaN),
@@ -315,8 +315,12 @@ export async function createExplosionFactory(engine: Engine) {
 		for (let i = 0; i < 7; i++) {
 			crumbs.push(new Crumb(position, darkColor, createCloud, crumbModel.model, engine))
 		}
-		let shockwave = new Shockwave(position, shockwaveModel, engine)
-		let plop = new Plop(position, color, plopModel, engine)
+		let shockwavePosition = vec3.clone(position)
+		shockwavePosition[2] += Math.random() * 0.1
+		let shockwave = new Shockwave(shockwavePosition, shockwaveModel, engine)
+		let plopPosition = vec3.clone(position)
+		plopPosition[2] += Math.random() * 0.1
+		let plop = new Plop(plopPosition, color, plopModel, engine)
 		let shards: Shard[] = []
 		for (let i = 0; i < 11; i++) {
 			shards.push(new Shard(position, shardModel.model, engine))

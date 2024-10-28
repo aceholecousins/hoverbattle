@@ -6,6 +6,7 @@ import { copy, Color } from "utils"
 import { ThreeModel } from "./threemodel"
 import { modMaterials } from "./shadermods"
 import { ThreeWater } from "./threewater"
+import { vec3 } from "gl-matrix"
 
 export class ThreeMesh extends ThreeSceneNode<"mesh"> implements Mesh {
 
@@ -13,10 +14,11 @@ export class ThreeMesh extends ThreeSceneNode<"mesh"> implements Mesh {
 
 	constructor(
 		scene: THREE.Scene,
-		template: THREE.Object3D,
-		config: MeshConfig,
+		config: ModelMeshConfig,
 		water: ThreeWater
 	) {
+		let threeModel = config.model as ThreeModel
+		let template = threeModel.threeObject
 		super(scene, template.clone(), config)
 
 		this.threeObject.userData.tintMatrix = { value: new THREE.Matrix3() }
@@ -56,10 +58,15 @@ export class ThreeMesh extends ThreeSceneNode<"mesh"> implements Mesh {
 		this.threeObject.traverse((obj) => {
 			if (obj.type === "Mesh") {
 				let mat = (obj as THREE.Mesh).material as THREE.Material
-				mat.transparent = op < 1
+				mat.transparent = op < 1 // TODO: this probably fails on objects with transparent parts
 				mat.opacity = op
 			}
 		})
+	}
+
+	set position(pos: vec3) {
+		super.position = pos
+		this.threeObject.renderOrder = pos[2]
 	}
 
 }
@@ -76,7 +83,6 @@ export class ThreeMeshFactory implements MeshFactory {
 	createFromModel(config: ModelMeshConfig) {
 		let mesh = new ThreeMesh(
 			this.threeScene,
-			(config.model as ThreeModel).threeObject,
 			config,
 			this.water
 		)
