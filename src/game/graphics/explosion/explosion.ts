@@ -327,6 +327,6 @@ export async function createExplosionFactory(engine: Engine) {
 		}
 		flashes[nextFlash].flash(position, color)
 		nextFlash = (nextFlash + 1) % flashes.length
-		return
+		return {smokeball, crumbs, shockwave, plop, shards}
 	}
 }

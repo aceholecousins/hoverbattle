@@ -1,9 +1,10 @@
-* action cam should wait until an explosion is finished
+* shake camera upon explosion
 * powerups should not be bounced against when collected
-* setTimeout, setInterval with ingame time
 * glider jumps around after spawning
 * some nice sounds
 * reset() everything on game end? (alternatively reload the window...)
+* coast looks shit (maybe white foam as part of mountain texture, semi covered by waves?)
+* why 115 fps physics?
 
 for Dani:
 

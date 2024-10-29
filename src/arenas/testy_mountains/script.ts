@@ -3,7 +3,7 @@ import { loadArena } from "game/entities/arena/arena"
 import { Damaging, makeDamaging, Destructible, makeDestructible } from "game/entities/damage"
 import { Entity } from "game/entities/entity"
 import { createGliderFactory, Glider } from "game/entities/glider/glider"
-import { Powerup, createPowerupBoxFactory, PowerupBox } from "game/entities/powerup"
+import { createPowerupBoxFactory, PowerupBox } from "game/entities/powerup"
 import { createPhaserFactory, PhaserShot, PhaserWeapon } from "game/entities/weapons/phaser"
 import { createMissileFactory, MissilePowerup, Missile, MissileLauncher } from "game/entities/weapons/missile"
 import { createMineFactory, MinePowerup, Mine, MineThrower } from "game/entities/weapons/mine"
@@ -14,6 +14,7 @@ import { SceneNodeConfig } from "game/graphics/scenenode"
 import { vec2, vec3 } from "gl-matrix"
 import { remove } from "utils"
 import { createExplosionFactory } from "game/graphics/explosion/explosion"
+import { GameTimer } from "game/gametimer"
 
 export let createMatch: MatchFactory = async function (engine) {
 
@@ -147,7 +148,7 @@ export let createMatch: MatchFactory = async function (engine) {
 		team++
 	})
 
-	setTimeout(spawnPowerup, Math.random() * 5000 + 3000)
+	new GameTimer(spawnPowerup, Math.random() * 5 + 3)
 
 	function spawnPowerup() {
 		if (powerupBoxes.length < 3) {
@@ -170,7 +171,7 @@ export let createMatch: MatchFactory = async function (engine) {
 			powerupBoxes.push(powerupBox)
 			engine.actionCam.follow(powerupBox.body, 1.5)
 		}
-		setTimeout(spawnPowerup, Math.random() * 3000 + 7000)
+		new GameTimer(spawnPowerup, Math.random() * 7 + 3)
 	}
 
 	function spawnGlider(player: Player) {
@@ -187,9 +188,19 @@ export let createMatch: MatchFactory = async function (engine) {
 					vec3.fromValues(glider.body.position[0], glider.body.position[1], 1),
 					player.color
 				)
-				setTimeout(() => {
+
+				let explosionPosition = {
+					position: vec2.fromValues(glider.body.position[0], glider.body.position[1])
+				}
+				engine.actionCam.follow(explosionPosition, 1.5)
+
+				new GameTimer(() => {
+					engine.actionCam.unfollow(explosionPosition)
+				}, 1)
+
+				new GameTimer(() => {
 					spawnGlider(player)
-				}, 2000)
+				}, 2)
 			}
 		)
 		glider.onDispose = () => {
