@@ -1,11 +1,12 @@
 
 import { RigidBodyConfig, RigidBody } from "game/physics/rigidbody"
-import { Physics } from "game/physics/physics"
+import { Physics, RayHit } from "game/physics/physics"
 import { P2RigidBody } from "./p2rigidbody"
 import * as p2 from "p2"
 import { ExtendedP2World, ExtendedP2Body, collisionDispatcher } from "./p2extensions"
 import "./p2factorylist"
 import { CollisionOverride, CollisionHandler } from "game/physics/collision"
+import { vec2 } from "gl-matrix"
 
 // https://github.com/schteppe/p2.js/blob/master/build/p2.js
 // code investigation entry point: World.prototype.internalStep
@@ -25,6 +26,32 @@ export class P2Physics implements Physics {
 	addRigidBody(config: RigidBodyConfig): RigidBody {
 		const body = new P2RigidBody(this.p2world, config)
 		return body
+	}
+
+	rayCast(from: vec2, to: vec2): RayHit[] {
+		let hits: RayHit[] = []
+		var ray = new p2.Ray({
+			mode: p2.Ray.ALL,
+			from: from as [number, number],
+			to: to as [number, number],
+			callback: function (result) {
+				var position = vec2.create();
+				result.getHitPoint(position as [number, number], ray);
+				hits.push({
+					actor: (result.body as ExtendedP2Body).actor,
+					position,
+					normal: vec2.clone(result.normal)
+				})
+			}
+		});
+		var result = new p2.RaycastResult();
+		this.p2world.raycast(result, ray);
+		hits.sort((a, b) => {
+			const distA = vec2.squaredDistance(from, a.position);
+			const distB = vec2.squaredDistance(from, b.position);
+			return distA - distB;
+		});
+		return hits
 	}
 
 	registerCollisionOverride(override: CollisionOverride<any, any>) {

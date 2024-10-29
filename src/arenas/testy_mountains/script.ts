@@ -11,10 +11,12 @@ import { MatchFactory } from "game/match"
 import { CollisionOverride, CollisionHandler } from "game/physics/collision"
 import { Player } from "game/player"
 import { SceneNodeConfig } from "game/graphics/scenenode"
-import { vec2, vec3 } from "gl-matrix"
+import { vec2, vec3, quat } from "gl-matrix"
 import { remove } from "utils"
 import { createExplosionFactory } from "game/graphics/explosion/explosion"
 import { GameTimer } from "game/gametimer"
+import { ModelMeshConfig } from "game/graphics/mesh";
+import { broker } from "broker"
 
 export let createMatch: MatchFactory = async function (engine) {
 
@@ -120,6 +122,11 @@ export let createMatch: MatchFactory = async function (engine) {
 		createExplosionFactory(engine)
 	]);
 
+	let laserPointSprite = await engine.graphics.loadSprite(
+		"game/entities/weapons/phaser.tint.png"
+	)
+
+
 	for (const [key, value] of Object.entries(arena_meta.meta)) {
 		if (key.startsWith("spawn")) {
 			const spawn = value as SceneNodeConfig<"empty">
@@ -203,9 +210,32 @@ export let createMatch: MatchFactory = async function (engine) {
 				}, 2)
 			}
 		)
+
+		let laserPoint = engine.graphics.mesh.createFromModel(new ModelMeshConfig({
+			model: laserPointSprite
+		}))
+		let pointUpdate = broker.update.addHandler(() => {
+			let hits = engine.physics.rayCast(
+				vec2.fromValues(glider.body.position[0], glider.body.position[1]),
+				vec2.fromValues(
+					glider.body.position[0] + 100 * Math.cos(glider.body.angle),
+					glider.body.position[1] + 100 * Math.sin(glider.body.angle)
+				)
+			)
+			if (hits.length >= 2) {
+				let hit = hits[1]
+				laserPoint.position = [hit.position[0], hit.position[1], 1]
+				laserPoint.orientation = quat.fromEuler(
+					quat.create(), 0, 0, Math.atan2(hit.normal[1], hit.normal[0]) / Math.PI * 180
+				)
+			}
+		})
+
 		glider.onDispose = () => {
 			engine.actionCam.unfollow(glider.body)
 			remove(gliders, glider)
+			broker.update.removeHandler(pointUpdate)
+			laserPoint.destroy()
 		}
 		assignRole(glider, gliderRole)
 		assignRole(glider, collideWithEverythingRole)
