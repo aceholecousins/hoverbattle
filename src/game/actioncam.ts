@@ -26,8 +26,12 @@ export class ActionCamConfig extends CameraConfig {
 	}
 }
 
+interface Target {
+	position: vec2
+}
+
 interface Lock {
-	body: RigidBody
+	target: Target
 	radius: number
 }
 
@@ -71,21 +75,21 @@ export class ActionCam {
 
 		const order = 3
 
-		this.positionX = new LowPass(order, config.tauXY/order, 0)
-		this.positionY = new LowPass(order, config.tauXY/order, 0)
-		this.positionZ = new LowPass(order, config.tauZ/order, 100)
+		this.positionX = new LowPass(order, config.tauXY / order, 0)
+		this.positionY = new LowPass(order, config.tauXY / order, 0)
+		this.positionZ = new LowPass(order, config.tauZ / order, 100)
 
-		this.focusX = new LowPass(order, config.tauFocus/order, 0)
-		this.focusY = new LowPass(order, config.tauFocus/order, 0)
+		this.focusX = new LowPass(order, config.tauFocus / order, 0)
+		this.focusY = new LowPass(order, config.tauFocus / order, 0)
 	}
 
-	follow(body: RigidBody, radius: number) {
-		this.locks.add({ body, radius })
+	follow(target: Target, radius: number) {
+		this.locks.add({ target, radius })
 	}
 
-	unfollow(body: RigidBody) {
+	unfollow(target: Target) {
 		for (let lock of this.locks) {
-			if (lock.body === body) {
+			if (lock.target === target) {
 				this.locks.delete(lock)
 			}
 		}
@@ -97,10 +101,10 @@ export class ActionCam {
 		let yMin = 1e12
 		let yMax = -1e12
 		for (let lock of this.locks) {
-			xMin = Math.min(xMin, lock.body.position[0] - lock.radius)
-			xMax = Math.max(xMax, lock.body.position[0] + lock.radius)
-			yMin = Math.min(yMin, lock.body.position[1] - lock.radius)
-			yMax = Math.max(yMax, lock.body.position[1] + lock.radius)
+			xMin = Math.min(xMin, lock.target.position[0] - lock.radius)
+			xMax = Math.max(xMax, lock.target.position[0] + lock.radius)
+			yMin = Math.min(yMin, lock.target.position[1] - lock.radius)
+			yMax = Math.max(yMax, lock.target.position[1] + lock.radius)
 		}
 
 		let target = vec3.fromValues(
