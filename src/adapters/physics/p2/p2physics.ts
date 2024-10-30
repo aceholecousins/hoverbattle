@@ -28,12 +28,13 @@ export class P2Physics implements Physics {
 		return body
 	}
 
-	rayCast(from: vec2, to: vec2): RayHit[] {
+	rayCast(from: vec2, to: vec2, skipBackfaces:boolean): RayHit[] {
 		let hits: RayHit[] = []
 		var ray = new p2.Ray({
 			mode: p2.Ray.ALL,
 			from: from as [number, number],
 			to: to as [number, number],
+			skipBackfaces,
 			callback: function (result) {
 				var position = vec2.create();
 				result.getHitPoint(position as [number, number], ray);

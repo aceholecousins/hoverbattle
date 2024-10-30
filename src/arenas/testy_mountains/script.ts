@@ -5,6 +5,7 @@ import { Entity } from "game/entities/entity"
 import { createGliderFactory, Glider } from "game/entities/glider/glider"
 import { createPowerupBoxFactory, PowerupBox } from "game/entities/powerup"
 import { createPhaserFactory, PhaserShot, PhaserWeapon } from "game/entities/weapons/phaser"
+import { createLaserFactory, LaserBeamRoot } from "game/entities/weapons/laser"
 import { createMissileFactory, MissilePowerup, Missile, MissileLauncher } from "game/entities/weapons/missile"
 import { createMineFactory, MinePowerup, Mine, MineThrower } from "game/entities/weapons/mine"
 import { MatchFactory } from "game/match"
@@ -108,6 +109,7 @@ export let createMatch: MatchFactory = async function (engine) {
 		createPowerupBox,
 		skybox,
 		phaserFactory,
+		laserFactory,
 		missileFactory,
 		mineFactory,
 		createExplosion
@@ -117,15 +119,11 @@ export let createMatch: MatchFactory = async function (engine) {
 		createPowerupBoxFactory(engine),
 		engine.graphics.loadSkybox("arenas/testy_mountains/environment/*.jpg"),
 		createPhaserFactory(engine),
+		createLaserFactory(engine),
 		createMissileFactory(engine),
 		createMineFactory(engine),
 		createExplosionFactory(engine)
 	]);
-
-	let laserPointSprite = await engine.graphics.loadSprite(
-		"game/entities/weapons/phaser.tint.png"
-	)
-
 
 	for (const [key, value] of Object.entries(arena_meta.meta)) {
 		if (key.startsWith("spawn")) {
@@ -155,7 +153,7 @@ export let createMatch: MatchFactory = async function (engine) {
 		team++
 	})
 
-	new GameTimer(spawnPowerup, Math.random() * 5 + 3)
+	//new GameTimer(spawnPowerup, Math.random() * 5 + 3)
 
 	function spawnPowerup() {
 		if (powerupBoxes.length < 3) {
@@ -182,6 +180,8 @@ export let createMatch: MatchFactory = async function (engine) {
 	}
 
 	function spawnGlider(player: Player) {
+		let laser: LaserBeamRoot = null
+
 		let glider = makeDestructible(
 			createGlider(
 				player,
@@ -211,31 +211,13 @@ export let createMatch: MatchFactory = async function (engine) {
 			}
 		)
 
-		let laserPoint = engine.graphics.mesh.createFromModel(new ModelMeshConfig({
-			model: laserPointSprite
-		}))
-		let pointUpdate = broker.update.addHandler(() => {
-			let hits = engine.physics.rayCast(
-				vec2.fromValues(glider.body.position[0], glider.body.position[1]),
-				vec2.fromValues(
-					glider.body.position[0] + 100 * Math.cos(glider.body.angle),
-					glider.body.position[1] + 100 * Math.sin(glider.body.angle)
-				)
-			)
-			if (hits.length >= 2) {
-				let hit = hits[1]
-				laserPoint.position = [hit.position[0], hit.position[1], 1]
-				laserPoint.orientation = quat.fromEuler(
-					quat.create(), 0, 0, Math.atan2(hit.normal[1], hit.normal[0]) / Math.PI * 180
-				)
-			}
-		})
-
 		glider.onDispose = () => {
 			engine.actionCam.unfollow(glider.body)
 			remove(gliders, glider)
-			broker.update.removeHandler(pointUpdate)
-			laserPoint.destroy()
+			if (laser) {
+				laser.dispose()
+				laser = null
+			}
 		}
 		assignRole(glider, gliderRole)
 		assignRole(glider, collideWithEverythingRole)
@@ -311,8 +293,9 @@ export let createMatch: MatchFactory = async function (engine) {
 			}
 		}
 
-		glider.onUpdate = () => {
-			if (glider.isFiring() && glider.readyPowerups.length == 0) {
+		let wasFiring = false
+		glider.onUpdate = (dt: number) => {
+			/*if (glider.isFiring() && glider.readyPowerups.length == 0) {
 				let phaserShots = phaserWeapon.tryShoot()
 				if (phaserShots) {
 					for (let shot1 of phaserShots) {
@@ -320,6 +303,25 @@ export let createMatch: MatchFactory = async function (engine) {
 						assignRole(shot2, phaserRole)
 						assignRole(shot2, collideWithEverythingRole)
 						assignRole(shot2, damagingRole)
+					}
+				}
+			}*/
+			if (glider.isFiring() && !wasFiring) {
+				laser = laserFactory.createBeam(glider, 1)
+			}
+			if (!glider.isFiring() && wasFiring) {
+				if (laser) {
+					laser.dispose()
+					laser = null
+				}
+			}
+			wasFiring = glider.isFiring()
+
+			if (laser) {
+				let hits = laser.fire()
+				for (let hit of hits) {
+					if ("isDestructible" in hit) {
+						(hit as unknown as Destructible).hit(40 * dt)
 					}
 				}
 			}

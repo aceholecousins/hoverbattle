@@ -14,7 +14,7 @@ export interface Physics {
 	addRigidBody(body: RigidBodyConfig): RigidBody
 	registerCollisionOverride(override: CollisionOverride<any, any>): void
 	registerCollisionHandler(handler: CollisionHandler<any, any>): void
-	rayCast(from: vec2, to: vec2): RayHit[]
+	rayCast(from: vec2, to: vec2, skipBackfaces: boolean): RayHit[]
 	step(dt: number): void
 	getTime(): number
 }

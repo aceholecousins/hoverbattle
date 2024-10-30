@@ -16,7 +16,7 @@ export class Glider extends Entity {
 	public activatedPowerups: Powerup[] = []
 	public onPressTrigger = () => { }
 	public onReleaseTrigger = () => { }
-	public onUpdate = () => { }
+	public onUpdate = (dt: number) => { }
 
 	private engine: Engine
 	private holdsTrigger: boolean = false
@@ -78,15 +78,15 @@ export class Glider extends Entity {
 			this.engine.graphics.water.makeRipple(
 				vec3.fromValues(
 					this.body.position[0],
-					this.body.position[1], 
+					this.body.position[1],
 					0
 				),
-				Math.min(v/10, 3),
+				Math.min(v / 10, 3),
 				1.0
 			)
 		}
 
-		this.onUpdate()
+		this.onUpdate(dt)
 	}
 
 	isFiring() { return this.holdsTrigger && !this.requiresRelease }
