@@ -4,9 +4,11 @@ import { Engine } from "game/engine"
 import { CircleConfig } from "game/physics/circle"
 import { RigidBodyConfig } from "game/physics/rigidbody"
 import { vec2, vec3, quat } from "gl-matrix"
-import { Entity } from "./entity"
+import { Entity } from "game/entities/entity"
 
-const POWERUP_BOX_SIZE = 1
+const POWERUP_BOX_SIZE = 1.8
+
+export type PowerupKind = "laser" | "mine" | "missile" | "nashwan" | "repair" | "shield"
 
 export interface Powerup {
 	readonly kind: string
@@ -16,7 +18,7 @@ export class PowerupBox extends Entity {
 	time: number = 0
 
 	constructor(
-		public kind: string,
+		public kind: PowerupKind,
 		position: vec2,
 		model: Model,
 		engine: Engine
@@ -30,6 +32,7 @@ export class PowerupBox extends Entity {
 			angularDamping: 0.5
 		}))
 		this.body.position = position
+		this.body.angle = Math.random() * Math.PI * 2
 		this.mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
 		this.mesh.scaling = vec3.fromValues(POWERUP_BOX_SIZE, POWERUP_BOX_SIZE, POWERUP_BOX_SIZE)
 		this.update(0)
@@ -51,14 +54,21 @@ export class PowerupBox extends Entity {
 
 export async function createPowerupBoxFactory(engine: Engine) {
 
-	let { model, meta } = await engine.graphics.loadModel(
-		"game/entities/crate.glb")
+	let [laser, mine, missile, nashwan, repair, shield] = await Promise.all([
+		engine.graphics.loadModel("game/entities/powerups/laser.glb"),
+		engine.graphics.loadModel("game/entities/powerups/mine.glb"),
+		engine.graphics.loadModel("game/entities/powerups/missile.glb"),
+		engine.graphics.loadModel("game/entities/powerups/nashwan.glb"),
+		engine.graphics.loadModel("game/entities/powerups/repair.glb"),
+		engine.graphics.loadModel("game/entities/powerups/shield.glb")
+	])
+	let models = { laser, mine, missile, nashwan, repair, shield }
 
-	return function (kind: string, position: vec2) {
+	return function (kind: PowerupKind, position: vec2) {
 		return new PowerupBox(
 			kind,
 			position,
-			model,
+			models[kind].model,
 			engine
 		)
 	}

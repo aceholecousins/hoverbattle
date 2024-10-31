@@ -9,7 +9,7 @@ import { quat, vec2, vec3 } from "gl-matrix";
 import { assignRole, Role } from "../actor";
 import { Entity } from "../entity";
 import { Glider } from "../glider/glider";
-import { Powerup } from "../powerup";
+import { Powerup } from "game/entities/powerups/powerup";
 import { wrapAngle } from "utilities/math_utils";
 
 const MISSILE_LENGTH = 1.3;

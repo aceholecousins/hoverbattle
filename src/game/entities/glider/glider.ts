@@ -7,7 +7,7 @@ import { Player } from "game/player"
 import { vec2, quat, vec3 } from "gl-matrix"
 import { wrapAngle } from "utilities/math_utils"
 import { Entity } from "../entity"
-import { Powerup } from "../powerup"
+import { Powerup } from "game/entities/powerups/powerup"
 
 export const GLIDER_RADIUS = 1;
 

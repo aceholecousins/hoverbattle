@@ -3,7 +3,7 @@ import { loadArena } from "game/entities/arena/arena"
 import { Damaging, makeDamaging, Destructible, makeDestructible } from "game/entities/damage"
 import { Entity } from "game/entities/entity"
 import { createGliderFactory, Glider } from "game/entities/glider/glider"
-import { createPowerupBoxFactory, PowerupBox } from "game/entities/powerup"
+import { PowerupKind, createPowerupBoxFactory, PowerupBox } from "game/entities/powerups/powerup"
 import { createPhaserFactory, PhaserShot, PhaserWeapon } from "game/entities/weapons/phaser"
 import { createLaserFactory, LaserBeamRoot } from "game/entities/weapons/laser"
 import { createMissileFactory, MissilePowerup, Missile, MissileLauncher } from "game/entities/weapons/missile"
@@ -153,11 +153,11 @@ export let createMatch: MatchFactory = async function (engine) {
 		team++
 	})
 
-	//new GameTimer(spawnPowerup, Math.random() * 5 + 3)
+	new GameTimer(spawnPowerup, Math.random() * 5 + 3)
 
 	function spawnPowerup() {
 		if (powerupBoxes.length < 3) {
-			const powerupKind = ["missile", "mine"][Math.floor(Math.random() * 2)];
+			const powerupKind:PowerupKind = ["missile", "mine"][Math.floor(Math.random() * 2)] as PowerupKind;
 			let powerupBox = makeDestructible(
 				createPowerupBox(
 					powerupKind,
@@ -306,7 +306,7 @@ export let createMatch: MatchFactory = async function (engine) {
 					}
 				}
 			}*/
-			if (glider.isFiring() && !wasFiring) {
+			if (glider.isFiring() && !wasFiring && glider.readyPowerups.length == 0) {
 				laser = laserFactory.createBeam(glider, 1)
 			}
 			if (!glider.isFiring() && wasFiring) {
