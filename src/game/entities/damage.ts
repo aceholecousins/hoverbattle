@@ -21,7 +21,6 @@ export function makeDamaging<T extends Entity>(
 
 
 export interface Destructible {
-	isDestructible: true
 	hit(damage: number): void
 }
 
@@ -31,7 +30,6 @@ export function makeDestructible<T extends Entity>(
 	destroyCallback: (entity: T) => void
 ) {
 	let extendedEntity = entity as T & Destructible;
-	extendedEntity.isDestructible = true
 	let hitpoints = initialHitpoints
 	extendedEntity.hit = (damage: number) => {
 		hitpoints -= damage

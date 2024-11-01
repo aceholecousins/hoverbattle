@@ -1,11 +1,12 @@
-import { Role, interact, assignRole } from "game/entities/actor"
+import { Role, interact, hasRole, assignRole } from "game/entities/actor"
 import { loadArena } from "game/entities/arena/arena"
 import { Damaging, makeDamaging, Destructible, makeDestructible } from "game/entities/damage"
 import { Entity } from "game/entities/entity"
+import { Actor } from "game/entities/actor"
 import { createGliderFactory, Glider } from "game/entities/glider/glider"
 import { PowerupKind, createPowerupBoxFactory, PowerupBox } from "game/entities/powerups/powerup"
 import { createPhaserFactory, PhaserShot, PhaserWeapon } from "game/entities/weapons/phaser"
-import { createLaserFactory, LaserBeamRoot } from "game/entities/weapons/laser"
+import { createLaserFactory, LaserBeamRoot, LaserPowerup } from "game/entities/weapons/laser"
 import { createMissileFactory, MissilePowerup, Missile, MissileLauncher } from "game/entities/weapons/missile"
 import { createMineFactory, MinePowerup, Mine, MineThrower } from "game/entities/weapons/mine"
 import { MatchFactory } from "game/match"
@@ -97,6 +98,9 @@ export let createMatch: MatchFactory = async function (engine) {
 			else if (powerupBox.kind == "mine") {
 				glider.readyPowerups = [new MinePowerup()]
 			}
+			else if (powerupBox.kind == "laser") {
+				glider.readyPowerups = [new LaserPowerup()]
+			}
 			powerupBox.dispose()
 		}
 	))
@@ -157,7 +161,8 @@ export let createMatch: MatchFactory = async function (engine) {
 
 	function spawnPowerup() {
 		if (powerupBoxes.length < 3) {
-			const powerupKind:PowerupKind = ["missile", "mine"][Math.floor(Math.random() * 2)] as PowerupKind;
+			let kinds = ["missile", "mine", "laser"]
+			const powerupKind = kinds[Math.floor(Math.random() * kinds.length)] as PowerupKind;
 			let powerupBox = makeDestructible(
 				createPowerupBox(
 					powerupKind,
@@ -180,8 +185,6 @@ export let createMatch: MatchFactory = async function (engine) {
 	}
 
 	function spawnGlider(player: Player) {
-		let laser: LaserBeamRoot = null
-
 		let glider = makeDestructible(
 			createGlider(
 				player,
@@ -214,10 +217,6 @@ export let createMatch: MatchFactory = async function (engine) {
 		glider.onDispose = () => {
 			engine.actionCam.unfollow(glider.body)
 			remove(gliders, glider)
-			if (laser) {
-				laser.dispose()
-				laser = null
-			}
 		}
 		assignRole(glider, gliderRole)
 		assignRole(glider, collideWithEverythingRole)
@@ -290,12 +289,26 @@ export let createMatch: MatchFactory = async function (engine) {
 						}
 					}
 				}
+
+				else if (glider.readyPowerups[0].kind == "laser") {
+					let laser = glider.readyPowerups[0] as LaserPowerup
+					if (!laser.activated) {
+						laser.activated = true
+						laserFactory.createBeam(glider, 1,
+							function (actor: Actor, dt: number) {
+								if (hasRole(actor, destructibleRole)) {
+									(actor as unknown as Destructible).hit(40 * dt)
+								}
+							},
+							function () { glider.readyPowerups = [] }
+						)
+					}
+				}
 			}
 		}
 
-		let wasFiring = false
 		glider.onUpdate = (dt: number) => {
-			/*if (glider.isFiring() && glider.readyPowerups.length == 0) {
+			if (glider.isFiring() && glider.readyPowerups.length == 0) {
 				let phaserShots = phaserWeapon.tryShoot()
 				if (phaserShots) {
 					for (let shot1 of phaserShots) {
@@ -303,25 +316,6 @@ export let createMatch: MatchFactory = async function (engine) {
 						assignRole(shot2, phaserRole)
 						assignRole(shot2, collideWithEverythingRole)
 						assignRole(shot2, damagingRole)
-					}
-				}
-			}*/
-			if (glider.isFiring() && !wasFiring && glider.readyPowerups.length == 0) {
-				laser = laserFactory.createBeam(glider, 1)
-			}
-			if (!glider.isFiring() && wasFiring) {
-				if (laser) {
-					laser.dispose()
-					laser = null
-				}
-			}
-			wasFiring = glider.isFiring()
-
-			if (laser) {
-				let hits = laser.fire()
-				for (let hit of hits) {
-					if ("isDestructible" in hit) {
-						(hit as unknown as Destructible).hit(40 * dt)
 					}
 				}
 			}

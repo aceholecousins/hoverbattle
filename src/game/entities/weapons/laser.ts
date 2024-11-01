@@ -6,8 +6,17 @@ import { Glider, GLIDER_RADIUS } from "../glider/glider";
 import { Visual } from "game/graphics/visual"
 import { Color } from "utils"
 import { Actor } from "game/entities/actor"
+import { Powerup } from "game/entities/powerups/powerup"
 
 const LASER_WIDTH = 1.0;
+const LASER_DURATION = 1.0;
+
+export class LaserPowerup implements Powerup {
+	public readonly kind = "laser"
+	activated = false
+}
+
+type HitCallback = (actor: Actor, dt: number) => void;
 
 export class Speckle extends Visual {
 	constructor(
@@ -57,9 +66,9 @@ export class LaserBeam extends Visual {
 	cast(
 		start: vec2,
 		angle: number,
-		maxDistance: number
-	): Actor[] {
-		let result: Actor[] = []
+		maxDistance: number,
+		onHit: (actor: Actor) => void
+	) {
 		let p1 = start
 		let p2 = vec2.fromValues(
 			p1[0] + Math.cos(angle) * maxDistance,
@@ -71,7 +80,7 @@ export class LaserBeam extends Visual {
 			hit = hits[0]
 			p2 = hit.position
 			this.hitSpeckle.position = vec3.fromValues(p2[0], p2[1], this.z + 0.1)
-			result.push(hit.actor)
+			onHit(hit.actor)
 		}
 		let distance = vec2.distance(p1, p2)
 		this.mesh.position = vec3.fromValues(
@@ -84,12 +93,8 @@ export class LaserBeam extends Visual {
 		if (hit && this.reflection) {
 			let normalAngle = Math.atan2(hit.normal[1], hit.normal[0])
 			let reflectionAngle = angle - 2 * (angle - normalAngle) + Math.PI;
-			result = result.concat(
-				this.reflection.cast(p2, reflectionAngle, maxDistance - distance)
-			)
+			this.reflection.cast(p2, reflectionAngle, maxDistance - distance, onHit)
 		}
-
-		return result
 	}
 
 	dispose() {
@@ -104,10 +109,13 @@ export class LaserBeam extends Visual {
 export class LaserBeamRoot extends LaserBeam {
 
 	private startSpeckle: Speckle
+	countdown = LASER_DURATION
 
 	constructor(
 		public parent: Glider,
 		numReflections: number,
+		public onHit: HitCallback,
+		private onDispose: () => void,
 		beamModel: Model,
 		speckleModel: Model,
 		engine: Engine
@@ -116,15 +124,23 @@ export class LaserBeamRoot extends LaserBeam {
 		this.startSpeckle = new Speckle(speckleModel, engine)
 	}
 
-	fire(): Actor[] {
+	update(dt: number) {
+		this.countdown -= dt
+		if (this.countdown <= 0 || this.parent.isDisposed()) {
+			this.dispose()
+			return
+		}
+
 		let p1 = vec2.clone(this.parent.body.position)
 		p1[0] += Math.cos(this.parent.body.angle) * GLIDER_RADIUS
 		p1[1] += Math.sin(this.parent.body.angle) * GLIDER_RADIUS
 		this.startSpeckle.position = vec3.fromValues(p1[0], p1[1], 0.7)
-		return this.cast(p1, this.parent.body.angle, 1000)
+		this.cast(p1, this.parent.body.angle, 1000,
+			(actor: Actor) => this.onHit(actor, dt))
 	}
 
 	dispose() {
+		this.onDispose()
 		this.startSpeckle.dispose()
 		super.dispose()
 	}
@@ -141,8 +157,21 @@ export async function createLaserFactory(engine: Engine) {
 	)
 
 	return {
-		createBeam: function (parent: Glider, numReflections: number) {
-			return new LaserBeamRoot(parent, numReflections, laserSprite, laserHitSprite, engine)
+		createBeam: function (
+			parent: Glider,
+			numReflections: number,
+			onHit: HitCallback,
+			onDispose: () => void
+		) {
+			return new LaserBeamRoot(
+				parent,
+				numReflections,
+				onHit,
+				onDispose,
+				laserSprite,
+				laserHitSprite,
+				engine
+			)
 		}
 	}
 }

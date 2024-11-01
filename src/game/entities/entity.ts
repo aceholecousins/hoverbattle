@@ -28,6 +28,10 @@ export class Entity implements Actor {
 		this.disposed = true
 	}
 
+	isDisposed() {
+		return this.disposed
+	}
+
 	protected removeIfDisposed() {
 		if (this.disposed) {
 			broker.purge.removeHandler(this.purgeHandler)
