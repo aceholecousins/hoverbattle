@@ -6,7 +6,7 @@ import { Actor } from "game/entities/actor"
 import { createGliderFactory, Glider } from "game/entities/glider/glider"
 import { PowerupKind, createPowerupBoxFactory, PowerupBox } from "game/entities/powerups/powerup"
 import { createPhaserFactory, PhaserShot, PhaserWeapon } from "game/entities/weapons/phaser"
-import { createLaserFactory, LaserBeamRoot, LaserPowerup } from "game/entities/weapons/laser"
+import { createLaserFactory, LaserPowerup } from "game/entities/weapons/laser"
 import { createMissileFactory, MissilePowerup, Missile, MissileLauncher } from "game/entities/weapons/missile"
 import { createMineFactory, MinePowerup, Mine, MineThrower } from "game/entities/weapons/mine"
 import { MatchFactory } from "game/match"
@@ -19,6 +19,8 @@ import { createExplosionFactory } from "game/graphics/explosion/explosion"
 import { GameTimer } from "game/gametimer"
 import { ModelMeshConfig } from "game/graphics/mesh";
 import { broker } from "broker"
+
+let GLIDER_HP = 10
 
 export let createMatch: MatchFactory = async function (engine) {
 
@@ -101,6 +103,9 @@ export let createMatch: MatchFactory = async function (engine) {
 			else if (powerupBox.kind == "laser") {
 				glider.readyPowerups = [new LaserPowerup()]
 			}
+			else if (powerupBox.kind == "repair") {
+				(glider as unknown as Destructible).repair(GLIDER_HP)
+			}
 			powerupBox.dispose()
 		}
 	))
@@ -157,11 +162,11 @@ export let createMatch: MatchFactory = async function (engine) {
 		team++
 	})
 
-	new GameTimer(spawnPowerup, Math.random() * 5 + 3)
+	new GameTimer(spawnPowerup, Math.random() * 2 + 1)
 
 	function spawnPowerup() {
-		if (powerupBoxes.length < 3) {
-			let kinds = ["missile", "mine", "laser"]
+		if (powerupBoxes.length < 5) {
+			let kinds = ["missile", "mine", "laser", "repair"]
 			const powerupKind = kinds[Math.floor(Math.random() * kinds.length)] as PowerupKind;
 			let powerupBox = makeDestructible(
 				createPowerupBox(
@@ -181,7 +186,7 @@ export let createMatch: MatchFactory = async function (engine) {
 			powerupBoxes.push(powerupBox)
 			engine.actionCam.follow(powerupBox.body, 1.5)
 		}
-		new GameTimer(spawnPowerup, Math.random() * 7 + 3)
+		new GameTimer(spawnPowerup, Math.random() * 2 + 1)
 	}
 
 	function spawnGlider(player: Player) {
@@ -190,7 +195,7 @@ export let createMatch: MatchFactory = async function (engine) {
 				player,
 				determineSpawnPoint()
 			),
-			10,
+			GLIDER_HP,
 			() => {
 				glider.dispose()
 

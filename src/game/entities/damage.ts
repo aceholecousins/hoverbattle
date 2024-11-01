@@ -22,6 +22,7 @@ export function makeDamaging<T extends Entity>(
 
 export interface Destructible {
 	hit(damage: number): void
+	repair(restore: number): void
 }
 
 export function makeDestructible<T extends Entity>(
@@ -37,6 +38,9 @@ export function makeDestructible<T extends Entity>(
 			destroyCallback(extendedEntity)
 			hitpoints = initialHitpoints
 		}
+	}
+	extendedEntity.repair = (restore: number) => {
+		hitpoints = Math.min(hitpoints + restore, initialHitpoints)
 	}
 	return extendedEntity
 }
