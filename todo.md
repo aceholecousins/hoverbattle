@@ -4,7 +4,7 @@
 * reset() everything on game end? (alternatively reload the window...)
 * coast looks shit (maybe white foam as part of mountain texture, semi covered by waves?)
 * mines should not be pooped into the wall, they should be sunk and appear after a second and if the glider is still there explode on it
-* the powerup boxes need more pizzazz, they somehow fade into the background. Emissivieness?
+* the powerup boxes need more pizzazz, they somehow fade into the background. Emissiveness?
 * implement standard shields and phaser charge
 * nashwan
 * power shield
