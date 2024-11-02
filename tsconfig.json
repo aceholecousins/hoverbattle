@@ -2,6 +2,7 @@
 	"compilerOptions": {
 		"target": "ES6",
 		"lib": ["DOM", "ScriptHost"],
+		"module": "esnext",
 		"moduleResolution": "node",
 		"outDir": "./dist/",		
 		"noImplicitAny": true,
@@ -15,4 +16,5 @@
 		"src/**/*.ts",
 		"tests/**/*.ts"
 	]
+
 }

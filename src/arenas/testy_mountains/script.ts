@@ -1,26 +1,19 @@
-import { Role, interact, hasRole, assignRole } from "game/entities/actor"
-import { loadArena } from "game/entities/arena/arena"
-import { Damaging, makeDamaging, Destructible, makeDestructible } from "game/entities/damage"
-import { Entity } from "game/entities/entity"
-import { Actor } from "game/entities/actor"
-import { createGliderFactory, Glider } from "game/entities/glider/glider"
-import { PowerupKind, createPowerupBoxFactory, PowerupBox } from "game/entities/powerups/powerup"
-import { createPhaserFactory, PhaserShot, PhaserWeapon } from "game/entities/weapons/phaser"
-import { createLaserFactory, LaserPowerup } from "game/entities/weapons/laser"
-import { createMissileFactory, MissilePowerup, Missile, MissileLauncher } from "game/entities/weapons/missile"
-import { createMineFactory, MinePowerup, Mine, MineThrower } from "game/entities/weapons/mine"
-import { MatchFactory } from "game/match"
-import { CollisionOverride, CollisionHandler } from "game/physics/collision"
-import { Player } from "game/player"
-import { SceneNodeConfig } from "game/graphics/scenenode"
-import { vec2, vec3, quat } from "gl-matrix"
-import { remove } from "utils"
-import { createExplosionFactory } from "game/graphics/explosion/explosion"
-import { GameTimer } from "game/gametimer"
 
 let GLIDER_HP = 10
 
-export let createMatch: MatchFactory = async function (engine) {
+export let createMatch: MatchFactory = async function (imports:any, engine) {
+
+	let {
+		Role, interact, hasRole, assignRole, loadArena, makeDamaging,
+		makeDestructible, Entity, createGliderFactory, Glider, createPowerupBoxFactory,
+		PowerupBox, createPhaserFactory, PhaserShot, PhaserWeapon, createLaserFactory,
+		LaserPowerup, createMissileFactory, MissilePowerup, Missile, MissileLauncher,
+		createMineFactory, MinePowerup, Mine, MineThrower, CollisionOverride,
+		CollisionHandler, Player, SceneNodeConfig, vec2, vec3, quat, remove,
+		createExplosionFactory, GameTimer
+	} = imports
+
+
 
 	let gliders: Glider[] = []
 	let powerupBoxes: PowerupBox[] = []
