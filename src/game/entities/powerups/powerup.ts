@@ -55,12 +55,12 @@ export class PowerupBox extends Entity {
 export async function createPowerupBoxFactory(engine: Engine) {
 
 	let [laser, mine, missile, nashwan, repair, shield] = await Promise.all([
-		engine.graphics.loadModel("game/entities/powerups/laser.glb"),
-		engine.graphics.loadModel("game/entities/powerups/mine.glb"),
-		engine.graphics.loadModel("game/entities/powerups/missile.glb"),
-		engine.graphics.loadModel("game/entities/powerups/nashwan.glb"),
-		engine.graphics.loadModel("game/entities/powerups/repair.glb"),
-		engine.graphics.loadModel("game/entities/powerups/shield.glb")
+		engine.graphics.loadModel("assets/models/lasercrate.glb"),
+		engine.graphics.loadModel("assets/models/minecrate.glb"),
+		engine.graphics.loadModel("assets/models/missilecrate.glb"),
+		engine.graphics.loadModel("assets/models/nashwancrate.glb"),
+		engine.graphics.loadModel("assets/models/repaircrate.glb"),
+		engine.graphics.loadModel("assets/models/powershieldcrate.glb")
 	])
 	let models = { laser, mine, missile, nashwan, repair, shield }
 

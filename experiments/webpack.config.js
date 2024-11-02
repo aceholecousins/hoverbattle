@@ -1,5 +1,4 @@
 const path = require('path');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
@@ -39,5 +38,6 @@ module.exports = {
 	output: {
 		filename: '[name]',
 		path: path.resolve(__dirname, '../dist/experiments'),
+		clean: true,
 	},
 };

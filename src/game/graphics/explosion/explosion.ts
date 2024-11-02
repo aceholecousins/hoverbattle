@@ -285,17 +285,17 @@ export class Flash {
 export async function createExplosionFactory(engine: Engine) {
 
 	let smokeballModel = await engine.graphics.loadModel(
-		"game/graphics/explosion/smokeball.glb")
+		"assets/models/smokeball.glb")
 	let crumbModel = await engine.graphics.loadModel(
-		"game/graphics/explosion/crumb.glb")
+		"assets/models/crumb.glb")
 	let shardModel = await engine.graphics.loadModel(
-		"game/graphics/explosion/shard.glb")
+		"assets/models/shard.glb")
 	let shockwaveModel = await engine.graphics.loadSprite(
-		"game/graphics/explosion/shockwave.png")
+		"assets/sprites/shockwave.png")
 	let plopModel = await engine.graphics.loadSprite(
-		"game/graphics/explosion/plop.tint.png")
+		"assets/sprites/plop.tint.png")
 	let cloudModel = await engine.graphics.loadSprite(
-		"game/graphics/explosion/smoke.png")
+		"assets/sprites/smoke.png")
 
 	// light sources are very expensive, especially creating them dynamically,
 	// so we create a pool of them and reuse them

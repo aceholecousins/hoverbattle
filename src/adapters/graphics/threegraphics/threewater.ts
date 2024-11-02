@@ -51,7 +51,7 @@ export class ThreeWater implements Water {
 		});
 
 		let textureLoader = new THREE.TextureLoader();
-		let texture = textureLoader.load('adapters/graphics/threegraphics/ripple.png');
+		let texture = textureLoader.load('assets/sprites/ripple.png');
 		this.plusMaterial = new THREE.MeshBasicMaterial({
 			map: texture,
 			blending: THREE.CustomBlending,

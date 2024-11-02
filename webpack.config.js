@@ -1,6 +1,5 @@
 const path = require('path');
 const webpack = require('webpack');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = (env, argv) => {
@@ -27,11 +26,12 @@ module.exports = (env, argv) => {
 			extensions: ['.tsx', '.ts', '.js'],
 		},
 		plugins: [
-			new CleanWebpackPlugin(),
 			new CopyPlugin({
 				patterns: [
+					{ from: 'src/index.html', to: 'index.html' },
+					{ from: 'assets/**/*' },
 					{
-						from: '**/*.(png|jpg|jpeg|gif|svg|html|css|gltf|glb|ico|js|ogg)',
+						from: 'arenas/**/*.(png|jpg|jpeg|gif|svg|html|css|gltf|glb|ico)',
 						context: 'src/'
 					}
 				],
@@ -40,6 +40,7 @@ module.exports = (env, argv) => {
 		output: {
 			filename: '[name].js',
 			path: path.resolve(__dirname, 'dist'),
+			clean: true,
 		},
 		optimization: {
 			splitChunks: {

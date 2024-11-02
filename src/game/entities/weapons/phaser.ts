@@ -106,10 +106,10 @@ export type PhaserFactory = {
 export async function createPhaserFactory(engine: Engine): Promise<PhaserFactory> {
 
 	let phaserSprite = await engine.graphics.loadSprite(
-		"game/entities/weapons/phaser.tint.png"
+		"assets/sprites/phaser.tint.png"
 	)
 
-	const phaserSound = await engine.loadSound("game/entities/weapons/phaser.ogg")
+	const phaserSound = await engine.loadSound("assets/sounds/phaser.ogg")
 
 	return {
 		createShot: function (parent: Glider, position: vec2) {

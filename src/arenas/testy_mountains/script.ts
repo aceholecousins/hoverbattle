@@ -17,8 +17,6 @@ import { vec2, vec3, quat } from "gl-matrix"
 import { remove } from "utils"
 import { createExplosionFactory } from "game/graphics/explosion/explosion"
 import { GameTimer } from "game/gametimer"
-import { ModelMeshConfig } from "game/graphics/mesh";
-import { broker } from "broker"
 
 let GLIDER_HP = 10
 

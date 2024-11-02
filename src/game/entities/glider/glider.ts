@@ -107,7 +107,7 @@ export class Glider extends Entity {
 export async function createGliderFactory(engine: Engine) {
 
 	let { model, meta } = await engine.graphics.loadModel(
-		"game/entities/glider/glider7.glb")
+		"assets/models/glider7.glb")
 
 	return function (player: Player, position: vec2) {
 		return new Glider(

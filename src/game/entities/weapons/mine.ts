@@ -119,7 +119,7 @@ export type MineFactory = Awaited<ReturnType<typeof createMineFactory>>
 
 export async function createMineFactory(engine: Engine) {
 	let { model, meta } = await engine.graphics.loadModel(
-		"game/entities/weapons/seamine.glb")
+		"assets/models/seamine.glb")
 
 	return function (parent: Glider, position: vec2): Mine {
 		return new Mine(parent, position, model, engine);

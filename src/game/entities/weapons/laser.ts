@@ -150,10 +150,10 @@ export class LaserBeamRoot extends LaserBeam {
 export async function createLaserFactory(engine: Engine) {
 
 	let laserSprite = await engine.graphics.loadSprite(
-		"game/entities/weapons/laser.tint.png"
+		"assets/sprites/laser.tint.png"
 	)
 	let laserHitSprite = await engine.graphics.loadSprite(
-		"game/entities/weapons/phaser_impact.png"
+		"assets/sprites/phaser_impact.png"
 	)
 
 	return {

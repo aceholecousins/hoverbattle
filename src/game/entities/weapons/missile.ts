@@ -150,7 +150,7 @@ export type MissileFactory = Awaited<ReturnType<typeof createMissileFactory>>
 export async function createMissileFactory(engine: Engine) {
 
 	let { model, meta } = await engine.graphics.loadModel(
-		"game/entities/weapons/missile.glb")
+		"assets/models/missile.glb")
 
 	return function (parent: Glider, position:vec2, possibleTargets: Entity[]): Missile {
 		return new Missile(parent, position, possibleTargets, model, engine)
