@@ -25,7 +25,6 @@ module.exports = {
 		extensions: ['.tsx', '.ts', '.js'],
 	},
 	plugins: [
-		new CleanWebpackPlugin(),
 		new CopyPlugin({
 			patterns: [
 				{
