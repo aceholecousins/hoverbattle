@@ -1,6 +1,6 @@
 
 import { RigidBodyConfig, RigidBody } from "game/physics/rigidbody"
-import { Physics, RayHit } from "game/physics/physics"
+import { Physics, RayHit, Attachment } from "game/physics/physics"
 import { P2RigidBody } from "./p2rigidbody"
 import * as p2 from "p2"
 import { ExtendedP2World, ExtendedP2Body, collisionDispatcher } from "./p2extensions"
@@ -28,7 +28,21 @@ export class P2Physics implements Physics {
 		return body
 	}
 
-	rayCast(from: vec2, to: vec2, skipBackfaces:boolean): RayHit[] {
+	attach(bodyA: RigidBody, bodyB: RigidBody): Attachment {
+		let constraint = new p2.LockConstraint(
+			(bodyA as P2RigidBody).p2body,
+			(bodyB as P2RigidBody).p2body,
+			{ collideConnected: false }
+		)
+		this.p2world.addConstraint(constraint)
+		return {
+			detach: () => {
+				this.p2world.removeConstraint(constraint)
+			}
+		}
+	}
+
+	rayCast(from: vec2, to: vec2, skipBackfaces: boolean): RayHit[] {
 		let hits: RayHit[] = []
 		var ray = new p2.Ray({
 			mode: p2.Ray.ALL,

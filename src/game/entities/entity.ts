@@ -8,8 +8,8 @@ export class Entity implements Actor {
 	roles: RoleSet
 	body: RigidBody
 	mesh: Mesh
-	onDispose = () => { }
 
+	private disposeCallbacks: (() => void)[] = []
 	private disposed = false
 
 	private updateHandler = (e: any) => this.update(e.dt)
@@ -23,8 +23,14 @@ export class Entity implements Actor {
 
 	protected update(dt: number) { }
 
+	onDispose(callback: () => void) {
+		this.disposeCallbacks.push(callback)
+	}
+
 	dispose() {
-		this.onDispose()
+		for (let cb of this.disposeCallbacks) {
+			cb()
+		}
 		this.disposed = true
 	}
 

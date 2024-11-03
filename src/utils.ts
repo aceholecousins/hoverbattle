@@ -55,3 +55,18 @@ export function remove<T>(a: Array<T>, b: T) {
 		a.splice(index, 1);
 	}
 }
+
+export type AwaitedFields<T> = {
+	[K in keyof T]: T[K] extends Promise<infer U> ? U : never;
+};
+
+// await all fields of an object
+export async function promiseAllFields<T extends Record<string, Promise<any>>>(obj: T): Promise<AwaitedFields<T>> {
+	const keys = Object.keys(obj) as Array<keyof T>;
+	const values = await Promise.all(keys.map(key => obj[key]));
+	const result = {} as AwaitedFields<T>;
+	keys.forEach((key, index) => {
+		(result[key] as any) = values[index];
+	});
+	return result;
+}

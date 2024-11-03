@@ -7,7 +7,7 @@
 * the powerup boxes need more pizzazz, they somehow fade into the background. Emissiveness?
 * implement standard shields and phaser charge
 * nashwan
-* power shield
+* things should not spawn into each other, have more spawning points or maybe spawning areas and also check if a spawn place is free
 
 for Dani:
 

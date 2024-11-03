@@ -8,7 +8,7 @@ import { Entity } from "game/entities/entity"
 
 const POWERUP_BOX_SIZE = 1.8
 
-export type PowerupKind = "laser" | "mine" | "missile" | "nashwan" | "repair" | "shield"
+export type PowerupKind = "laser" | "mine" | "missile" | "nashwan" | "repair" | "powershield"
 
 export interface Powerup {
 	readonly kind: string
@@ -54,7 +54,7 @@ export class PowerupBox extends Entity {
 
 export async function createPowerupBoxFactory(engine: Engine) {
 
-	let [laser, mine, missile, nashwan, repair, shield] = await Promise.all([
+	let [laser, mine, missile, nashwan, repair, powershield] = await Promise.all([
 		engine.graphics.loadModel("assets/models/lasercrate.glb"),
 		engine.graphics.loadModel("assets/models/minecrate.glb"),
 		engine.graphics.loadModel("assets/models/missilecrate.glb"),
@@ -62,7 +62,7 @@ export async function createPowerupBoxFactory(engine: Engine) {
 		engine.graphics.loadModel("assets/models/repaircrate.glb"),
 		engine.graphics.loadModel("assets/models/powershieldcrate.glb")
 	])
-	let models = { laser, mine, missile, nashwan, repair, shield }
+	let models = { laser, mine, missile, nashwan, repair, powershield }
 
 	return function (kind: PowerupKind, position: vec2) {
 		return new PowerupBox(

@@ -14,15 +14,19 @@ export async function loadArena(
 
 	let arena = new Entity()
 
+	let shapes: TriangleConfig[] = []
+
 	for (let tri of (meta.collision as Triangle3[])) {
-		engine.physics.addRigidBody(
-			new RigidBodyConfig({
-				actor: arena,
-				mass: Infinity,
-				shapes: [new TriangleConfig({ corners: triangle3to2(tri) })]
-			})
-		)
+		shapes.push(new TriangleConfig({ corners: triangle3to2(tri) }))
 	}
+
+	arena.body = engine.physics.addRigidBody(
+		new RigidBodyConfig({
+			actor: arena,
+			mass: Infinity,
+			shapes
+		})
+	)
 
 	engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
 

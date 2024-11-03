@@ -10,8 +10,13 @@ export interface RayHit {
 	normal: vec2
 }
 
+export interface Attachment{
+	detach(): void
+}
+
 export interface Physics {
 	addRigidBody(body: RigidBodyConfig): RigidBody
+	attach(bodyA: RigidBody, bodyB: RigidBody): Attachment
 	registerCollisionOverride(override: CollisionOverride<any, any>): void
 	registerCollisionHandler(handler: CollisionHandler<any, any>): void
 	rayCast(from: vec2, to: vec2, skipBackfaces: boolean): RayHit[]
