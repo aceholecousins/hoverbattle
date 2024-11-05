@@ -46,7 +46,7 @@ export class PowerShield extends Entity {
 		})
 		this.body = engine.physics.addRigidBody(bodyCfg)
 		this.body.position = this.parent.body.position
-		this.attachment = engine.physics.attach(this.parent.body, this.body)
+		this.attachment = engine.physics.attach(this.parent.body, this.body, false, 1e6)
 		this.parent.onDispose(() => this.dispose())
 		this.update(0)
 	}

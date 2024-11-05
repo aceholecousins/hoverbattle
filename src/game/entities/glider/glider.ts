@@ -9,7 +9,11 @@ import { wrapAngle } from "utilities/math_utils"
 import { Entity } from "../entity"
 import { Powerup } from "game/entities/powerups/powerup"
 
-export const GLIDER_RADIUS = 1;
+export const GLIDER_RADIUS = 1
+export const GLIDER_THRUST = 20
+export const GLIDER_TURN_RATE = 20
+export const GLIDER_DAMPING = 0.7
+export const GLIDER_ANGULAR_DAMPING = 0.99
 
 export class Glider extends Entity {
 	public readyPowerups: Powerup[] = []
@@ -17,6 +21,9 @@ export class Glider extends Entity {
 	public onPressTrigger = () => { }
 	public onReleaseTrigger = () => { }
 	public onUpdate = (dt: number) => { }
+
+	public maxThrust = GLIDER_THRUST
+	public maxTurnRate = GLIDER_TURN_RATE
 
 	private engine: Engine
 	private holdsTrigger: boolean = false
@@ -34,8 +41,8 @@ export class Glider extends Entity {
 		this.body = engine.physics.addRigidBody(new RigidBodyConfig({
 			actor: this,
 			shapes: [new CircleConfig({ radius: 1 })],
-			damping: 0.7,
-			angularDamping: 0.99
+			damping: GLIDER_DAMPING,
+			angularDamping: GLIDER_ANGULAR_DAMPING
 		}))
 		this.body.position = position
 		this.mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
@@ -44,12 +51,12 @@ export class Glider extends Entity {
 	}
 
 	update(dt: number) {
-		let thrust = this.player.controller.getThrust() * 20;
+		let thrust = this.player.controller.getThrust() * this.maxThrust;
 		this.body.applyLocalForce(vec2.fromValues(thrust, 0))
 
 		const turnRate = this.player.controller.getTurnRate()
 		if (turnRate != undefined) {
-			this.body.applyTorque(turnRate * 20)
+			this.body.applyTorque(turnRate * this.maxTurnRate)
 		}
 		const direction = this.player.controller.getAbsoluteDirection()
 		if (direction != undefined) {

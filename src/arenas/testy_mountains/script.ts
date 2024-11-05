@@ -3,13 +3,21 @@ import { loadArena } from "game/entities/arena/arena"
 import { Damaging, makeDamaging, Destructible, makeDestructible } from "game/entities/damage"
 import { Entity } from "game/entities/entity"
 import { Actor } from "game/entities/actor"
-import { createGliderFactory, Glider } from "game/entities/glider/glider"
+import {
+	createGliderFactory,
+	Glider,
+	GLIDER_THRUST,
+	GLIDER_TURN_RATE,
+	GLIDER_DAMPING,
+	GLIDER_ANGULAR_DAMPING
+} from "game/entities/glider/glider"
 import { PowerupKind, createPowerupBoxFactory, PowerupBox } from "game/entities/powerups/powerup"
 import { createPhaserFactory, PhaserShot, PhaserWeapon } from "game/entities/weapons/phaser"
 import { createLaserFactory, LaserPowerup } from "game/entities/weapons/laser"
 import { createMissileFactory, MissilePowerup, Missile, MissileLauncher } from "game/entities/weapons/missile"
 import { createMineFactory, MinePowerup, Mine, MineThrower } from "game/entities/weapons/mine"
-import { createPowerShieldFactory, PowerShield } from "game/entities/weapons/powershield"
+import { createPowerShieldFactory, PowerShield, PowerShieldPowerup } from "game/entities/weapons/powershield"
+import { createNashwanFactory, NashwanPowerup, Projectile } from "game/entities/weapons/nashwan"
 import { MatchFactory } from "game/match"
 import { CollisionOverride, CollisionHandler } from "game/physics/collision"
 import { Player } from "game/player"
@@ -28,7 +36,7 @@ export let createMatch: MatchFactory = async function (engine) {
 
 	let collideWithEverythingRole = new Role<Entity>()
 	let gliderRole = new Role<Glider>()
-	let phaserRole = new Role<PhaserShot>()
+	let projectileRole = new Role<PhaserShot | Projectile>()
 	let powerShieldRole = new Role<PowerShield>()
 	let powerupBoxRole = new Role<PowerupBox>()
 	let missileRole = new Role<Missile>()
@@ -38,10 +46,10 @@ export let createMatch: MatchFactory = async function (engine) {
 	interact(collideWithEverythingRole, collideWithEverythingRole)
 
 	engine.physics.registerCollisionOverride(new CollisionOverride(
-		gliderRole, phaserRole, function (
-			glider: Glider, phaserShot: PhaserShot
+		gliderRole, projectileRole, function (
+			glider: Glider, projectile: PhaserShot | Projectile
 		) {
-		return glider != phaserShot.parent
+		return glider != projectile.parent
 	}
 	))
 
@@ -54,7 +62,7 @@ export let createMatch: MatchFactory = async function (engine) {
 	))
 
 	engine.physics.registerCollisionOverride(new CollisionOverride(
-		phaserRole, powerShieldRole, function (
+		projectileRole, powerShieldRole, function (
 			phaserShot: PhaserShot, powerShield: PowerShield
 		) {
 		return phaserShot.parent != powerShield.parent
@@ -77,7 +85,7 @@ export let createMatch: MatchFactory = async function (engine) {
 	))
 
 	engine.physics.registerCollisionHandler(new CollisionHandler(
-		phaserRole, collideWithEverythingRole, (shot: PhaserShot, other: Entity) => {
+		projectileRole, collideWithEverythingRole, (shot: PhaserShot, other: Entity) => {
 			shot.dispose()
 		}
 	))
@@ -100,10 +108,18 @@ export let createMatch: MatchFactory = async function (engine) {
 			else if (powerupBox.kind == "laser") {
 				glider.readyPowerups = [new LaserPowerup()]
 			}
+			else if (powerupBox.kind == "nashwan") {
+				glider.activatedPowerups = [new NashwanPowerup()]
+				glider.maxThrust = GLIDER_THRUST * 4
+				glider.maxTurnRate = GLIDER_TURN_RATE * 1.5
+				glider.body.damping = 1 - (1 - GLIDER_DAMPING) / 6
+				glider.body.angularDamping = 1 - (1 - GLIDER_ANGULAR_DAMPING) / 4
+			}
 			else if (powerupBox.kind == "repair") {
 				(glider as unknown as Destructible).repair(GLIDER_HP)
 			}
 			else if (powerupBox.kind == "powershield") {
+				glider.activatedPowerups = [new PowerShieldPowerup()]
 				let powerShield1 = powerShieldFactory(glider);
 				let powerShield2 = makeDamaging(powerShield1, 8, () => { })
 				let powerShield3 = makeDestructible(powerShield2, Infinity, () => { })
@@ -129,6 +145,7 @@ export let createMatch: MatchFactory = async function (engine) {
 		missileFactory,
 		mineFactory,
 		powerShieldFactory,
+		nashwanFactory,
 		createExplosion
 	] = await Promise.all([
 		loadArena("arenas/testy_mountains/mountains.glb", engine),
@@ -140,6 +157,7 @@ export let createMatch: MatchFactory = async function (engine) {
 		createMissileFactory(engine),
 		createMineFactory(engine),
 		createPowerShieldFactory(engine),
+		createNashwanFactory(engine),
 		createExplosionFactory(engine)
 	]);
 
@@ -175,7 +193,7 @@ export let createMatch: MatchFactory = async function (engine) {
 
 	function spawnPowerup() {
 		if (powerupBoxes.length < 5) {
-			let kinds = ["missile", "mine", "laser", "repair", "powershield"]
+			let kinds = ["mine", "missile", "laser", "nashwan", "powershield", "repair"]
 			const powerupKind = kinds[Math.floor(Math.random() * kinds.length)] as PowerupKind;
 			let powerupBox = makeDestructible(
 				createPowerupBox(
@@ -227,6 +245,17 @@ export let createMatch: MatchFactory = async function (engine) {
 				}, 2)
 			}
 		)
+
+		let projectileModifier = (projectile: Projectile) => {
+			assignRole(projectile, collideWithEverythingRole)
+			assignRole(projectile, projectileRole)
+			let projectile2 = makeDamaging(projectile, 1, () => { projectile.dispose() })
+			assignRole(projectile2, damagingRole)
+		}
+		let barrels = nashwanFactory(glider, projectileModifier)
+		for (let barrel of Object.values(barrels)) {
+			assignRole(barrel, collideWithEverythingRole)
+		}
 
 		glider.onDispose(() => {
 			engine.actionCam.unfollow(glider.body)
@@ -327,7 +356,7 @@ export let createMatch: MatchFactory = async function (engine) {
 				if (phaserShots) {
 					for (let shot1 of phaserShots) {
 						let shot2 = makeDamaging(shot1, 1, () => { shot1.dispose() })
-						assignRole(shot2, phaserRole)
+						assignRole(shot2, projectileRole)
 						assignRole(shot2, collideWithEverythingRole)
 						assignRole(shot2, damagingRole)
 					}

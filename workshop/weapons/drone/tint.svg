@@ -1,0 +1,1295 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="1024"
+   height="512"
+   viewBox="0 0 1024 512"
+   version="1.1"
+   id="svg244"
+   sodipodi:docname="ting.svg"
+   inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
+   inkscape:export-filename="/home/mirko/development/hoverbattle/workshop/weapons/drone/tint.png"
+   inkscape:export-xdpi="24"
+   inkscape:export-ydpi="24"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs248">
+    <mask
+       maskUnits="userSpaceOnUse"
+       id="mask1343">
+      <image
+         width="1024"
+         height="512"
+         preserveAspectRatio="none"
+         xlink:href="data:image/png;base64,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
+TkSuQmCC
+"
+         id="image1345"
+         x="0"
+         y="0"
+         style="stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none" />
+    </mask>
+  </defs>
+  <sodipodi:namedview
+     id="namedview246"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     showgrid="false"
+     inkscape:snap-page="true"
+     inkscape:zoom="0.74293073"
+     inkscape:cx="496.68157"
+     inkscape:cy="442.16774"
+     inkscape:window-width="1920"
+     inkscape:window-height="1109"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg244" />
+  <desc
+     id="desc2">drone.blend, (Blender 4.2.3 LTS)</desc>
+  <rect
+     style="fill:#000000;stroke:none;stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;paint-order:fill markers stroke"
+     id="rect1369"
+     width="1024"
+     height="512"
+     x="0"
+     y="0" />
+  <g
+     id="g1341"
+     mask="url(#mask1343)">
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="580.485,252.995 628.243,219.863 564.917,194.931 "
+       id="polygon4"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="682.201,184.390 628.243,219.863 688.522,252.995 "
+       id="polygon6"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="580.485,252.995 564.917,194.931 516.104,252.995 "
+       id="polygon8"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="580.485,252.995 516.104,252.995 564.917,311.060 "
+       id="polygon10"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="580.485,252.995 564.917,311.060 628.243,286.128 "
+       id="polygon12"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="752.052,202.583 749.042,192.781 682.201,184.390 688.522,252.995 750.595,210.249 "
+       id="polygon14"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="600.147,53.560 588.897,61.808 552.540,126.995 621.145,149.094 607.161,68.419 "
+       id="polygon16"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="451.372,223.324 488.650,173.949 443.384,160.994 449.719,200.013 "
+       id="polygon18"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="490.794,424.180 499.335,428.145 552.540,378.996 488.650,332.042 486.457,418.477 "
+       id="polygon20"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="703.669,386.502 682.201,321.601 621.145,356.897 688.988,397.098 696.558,394.346 "
+       id="polygon22"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="703.669,119.489 682.201,184.390 749.042,192.781 "
+       id="polygon24"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="499.334,77.846 552.540,126.995 588.897,61.808 "
+       id="polygon26"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="552.540,378.996 499.335,428.145 588.897,444.183 "
+       id="polygon28"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="749.042,313.210 682.201,321.601 703.669,386.502 "
+       id="polygon30"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="198.210,139.832 152.709,195.652 222.362,202.958 "
+       id="polygon32"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="343.227,175.807 271.288,149.163 289.136,221.773 "
+       id="polygon34"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="289.091,294.255 343.198,340.189 366.504,257.384 "
+       id="polygon36"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="198.205,376.173 271.271,366.837 222.352,313.055 "
+       id="polygon38"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="120.144,258.005 152.707,320.357 184.524,258.006 "
+       id="polygon40"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="184.524,258.006 222.352,313.055 241.493,258.009 "
+       id="polygon42"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="184.524,258.006 152.707,320.357 222.352,313.055 "
+       id="polygon44"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="152.707,320.357 198.205,376.173 222.352,313.055 "
+       id="polygon46"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="222.352,313.055 289.091,294.255 241.493,258.009 "
+       id="polygon48"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="222.352,313.055 271.271,366.837 289.091,294.255 "
+       id="polygon50"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="271.271,366.837 343.198,340.189 289.091,294.255 "
+       id="polygon52"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="289.091,294.255 289.136,221.773 241.493,258.009 "
+       id="polygon54"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="366.504,257.384 289.136,221.773 289.091,294.255 "
+       id="polygon56"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="289.136,221.773 366.504,257.384 343.227,175.807 "
+       id="polygon58"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="289.136,221.773 222.362,202.958 241.493,258.009 "
+       id="polygon60"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="289.136,221.773 271.288,149.163 222.362,202.958 "
+       id="polygon62"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="271.288,149.163 198.210,139.832 222.362,202.958 "
+       id="polygon64"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="222.362,202.958 184.524,258.006 241.493,258.009 "
+       id="polygon66"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="222.362,202.958 152.709,195.652 184.524,258.006 "
+       id="polygon68"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="152.709,195.652 120.144,258.005 184.524,258.006 "
+       id="polygon70"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="69.828,311.967 75.118,318.120 152.707,320.357 120.144,258.005 67.454,301.565 "
+       id="polygon72"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="122.881,393.385 152.707,320.357 75.118,318.120 "
+       id="polygon74"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="133.286,409.160 198.205,376.173 152.707,320.357 122.881,393.385 125.418,401.401 "
+       id="polygon76"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="240.676,446.303 271.271,366.837 198.205,376.173 219.051,449.419 231.799,461.955 "
+       id="polygon78"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="271.271,366.837 240.676,446.303 331.606,422.299 "
+       id="polygon80"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="343.792,416.185 343.198,340.189 271.271,366.837 331.606,422.299 337.564,421.163 "
+       id="polygon82"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="366.504,257.384 343.198,340.189 380.526,346.591 368.866,301.937 "
+       id="polygon84"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="343.227,175.807 366.504,257.384 369.034,214.088 380.606,169.356 "
+       id="polygon86"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="343.799,99.767 337.572,94.802 331.618,93.675 271.288,149.163 343.227,175.807 "
+       id="polygon88"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="240.676,69.689 271.288,149.163 331.618,93.675 "
+       id="polygon90"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="231.799,54.039 219.051,66.577 198.210,139.832 271.288,149.163 240.676,69.689 "
+       id="polygon92"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="125.417,114.605 122.881,122.620 152.709,195.652 198.210,139.832 133.284,106.845 "
+       id="polygon94"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="75.118,197.888 152.709,195.652 122.881,122.620 "
+       id="polygon96"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="69.827,204.041 67.454,214.443 120.144,258.005 152.709,195.652 75.118,197.888 "
+       id="polygon98"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="198.205,376.173 133.286,409.160 219.051,449.419 "
+       id="polygon100"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="621.145,356.897 607.161,437.572 688.988,397.098 "
+       id="polygon102"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="607.161,437.572 621.145,356.897 552.540,378.996 588.897,444.183 600.147,452.431 "
+       id="polygon104"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="343.792,416.185 395.050,377.235 380.526,346.591 343.198,340.189 "
+       id="polygon106"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="486.457,418.477 488.650,332.042 443.384,344.997 444.618,354.074 433.377,384.768 "
+       id="polygon108"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="488.650,332.042 451.372,282.667 449.718,305.977 443.384,344.997 "
+       id="polygon110"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="343.799,99.767 343.227,175.807 380.606,169.356 395.110,138.689 "
+       id="polygon112"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="443.384,160.994 488.650,173.949 486.457,87.513 433.377,121.223 444.618,151.917 "
+       id="polygon114"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="490.794,81.811 486.457,87.513 488.650,173.949 552.540,126.995 499.334,77.846 "
+       id="polygon116"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="133.284,106.845 198.210,139.832 219.051,66.577 "
+       id="polygon118"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="607.161,68.419 621.145,149.094 688.988,108.893 "
+       id="polygon120"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="696.558,111.645 688.988,108.893 621.145,149.094 682.201,184.390 703.669,119.489 "
+       id="polygon122"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="67.454,301.565 120.144,258.005 67.454,214.443 "
+       id="polygon124"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="750.595,210.249 688.522,252.995 750.595,295.742 "
+       id="polygon126"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="752.052,303.408 750.595,295.742 688.522,252.995 682.201,321.601 749.042,313.210 "
+       id="polygon128"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="628.243,286.128 621.145,356.897 682.201,321.601 "
+       id="polygon130"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="628.243,286.128 564.917,311.060 621.145,356.897 "
+       id="polygon132"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="564.917,311.060 552.540,378.996 621.145,356.897 "
+       id="polygon134"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="564.917,311.060 488.650,332.042 552.540,378.996 "
+       id="polygon136"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="564.917,311.060 516.104,252.995 488.650,332.042 "
+       id="polygon138"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="488.650,332.042 516.104,252.995 450.650,252.995 451.372,282.667 "
+       id="polygon140"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="516.104,252.995 488.650,173.949 451.372,223.324 450.650,252.995 "
+       id="polygon142"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="516.104,252.995 564.917,194.931 488.650,173.949 "
+       id="polygon144"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="564.917,194.931 552.540,126.995 488.650,173.949 "
+       id="polygon146"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="688.522,252.995 628.243,286.128 682.201,321.601 "
+       id="polygon148"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="688.522,252.995 628.243,219.863 628.243,286.128 "
+       id="polygon150"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="628.243,219.863 580.485,252.995 628.243,286.128 "
+       id="polygon152"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="564.917,194.931 621.145,149.094 552.540,126.995 "
+       id="polygon154"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="564.917,194.931 628.243,219.863 621.145,149.094 "
+       id="polygon156"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="628.243,219.863 682.201,184.390 621.145,149.094 "
+       id="polygon158"
+       style="fill:#ff0000;stroke:#ff0000;stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="802.691,315.130 803.407,310.402 791.734,307.737 747.586,399.383 756.946,406.850 760.198,403.342 "
+       id="polygon160"
+       style="stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;fill:#0000ff;stroke:#0000ff" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="60.250,400.354 64.761,404.735 74.121,397.268 29.973,305.622 18.299,308.287 18.913,314.543 "
+       id="polygon162"
+       style="stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;fill:#0000ff;stroke:#0000ff" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="679.194,471.589 753.677,412.221 756.946,406.850 747.586,399.383 668.038,462.788 673.230,473.578 "
+       id="polygon164"
+       style="stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;fill:#0000ff;stroke:#0000ff" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="144.024,469.713 148.476,471.463 153.668,460.673 74.121,397.268 64.761,404.735 67.459,408.684 "
+       id="polygon166"
+       style="stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;fill:#0000ff;stroke:#0000ff" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="573.620,497.718 669.085,475.965 673.230,473.578 668.038,462.788 568.855,485.388 568.850,497.362 "
+       id="polygon168"
+       style="stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;fill:#0000ff;stroke:#0000ff" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="246.620,496.043 252.856,495.247 252.851,483.273 153.668,460.673 148.476,471.463 153.752,474.883 "
+       id="polygon170"
+       style="stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;fill:#0000ff;stroke:#0000ff" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="562.613,498.153 568.850,497.362 568.855,485.388 502.517,470.213 499.092,483.622 "
+       id="polygon172"
+       style="stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;fill:#0000ff;stroke:#0000ff" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="908.413,42.195 872.294,62.279 928.761,118.992 "
+       id="polygon174"
+       style="stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;fill:#00ff00;stroke:#00ff00" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="872.294,62.279 852.053,98.310 928.761,118.992 "
+       id="polygon176"
+       style="stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;fill:#00ff00;stroke:#00ff00" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="319.190,468.098 252.851,483.273 252.856,495.247 257.627,495.599 322.428,480.775 "
+       id="polygon178"
+       style="stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;fill:#0000ff;stroke:#0000ff" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="852.053,139.391 872.530,174.978 928.761,118.992 "
+       id="polygon180"
+       style="stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;fill:#00ff00;stroke:#00ff00" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="502.517,43.535 568.855,28.360 568.850,16.386 562.613,15.595 499.092,30.126 "
+       id="polygon182"
+       style="stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;fill:#0000ff;stroke:#0000ff" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="322.428,28.743 257.627,13.919 252.857,14.272 252.852,26.245 319.190,41.421 "
+       id="polygon184"
+       style="stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;fill:#0000ff;stroke:#0000ff" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="908.028,195.610 949.108,195.789 928.761,118.992 "
+       id="polygon186"
+       style="stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;fill:#00ff00;stroke:#00ff00" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="573.620,16.030 568.850,16.386 568.855,28.360 668.038,50.960 673.230,40.170 669.085,37.783 "
+       id="polygon188"
+       style="stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;fill:#0000ff;stroke:#0000ff" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="153.752,34.635 148.476,38.055 153.668,48.845 252.852,26.245 252.857,14.272 246.620,13.475 "
+       id="polygon190"
+       style="stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;fill:#0000ff;stroke:#0000ff" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="753.677,101.528 679.195,42.159 673.230,40.170 668.038,50.960 747.586,114.365 756.946,106.898 "
+       id="polygon192"
+       style="stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;fill:#0000ff;stroke:#0000ff" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="64.761,104.783 74.121,112.250 153.668,48.845 148.476,38.055 144.024,39.805 67.459,100.833 "
+       id="polygon194"
+       style="stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;fill:#0000ff;stroke:#0000ff" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="802.691,198.618 760.198,110.406 756.946,106.898 747.586,114.365 791.734,206.011 803.407,203.346 "
+       id="polygon196"
+       style="stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;fill:#0000ff;stroke:#0000ff" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="60.250,109.163 18.913,194.975 18.299,201.231 29.973,203.896 74.121,112.250 64.761,104.783 "
+       id="polygon198"
+       style="stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;fill:#0000ff;stroke:#0000ff" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="805.570,209.251 803.407,203.346 791.734,206.011 791.734,307.737 803.407,310.402 805.570,304.497 "
+       id="polygon200"
+       style="stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;fill:#0000ff;stroke:#0000ff" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="16.892,303.714 18.299,308.287 29.973,305.622 29.973,203.896 18.299,201.231 16.892,205.804 "
+       id="polygon202"
+       style="stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;fill:#0000ff;stroke:#0000ff" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="916.281,367.832 909.700,407.346 920.484,411.272 928.584,392.060 931.390,367.832 "
+       id="polygon204"
+       style="stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;fill:#0000ff;stroke:#0000ff" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="909.700,407.346 889.340,441.846 897.388,448.865 900.609,445.837 920.484,411.272 "
+       id="polygon206"
+       style="stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;fill:#0000ff;stroke:#0000ff" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="870.993,471.167 897.388,448.865 889.340,441.846 858.403,467.605 "
+       id="polygon208"
+       style="stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;fill:#0000ff;stroke:#0000ff" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="852.053,98.310 852.053,139.391 928.761,118.992 "
+       id="polygon210"
+       style="stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;fill:#00ff00;stroke:#00ff00" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="926.089,266.590 956.398,293.085 966.529,284.290 939.493,263.143 "
+       id="polygon212"
+       style="stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;fill:#0000ff;stroke:#0000ff" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="949.494,42.374 908.413,42.195 928.761,118.992 "
+       id="polygon214"
+       style="stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;fill:#00ff00;stroke:#00ff00" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="956.398,293.085 975.975,328.034 986.651,324.419 966.529,284.290 "
+       id="polygon216"
+       style="stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;fill:#0000ff;stroke:#0000ff" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="986.651,324.419 975.975,328.034 981.664,367.687 998.146,368.481 "
+       id="polygon218"
+       style="stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;fill:#0000ff;stroke:#0000ff" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="998.146,368.481 981.664,367.687 975.975,407.341 986.651,410.956 "
+       id="polygon220"
+       style="stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;fill:#0000ff;stroke:#0000ff" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="984.991,63.006 949.494,42.374 928.761,118.992 "
+       id="polygon222"
+       style="stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;fill:#00ff00;stroke:#00ff00" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="975.975,407.341 956.398,442.290 966.529,451.085 986.651,410.956 "
+       id="polygon224"
+       style="stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;fill:#0000ff;stroke:#0000ff" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="966.529,451.085 956.398,442.290 926.089,468.785 939.493,472.232 "
+       id="polygon226"
+       style="stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;fill:#0000ff;stroke:#0000ff" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="872.530,174.978 908.028,195.610 928.761,118.992 "
+       id="polygon228"
+       style="stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;fill:#00ff00;stroke:#00ff00" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="949.108,195.789 985.227,175.705 928.761,118.992 "
+       id="polygon230"
+       style="stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;fill:#00ff00;stroke:#00ff00" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="858.403,268.058 889.340,293.817 897.388,286.799 870.993,264.496 "
+       id="polygon232"
+       style="stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;fill:#0000ff;stroke:#0000ff" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="1005.468,139.674 1005.468,98.593 928.761,118.992 "
+       id="polygon234"
+       style="stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;fill:#00ff00;stroke:#00ff00" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="985.227,175.705 1005.468,139.674 928.761,118.992 "
+       id="polygon236"
+       style="stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;fill:#00ff00;stroke:#00ff00" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="897.388,286.799 889.340,293.817 909.700,328.317 920.484,324.391 900.609,289.827 "
+       id="polygon238"
+       style="stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;fill:#0000ff;stroke:#0000ff" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="920.484,324.391 909.700,328.317 916.281,367.832 931.390,367.832 928.584,343.603 "
+       id="polygon240"
+       style="stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;fill:#0000ff;stroke:#0000ff" />
+    <polygon
+       stroke="black"
+       stroke-width="1"
+       fill="rgb(204, 204, 204)"
+       fill-opacity="1"
+       points="1005.468,98.593 984.991,63.006 928.761,118.992 "
+       id="polygon242"
+       style="stroke-width:5;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round;fill:#00ff00;stroke:#00ff00" />
+  </g>
+</svg>
