@@ -6,6 +6,7 @@ import { Glider, GLIDER_RADIUS } from "../glider/glider";
 import { Powerup } from "game/entities/powerups/powerup";
 import { Visual } from "game/graphics/visual";
 import { Entity } from "game/entities/entity";
+import { Projectile } from "game/entities/weapons/projectile";
 import { CircleConfig } from "game/physics/circle";
 import { RigidBodyConfig } from "game/physics/rigidbody";
 import { Attachment } from "game/physics/physics";
@@ -19,18 +20,18 @@ export class NashwanPowerup implements Powerup {
 	public readonly kind = "nashwan"
 }
 
-type ProjectileFactory = (position: vec2, angle: number) => Projectile;
+type NashwanShotFactory = (position: vec2, angle: number) => NashwanShot;
 
 export class Barrel extends Entity {
 	private attachment: Attachment
 	private tNextShot = 0
 
 	constructor(
-		public parentGlider: Glider,
+		public parent: Glider,
 		public attachTo: Entity,
 		public offset: vec2,
 		model: Model,
-		private laserFactory: ProjectileFactory,
+		private laserFactory: NashwanShotFactory,
 		engine: Engine
 	) {
 		super()
@@ -38,7 +39,7 @@ export class Barrel extends Entity {
 			new ModelMeshConfig({ model: model })
 		)
 		this.mesh.scaling = vec3.fromValues(BARREL_RADIUS, BARREL_RADIUS, BARREL_RADIUS)
-		this.mesh.baseColor = parentGlider.player.color
+		this.mesh.baseColor = parent.player.color
 
 		const bodyCfg = new RigidBodyConfig({
 			actor: this,
@@ -52,7 +53,7 @@ export class Barrel extends Entity {
 		let rotatedOffset = vec2.rotate(vec2.create(), offset, [0, 0], this.attachTo.body.angle)
 		this.body.position = vec2.add(vec2.create(), this.attachTo.body.position, rotatedOffset)
 		this.attachment = engine.physics.attach(this.attachTo.body, this.body, true, 30)
-		this.parentGlider.onDispose(() => this.dispose())
+		this.parent.onDispose(() => this.dispose())
 		this.update(0)
 	}
 
@@ -61,8 +62,8 @@ export class Barrel extends Entity {
 		if (this.tNextShot <= 0) {
 			this.tNextShot += 0.5
 			let position = vec2.copy(vec2.create(), this.body.position)
-			position[0] += Math.cos(this.body.angle) * BARREL_RADIUS *3
-			position[1] += Math.sin(this.body.angle) * BARREL_RADIUS *3
+			position[0] += Math.cos(this.body.angle) * BARREL_RADIUS * 3
+			position[1] += Math.sin(this.body.angle) * BARREL_RADIUS * 3
 			this.laserFactory(position, this.body.angle)
 		}
 		this.mesh.position = [
@@ -82,11 +83,11 @@ export class Drone extends Entity {
 	private tNextShot = 0
 
 	constructor(
-		public parentGlider: Glider,
+		public parent: Glider,
 		public attachTo: Entity,
 		public offset: vec2,
 		model: Model,
-		private particleFactory: ProjectileFactory,
+		private particleFactory: NashwanShotFactory,
 		engine: Engine
 	) {
 		super()
@@ -94,7 +95,7 @@ export class Drone extends Entity {
 			new ModelMeshConfig({ model: model })
 		)
 		this.mesh.scaling = vec3.fromValues(DRONE_RADIUS, DRONE_RADIUS, DRONE_RADIUS)
-		this.mesh.baseColor = parentGlider.player.color
+		this.mesh.baseColor = parent.player.color
 
 		const bodyCfg = new RigidBodyConfig({
 			actor: this,
@@ -104,7 +105,7 @@ export class Drone extends Entity {
 			angularDamping: 0
 		})
 		this.body = engine.physics.addRigidBody(bodyCfg)
-		this.parentGlider.onDispose(() => this.dispose())
+		this.parent.onDispose(() => this.dispose())
 
 		let rotatedOffset = vec2.rotate(vec2.create(), this.offset, [0, 0], this.attachTo.body.angle)
 		let target = vec2.add(vec2.create(), this.attachTo.body.position, rotatedOffset)
@@ -131,7 +132,7 @@ export class Drone extends Entity {
 		let target = vec2.add(vec2.create(), this.attachTo.body.position, rotatedOffset)
 
 		let force = vec2.subtract(vec2.create(), target, this.body.position)
-		vec2.scale(force, force, 2)
+		vec2.scale(force, force, 5 * vec2.length(force))
 		this.body.applyForce(force)
 
 		this.mesh.position = [
@@ -145,13 +146,16 @@ export class Drone extends Entity {
 	}
 }
 
-export class Projectile extends Entity {
+export class NashwanShot extends Entity implements Projectile {
+	public collidesWithParent = false
+	public collidesWithSibling = false
 
 	constructor(
 		public parent: Glider,
 		position: vec2,
 		angle: number,
-		scale: number,
+		spriteScale: vec2,
+		radius: number,
 		speed: number,
 		model: Model,
 		engine: Engine
@@ -160,14 +164,14 @@ export class Projectile extends Entity {
 		this.mesh = engine.graphics.mesh.createFromModel(
 			new ModelMeshConfig({
 				model,
-				scaling: vec3.fromValues(scale, scale, 1)
+				scaling: vec3.fromValues(spriteScale[0], spriteScale[1], 1)
 			}))
 		this.mesh.baseColor = parent.player.color
 		this.mesh.accentColor1 = { r: 1, g: 1, b: 1 }
 
 		const bodyCfg = new RigidBodyConfig({
 			actor: this,
-			shapes: [new CircleConfig({ radius: scale })],
+			shapes: [new CircleConfig({ radius })],
 			damping: 0,
 			angularDamping: 0
 		})
@@ -199,32 +203,32 @@ export async function createNashwanFactory(engine: Engine) {
 	let nashwanParticle = await engine.graphics.loadSprite(
 		"assets/sprites/particle.tint.png")
 
-	return function (parent: Glider, projectileModifier: (projectile: Projectile) => void) {
+	return function (parent: Glider, shotModifier: (shot: NashwanShot) => void) {
 
 		let particleFactory = function (position: vec2, angle: number) {
-			let particle = new Projectile(
-				parent, position, angle, 0.3, 10, nashwanParticle, engine
+			let particle = new NashwanShot(
+				parent, position, angle, [0.3, 0.3], 0.3, 10, nashwanParticle, engine
 			)
-			projectileModifier(particle)
+			shotModifier(particle)
 			return particle
 		}
 		let laserFactory = function (position: vec2, angle: number) {
-			let laser = new Projectile(
-				parent, position, angle, 1.0, 20, nashwanLaser, engine
+			let laser = new NashwanShot(
+				parent, position, angle, [4.0, 1.0], 0.3, 30, nashwanLaser, engine
 			)
-			projectileModifier(laser)
+			shotModifier(laser)
 			return laser
 		}
 
 		let leftBarrel1 = new Barrel(parent, parent,
 			vec2.fromValues(-0.1, GLIDER_RADIUS + BARREL_RADIUS),
-			barrelModel, (position: vec2, angle: number) => { }, engine)
+			barrelModel, laserFactory, engine)
 		let leftBarrel2 = new Barrel(parent, leftBarrel1,
 			vec2.fromValues(-0.2, BARREL_RADIUS * 2),
 			barrelModel, laserFactory, engine)
 		let rightBarrel1 = new Barrel(parent, parent,
 			vec2.fromValues(-0.1, -GLIDER_RADIUS - BARREL_RADIUS),
-			barrelModel, (position: vec2, angle: number) => { }, engine)
+			barrelModel, laserFactory, engine)
 		let rightBarrel2 = new Barrel(parent, rightBarrel1,
 			vec2.fromValues(-0.2, -BARREL_RADIUS * 2),
 			barrelModel, laserFactory, engine)

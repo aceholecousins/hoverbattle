@@ -11,13 +11,14 @@ import {
 	GLIDER_DAMPING,
 	GLIDER_ANGULAR_DAMPING
 } from "game/entities/glider/glider"
+import { Projectile } from "game/entities/weapons/projectile"
 import { PowerupKind, createPowerupBoxFactory, PowerupBox } from "game/entities/powerups/powerup"
 import { createPhaserFactory, PhaserShot, PhaserWeapon } from "game/entities/weapons/phaser"
 import { createLaserFactory, LaserPowerup } from "game/entities/weapons/laser"
 import { createMissileFactory, MissilePowerup, Missile, MissileLauncher } from "game/entities/weapons/missile"
 import { createMineFactory, MinePowerup, Mine, MineThrower } from "game/entities/weapons/mine"
 import { createPowerShieldFactory, PowerShield, PowerShieldPowerup } from "game/entities/weapons/powershield"
-import { createNashwanFactory, NashwanPowerup, Projectile } from "game/entities/weapons/nashwan"
+import { createNashwanFactory, NashwanPowerup, NashwanShot } from "game/entities/weapons/nashwan"
 import { MatchFactory } from "game/match"
 import { CollisionOverride, CollisionHandler } from "game/physics/collision"
 import { Player } from "game/player"
@@ -36,7 +37,7 @@ export let createMatch: MatchFactory = async function (engine) {
 
 	let collideWithEverythingRole = new Role<Entity>()
 	let gliderRole = new Role<Glider>()
-	let projectileRole = new Role<PhaserShot | Projectile>()
+	let projectileRole = new Role<Projectile>()
 	let powerShieldRole = new Role<PowerShield>()
 	let powerupBoxRole = new Role<PowerupBox>()
 	let missileRole = new Role<Missile>()
@@ -46,26 +47,23 @@ export let createMatch: MatchFactory = async function (engine) {
 	interact(collideWithEverythingRole, collideWithEverythingRole)
 
 	engine.physics.registerCollisionOverride(new CollisionOverride(
-		gliderRole, projectileRole, function (
-			glider: Glider, projectile: PhaserShot | Projectile
+		projectileRole, collideWithEverythingRole, function (
+			projectile: Projectile, entity: Entity
 		) {
-		return glider != projectile.parent
-	}
-	))
-
-	engine.physics.registerCollisionOverride(new CollisionOverride(
-		gliderRole, missileRole, function (
-			glider: Glider, missile: Missile
+		if (
+			!projectile.collidesWithParent
+			&& projectile.parent == entity
 		) {
-		return glider != missile.parent
-	}
-	))
-
-	engine.physics.registerCollisionOverride(new CollisionOverride(
-		projectileRole, powerShieldRole, function (
-			phaserShot: PhaserShot, powerShield: PowerShield
+			return false
+		}
+		if (
+			!projectile.collidesWithSibling
+			&& "parent" in entity
+			&& projectile.parent == entity.parent
 		) {
-		return phaserShot.parent != powerShield.parent
+			return false
+		}
+		return true
 	}
 	))
 
@@ -85,9 +83,11 @@ export let createMatch: MatchFactory = async function (engine) {
 	))
 
 	engine.physics.registerCollisionHandler(new CollisionHandler(
-		projectileRole, collideWithEverythingRole, (shot: PhaserShot, other: Entity) => {
-			shot.dispose()
-		}
+		projectileRole, collideWithEverythingRole, function (
+			projectile: Projectile, _: Entity
+		) {
+		projectile.dispose()
+	}
 	))
 
 	engine.physics.registerCollisionHandler(new CollisionHandler(
@@ -246,13 +246,13 @@ export let createMatch: MatchFactory = async function (engine) {
 			}
 		)
 
-		let projectileModifier = (projectile: Projectile) => {
-			assignRole(projectile, collideWithEverythingRole)
-			assignRole(projectile, projectileRole)
-			let projectile2 = makeDamaging(projectile, 1, () => { projectile.dispose() })
+		let shotModifier = (shot: NashwanShot) => {
+			assignRole(shot, collideWithEverythingRole)
+			assignRole(shot, projectileRole)
+			let projectile2 = makeDamaging(shot, 1, () => { shot.dispose() })
 			assignRole(projectile2, damagingRole)
 		}
-		let barrels = nashwanFactory(glider, projectileModifier)
+		let barrels = nashwanFactory(glider, shotModifier)
 		for (let barrel of Object.values(barrels)) {
 			assignRole(barrel, collideWithEverythingRole)
 		}

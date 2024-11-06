@@ -9,12 +9,15 @@ import { quat, vec2, vec3 } from "gl-matrix";
 import { assignRole, Role } from "../actor";
 import { Entity } from "../entity";
 import { Glider } from "../glider/glider";
+import { Projectile } from "game/entities/weapons/projectile";
 
 const PHASER_LENGTH = 0.8;
 const PHASER_SPEED = 30;
 const PHASER_FIRE_RATE = 12;
 
-export class PhaserShot extends Entity {
+export class PhaserShot extends Entity implements Projectile {
+	public collidesWithParent = false
+	public collidesWithSibling = false
 
 	constructor(
 		public parent: Glider,
