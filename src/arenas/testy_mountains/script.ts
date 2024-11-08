@@ -136,7 +136,7 @@ export let createMatch: MatchFactory = async function (engine) {
 	let spawnPoints: vec2[] = []
 
 	let [
-		arena_meta,
+		arenaParts_meta,
 		createGlider,
 		createPowerupBox,
 		skybox,
@@ -161,17 +161,19 @@ export let createMatch: MatchFactory = async function (engine) {
 		createExplosionFactory(engine)
 	]);
 
-	for (const [key, value] of Object.entries(arena_meta.meta)) {
+	for (const [key, value] of Object.entries(arenaParts_meta.meta)) {
 		if (key.startsWith("spawn")) {
 			const spawn = value as SceneNodeConfig<"empty">
 			spawnPoints.push(vec2.fromValues(spawn.position[0], spawn.position[1]))
 		}
 	}
 
-	// destructible but with infinite hitpoints, absorbs things that damage
-	let arena = makeDestructible(arena_meta.arena, Infinity, () => { })
-	assignRole(arena, collideWithEverythingRole)
-	assignRole(arena, destructibleRole)
+	for (let part of arenaParts_meta.arenaParts) {
+		// destructible but with infinite hitpoints, absorbs things that damage
+		let part2 = makeDestructible(part, Infinity, () => { })
+		assignRole(part2, collideWithEverythingRole)
+		assignRole(part2, destructibleRole)
+	}
 
 	engine.graphics.setEnvironment(skybox)
 	engine.graphics.setEnvironmentOrientation([Math.PI / 2, 0, Math.PI / 2])

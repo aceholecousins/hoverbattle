@@ -9,26 +9,30 @@ export async function loadArena(
 	modelFile: string,
 	engine: Engine
 ) {
+	// This function used to return one body with many shapes.
+	// However, the broadphase of the physics engine only checks
+	// complete bodies against each other, so everything always got
+	// narrowphase checked against all shapes of the arena which was
+	// very slow. Now we return many bodies with one shape each, which
+	// is much faster.
 
 	let { model, meta } = await engine.graphics.loadModel(modelFile)
 
-	let arena = new Entity()
-
-	let shapes: TriangleConfig[] = []
+	let arenaParts: Entity[] = []
 
 	for (let tri of (meta.collision as Triangle3[])) {
-		shapes.push(new TriangleConfig({ corners: triangle3to2(tri) }))
+		let arenaPart = new Entity()
+		arenaPart.body = engine.physics.addRigidBody(
+			new RigidBodyConfig({
+				actor: arenaPart,
+				mass: Infinity,
+				shapes: [new TriangleConfig({ corners: triangle3to2(tri) })]
+			})
+		)
+		arenaParts.push(arenaPart)
 	}
-
-	arena.body = engine.physics.addRigidBody(
-		new RigidBodyConfig({
-			actor: arena,
-			mass: Infinity,
-			shapes
-		})
-	)
 
 	engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
 
-	return { arena, meta }
+	return { arenaParts, meta }
 }
