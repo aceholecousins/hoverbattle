@@ -11,6 +11,7 @@ import { CircleConfig } from "game/physics/circle";
 import { RigidBodyConfig } from "game/physics/rigidbody";
 import { Attachment } from "game/physics/physics";
 import { Color, colorLerp } from "utils";
+import { broker, } from "broker"
 
 let BARREL_RADIUS = 0.6
 let DRONE_RADIUS = 0.6
@@ -32,6 +33,7 @@ export class Barrel extends Entity {
 		public offset: vec2,
 		model: Model,
 		private laserFactory: NashwanShotFactory,
+		private rechargeTime: number,
 		engine: Engine
 	) {
 		super()
@@ -60,7 +62,7 @@ export class Barrel extends Entity {
 	update(dt: number) {
 		this.tNextShot -= dt
 		if (this.tNextShot <= 0) {
-			this.tNextShot += 0.5
+			this.tNextShot += this.rechargeTime
 			let position = vec2.copy(vec2.create(), this.body.position)
 			position[0] += Math.cos(this.body.angle) * BARREL_RADIUS * 3
 			position[1] += Math.sin(this.body.angle) * BARREL_RADIUS * 3
@@ -146,6 +148,44 @@ export class Drone extends Entity {
 	}
 }
 
+export class XenonQuadBlaster {
+	private time = 0
+	private tNextShot = 0
+	private updateHandler = (e: any) => this.update(e.dt)
+
+	constructor(
+		public parent: Glider,
+		private shotFactory: NashwanShotFactory
+	) {
+		broker.update.addHandler(this.updateHandler)
+		this.parent.onDispose(() => this.dispose())
+	}
+
+	update(dt: number) {
+		this.time += dt
+		this.tNextShot -= dt
+		if (this.tNextShot <= 0) {
+			this.tNextShot += 0.3
+			let offset1 = vec2.fromValues(
+				this.parent.body.position[0] + Math.sin(this.parent.body.angle) * 0.5,
+				this.parent.body.position[1] - Math.cos(this.parent.body.angle) * 0.5
+			)
+			let offset2 = vec2.fromValues(
+				this.parent.body.position[0] - Math.sin(this.parent.body.angle) * 0.5,
+				this.parent.body.position[1] + Math.cos(this.parent.body.angle) * 0.5
+			)
+			this.shotFactory(offset1, this.parent.body.angle)
+			this.shotFactory(offset2, this.parent.body.angle)
+			this.shotFactory(this.parent.body.position, this.parent.body.angle + Math.PI / 2)
+			this.shotFactory(this.parent.body.position, this.parent.body.angle - Math.PI / 2)
+		}
+	}
+
+	dispose() {
+		broker.update.removeHandler(this.updateHandler)
+	}
+}
+
 export class NashwanShot extends Entity implements Projectile {
 	public collidesWithParent = false
 	public collidesWithSibling = false
@@ -164,10 +204,10 @@ export class NashwanShot extends Entity implements Projectile {
 		this.mesh = engine.graphics.mesh.createFromModel(
 			new ModelMeshConfig({
 				model,
-				scaling: vec3.fromValues(spriteScale[0], spriteScale[1], 1)
+				scaling: vec3.fromValues(spriteScale[0], spriteScale[1], spriteScale[1])
 			}))
-		this.mesh.baseColor = parent.player.color
-		this.mesh.accentColor1 = { r: 1, g: 1, b: 1 }
+		this.mesh.baseColor = { r: 1, g: 1, b: 1 }
+		this.mesh.accentColor1 = parent.player.color
 
 		const bodyCfg = new RigidBodyConfig({
 			actor: this,
@@ -194,47 +234,66 @@ export class NashwanShot extends Entity implements Projectile {
 }
 
 export async function createNashwanFactory(engine: Engine) {
+	let xenonShot = await engine.graphics.loadSprite(
+		"assets/sprites/xenon_shot.tint.png")
 	let barrelModel = (await engine.graphics.loadModel(
 		"assets/models/barrel.glb")).model
 	let droneModel = (await engine.graphics.loadModel(
 		"assets/models/drone.glb")).model
 	let nashwanLaser = await engine.graphics.loadSprite(
 		"assets/sprites/nashwan_laser.tint.png")
+	let nashwanMissile = (await engine.graphics.loadModel(
+		"assets/models/missile.glb")).model
 	let nashwanParticle = await engine.graphics.loadSprite(
 		"assets/sprites/particle.tint.png")
 
 	return function (parent: Glider, shotModifier: (shot: NashwanShot) => void) {
 
-		let particleFactory = function (position: vec2, angle: number) {
-			let particle = new NashwanShot(
-				parent, position, angle, [0.3, 0.3], 0.3, 10, nashwanParticle, engine
+		let shotFactory = function (position: vec2, angle: number) {
+			let shot = new NashwanShot(
+				parent, position, angle, [1, 1], 0.3, 20, xenonShot, engine
 			)
-			shotModifier(particle)
-			return particle
+			shotModifier(shot)
+			return shot
 		}
 		let laserFactory = function (position: vec2, angle: number) {
 			let laser = new NashwanShot(
-				parent, position, angle, [4.0, 1.0], 0.3, 30, nashwanLaser, engine
+				parent, position, angle, [4.0, 1.0], 0.3, 35, nashwanLaser, engine
 			)
 			shotModifier(laser)
 			return laser
 		}
+		let missileFactory = function (position: vec2, angle: number) {
+			let missile = new NashwanShot(
+				parent, position, angle, [1.0, 0.6], 0.3, 25, nashwanMissile, engine
+			)
+			shotModifier(missile)
+			return missile
+		}
+		let particleFactory = function (position: vec2, angle: number) {
+			let particle = new NashwanShot(
+				parent, position, angle, [0.5, 0.5], 0.3, 10, nashwanParticle, engine
+			)
+			shotModifier(particle)
+			return particle
+		}
 
 		let leftBarrel1 = new Barrel(parent, parent,
 			vec2.fromValues(-0.1, GLIDER_RADIUS + BARREL_RADIUS),
-			barrelModel, laserFactory, engine)
+			barrelModel, missileFactory, 0.4, engine)
 		let leftBarrel2 = new Barrel(parent, leftBarrel1,
 			vec2.fromValues(-0.2, BARREL_RADIUS * 2),
-			barrelModel, laserFactory, engine)
+			barrelModel, laserFactory, 0.5, engine)
 		let rightBarrel1 = new Barrel(parent, parent,
 			vec2.fromValues(-0.1, -GLIDER_RADIUS - BARREL_RADIUS),
-			barrelModel, laserFactory, engine)
+			barrelModel, missileFactory, 0.4, engine)
 		let rightBarrel2 = new Barrel(parent, rightBarrel1,
 			vec2.fromValues(-0.2, -BARREL_RADIUS * 2),
-			barrelModel, laserFactory, engine)
+			barrelModel, laserFactory, 0.5, engine)
 		let drone = new Drone(parent, parent,
 			vec2.fromValues(-GLIDER_RADIUS - 1.5 * DRONE_RADIUS, 0),
 			droneModel, particleFactory, engine)
+		let blaster = new XenonQuadBlaster(parent, shotFactory)
 		return { leftBarrel1, leftBarrel2, rightBarrel1, rightBarrel2, drone }
 	}
 }
