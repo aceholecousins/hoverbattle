@@ -32,7 +32,10 @@ p2.Broadphase.canCollide = function (bodyA: p2.Body, bodyB: p2.Body) {
 
 	// check if any override could apply
 	let overridesMask = (bodyA.world as ExtendedP2World).collisionOverridesBitMask
-	if (((overridesMask & rolesA.bits) == 0) || ((overridesMask & rolesB.bits) == 0)) {
+	if (
+		((overridesMask & rolesA.bits) == 0)
+		|| ((overridesMask & rolesB.bits) == 0)
+	) {
 		return true
 	}
 

@@ -6,7 +6,6 @@ import { Glider, GLIDER_RADIUS } from "../glider/glider";
 import { Powerup } from "game/entities/powerups/powerup";
 import { Visual } from "game/graphics/visual";
 import { Entity } from "game/entities/entity";
-import { Projectile } from "game/entities/weapons/projectile";
 import { CircleConfig } from "game/physics/circle";
 import { RigidBodyConfig } from "game/physics/rigidbody";
 import { Attachment } from "game/physics/physics";
@@ -24,6 +23,7 @@ export class NashwanPowerup implements Powerup {
 type NashwanShotFactory = (position: vec2, angle: number) => NashwanShot;
 
 export class Barrel extends Entity {
+	private deployed = 0.2
 	private attachment: Attachment
 	private tNextShot = 0
 
@@ -54,19 +54,31 @@ export class Barrel extends Entity {
 
 		let rotatedOffset = vec2.rotate(vec2.create(), offset, [0, 0], this.attachTo.body.angle)
 		this.body.position = vec2.add(vec2.create(), this.attachTo.body.position, rotatedOffset)
-		this.attachment = engine.physics.attach(this.attachTo.body, this.body, true, 30)
+		this.attachment = engine.physics.attach(this.attachTo.body, this.body)
+		this.attachment.setOffset([0, 0], 0)
+		this.attachment.setCanCollide(false)
 		this.parent.onDispose(() => this.dispose())
 		this.update(0)
 	}
 
 	update(dt: number) {
-		this.tNextShot -= dt
-		if (this.tNextShot <= 0) {
-			this.tNextShot += this.rechargeTime
-			let position = vec2.copy(vec2.create(), this.body.position)
-			position[0] += Math.cos(this.body.angle) * BARREL_RADIUS * 3
-			position[1] += Math.sin(this.body.angle) * BARREL_RADIUS * 3
-			this.laserFactory(position, this.body.angle)
+		this.deployed += 2 * dt
+		this.deployed = Math.min(1, this.deployed)
+		this.attachment.setOffset([
+			this.offset[0] * this.deployed,
+			this.offset[1] * this.deployed
+		], 0)
+
+		if (this.deployed == 1) {
+			this.attachment.setCanCollide(true)
+			this.tNextShot -= dt
+			if (this.tNextShot <= 0) {
+				this.tNextShot += this.rechargeTime
+				let position = vec2.copy(vec2.create(), this.body.position)
+				position[0] += Math.cos(this.body.angle) * BARREL_RADIUS * 3
+				position[1] += Math.sin(this.body.angle) * BARREL_RADIUS * 3
+				this.laserFactory(position, this.body.angle)
+			}
 		}
 		this.mesh.position = [
 			this.body.position[0], this.body.position[1], 0.1]
@@ -83,6 +95,7 @@ export class Barrel extends Entity {
 export class Drone extends Entity {
 	private time = 0
 	private tNextShot = 0
+	private deployed = 0.2
 
 	constructor(
 		public parent: Glider,
@@ -186,9 +199,7 @@ export class XenonQuadBlaster {
 	}
 }
 
-export class NashwanShot extends Entity implements Projectile {
-	public collidesWithParent = false
-	public collidesWithSibling = false
+export class NashwanShot extends Entity{
 
 	constructor(
 		public parent: Glider,
@@ -222,6 +233,10 @@ export class NashwanShot extends Entity implements Projectile {
 			Math.cos(this.body.angle) * speed,
 			Math.sin(this.body.angle) * speed
 		)
+
+		this.collidesWithParent = false
+		this.collidesWithSibling = false
+	
 		this.update(0)
 	}
 

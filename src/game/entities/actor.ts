@@ -8,7 +8,7 @@ export class Role<I> {
 	bit: number // bit that identifies this role
 	mask: number // bitmask storing all roles that this role collides with
 
-	constructor() {
+	constructor(public readonly tag: string = "unnamed") {
 		this.bit = 1 << (Role.numRoles)
 		this.mask = 0
 		Role.numRoles += 1
@@ -56,4 +56,3 @@ export function interact(roleA: Role<any>, roleB: Role<any>) {
 	roleA.mask |= roleB.bit
 	roleB.mask |= roleA.bit
 }
-

@@ -11,7 +11,6 @@ import {
 	GLIDER_DAMPING,
 	GLIDER_ANGULAR_DAMPING
 } from "game/entities/glider/glider"
-import { Projectile } from "game/entities/weapons/projectile"
 import { PowerupKind, createPowerupBoxFactory, PowerupBox } from "game/entities/powerups/powerup"
 import { createPhaserFactory, PhaserShot, PhaserWeapon } from "game/entities/weapons/phaser"
 import { createLaserFactory, LaserPowerup } from "game/entities/weapons/laser"
@@ -35,37 +34,16 @@ export let createMatch: MatchFactory = async function (engine) {
 	let gliders: Glider[] = []
 	let powerupBoxes: PowerupBox[] = []
 
-	let collideWithEverythingRole = new Role<Entity>()
-	let gliderRole = new Role<Glider>()
-	let projectileRole = new Role<Projectile>()
-	let powerShieldRole = new Role<PowerShield>()
-	let powerupBoxRole = new Role<PowerupBox>()
-	let missileRole = new Role<Missile>()
-	let damagingRole = new Role<Damaging>()
-	let destructibleRole = new Role<Destructible>()
+	let collideWithEverythingRole = new Role<Entity>("collideWithEverything")
+	let gliderRole = new Role<Glider>("glider")
+	let projectileRole = new Role<Entity>("projectile")
+	let powerShieldRole = new Role<PowerShield>("powerShield")
+	let powerupBoxRole = new Role<PowerupBox>("powerupBox")
+	let missileRole = new Role<Missile>("missile")
+	let damagingRole = new Role<Damaging>("damaging")
+	let destructibleRole = new Role<Destructible>("destructible")
 
 	interact(collideWithEverythingRole, collideWithEverythingRole)
-
-	engine.physics.registerCollisionOverride(new CollisionOverride(
-		projectileRole, collideWithEverythingRole, function (
-			projectile: Projectile, entity: Entity
-		) {
-		if (
-			!projectile.collidesWithParent
-			&& projectile.parent == entity
-		) {
-			return false
-		}
-		if (
-			!projectile.collidesWithSibling
-			&& "parent" in entity
-			&& projectile.parent == entity.parent
-		) {
-			return false
-		}
-		return true
-	}
-	))
 
 	engine.physics.registerCollisionHandler(new CollisionHandler(
 		powerShieldRole, collideWithEverythingRole, function (
@@ -84,7 +62,7 @@ export let createMatch: MatchFactory = async function (engine) {
 
 	engine.physics.registerCollisionHandler(new CollisionHandler(
 		projectileRole, collideWithEverythingRole, function (
-			projectile: Projectile, _: Entity
+			projectile: Entity, _: Entity
 		) {
 		projectile.dispose()
 	}

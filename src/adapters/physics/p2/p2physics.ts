@@ -31,17 +31,23 @@ export class P2Physics implements Physics {
 	attach(
 		bodyA: RigidBody,
 		bodyB: RigidBody,
-		canCollide: boolean,
-		stiffness: number
 	): Attachment {
 		let constraint = new p2.LockConstraint(
 			(bodyA as P2RigidBody).p2body,
-			(bodyB as P2RigidBody).p2body,
-			{ collideConnected: canCollide }
+			(bodyB as P2RigidBody).p2body
 		)
-		constraint.setStiffness(stiffness)
 		this.p2world.addConstraint(constraint)
 		return {
+			setOffset: (position: vec2, angle: number) => {
+				vec2.copy((constraint as any).localOffsetB, position);
+				(constraint as any).localAngleB = angle
+			},
+			setCanCollide: (canCollide: boolean) => {
+				constraint.collideConnected = canCollide
+			},
+			setStiffness: (stiffness: number) => {
+				constraint.setStiffness(stiffness)
+			},
 			detach: () => {
 				this.p2world.removeConstraint(constraint)
 			}

@@ -6,6 +6,7 @@ import { Graphics } from "game/graphics/graphics"
 import { ActionCam, ActionCamConfig } from "game/actioncam"
 import { Physics } from "game/physics/physics"
 import { SoundLoader } from "game/sound"
+import { registerRelatedEntityCollisionOverride } from "game/entities/entity"
 
 import { ThreeGraphics } from "adapters/graphics/threegraphics/threegraphics"
 import { P2Physics } from "adapters/physics/p2/p2physics"
@@ -21,6 +22,7 @@ async function main() {
 	broker.newChannel('purge')
 
 	let physics = new P2Physics() as Physics
+	registerRelatedEntityCollisionOverride(physics)
 	let graphics = new ThreeGraphics() as Graphics
 	let actionCam = new ActionCam(graphics, new ActionCamConfig())
 	actionCam.camera.activate()
