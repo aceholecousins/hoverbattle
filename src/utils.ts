@@ -70,3 +70,17 @@ export async function promiseAllFields<T extends Record<string, Promise<any>>>(o
 	});
 	return result;
 }
+
+export function memoize<T, Args extends any[]>(
+	fn: (...args: Args) => Promise<T>
+): (...args: Args) => Promise<T> {
+	let cache: T | null = null
+	let cacheArgs: Args | null = null
+	return async function (...args: Args) {
+		if (!cache || !cacheArgs || !args.every((arg, index) => arg === cacheArgs![index])) {
+			cache = await fn(...args)
+			cacheArgs = args
+		}
+		return cache
+	}
+}

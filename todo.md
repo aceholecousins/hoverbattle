@@ -11,8 +11,7 @@
 * refactor this extra update handler member everywhere
 * vec utils (euler, temp, etc)
 * config file
-* missile smoke
-* nashwan missiles must accelerate and explode and smoke
+* color without tint
 
 for Dani:
 

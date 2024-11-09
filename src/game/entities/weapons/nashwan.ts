@@ -11,6 +11,7 @@ import { RigidBodyConfig } from "game/physics/rigidbody";
 import { Attachment } from "game/physics/physics";
 import { Color, colorLerp } from "utils";
 import { broker, } from "broker"
+import { createMissileFactory } from "./missile"
 
 let BARREL_RADIUS = 0.5
 let DRONE_RADIUS = 0.6
@@ -279,10 +280,10 @@ export async function createNashwanFactory(engine: Engine) {
 		"assets/models/drone.glb")).model
 	let nashwanLaser = await engine.graphics.loadSprite(
 		"assets/sprites/nashwan_laser.tint.png")
-	let nashwanMissile = (await engine.graphics.loadModel(
-		"assets/models/missile.glb")).model
 	let nashwanParticle = await engine.graphics.loadSprite(
 		"assets/sprites/particle.tint.png")
+
+	let createMissile = await createMissileFactory(engine)
 
 	return function (parent: Glider, shotModifier: (shot: NashwanShot) => void) {
 
@@ -301,8 +302,8 @@ export async function createNashwanFactory(engine: Engine) {
 			return laser
 		}
 		let missileFactory = function (position: vec2, angle: number) {
-			let missile = new NashwanShot(
-				parent, position, angle, [1.0, 0.6], 0.3, 25, nashwanMissile, engine
+			let missile = createMissile(
+				parent, position, angle, []
 			)
 			shotModifier(missile)
 			return missile

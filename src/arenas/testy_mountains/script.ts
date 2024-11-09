@@ -24,7 +24,7 @@ import { Player } from "game/player"
 import { SceneNodeConfig } from "game/graphics/scenenode"
 import { vec2, vec3, quat } from "gl-matrix"
 import { remove } from "utils"
-import { createExplosionFactory } from "game/graphics/explosion/explosion"
+import { createExplosionFactory, createSmallExplosionFactory } from "game/graphics/explosion/explosion"
 import { GameTimer } from "game/gametimer"
 
 let GLIDER_HP = 10
@@ -91,7 +91,16 @@ export let createMatch: MatchFactory = async function (engine) {
 				let shotModifier = (shot: NashwanShot) => {
 					assignRole(shot, collideWithEverythingRole)
 					assignRole(shot, projectileRole)
-					let projectile2 = makeDamaging(shot, 1, () => { shot.dispose() })
+					let projectile2 = makeDamaging(shot, 1, () => {
+						if("isMissile" in shot) {
+							createSmallExplosion([
+								shot.body.position[0],
+								shot.body.position[1],
+								1
+							], glider.player.color)
+						}
+						shot.dispose()
+					})
 					assignRole(projectile2, damagingRole)
 				}
 				let extensions = nashwanFactory(glider, shotModifier)
@@ -141,7 +150,8 @@ export let createMatch: MatchFactory = async function (engine) {
 		mineFactory,
 		powerShieldFactory,
 		nashwanFactory,
-		createExplosion
+		createExplosion,
+		createSmallExplosion
 	] = await Promise.all([
 		loadArena("arenas/testy_mountains/mountains.glb", engine),
 		createGliderFactory(engine),
@@ -153,7 +163,8 @@ export let createMatch: MatchFactory = async function (engine) {
 		createMineFactory(engine),
 		createPowerShieldFactory(engine),
 		createNashwanFactory(engine),
-		createExplosionFactory(engine)
+		createExplosionFactory(engine),
+		createSmallExplosionFactory(engine)
 	]);
 
 	for (const [key, value] of Object.entries(arenaParts_meta.meta)) {
@@ -191,6 +202,7 @@ export let createMatch: MatchFactory = async function (engine) {
 	function spawnPowerup() {
 		if (powerupBoxes.length < 5) {
 			let kinds = ["mine", "missile", "laser", "nashwan", "powershield", "repair"]
+			kinds = ["missile", "nashwan"]
 			const powerupKind = kinds[Math.floor(Math.random() * kinds.length)] as PowerupKind;
 			let powerupBox = makeDestructible(
 				createPowerupBox(

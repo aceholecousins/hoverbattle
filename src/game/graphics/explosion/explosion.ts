@@ -6,6 +6,7 @@ import { Color, colorLerp } from "utils"
 import { Visual } from "game/graphics/visual"
 import { PointLight, PointLightConfig } from "../light"
 import { broker } from "broker"
+import { SmokeFactory, createSmokeFactory } from "./smoke"
 
 const DURATION = 0.5
 
@@ -70,8 +71,8 @@ export class Crumb extends Visual {
 
 	constructor(
 		position: vec3,
-		color: Color,
-		private createCloud: (position: vec3) => void,
+		private color: Color,
+		private createCloud: SmokeFactory,
 		model: Model,
 		engine: Engine
 	) {
@@ -82,7 +83,7 @@ export class Crumb extends Visual {
 		this.position = vec3.clone(position)
 		let direction = Math.random() * 2 * Math.PI
 		let pitch = 0.5 + Math.random() * 1.0
-		let speed = 20 + Math.random() * 10
+		let speed = 35 + Math.random() * 10
 		this.velocity = vec3.fromValues(
 			speed * Math.cos(direction) * Math.cos(pitch),
 			speed * Math.sin(direction) * Math.cos(pitch),
@@ -104,37 +105,10 @@ export class Crumb extends Visual {
 
 		if (this.time > this.tNextCloud) {
 			this.tNextCloud = this.time + 0.04
-			this.createCloud(this.position)
+			this.createCloud(this.position, this.color)
 		}
 
 		if (this.position[2] < 0) {
-			this.dispose()
-		}
-	}
-}
-
-export class Cloud extends Visual {
-	time: number = 0
-
-	constructor(
-		position: vec3,
-		model: Model,
-		engine: Engine
-	) {
-		super()
-		this.mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
-		this.mesh.scaling = vec3.fromValues(2, 2, 2)
-		this.mesh.position = position
-		this.mesh.orientation = quat.fromEuler(quat.create(), 0, 0, Math.random() * 360)
-		this.mesh.opacity = 0.2
-		this.update(0)
-	}
-
-	update(dt: number) {
-		this.time += dt
-		let size = 3 * (1 - this.time / DURATION)
-		this.mesh.scaling = vec3.fromValues(size, size, size)
-		if (this.time > DURATION) {
 			this.dispose()
 		}
 	}
@@ -192,6 +166,53 @@ export class Plop extends Visual {
 		if (this.time > DURATION) {
 			this.dispose()
 		}
+	}
+}
+
+export class Piff extends Visual {
+	progress: number = 0
+
+	constructor(
+		position: vec3,
+		private color: Color,
+		model: Model,
+		engine: Engine
+	) {
+		super()
+		this.mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
+		this.mesh.scaling = vec3.fromValues(0.1, 0.1, 0.1)
+		this.mesh.position = [
+			position[0], position[1], position[2] + 0.1 * Math.random()
+		]
+		this.mesh.orientation = quat.fromEuler(
+			quat.create(), 0, 0, Math.random() * 360
+		)
+		this.mesh.baseColor = color
+		this.mesh.accentColor2 = colorLerp(color, { r: 0, g: 0, b: 0 }, 0.5)
+		this.update(0)
+	}
+
+	update(dt: number) {
+		this.progress += dt * 10
+		if (this.progress > 1) {
+			this.dispose()
+			return
+		}
+		let size = this.progress * 5
+		this.mesh.scaling = vec3.fromValues(size, size, size)
+		this.mesh.opacity = 0.99
+
+		this.mesh.baseColor = colorLerp(
+			this.color,
+			{ r: 0, g: 0, b: 0 },
+			0.9 * this.progress
+		)
+
+		this.mesh.accentColor1 = colorLerp(
+			{ r: 1, g: 1, b: 1 },
+			this.color,
+			this.progress
+		)
 	}
 }
 
@@ -294,8 +315,7 @@ export async function createExplosionFactory(engine: Engine) {
 		"assets/sprites/shockwave.png")
 	let plopModel = await engine.graphics.loadSprite(
 		"assets/sprites/plop.tint.png")
-	let cloudModel = await engine.graphics.loadSprite(
-		"assets/sprites/smoke.png")
+	let createCloud = await createSmokeFactory(engine)
 
 	// light sources are very expensive, especially creating them dynamically,
 	// so we create a pool of them and reuse them
@@ -308,9 +328,6 @@ export async function createExplosionFactory(engine: Engine) {
 	return function (position: vec3, color: Color) {
 		let smokeball = new Smokeball(position, color, smokeballModel.model, engine)
 		let crumbs: Crumb[] = []
-		let createCloud = (position: vec3) => {
-			let cloud = new Cloud(position, cloudModel, engine)
-		}
 		let darkColor = { r: color.r * 0.33, g: color.g * 0.33, b: color.b * 0.33 }
 		for (let i = 0; i < 7; i++) {
 			crumbs.push(new Crumb(position, darkColor, createCloud, crumbModel.model, engine))
@@ -327,6 +344,15 @@ export async function createExplosionFactory(engine: Engine) {
 		}
 		flashes[nextFlash].flash(position, color)
 		nextFlash = (nextFlash + 1) % flashes.length
-		return {smokeball, crumbs, shockwave, plop, shards}
+		return { smokeball, crumbs, shockwave, plop, shards }
+	}
+}
+
+export async function createSmallExplosionFactory(engine: Engine) {
+	let explosionModel = await engine.graphics.loadSprite(
+		"assets/sprites/small_explosion.tint.png")
+
+	return function (position: vec3, color: Color) {
+		return new Piff(position, color, explosionModel, engine)
 	}
 }

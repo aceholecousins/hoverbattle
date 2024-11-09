@@ -11,6 +11,8 @@ import { Entity } from "../entity";
 import { Glider, GLIDER_RADIUS } from "../glider/glider";
 import { Powerup } from "game/entities/powerups/powerup";
 import { wrapAngle } from "utilities/math_utils";
+import { SmokeFactory, createSmokeFactory } from "game/graphics/explosion/smoke"
+import { memoize } from "utils";
 
 const MISSILE_LENGTH = 1.3;
 const MISSILE_RADIUS = 0.3 * MISSILE_LENGTH;
@@ -27,13 +29,17 @@ export class MissilePowerup implements Powerup {
 }
 
 export class Missile extends Entity {
+	public isMissile = true
 	public target: Entity | null;
 	public roll: number = 0;
+	private tNextSmoke = 0
 
 	constructor(
 		public parent: Glider,
 		position: vec2,
+		angle: number,
 		public possibleTargets: Entity[],
+		private createSmoke: SmokeFactory,
 		model: Model,
 		engine: Engine
 	) {
@@ -56,6 +62,7 @@ export class Missile extends Entity {
 		})
 		this.body = engine.physics.addRigidBody(bodyCfg)
 		this.body.position = position
+		this.body.angle = angle
 
 		this.target = this.lockOnTarget(parent);
 
@@ -97,6 +104,15 @@ export class Missile extends Entity {
 			this.collidesWithParent = true
 		}
 
+		this.tNextSmoke -= dt
+		if (this.tNextSmoke <= 0) {
+			this.tNextSmoke += 0.04
+			this.createSmoke(
+				[this.body.position[0], this.body.position[1], 0.1],
+				{ r: 0.2, g: 0.2, b: 0.2 }
+			)
+		}
+
 		if (this.target != null) {
 			const toTarget = vec2.sub(vec2.create(), this.target.body.position, this.body.position);
 			const toTargetAngle = Math.atan2(toTarget[1], toTarget[0]);
@@ -106,8 +122,7 @@ export class Missile extends Entity {
 
 		this.body.applyLocalForce(vec2.fromValues(MISSILE_ACCELERATION * MISSILE_MASS, 0))
 
-		this.mesh.position = [
-			this.body.position[0], this.body.position[1], 0.1]
+		this.mesh.position = [this.body.position[0], this.body.position[1], 0.1]
 		this.roll += dt * 300;
 		this.mesh.orientation = quat.fromEuler(
 			quat.create(), this.roll, 0, this.body.angle / Math.PI * 180)
@@ -142,8 +157,7 @@ export class MissileLauncher {
 	private spawnMissile(possibleTargets: Entity[]): Missile {
 		let phi = this.parent.body.angle;
 		let pos = this.parent.body.position;
-		let missile = this.createMissile(this.parent, pos, possibleTargets);
-		missile.body.angle = phi;
+		let missile = this.createMissile(this.parent, pos, phi, possibleTargets);
 		missile.body.velocity = vec2.copy([0, 0], this.parent.body.velocity)
 		this.coolDown = 1 / MISSILE_FIRE_RATE
 		return missile
@@ -156,12 +170,26 @@ export class MissileLauncher {
 
 export type MissileFactory = Awaited<ReturnType<typeof createMissileFactory>>
 
-export async function createMissileFactory(engine: Engine) {
+export let createMissileFactory = memoize(async function (engine: Engine) {
 
 	let { model, meta } = await engine.graphics.loadModel(
 		"assets/models/missile.glb")
+	let createSmoke = await createSmokeFactory(engine)
 
-	return function (parent: Glider, position: vec2, possibleTargets: Entity[]): Missile {
-		return new Missile(parent, position, possibleTargets, model, engine)
+	return function (
+		parent: Glider,
+		position: vec2,
+		angle: number,
+		possibleTargets: Entity[]
+	): Missile {
+		return new Missile(
+			parent,
+			position,
+			angle,
+			possibleTargets,
+			createSmoke,
+			model,
+			engine
+		)
 	}
-}
+})
