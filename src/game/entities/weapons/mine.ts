@@ -26,11 +26,11 @@ export class MinePowerup implements Powerup {
 
 export class Mine extends Entity {
 	private time = 0;
+	private deployed = 0
 	public onPrime = () => { }
 
 	constructor(
 		public parent: Glider,
-		position: vec2,
 		model: Model,
 		engine: Engine
 	) {
@@ -41,8 +41,6 @@ export class Mine extends Entity {
 				scaling: vec3.fromValues(MINE_RADIUS, MINE_RADIUS, MINE_RADIUS)
 			}))
 		this.mesh.baseColor = { r: 0, g: 0, b: 0 }
-		this.mesh.accentColor1 = { r: 1, g: 1, b: 1 }
-		this.mesh.accentColor2 = parent.player.team == 0 ? { r: 1, g: 0.2, b: 0 } : { r: 0, g: 0.5, b: 1 }
 
 		const bodyCfg = new RigidBodyConfig({
 			actor: this,
@@ -52,15 +50,25 @@ export class Mine extends Entity {
 			angularDamping: MINE_ANGULAR_DAMPING
 		})
 		this.body = engine.physics.addRigidBody(bodyCfg)
-		this.body.position = position
+		this.body.position = this.parent.body.position
+
+		this.collidesWithParent = false
+
 		this.update(0)
 	}
 
 	update(dt: number) {
 		this.time += dt
+		this.deployed += dt
+		this.deployed = Math.min(this.deployed, 1)
 
 		this.mesh.position = [
-			this.body.position[0], this.body.position[1], 0.1]
+			this.body.position[0], this.body.position[1], -0.9 + this.deployed]
+
+		if (this.deployed >= 1){
+			this.collidesWithParent = true
+		}
+		
 		this.mesh.orientation = quat.fromEuler(
 			quat.create(),
 			20 * Math.sin(this.time),
@@ -100,11 +108,7 @@ export class MineThrower {
 	}
 
 	private spawnMine(): Mine {
-		let pos = this.parent.body.position;
-		const d = MINE_RADIUS + GLIDER_RADIUS
-		pos[0] -= Math.cos(this.parent.body.angle) * d
-		pos[1] -= Math.sin(this.parent.body.angle) * d
-		let mine = this.createMine(this.parent, pos);
+		let mine = this.createMine(this.parent);
 		mine.body.angle = Math.random() * Math.PI * 2;
 		this.coolDown = MINE_COOLDOWN
 		return mine
@@ -121,7 +125,7 @@ export async function createMineFactory(engine: Engine) {
 	let { model, meta } = await engine.graphics.loadModel(
 		"assets/models/seamine.glb")
 
-	return function (parent: Glider, position: vec2): Mine {
-		return new Mine(parent, position, model, engine);
+	return function (parent: Glider): Mine {
+		return new Mine(parent, model, engine);
 	}
 }

@@ -3,15 +3,13 @@
 * some nice sounds
 * reset() everything on game end? (alternatively reload the window...)
 * coast looks shit (maybe white foam as part of mountain texture, semi covered by waves?)
-* mines should not be pooped into the wall, they should be sunk and appear after a second and if the glider is still there explode on it
+* mine color
 * the powerup boxes need more pizzazz, they somehow fade into the background. Emissiveness?
 * implement standard shields and phaser charge
 * tune nashwan damage
-* things should not spawn into each other, have more spawning points or maybe spawning 
+* things should not spawn into each other, have more spawning points or maybe spawning areas and also check if a spawn place is free
 * refactor this extra update handler member everywhere
-areas and also check if a spawn place is free
 * vec utils (euler, temp, etc)
-* missile explodes parent
 * config file
 * missile smoke
 * nashwan missiles must accelerate and explode and smoke

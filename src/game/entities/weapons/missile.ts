@@ -8,11 +8,12 @@ import { Sound } from "game/sound";
 import { quat, vec2, vec3 } from "gl-matrix";
 import { assignRole, Role } from "../actor";
 import { Entity } from "../entity";
-import { Glider } from "../glider/glider";
+import { Glider, GLIDER_RADIUS } from "../glider/glider";
 import { Powerup } from "game/entities/powerups/powerup";
 import { wrapAngle } from "utilities/math_utils";
 
 const MISSILE_LENGTH = 1.3;
+const MISSILE_RADIUS = 0.3 * MISSILE_LENGTH;
 const MISSILE_MASS = 1;
 const MISSILE_ACCELERATION = 70;
 const MISSILE_DAMPING = 0.8;
@@ -48,7 +49,7 @@ export class Missile extends Entity {
 
 		const bodyCfg = new RigidBodyConfig({
 			actor: this,
-			shapes: [new CircleConfig({ radius: 0.3 * MISSILE_LENGTH })],
+			shapes: [new CircleConfig({ radius: MISSILE_RADIUS })],
 			mass: MISSILE_MASS,
 			damping: MISSILE_DAMPING,
 			angularDamping: MISSILE_ANGULAR_DAMPING
@@ -57,6 +58,8 @@ export class Missile extends Entity {
 		this.body.position = position
 
 		this.target = this.lockOnTarget(parent);
+
+		this.collidesWithParent = false
 
 		this.update(0)
 	}
@@ -87,6 +90,12 @@ export class Missile extends Entity {
 	}
 
 	update(dt: number) {
+		if (
+			vec2.distance(this.body.position, this.parent.body.position)
+			> (MISSILE_RADIUS + GLIDER_RADIUS) * 1.5
+		) {
+			this.collidesWithParent = true
+		}
 
 		if (this.target != null) {
 			const toTarget = vec2.sub(vec2.create(), this.target.body.position, this.body.position);
@@ -152,7 +161,7 @@ export async function createMissileFactory(engine: Engine) {
 	let { model, meta } = await engine.graphics.loadModel(
 		"assets/models/missile.glb")
 
-	return function (parent: Glider, position:vec2, possibleTargets: Entity[]): Missile {
+	return function (parent: Glider, position: vec2, possibleTargets: Entity[]): Missile {
 		return new Missile(parent, position, possibleTargets, model, engine)
 	}
 }
