@@ -88,10 +88,27 @@ export let createMatch: MatchFactory = async function (engine) {
 			}
 			else if (powerupBox.kind == "nashwan") {
 				glider.activatedPowerups = [new NashwanPowerup()]
-				glider.maxThrust = GLIDER_THRUST * 4
-				glider.maxTurnRate = GLIDER_TURN_RATE * 1.5
-				glider.body.damping = 1 - (1 - GLIDER_DAMPING) / 6
-				glider.body.angularDamping = 1 - (1 - GLIDER_ANGULAR_DAMPING) / 4
+				let shotModifier = (shot: NashwanShot) => {
+					assignRole(shot, collideWithEverythingRole)
+					assignRole(shot, projectileRole)
+					let projectile2 = makeDamaging(shot, 1, () => { shot.dispose() })
+					assignRole(projectile2, damagingRole)
+				}
+				let extensions = nashwanFactory(glider, shotModifier)
+				for (let ex of [
+					extensions.leftBarrel1,
+					extensions.leftBarrel2,
+					extensions.rightBarrel1,
+					extensions.rightBarrel1,
+					extensions.drone]
+				) {
+					assignRole(ex, collideWithEverythingRole)
+				}
+				new GameTimer(() => {
+					for (let ex of Object.values(extensions)) {
+						ex.dispose()
+					}
+				}, 10)
 			}
 			else if (powerupBox.kind == "repair") {
 				(glider as unknown as Destructible).repair(GLIDER_HP)
@@ -225,17 +242,6 @@ export let createMatch: MatchFactory = async function (engine) {
 				}, 2)
 			}
 		)
-
-		let shotModifier = (shot: NashwanShot) => {
-			assignRole(shot, collideWithEverythingRole)
-			assignRole(shot, projectileRole)
-			let projectile2 = makeDamaging(shot, 1, () => { shot.dispose() })
-			assignRole(projectile2, damagingRole)
-		}
-		let barrels = nashwanFactory(glider, shotModifier)
-		for (let barrel of Object.values(barrels)) {
-			assignRole(barrel, collideWithEverythingRole)
-		}
 
 		glider.onDispose(() => {
 			engine.actionCam.unfollow(glider.body)

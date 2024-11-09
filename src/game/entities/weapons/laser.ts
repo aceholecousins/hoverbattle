@@ -9,7 +9,7 @@ import { Actor } from "game/entities/actor"
 import { Powerup } from "game/entities/powerups/powerup"
 
 const LASER_WIDTH = 1.0;
-const LASER_DURATION = 1.0;
+const LASER_DURATION = 2.0;
 
 export class LaserPowerup implements Powerup {
 	public readonly kind = "laser"

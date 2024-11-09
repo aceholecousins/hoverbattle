@@ -12,7 +12,7 @@ import { Attachment } from "game/physics/physics";
 import { Color, colorLerp } from "utils";
 import { broker, } from "broker"
 
-let BARREL_RADIUS = 0.6
+let BARREL_RADIUS = 0.5
 let DRONE_RADIUS = 0.6
 let DRONE_DAMPING = 0.5
 
@@ -23,7 +23,7 @@ export class NashwanPowerup implements Powerup {
 type NashwanShotFactory = (position: vec2, angle: number) => NashwanShot;
 
 export class Barrel extends Entity {
-	private deployed = 0.2
+	private deployed = 0
 	private attachment: Attachment
 	private tNextShot = 0
 
@@ -42,6 +42,8 @@ export class Barrel extends Entity {
 		)
 		this.mesh.scaling = vec3.fromValues(BARREL_RADIUS, BARREL_RADIUS, BARREL_RADIUS)
 		this.mesh.baseColor = parent.player.color
+		this.mesh.accentColor1 = colorLerp(parent.player.color, { r: 0, g: 0, b: 0 }, 0.5)
+		this.mesh.accentColor2 = { r: 0, g: 0, b: 0 }
 
 		const bodyCfg = new RigidBodyConfig({
 			actor: this,
@@ -52,12 +54,15 @@ export class Barrel extends Entity {
 		})
 		this.body = engine.physics.addRigidBody(bodyCfg)
 
-		let rotatedOffset = vec2.rotate(vec2.create(), offset, [0, 0], this.attachTo.body.angle)
-		this.body.position = vec2.add(vec2.create(), this.attachTo.body.position, rotatedOffset)
+		this.body.position = this.parent.body.position
+		this.body.angle = this.attachTo.body.angle
 		this.attachment = engine.physics.attach(this.attachTo.body, this.body)
 		this.attachment.setOffset([0, 0], 0)
-		this.attachment.setCanCollide(false)
 		this.parent.onDispose(() => this.dispose())
+
+		this.collidesWithParent = false
+		this.collidesWithSibling = false
+
 		this.update(0)
 	}
 
@@ -70,7 +75,8 @@ export class Barrel extends Entity {
 		], 0)
 
 		if (this.deployed == 1) {
-			this.attachment.setCanCollide(true)
+			this.collidesWithParent = true
+			this.collidesWithSibling = true
 			this.tNextShot -= dt
 			if (this.tNextShot <= 0) {
 				this.tNextShot += this.rechargeTime
@@ -95,7 +101,7 @@ export class Barrel extends Entity {
 export class Drone extends Entity {
 	private time = 0
 	private tNextShot = 0
-	private deployed = 0.2
+	private deployed = 0
 
 	constructor(
 		public parent: Glider,
@@ -111,6 +117,8 @@ export class Drone extends Entity {
 		)
 		this.mesh.scaling = vec3.fromValues(DRONE_RADIUS, DRONE_RADIUS, DRONE_RADIUS)
 		this.mesh.baseColor = parent.player.color
+		this.mesh.accentColor1 = { r: 1, g: 0.5, b: 0 }
+		this.mesh.accentColor2 = colorLerp(parent.player.color, { r: 0, g: 0, b: 0 }, 0.5)
 
 		const bodyCfg = new RigidBodyConfig({
 			actor: this,
@@ -122,10 +130,10 @@ export class Drone extends Entity {
 		this.body = engine.physics.addRigidBody(bodyCfg)
 		this.parent.onDispose(() => this.dispose())
 
-		let rotatedOffset = vec2.rotate(vec2.create(), this.offset, [0, 0], this.attachTo.body.angle)
-		let target = vec2.add(vec2.create(), this.attachTo.body.position, rotatedOffset)
+		this.body.position = this.parent.body.position
 
-		this.body.position = target
+		this.collidesWithParent = false
+		this.collidesWithSibling = false
 
 		this.update(0)
 	}
@@ -133,18 +141,32 @@ export class Drone extends Entity {
 	update(dt: number) {
 		this.time += dt
 		this.tNextShot -= dt
-		if (this.tNextShot <= 0) {
-			this.tNextShot += 0.5
-			for (let phi = 0.0001; phi < 2 * Math.PI; phi += 2 * Math.PI / 12) {
-				let position = vec2.copy(vec2.create(), this.body.position)
-				position[0] += Math.cos(this.body.angle + phi) * DRONE_RADIUS * 2
-				position[1] += Math.sin(this.body.angle + phi) * DRONE_RADIUS * 2
-				this.particleFactory(position, this.body.angle + phi)
+		this.deployed += 2 * dt
+		this.deployed = Math.min(1, this.deployed)
+
+		if (this.deployed == 1) {
+			this.collidesWithParent = true
+			this.collidesWithSibling = true
+
+			if (this.tNextShot <= 0) {
+				this.tNextShot += 0.5
+				for (let phi = 0.0001; phi < 2 * Math.PI; phi += 2 * Math.PI / 12) {
+					let position = vec2.copy(vec2.create(), this.body.position)
+					position[0] += Math.cos(this.body.angle + phi) * DRONE_RADIUS * 2
+					position[1] += Math.sin(this.body.angle + phi) * DRONE_RADIUS * 2
+					this.particleFactory(position, this.body.angle + phi)
+				}
 			}
+
 		}
 
 		let rotatedOffset = vec2.rotate(vec2.create(), this.offset, [0, 0], this.attachTo.body.angle)
-		let target = vec2.add(vec2.create(), this.attachTo.body.position, rotatedOffset)
+		let target = vec2.scaleAndAdd(
+			vec2.create(),
+			this.attachTo.body.position,
+			rotatedOffset,
+			this.deployed
+		)
 
 		let force = vec2.subtract(vec2.create(), target, this.body.position)
 		vec2.scale(force, force, 5 * vec2.length(force))
@@ -199,7 +221,7 @@ export class XenonQuadBlaster {
 	}
 }
 
-export class NashwanShot extends Entity{
+export class NashwanShot extends Entity {
 
 	constructor(
 		public parent: Glider,
@@ -236,7 +258,7 @@ export class NashwanShot extends Entity{
 
 		this.collidesWithParent = false
 		this.collidesWithSibling = false
-	
+
 		this.update(0)
 	}
 
@@ -308,7 +330,7 @@ export async function createNashwanFactory(engine: Engine) {
 		let drone = new Drone(parent, parent,
 			vec2.fromValues(-GLIDER_RADIUS - 1.5 * DRONE_RADIUS, 0),
 			droneModel, particleFactory, engine)
-		let blaster = new XenonQuadBlaster(parent, shotFactory)
-		return { leftBarrel1, leftBarrel2, rightBarrel1, rightBarrel2, drone }
+		let quadBlaster = new XenonQuadBlaster(parent, shotFactory)
+		return { leftBarrel1, leftBarrel2, rightBarrel1, rightBarrel2, drone, quadBlaster }
 	}
 }
