@@ -61,15 +61,19 @@ export class ActionCam {
 		graphics: Graphics,
 		config: ActionCamConfig
 	) {
-		this.camera = graphics.camera.create(config)
 
 		this.distanceOverHeight =
 			0.5 / Math.tan(0.5 * config.verticalAngleOfViewInDeg / 180 * Math.PI) * config.marginFactor
 
 		let cam = this
-		this.camera.onAspectChange = function (aspect: number) {
+
+		let oldAspectChange = config.onAspectChange
+		config.onAspectChange = function (aspect: number) {
 			cam.distanceOverWidth = cam.distanceOverHeight / aspect
+			oldAspectChange(aspect)
 		}
+
+		this.camera = graphics.camera.create(config)
 
 		this.dMin = config.dMin
 

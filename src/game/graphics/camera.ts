@@ -3,12 +3,6 @@ import { SceneNode, SceneNodeConfig } from "./scenenode"
 import { copyIfPresent } from "utils/general"
 
 export interface Camera extends SceneNode<"camera"> {
-	kind: "camera"
-	nearClip: number
-	farClip: number
-	verticalAngleOfViewInDeg: number
-	onAspectChange: (aspect: number) => void
-
 	activate(): void
 }
 

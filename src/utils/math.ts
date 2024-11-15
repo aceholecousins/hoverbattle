@@ -1,4 +1,4 @@
-import { vec3, mat3, vec2, quat } from "gl-matrix";
+import { vec2, vec3, mat3, quat, ReadonlyVec2, ReadonlyVec3 } from "gl-matrix";
 
 export function angleDelta(from: number, to: number): number {
 	let diff = (to - from) % (2 * Math.PI);
@@ -7,7 +7,7 @@ export function angleDelta(from: number, to: number): number {
 	return diff;
 }
 
-export function mat3fromVectors(out: mat3, x: vec3, y: vec3, z: vec3) {
+export function mat3fromVectors(out: mat3, x: ReadonlyVec3, y: ReadonlyVec3, z: ReadonlyVec3) {
 	// note that matrices are stored column-wise
 
 	out[0] = x[0]
@@ -62,4 +62,8 @@ export class LowPass {
 
 export function quatFromAngle(angle: number) {
 	return quat.fromEuler(quat.create(), 0, 0, angle / Math.PI * 180)
+}
+
+export function appendZ(v: ReadonlyVec2, z: number) {
+	return vec3.fromValues(v[0], v[1], z)
 }
