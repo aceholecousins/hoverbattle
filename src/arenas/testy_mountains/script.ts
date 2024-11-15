@@ -262,9 +262,9 @@ export let createMatch: MatchFactory = async function (engine) {
 		assignRole(glider, gliderRole)
 		assignRole(glider, collideWithEverythingRole)
 		assignRole(glider, destructibleRole)
-		glider.mesh.baseColor = player.color
-		glider.mesh.accentColor1 = player.team == 0 ? { r: 1, g: 0.5, b: 0 } : { r: 0, g: 0.8, b: 1 }
-		glider.mesh.accentColor2 = player.team == 0 ? { r: 0, g: 0, b: 0.8 } : { r: 1, g: 0, b: 0.2 }
+		glider.mesh.setBaseColor(player.color)
+		glider.mesh.setAccentColor1(player.team == 0 ? { r: 1, g: 0.5, b: 0 } : { r: 0, g: 0.8, b: 1 })
+		glider.mesh.setAccentColor2(player.team == 0 ? { r: 0, g: 0, b: 0.8 } : { r: 1, g: 0, b: 0.2 })
 		glider.body.position = determineSpawnPoint()
 		glider.body.angle = Math.random() * 1000
 		engine.actionCam.follow(glider.body, 5)

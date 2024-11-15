@@ -23,7 +23,7 @@ export class Smoke extends Visual {
 		this.mesh.scaling = vec3.fromValues(2, 2, 2)
 		this.mesh.position = position
 		this.mesh.orientation = quatFromAngle(Math.random() * 6.28)
-		this.mesh.opacity = 0.2
+		this.mesh.setOpacity(0.2)
 		this.update(0)
 	}
 

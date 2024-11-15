@@ -30,8 +30,8 @@ export class PhaserShot extends Entity {
 				model,
 				scaling: vec3.fromValues(PHASER_LENGTH, PHASER_LENGTH / 2, 1)
 			}))
-		this.mesh.baseColor = parent.player.team == 0 ? { r: 1, g: 0.2, b: 0 } : { r: 0, g: 0.5, b: 1 }
-		this.mesh.accentColor1 = { r: 1, g: 1, b: 1 }
+		this.mesh.setBaseColor(parent.player.team == 0 ? { r: 1, g: 0.2, b: 0 } : { r: 0, g: 0.5, b: 1 })
+		this.mesh.setAccentColor1({ r: 1, g: 1, b: 1 })
 
 		const bodyCfg = new RigidBodyConfig({
 			actor: this,

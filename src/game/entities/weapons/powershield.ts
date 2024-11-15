@@ -33,7 +33,7 @@ export class PowerShield extends Entity {
 			new ModelMeshConfig({ model: model })
 		)
 		this.mesh.scaling = vec3.fromValues(POWERSHIELD_RADIUS, POWERSHIELD_RADIUS, POWERSHIELD_RADIUS)
-		this.mesh.baseColor = parent.player.color
+		this.mesh.setBaseColor(parent.player.color)
 		this.currentAccentColor = colorLerp(parent.player.color, { r: 0, g: 0, b: 0 }, 0.5)
 		this.targetAccentColor = colorLerp(parent.player.color, { r: 0, g: 0, b: 0 }, 0.5)
 
@@ -66,7 +66,7 @@ export class PowerShield extends Entity {
 			0.06
 		)
 
-		this.mesh.accentColor1 = this.currentAccentColor
+		this.mesh.setAccentColor1(this.currentAccentColor)
 
 		this.mesh.position = [
 			// this is slightly cheating, it hides the elasticity of the attachment

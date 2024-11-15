@@ -39,7 +39,7 @@ export class Mine extends Entity {
 				model,
 				scaling: vec3.fromValues(MINE_RADIUS, MINE_RADIUS, MINE_RADIUS)
 			}))
-		this.mesh.baseColor = { r: 0, g: 0, b: 0 }
+		this.mesh.setBaseColor({ r: 0, g: 0, b: 0 })
 
 		const bodyCfg = new RigidBodyConfig({
 			actor: this,

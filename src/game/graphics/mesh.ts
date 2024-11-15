@@ -5,10 +5,10 @@ import { SceneNode, SceneNodeConfig } from "./scenenode"
 import { Model } from "./asset"
 
 export interface Mesh extends SceneNode<"mesh"> {
-	baseColor: Color
-	accentColor1: Color
-	accentColor2: Color
-	opacity: number
+	setBaseColor(color: Color): void
+	setAccentColor1(color: Color): void
+	setAccentColor2(color: Color): void
+	setOpacity(opacity: number): void
 }
 
 export class MeshConfig extends SceneNodeConfig<"mesh"> {

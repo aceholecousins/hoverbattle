@@ -43,9 +43,9 @@ export class Barrel extends Entity {
 			new ModelMeshConfig({ model: model })
 		)
 		this.mesh.scaling = vec3.fromValues(BARREL_RADIUS, BARREL_RADIUS, BARREL_RADIUS)
-		this.mesh.baseColor = parent.player.color
-		this.mesh.accentColor1 = colorLerp(parent.player.color, { r: 0, g: 0, b: 0 }, 0.5)
-		this.mesh.accentColor2 = { r: 0, g: 0, b: 0 }
+		this.mesh.setBaseColor(parent.player.color)
+		this.mesh.setAccentColor1(colorLerp(parent.player.color, { r: 0, g: 0, b: 0 }, 0.5))
+		this.mesh.setAccentColor2({ r: 0, g: 0, b: 0 })
 
 		const bodyCfg = new RigidBodyConfig({
 			actor: this,
@@ -117,9 +117,9 @@ export class Drone extends Entity {
 			new ModelMeshConfig({ model: model })
 		)
 		this.mesh.scaling = vec3.fromValues(DRONE_RADIUS, DRONE_RADIUS, DRONE_RADIUS)
-		this.mesh.baseColor = parent.player.color
-		this.mesh.accentColor1 = { r: 1, g: 0.5, b: 0 }
-		this.mesh.accentColor2 = colorLerp(parent.player.color, { r: 0, g: 0, b: 0 }, 0.5)
+		this.mesh.setBaseColor(parent.player.color)
+		this.mesh.setAccentColor1({ r: 1, g: 0.5, b: 0 })
+		this.mesh.setAccentColor2(colorLerp(parent.player.color, { r: 0, g: 0, b: 0 }, 0.5))
 
 		const bodyCfg = new RigidBodyConfig({
 			actor: this,
@@ -239,8 +239,8 @@ export class NashwanShot extends Entity {
 				model,
 				scaling: vec3.fromValues(spriteScale[0], spriteScale[1], spriteScale[1])
 			}))
-		this.mesh.baseColor = { r: 1, g: 1, b: 1 }
-		this.mesh.accentColor1 = parent.player.color
+		this.mesh.setBaseColor({ r: 1, g: 1, b: 1 })
+		this.mesh.setAccentColor1(parent.player.color)
 
 		const bodyCfg = new RigidBodyConfig({
 			actor: this,

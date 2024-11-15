@@ -1,8 +1,7 @@
 
-import { Mesh, MeshConfig, ModelMeshConfig, MeshFactory } from "game/graphics/mesh"
+import { Mesh, ModelMeshConfig, MeshFactory } from "game/graphics/mesh"
 import { ThreeSceneNode } from "./threescenenode"
 import * as THREE from "three"
-import { copy } from "utils/general"
 import { Color } from "utils/color"
 import { ThreeModel } from "./threemodel"
 import { modMaterials } from "./shadermods"
@@ -25,49 +24,51 @@ export class ThreeMesh extends ThreeSceneNode<"mesh"> implements Mesh {
 		this.threeObject.userData.tintMatrix = { value: new THREE.Matrix3() }
 		modMaterials(this.threeObject, this.threeObject.userData.tintMatrix, water)
 
-		copy(this, config, ["baseColor", "accentColor1", "accentColor2"])
+		this.setBaseColor(config.baseColor)
+		this.setAccentColor1(config.accentColor1)
+		this.setAccentColor2(config.accentColor2)
 	}
 
-	set baseColor(col: Color) {
+	setBaseColor(color: Color) {
 		if (this.threeObject.userData.tintMatrix) {
 			let tint = this.threeObject.userData.tintMatrix.value as THREE.Matrix3
-			tint.elements[0] = col.r
-			tint.elements[1] = col.g
-			tint.elements[2] = col.b
+			tint.elements[0] = color.r
+			tint.elements[1] = color.g
+			tint.elements[2] = color.b
 		}
 	}
 
-	set accentColor1(col: Color) {
+	setAccentColor1(color: Color) {
 		if (this.threeObject.userData.tintMatrix) {
 			let tint = this.threeObject.userData.tintMatrix.value as THREE.Matrix3
-			tint.elements[3] = col.r
-			tint.elements[4] = col.g
-			tint.elements[5] = col.b
+			tint.elements[3] = color.r
+			tint.elements[4] = color.g
+			tint.elements[5] = color.b
 		}
 	}
 
-	set accentColor2(col: Color) {
+	setAccentColor2(color: Color) {
 		if (this.threeObject.userData.tintMatrix) {
 			let tint = this.threeObject.userData.tintMatrix.value as THREE.Matrix3
-			tint.elements[6] = col.r
-			tint.elements[7] = col.g
-			tint.elements[8] = col.b
+			tint.elements[6] = color.r
+			tint.elements[7] = color.g
+			tint.elements[8] = color.b
 		}
 	}
 
-	set opacity(op: number) {
+	setOpacity(opacity: number) {
 		this.threeObject.traverse((obj) => {
 			if (obj.type === "Mesh") {
 				let mat = (obj as THREE.Mesh).material as THREE.Material
-				mat.transparent = op < 1 // TODO: this probably fails on objects with transparent parts
-				mat.opacity = op
+				mat.transparent = opacity < 1 // TODO: this probably fails on objects with transparent parts
+				mat.opacity = opacity
 			}
 		})
 	}
 
-	set position(pos: vec3) {
-		super.position = pos
-		this.threeObject.renderOrder = pos[2]
+	setPosition(position: vec3) {
+		super.position = position
+		this.threeObject.renderOrder = position[2]
 	}
 
 }

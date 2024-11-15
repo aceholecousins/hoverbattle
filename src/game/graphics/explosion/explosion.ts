@@ -32,8 +32,8 @@ export class Smokeball extends Visual {
 			Math.random() * 360,
 			Math.random() * 360
 		)
-		this.mesh.baseColor = { r: 1, g: 1, b: 1 }
-		this.mesh.accentColor1 = { r: 1, g: 1, b: 1 }
+		this.mesh.setBaseColor({ r: 1, g: 1, b: 1 })
+		this.mesh.setAccentColor1({ r: 1, g: 1, b: 1 })
 		this.update(0)
 	}
 
@@ -41,19 +41,19 @@ export class Smokeball extends Visual {
 		this.time += dt
 		let size = this.time * 7
 
-		this.mesh.baseColor = colorLerp(
+		this.mesh.setBaseColor(colorLerp(
 			{ r: 1, g: 1, b: 1 },
 			this.color,
 			this.time / DURATION
-		)
-		this.mesh.accentColor1 = colorLerp(
+		))
+		this.mesh.setAccentColor1(colorLerp(
 			this.color,
 			{ r: 0, g: 0, b: 0 },
 			this.time / DURATION
-		)
+		))
 
 		if (this.time > DURATION * 0.8) {
-			this.mesh.opacity = 1 - (this.time - DURATION * 0.8) / (DURATION * 0.2)
+			this.mesh.setOpacity(1 - (this.time - DURATION * 0.8) / (DURATION * 0.2))
 		}
 
 		this.mesh.scaling = vec3.fromValues(size, size, size)
@@ -80,7 +80,7 @@ export class Crumb extends Visual {
 		super()
 		this.mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
 		this.mesh.scaling = vec3.fromValues(0.5, 0.5, 0.5)
-		this.mesh.baseColor = color
+		this.mesh.setBaseColor(color)
 		this.position = vec3.clone(position)
 		let direction = Math.random() * 2 * Math.PI
 		let pitch = 0.5 + Math.random() * 1.0
@@ -132,7 +132,7 @@ export class Shockwave extends Visual {
 		this.mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
 		this.mesh.scaling = vec3.fromValues(0.1, 0.1, 0.1)
 		this.mesh.position = position
-		this.mesh.opacity = 0.2
+		this.mesh.setOpacity(0.2)
 		this.update(0)
 	}
 
@@ -140,7 +140,7 @@ export class Shockwave extends Visual {
 		this.time += dt
 		let size = this.time * 50
 		this.mesh.scaling = vec3.fromValues(size, size, size)
-		this.mesh.opacity = 0.99 - this.time / DURATION
+		this.mesh.setOpacity(0.99 - this.time / DURATION)
 		if (this.time > DURATION) {
 			this.dispose()
 		}
@@ -160,7 +160,7 @@ export class Plop extends Visual {
 		this.mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
 		this.mesh.scaling = vec3.fromValues(0.1, 0.1, 0.1)
 		this.mesh.position = position
-		this.mesh.baseColor = color
+		this.mesh.setBaseColor(color)
 		this.update(0)
 	}
 
@@ -168,7 +168,7 @@ export class Plop extends Visual {
 		this.time += dt
 		let size = this.time * 25
 		this.mesh.scaling = vec3.fromValues(size, size, size)
-		this.mesh.opacity = 0.99
+		this.mesh.setOpacity(0.99)
 		if (this.time > DURATION) {
 			this.dispose()
 		}
@@ -191,8 +191,8 @@ export class Piff extends Visual {
 			position[0], position[1], position[2] + 0.1 * Math.random()
 		]
 		this.mesh.orientation = quatFromAngle(Math.random() * 6.28)
-		this.mesh.baseColor = color
-		this.mesh.accentColor2 = colorLerp(color, { r: 0, g: 0, b: 0 }, 0.5)
+		this.mesh.setBaseColor(color)
+		this.mesh.setAccentColor2(colorLerp(color, { r: 0, g: 0, b: 0 }, 0.5))
 		this.update(0)
 	}
 
@@ -204,19 +204,19 @@ export class Piff extends Visual {
 		}
 		let size = this.progress * 5
 		this.mesh.scaling = vec3.fromValues(size, size, size)
-		this.mesh.opacity = 0.99
+		this.mesh.setOpacity(0.99)
 
-		this.mesh.baseColor = colorLerp(
+		this.mesh.setBaseColor(colorLerp(
 			this.color,
 			{ r: 0, g: 0, b: 0 },
 			0.9 * this.progress
-		)
+		))
 
-		this.mesh.accentColor1 = colorLerp(
+		this.mesh.setAccentColor1(colorLerp(
 			{ r: 1, g: 1, b: 1 },
 			this.color,
 			this.progress
-		)
+		))
 	}
 }
 

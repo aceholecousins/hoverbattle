@@ -49,9 +49,9 @@ export class Missile extends Entity {
 				model,
 				scaling: vec3.fromValues(MISSILE_LENGTH / 2, MISSILE_LENGTH / 2, MISSILE_LENGTH / 2)
 			}))
-		this.mesh.baseColor = { r: 0, g: 0, b: 0 }
-		this.mesh.accentColor1 = { r: 1, g: 1, b: 1 }
-		this.mesh.accentColor2 = parent.player.color
+		this.mesh.setBaseColor({ r: 0, g: 0, b: 0 })
+		this.mesh.setAccentColor1({ r: 1, g: 1, b: 1 })
+		this.mesh.setAccentColor2(parent.player.color)
 
 		const bodyCfg = new RigidBodyConfig({
 			actor: this,

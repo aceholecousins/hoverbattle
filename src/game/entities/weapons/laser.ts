@@ -53,8 +53,8 @@ export class LaserBeam extends Visual {
 		this.mesh = engine.graphics.mesh.createFromModel(
 			new ModelMeshConfig({ model: beamModel })
 		)
-		this.mesh.baseColor = color
-		this.mesh.accentColor1 = { r: 1, g: 1, b: 1 }
+		this.mesh.setBaseColor(color)
+		this.mesh.setAccentColor1({ r: 1, g: 1, b: 1 })
 
 		if (numReflections > 0) {
 			this.reflection = new LaserBeam(
