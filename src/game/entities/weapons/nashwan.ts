@@ -2,6 +2,7 @@ import { ModelMeshConfig } from "game/graphics/mesh";
 import { Model } from "game/graphics/asset";
 import { Engine } from "game/engine";
 import { quat, vec2, vec3 } from "gl-matrix";
+import { quatFromAngle } from "utils/math"
 import { Glider, GLIDER_RADIUS } from "../glider/glider";
 import { Powerup } from "game/entities/powerups/powerup";
 import { Visual } from "game/graphics/visual";
@@ -9,7 +10,7 @@ import { Entity } from "game/entities/entity";
 import { CircleConfig } from "game/physics/circle";
 import { RigidBodyConfig } from "game/physics/rigidbody";
 import { Attachment } from "game/physics/physics";
-import { Color, colorLerp } from "utils";
+import { Color, colorLerp } from "utils/color";
 import { broker, } from "broker"
 import { createMissileFactory } from "./missile"
 
@@ -89,8 +90,7 @@ export class Barrel extends Entity {
 		}
 		this.mesh.position = [
 			this.body.position[0], this.body.position[1], 0.1]
-		this.mesh.orientation = quat.fromEuler(
-			quat.create(), 0, 0, this.body.angle / Math.PI * 180)
+		this.mesh.orientation = quatFromAngle(this.body.angle)
 	}
 
 	dispose() {
@@ -175,8 +175,7 @@ export class Drone extends Entity {
 
 		this.mesh.position = [
 			this.body.position[0], this.body.position[1], 0.1]
-		this.mesh.orientation = quat.fromEuler(
-			quat.create(), 0, 0, this.time * 360)
+		this.mesh.orientation = quatFromAngle(this.time * 6.28)
 	}
 
 	dispose() {
@@ -266,8 +265,7 @@ export class NashwanShot extends Entity {
 	update(dt: number) {
 		this.mesh.position = [
 			this.body.position[0], this.body.position[1], 0.1]
-		this.mesh.orientation = quat.fromEuler(
-			quat.create(), 0, 0, this.body.angle / Math.PI * 180)
+		this.mesh.orientation = quatFromAngle(this.body.angle)
 	}
 }
 

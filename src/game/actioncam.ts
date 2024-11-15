@@ -1,10 +1,10 @@
 import { Graphics } from "game/graphics/graphics";
 import { vec3, mat3, mat4, vec2, quat } from "gl-matrix";
 import { Camera, CameraConfig } from "game/graphics/camera";
-import { mat3fromVectors } from "utilities/math_utils";
+import { mat3fromVectors } from "utils/math";
 import { RigidBody } from "./physics/rigidbody";
-import { copyIfPresent } from "utils";
-import { LowPass } from "utilities/math_utils";
+import { copyIfPresent } from "utils/general";
+import { LowPass } from "utils/math";
 
 export class ActionCamConfig extends CameraConfig {
 	/** camera will not move closer to scene than this */

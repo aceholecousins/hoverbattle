@@ -1,4 +1,4 @@
-import { Color } from "utils";
+import { Color } from "utils/color";
 import { Controller } from "./controller/controller";
 
 

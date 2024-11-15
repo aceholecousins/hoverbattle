@@ -1,20 +1,6 @@
 
 export type Registry<T> = { [index: string]: T }
 
-export interface Color {
-	r: number
-	g: number
-	b: number
-}
-
-export function colorLerp(a: Color, b: Color, q: number): Color {
-	return {
-		r: a.r + (b.r - a.r) * q,
-		g: a.g + (b.g - a.g) * q,
-		b: a.b + (b.b - a.b) * q
-	}
-}
-
 export type Kind = string
 
 // https://stackoverflow.com/a/49579497/3825996
@@ -40,13 +26,6 @@ export function copyIfPresent<T1 extends object, T2 extends object, K extends ke
 			(target as any)[k] = (source as any)[k]
 		}
 	}
-}
-
-export function angleDelta(a: number, b: number): number {
-	let diff = (a - b) % (2 * Math.PI);
-	if (diff > Math.PI) diff -= 2 * Math.PI;
-	if (diff < -Math.PI) diff += 2 * Math.PI;;
-	return diff;
 }
 
 export function remove<T>(a: Array<T>, b: T) {

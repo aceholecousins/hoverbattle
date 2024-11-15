@@ -5,7 +5,7 @@ import * as THREE from "three"
 import { Vector3 } from "three"
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 // `import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader"
-import { Triangle3 } from "utilities/math_utils"
+import { Triangle3 } from "utils/math"
 import { SceneNodeConfig } from "game/graphics/scenenode"
 
 export class ThreeModel extends Model {

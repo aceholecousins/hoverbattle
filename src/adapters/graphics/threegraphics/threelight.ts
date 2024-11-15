@@ -1,5 +1,5 @@
 
-import { Color } from "utils"
+import { Color } from "utils/color"
 import { ThreeSceneNode } from "./threescenenode"
 import {
 	PointLight,

@@ -2,9 +2,10 @@ import { ModelMeshConfig } from "game/graphics/mesh";
 import { Model } from "game/graphics/asset";
 import { Engine } from "game/engine";
 import { quat, vec2, vec3 } from "gl-matrix";
+import { quatFromAngle } from "utils/math"
 import { Glider, GLIDER_RADIUS } from "../glider/glider";
 import { Visual } from "game/graphics/visual"
-import { Color } from "utils"
+import { Color } from "utils/color"
 import { Actor } from "game/entities/actor"
 import { Powerup } from "game/entities/powerups/powerup"
 
@@ -87,8 +88,8 @@ export class LaserBeam extends Visual {
 			(p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2, this.z)
 		this.mesh.scaling = vec3.fromValues(
 			distance, LASER_WIDTH, 1)
-		this.mesh.orientation = quat.fromEuler(
-			quat.create(), 0, 0, angle / Math.PI * 180)
+		this.mesh.orientation = quatFromAngle(angle)
+
 
 		if (hit && this.reflection) {
 			let normalAngle = Math.atan2(hit.normal[1], hit.normal[0])

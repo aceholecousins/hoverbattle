@@ -2,7 +2,8 @@ import { ModelMeshConfig } from "game/graphics/mesh"
 import { Model } from "game/graphics/asset"
 import { Engine } from "game/engine"
 import { vec3, quat } from "gl-matrix"
-import { Color, colorLerp } from "utils"
+import { quatFromAngle } from "utils/math"
+import { Color, colorLerp } from "utils/color"
 import { Visual } from "game/graphics/visual"
 import { PointLight, PointLightConfig } from "../light"
 import { broker } from "broker"
@@ -101,7 +102,12 @@ export class Crumb extends Visual {
 		this.position[2] += this.velocity[2] * dt
 		this.velocity[2] -= 9.81 * dt
 		this.mesh.position = this.position
-		this.mesh.orientation = quat.fromEuler(quat.create(), this.euler[0], this.euler[1], this.euler[2])
+		this.mesh.orientation = quat.fromEuler(
+			quat.create(),
+			this.euler[0],
+			this.euler[1],
+			this.euler[2]
+		)
 
 		if (this.time > this.tNextCloud) {
 			this.tNextCloud = this.time + 0.04
@@ -184,9 +190,7 @@ export class Piff extends Visual {
 		this.mesh.position = [
 			position[0], position[1], position[2] + 0.1 * Math.random()
 		]
-		this.mesh.orientation = quat.fromEuler(
-			quat.create(), 0, 0, Math.random() * 360
-		)
+		this.mesh.orientation = quatFromAngle(Math.random() * 6.28)
 		this.mesh.baseColor = color
 		this.mesh.accentColor2 = colorLerp(color, { r: 0, g: 0, b: 0 }, 0.5)
 		this.update(0)

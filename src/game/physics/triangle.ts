@@ -1,8 +1,8 @@
 
 import { ShapeConfig, Shape } from "./shape"
-import { copyIfPresent } from "utils"
+import { copyIfPresent } from "utils/general"
 import { vec2 } from "gl-matrix"
-import { Triangle2 } from "utilities/math_utils"
+import { Triangle2 } from "utils/math"
 
 export interface Triangle extends Shape<"triangle"> {
 	kind: "triangle"

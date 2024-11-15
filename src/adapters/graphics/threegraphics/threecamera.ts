@@ -3,7 +3,7 @@ import { ThreeSceneNode } from "./threescenenode"
 import { Camera, CameraConfig, CameraFactory } from "game/graphics/camera"
 import { SceneInfo } from "./sceneinfo"
 import * as THREE from "three"
-import { copy } from "utils"
+import { copy } from "utils/general"
 import { renderer } from "./threerenderer"
 import { PerspectiveCamera } from "three"
 

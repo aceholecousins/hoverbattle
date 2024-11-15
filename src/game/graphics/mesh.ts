@@ -1,5 +1,6 @@
 
-import { Color, copyIfPresent } from "utils"
+import { copyIfPresent } from "utils/general"
+import { Color } from "utils/color"
 import { SceneNode, SceneNodeConfig } from "./scenenode"
 import { Model } from "./asset"
 

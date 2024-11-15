@@ -1,6 +1,6 @@
 
 import { SceneNode, SceneNodeConfig } from "./scenenode"
-import { copyIfPresent } from "utils"
+import { copyIfPresent } from "utils/general"
 
 export interface Camera extends SceneNode<"camera"> {
 	kind: "camera"

@@ -9,7 +9,7 @@ import { Entity } from "game/entities/entity";
 import { CircleConfig } from "game/physics/circle";
 import { RigidBodyConfig } from "game/physics/rigidbody";
 import { Attachment } from "game/physics/physics";
-import { Color, colorLerp } from "utils";
+import { Color, colorLerp } from "utils/color";
 
 const POWERSHIELD_RADIUS = GLIDER_RADIUS * 1.5
 

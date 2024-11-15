@@ -2,7 +2,7 @@ import { ModelMeshConfig } from "game/graphics/mesh"
 import { Engine } from "game/engine"
 import { RigidBodyConfig } from "game/physics/rigidbody"
 import { TriangleConfig } from "game/physics/triangle"
-import { triangle3to2, Triangle3 } from "utilities/math_utils"
+import { triangle3to2, Triangle3 } from "utils/math"
 import { Entity } from "../entity"
 
 export async function loadArena(

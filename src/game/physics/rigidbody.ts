@@ -1,6 +1,6 @@
 import { vec2 } from "gl-matrix"
 import { ShapeConfig, Shape } from "./shape"
-import { copyIfPresent } from "utils"
+import { copyIfPresent } from "utils/general"
 import { Actor } from "game/entities/actor"
 
 export interface RigidBody {

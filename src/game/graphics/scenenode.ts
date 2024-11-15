@@ -1,6 +1,6 @@
 
 import { vec3, quat } from "gl-matrix"
-import { Kind, copyIfPresent } from "utils"
+import { Kind, copyIfPresent } from "utils/general"
 
 export interface SceneNode<K extends Kind> {
 	kind: K

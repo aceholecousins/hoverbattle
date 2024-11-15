@@ -5,7 +5,7 @@ import { CircleConfig } from "game/physics/circle"
 import { RigidBodyConfig } from "game/physics/rigidbody"
 import { Player } from "game/player"
 import { vec2, quat, vec3 } from "gl-matrix"
-import { wrapAngle } from "utilities/math_utils"
+import { angleDelta, quatFromAngle } from "utils/math"
 import { Entity } from "../entity"
 import { Powerup } from "game/entities/powerups/powerup"
 
@@ -75,8 +75,7 @@ export class Glider extends Entity {
 
 		this.mesh.position = [
 			this.body.position[0], this.body.position[1], 0.1]
-		this.mesh.orientation = quat.fromEuler(
-			quat.create(), 0, 0, this.body.angle / Math.PI * 180)
+		this.mesh.orientation = quatFromAngle(this.body.angle)
 
 		this.tNextRipple -= dt
 		if (this.tNextRipple < 0) {
@@ -100,11 +99,10 @@ export class Glider extends Entity {
 	requireTriggerRelease() { this.requiresRelease = true }
 
 	turnToDirection(direction: number) {
-		let wrappedAngle = wrapAngle(this.body.angle);
-		let directionDiff = wrapAngle(wrappedAngle - direction);
+		let delta = angleDelta(direction, this.body.angle);
 		let threshold = 0.0001;
-		if (Math.abs(directionDiff) > threshold) {
-			let sign = Math.sign(directionDiff)
+		if (Math.abs(delta) > threshold) {
+			let sign = Math.sign(delta)
 			this.body.applyAngularMomentum(-sign * 0.3)
 		}
 	}

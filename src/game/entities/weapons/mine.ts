@@ -10,7 +10,6 @@ import { assignRole, Role } from "../actor";
 import { Entity } from "../entity";
 import { Glider, GLIDER_RADIUS } from "../glider/glider";
 import { Powerup } from "game/entities/powerups/powerup";
-import { wrapAngle } from "utilities/math_utils";
 
 const MINE_RADIUS = 1;
 const MINE_MASS = 1

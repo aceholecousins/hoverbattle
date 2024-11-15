@@ -1,5 +1,5 @@
 
-import { Triangle3 } from "utilities/math_utils"
+import { Triangle3 } from "utils/math"
 import { SceneNodeConfig } from "./scenenode"
 
 export class Model { readonly kind = "model" }

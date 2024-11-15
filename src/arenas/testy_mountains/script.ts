@@ -23,7 +23,7 @@ import { CollisionOverride, CollisionHandler } from "game/physics/collision"
 import { Player } from "game/player"
 import { SceneNodeConfig } from "game/graphics/scenenode"
 import { vec2, vec3, quat } from "gl-matrix"
-import { remove } from "utils"
+import { remove } from "utils/general"
 import { createExplosionFactory, createSmallExplosionFactory } from "game/graphics/explosion/explosion"
 import { GameTimer } from "game/gametimer"
 

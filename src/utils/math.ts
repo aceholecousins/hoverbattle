@@ -1,16 +1,10 @@
-import { vec3, mat3, vec2 } from "gl-matrix";
+import { vec3, mat3, vec2, quat } from "gl-matrix";
 
-/**
- * Wraps an angle in order to be in the limits of the wrapping point.
- * 
- * @param angle Angle to be wrapped in rad
- * @param wrapAt Wrapping point. Defaults to Math.PI
- * 
- * @returns the wrapped angle in the range between [wrapAt-2pi, wrapAt)
- */
-export function wrapAngle(angle: number, wrapAt = Math.PI): number {
-	let revs = (angle - wrapAt) / 2.0 / Math.PI;
-	return (revs - Math.floor(revs) - 1) * 2.0 * Math.PI + wrapAt
+export function angleDelta(from: number, to: number): number {
+	let diff = (to - from) % (2 * Math.PI);
+	if (diff > Math.PI) diff -= 2 * Math.PI;
+	if (diff < -Math.PI) diff += 2 * Math.PI;;
+	return diff;
 }
 
 export function mat3fromVectors(out: mat3, x: vec3, y: vec3, z: vec3) {
@@ -64,4 +58,8 @@ export class LowPass {
 	get() {
 		return this.state[this.state.length - 1]
 	}
+}
+
+export function quatFromAngle(angle: number) {
+	return quat.fromEuler(quat.create(), 0, 0, angle / Math.PI * 180)
 }

@@ -1,6 +1,6 @@
 
 import { vec2 } from "gl-matrix"
-import { Kind, copyIfPresent } from "utils"
+import { Kind, copyIfPresent } from "utils/general"
 
 // parameters that are common to all shapes
 

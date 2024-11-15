@@ -10,9 +10,9 @@ import { assignRole, Role } from "../actor";
 import { Entity } from "../entity";
 import { Glider, GLIDER_RADIUS } from "../glider/glider";
 import { Powerup } from "game/entities/powerups/powerup";
-import { wrapAngle } from "utilities/math_utils";
+import { angleDelta } from "utils/math";
 import { SmokeFactory, createSmokeFactory } from "game/graphics/explosion/smoke"
-import { memoize } from "utils";
+import { memoize } from "utils/general";
 
 const MISSILE_LENGTH = 1.3;
 const MISSILE_RADIUS = 0.3 * MISSILE_LENGTH;
@@ -116,7 +116,7 @@ export class Missile extends Entity {
 		if (this.target != null) {
 			const toTarget = vec2.sub(vec2.create(), this.target.body.position, this.body.position);
 			const toTargetAngle = Math.atan2(toTarget[1], toTarget[0]);
-			let delta = wrapAngle(toTargetAngle - this.body.angle);
+			let delta = angleDelta(this.body.angle, toTargetAngle);
 			this.body.applyTorque(Math.sign(delta) * MISSILE_HOMING_TORQUE);
 		}
 

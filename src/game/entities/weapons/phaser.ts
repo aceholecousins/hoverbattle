@@ -6,6 +6,7 @@ import { CircleConfig } from "game/physics/circle";
 import { RigidBodyConfig } from "game/physics/rigidbody";
 import { Sound } from "game/sound";
 import { quat, vec2, vec3 } from "gl-matrix";
+import { quatFromAngle } from "utils/math"
 import { Entity } from "../entity";
 import { Glider } from "../glider/glider";
 
@@ -46,8 +47,7 @@ export class PhaserShot extends Entity {
 	update(dt: number) {
 		this.mesh.position = [
 			this.body.position[0], this.body.position[1], 0.1]
-		this.mesh.orientation = quat.fromEuler(
-			quat.create(), 0, 0, this.body.angle / Math.PI * 180)
+		this.mesh.orientation = quatFromAngle(this.body.angle)
 	}
 }
 

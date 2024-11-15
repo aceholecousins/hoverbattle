@@ -2,9 +2,10 @@ import { ModelMeshConfig } from "game/graphics/mesh"
 import { Model } from "game/graphics/asset"
 import { Engine } from "game/engine"
 import { vec3, quat } from "gl-matrix"
-import { Color, colorLerp } from "utils"
+import { quatFromAngle } from "utils/math"
+import { Color, colorLerp } from "utils/color"
 import { Visual } from "game/graphics/visual"
-import { memoize } from "utils"
+import { memoize } from "utils/general"
 
 let DURATION = 0.5
 
@@ -21,7 +22,7 @@ export class Smoke extends Visual {
 		this.mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
 		this.mesh.scaling = vec3.fromValues(2, 2, 2)
 		this.mesh.position = position
-		this.mesh.orientation = quat.fromEuler(quat.create(), 0, 0, Math.random() * 360)
+		this.mesh.orientation = quatFromAngle(Math.random() * 6.28)
 		this.mesh.opacity = 0.2
 		this.update(0)
 	}

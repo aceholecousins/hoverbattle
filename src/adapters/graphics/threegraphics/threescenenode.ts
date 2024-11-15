@@ -2,7 +2,7 @@
 import * as THREE from "three"
 import { SceneNode, SceneNodeConfig } from "game/graphics/scenenode"
 import { vec3, quat } from "gl-matrix"
-import { Kind, copy } from "utils"
+import { Kind, copy } from "utils/general"
 
 export abstract class ThreeSceneNode<K extends Kind> implements SceneNode<K> {
 	kind: K

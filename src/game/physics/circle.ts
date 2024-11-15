@@ -1,6 +1,6 @@
 
 import { ShapeConfig, Shape } from "./shape"
-import { copyIfPresent } from "utils"
+import { copyIfPresent } from "utils/general"
 
 export interface Circle extends Shape<"circle"> {
 	kind: "circle"
