@@ -283,7 +283,7 @@ export class Flash {
 	flash(position: vec3, color: Color) {
 		this.time = 0
 		this.light.position = position
-		this.light.color = color
+		this.light.setColor(color)
 		if (!this.active) {
 			this.active = true
 			broker.update.addHandler(this.updateHandler)
@@ -292,7 +292,7 @@ export class Flash {
 
 	update(dt: number) {
 		this.time += dt
-		this.light.intensity = 1000 * (1 - this.time / DURATION)
+		this.light.setIntensity(1000 * (1 - this.time / DURATION))
 		if (this.time > DURATION) {
 			this.dispose()
 		}
@@ -301,8 +301,8 @@ export class Flash {
 	dispose() {
 		this.active = false
 		broker.update.removeHandler(this.updateHandler)
-		this.light.intensity = 0
-		this.light.color = { r: 0, g: 0, b: 0 }
+		this.light.setIntensity(0)
+		this.light.setColor({ r: 0, g: 0, b: 0 })
 		this.light.position = vec3.fromValues(NaN, NaN, NaN)
 	}
 }

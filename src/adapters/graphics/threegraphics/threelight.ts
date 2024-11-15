@@ -14,18 +14,19 @@ export class ThreePointLight extends ThreeSceneNode<"pointlight"> implements Poi
 
 	threeObject: THREE.PointLight
 
-	set intensity(intensity: number) {
+	setIntensity(intensity: number) {
 		this.threeObject.intensity = intensity
 	}
 
-	set color(col: Color) {
-		this.threeObject.color.setRGB(col.r, col.g, col.b)
+	setColor(color: Color) {
+		this.threeObject.color.setRGB(color.r, color.g, color.b)
 	}
 
 	constructor(scene: THREE.Scene, config: PointLightConfig) {
 		super(scene, new THREE.PointLight(), config)
 
-		this.color = config.color
+		this.setIntensity(config.intensity)
+		this.setColor(config.color)
 	}
 }
 
@@ -33,19 +34,19 @@ export class ThreeHemisphereLight extends ThreeSceneNode<"hemispherelight"> impl
 
 	threeObject: THREE.HemisphereLight
 
-	set groundColor(col: Color) {
-		this.threeObject.groundColor.setRGB(col.r, col.g, col.b)
+	setGroundColor(color: Color) {
+		this.threeObject.groundColor.setRGB(color.r, color.g, color.b)
 	}
 
-	set skyColor(col: Color) {
-		this.threeObject.color.setRGB(col.r, col.g, col.b)
+	setSkyColor(color: Color) {
+		this.threeObject.color.setRGB(color.r, color.g, color.b)
 	}
 
 	constructor(scene: THREE.Scene, config: HemisphereLightConfig) {
 		super(scene, new THREE.HemisphereLight(), config)
 
-		this.groundColor = config.groundColor
-		this.skyColor = config.skyColor
+		this.setGroundColor(config.groundColor)
+		this.setSkyColor(config.skyColor)
 	}
 }
 
