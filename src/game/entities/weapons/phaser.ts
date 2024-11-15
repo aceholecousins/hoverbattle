@@ -28,10 +28,11 @@ export class PhaserShot extends Entity {
 		this.mesh = engine.graphics.mesh.createFromModel(
 			new ModelMeshConfig({
 				model,
-				scaling: vec3.fromValues(PHASER_LENGTH, PHASER_LENGTH / 2, 1)
+				scale: [PHASER_LENGTH, PHASER_LENGTH / 2, 1]
 			}))
 		this.mesh.setBaseColor(parent.player.team == 0 ? { r: 1, g: 0.2, b: 0 } : { r: 0, g: 0.5, b: 1 })
 		this.mesh.setAccentColor1({ r: 1, g: 1, b: 1 })
+		this.mesh.setPositionZ(0.1)
 
 		const bodyCfg = new RigidBodyConfig({
 			actor: this,
@@ -45,9 +46,7 @@ export class PhaserShot extends Entity {
 	}
 
 	update(dt: number) {
-		this.mesh.position = [
-			this.body.position[0], this.body.position[1], 0.1]
-		this.mesh.orientation = quatFromAngle(this.body.angle)
+		this.mesh.copy2dPose(this.body)
 	}
 }
 

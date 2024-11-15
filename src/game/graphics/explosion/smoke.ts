@@ -20,17 +20,16 @@ export class Smoke extends Visual {
 	) {
 		super()
 		this.mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
-		this.mesh.scaling = vec3.fromValues(2, 2, 2)
-		this.mesh.position = position
-		this.mesh.orientation = quatFromAngle(Math.random() * 6.28)
+		this.mesh.setScale(2)
+		this.mesh.setPosition(position)
+		this.mesh.setAngle(Math.random() * 6.28)
 		this.mesh.setOpacity(0.2)
 		this.update(0)
 	}
 
 	update(dt: number) {
 		this.time += dt
-		let size = 3 * (1 - this.time / DURATION)
-		this.mesh.scaling = vec3.fromValues(size, size, size)
+		this.mesh.setScale(3 * (1 - this.time / DURATION))
 		if (this.time > DURATION) {
 			this.dispose()
 		}

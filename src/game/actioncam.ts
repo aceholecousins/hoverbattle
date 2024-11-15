@@ -140,12 +140,12 @@ export class ActionCam {
 
 		let ori = mat3fromVectors(mat3.create(), x, y, z)
 
-		this.camera.position = vec3.fromValues(
+		this.camera.setPosition(vec3.fromValues(
 			this.positionX.get(),
 			this.positionY.get(),
 			this.positionZ.get()
-		)
-		this.camera.orientation = quat.fromMat3(quat.create(), ori)
+		))
+		this.camera.setOrientation(quat.fromMat3(quat.create(), ori))
 	}
 
 }

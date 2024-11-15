@@ -107,7 +107,7 @@ function extractMetaData(scene: THREE.Scene) {
 					kind: "empty",
 					position: vec3.fromValues(p.x, p.y, p.z),
 					orientation: quat.fromValues(q.x, q.y, q.z, q.w),
-					scaling: vec3.fromValues(s.x, s.y, s.z)
+					scale: vec3.fromValues(s.x, s.y, s.z)
 				})
 				scene.remove(node);
 			}

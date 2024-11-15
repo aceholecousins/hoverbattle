@@ -28,11 +28,11 @@ export class Speckle extends Visual {
 		this.mesh = engine.graphics.mesh.createFromModel(
 			new ModelMeshConfig({ model: model })
 		)
-		this.mesh.scaling = vec3.fromValues(LASER_WIDTH * 3, LASER_WIDTH * 3, 1)
+		this.mesh.setScale([LASER_WIDTH * 3, LASER_WIDTH * 3, 1])
 	}
 
 	set position(p: vec3) {
-		this.mesh.position = p
+		this.mesh.setPosition(p)
 	}
 }
 
@@ -55,6 +55,7 @@ export class LaserBeam extends Visual {
 		)
 		this.mesh.setBaseColor(color)
 		this.mesh.setAccentColor1({ r: 1, g: 1, b: 1 })
+		this.mesh.setPositionZ(this.z)
 
 		if (numReflections > 0) {
 			this.reflection = new LaserBeam(
@@ -84,12 +85,9 @@ export class LaserBeam extends Visual {
 			onHit(hit.actor)
 		}
 		let distance = vec2.distance(p1, p2)
-		this.mesh.position = vec3.fromValues(
-			(p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2, this.z)
-		this.mesh.scaling = vec3.fromValues(
-			distance, LASER_WIDTH, 1)
-		this.mesh.orientation = quatFromAngle(angle)
-
+		this.mesh.setPositionXY([(p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2])
+		this.mesh.setScale([distance, LASER_WIDTH, 1])
+		this.mesh.setAngle(angle)
 
 		if (hit && this.reflection) {
 			let normalAngle = Math.atan2(hit.normal[1], hit.normal[0])

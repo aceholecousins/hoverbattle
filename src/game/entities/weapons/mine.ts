@@ -37,7 +37,7 @@ export class Mine extends Entity {
 		this.mesh = engine.graphics.mesh.createFromModel(
 			new ModelMeshConfig({
 				model,
-				scaling: vec3.fromValues(MINE_RADIUS, MINE_RADIUS, MINE_RADIUS)
+				scale: MINE_RADIUS
 			}))
 		this.mesh.setBaseColor({ r: 0, g: 0, b: 0 })
 
@@ -61,19 +61,19 @@ export class Mine extends Entity {
 		this.deployed += dt
 		this.deployed = Math.min(this.deployed, 1)
 
-		this.mesh.position = [
-			this.body.position[0], this.body.position[1], -0.9 + this.deployed]
+		this.mesh.setPosition([
+			this.body.position[0], this.body.position[1], -0.9 + this.deployed])
 
 		if (this.deployed >= 1){
 			this.collidesWithParent = true
 		}
 		
-		this.mesh.orientation = quat.fromEuler(
+		this.mesh.setOrientation(quat.fromEuler(
 			quat.create(),
 			20 * Math.sin(this.time),
 			17 * Math.sin(1.1337 * this.time),
 			this.body.angle / Math.PI * 180
-		)
+		))
 
 		if (this.time > MINE_PRIME_DELAY) {
 			this.onPrime()

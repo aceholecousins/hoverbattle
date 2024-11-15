@@ -42,10 +42,11 @@ export class Barrel extends Entity {
 		this.mesh = engine.graphics.mesh.createFromModel(
 			new ModelMeshConfig({ model: model })
 		)
-		this.mesh.scaling = vec3.fromValues(BARREL_RADIUS, BARREL_RADIUS, BARREL_RADIUS)
+		this.mesh.setScale(BARREL_RADIUS)
 		this.mesh.setBaseColor(parent.player.color)
 		this.mesh.setAccentColor1(colorLerp(parent.player.color, { r: 0, g: 0, b: 0 }, 0.5))
 		this.mesh.setAccentColor2({ r: 0, g: 0, b: 0 })
+		this.mesh.setPositionZ(0.1)
 
 		const bodyCfg = new RigidBodyConfig({
 			actor: this,
@@ -88,9 +89,7 @@ export class Barrel extends Entity {
 				this.laserFactory(position, this.body.angle)
 			}
 		}
-		this.mesh.position = [
-			this.body.position[0], this.body.position[1], 0.1]
-		this.mesh.orientation = quatFromAngle(this.body.angle)
+		this.mesh.copy2dPose(this.body)
 	}
 
 	dispose() {
@@ -116,10 +115,11 @@ export class Drone extends Entity {
 		this.mesh = engine.graphics.mesh.createFromModel(
 			new ModelMeshConfig({ model: model })
 		)
-		this.mesh.scaling = vec3.fromValues(DRONE_RADIUS, DRONE_RADIUS, DRONE_RADIUS)
+		this.mesh.setScale(DRONE_RADIUS)
 		this.mesh.setBaseColor(parent.player.color)
 		this.mesh.setAccentColor1({ r: 1, g: 0.5, b: 0 })
 		this.mesh.setAccentColor2(colorLerp(parent.player.color, { r: 0, g: 0, b: 0 }, 0.5))
+		this.mesh.setPositionZ(0.1)
 
 		const bodyCfg = new RigidBodyConfig({
 			actor: this,
@@ -173,9 +173,8 @@ export class Drone extends Entity {
 		vec2.scale(force, force, 5 * vec2.length(force))
 		this.body.applyForce(force)
 
-		this.mesh.position = [
-			this.body.position[0], this.body.position[1], 0.1]
-		this.mesh.orientation = quatFromAngle(this.time * 6.28)
+		this.mesh.setPositionXY(this.body.position)
+		this.mesh.setAngle(this.time * 6.28)
 	}
 
 	dispose() {
@@ -237,10 +236,11 @@ export class NashwanShot extends Entity {
 		this.mesh = engine.graphics.mesh.createFromModel(
 			new ModelMeshConfig({
 				model,
-				scaling: vec3.fromValues(spriteScale[0], spriteScale[1], spriteScale[1])
+				scale: vec3.fromValues(spriteScale[0], spriteScale[1], spriteScale[1])
 			}))
 		this.mesh.setBaseColor({ r: 1, g: 1, b: 1 })
 		this.mesh.setAccentColor1(parent.player.color)
+		this.mesh.setPositionZ(0.1)
 
 		const bodyCfg = new RigidBodyConfig({
 			actor: this,
@@ -263,9 +263,7 @@ export class NashwanShot extends Entity {
 	}
 
 	update(dt: number) {
-		this.mesh.position = [
-			this.body.position[0], this.body.position[1], 0.1]
-		this.mesh.orientation = quatFromAngle(this.body.angle)
+		this.mesh.copy2dPose(this.body)
 	}
 }
 

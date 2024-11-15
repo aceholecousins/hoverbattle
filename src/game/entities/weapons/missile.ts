@@ -47,7 +47,7 @@ export class Missile extends Entity {
 		this.mesh = engine.graphics.mesh.createFromModel(
 			new ModelMeshConfig({
 				model,
-				scaling: vec3.fromValues(MISSILE_LENGTH / 2, MISSILE_LENGTH / 2, MISSILE_LENGTH / 2)
+				scale: MISSILE_LENGTH / 2
 			}))
 		this.mesh.setBaseColor({ r: 0, g: 0, b: 0 })
 		this.mesh.setAccentColor1({ r: 1, g: 1, b: 1 })
@@ -122,10 +122,10 @@ export class Missile extends Entity {
 
 		this.body.applyLocalForce(vec2.fromValues(MISSILE_ACCELERATION * MISSILE_MASS, 0))
 
-		this.mesh.position = [this.body.position[0], this.body.position[1], 0.1]
+		this.mesh.setPosition([this.body.position[0], this.body.position[1], 0.1])
 		this.roll += dt * 300;
-		this.mesh.orientation = quat.fromEuler(
-			quat.create(), this.roll, 0, this.body.angle / Math.PI * 180)
+		this.mesh.setOrientation(quat.fromEuler(
+			quat.create(), this.roll, 0, this.body.angle / Math.PI * 180))
 	}
 }
 

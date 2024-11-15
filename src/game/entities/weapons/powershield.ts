@@ -32,7 +32,8 @@ export class PowerShield extends Entity {
 		this.mesh = engine.graphics.mesh.createFromModel(
 			new ModelMeshConfig({ model: model })
 		)
-		this.mesh.scaling = vec3.fromValues(POWERSHIELD_RADIUS, POWERSHIELD_RADIUS, POWERSHIELD_RADIUS)
+		this.mesh.setPositionZ(0.1)
+		this.mesh.setScale(POWERSHIELD_RADIUS)
 		this.mesh.setBaseColor(parent.player.color)
 		this.currentAccentColor = colorLerp(parent.player.color, { r: 0, g: 0, b: 0 }, 0.5)
 		this.targetAccentColor = colorLerp(parent.player.color, { r: 0, g: 0, b: 0 }, 0.5)
@@ -68,16 +69,15 @@ export class PowerShield extends Entity {
 
 		this.mesh.setAccentColor1(this.currentAccentColor)
 
-		this.mesh.position = [
-			// this is slightly cheating, it hides the elasticity of the attachment
-			this.parent.body.position[0], this.parent.body.position[1], 0.1
-		]
-		this.mesh.orientation = quat.fromEuler(
+		// this is slightly cheating, it hides the elasticity of the attachment
+		this.mesh.setPositionXY(this.parent.body.position)
+
+		this.mesh.setOrientation(quat.fromEuler(
 			quat.create(),
 			Math.random() * 360,
 			Math.random() * 360,
 			Math.random() * 360
-		)
+		))
 	}
 
 	dispose() {

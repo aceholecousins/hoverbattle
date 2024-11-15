@@ -67,7 +67,7 @@ export class ThreeMesh extends ThreeSceneNode<"mesh"> implements Mesh {
 	}
 
 	setPosition(position: vec3) {
-		super.position = position
+		super.setPosition(position)
 		this.threeObject.renderOrder = position[2]
 	}
 

@@ -46,7 +46,8 @@ export class Glider extends Entity {
 		}))
 		this.body.position = position
 		this.mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
-		this.mesh.scaling = vec3.fromValues(GLIDER_RADIUS, GLIDER_RADIUS, GLIDER_RADIUS)
+		this.mesh.setScale(GLIDER_RADIUS)
+		this.mesh.setPositionZ(0.1)
 		this.update(0)
 	}
 
@@ -73,9 +74,7 @@ export class Glider extends Entity {
 			this.onReleaseTrigger()
 		}
 
-		this.mesh.position = [
-			this.body.position[0], this.body.position[1], 0.1]
-		this.mesh.orientation = quatFromAngle(this.body.angle)
+		this.mesh.copy2dPose(this.body)
 
 		this.tNextRipple -= dt
 		if (this.tNextRipple < 0) {

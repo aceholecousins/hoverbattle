@@ -24,14 +24,14 @@ export class Smokeball extends Visual {
 		super()
 		this.color = color
 		this.mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
-		this.mesh.scaling = vec3.fromValues(0.01, 0.01, 0.01)
-		this.mesh.position = position
-		this.mesh.orientation = quat.fromEuler(
+		this.mesh.setScale(0.01)
+		this.mesh.setPosition(position)
+		this.mesh.setOrientation(quat.fromEuler(
 			quat.create(),
 			Math.random() * 360,
 			Math.random() * 360,
 			Math.random() * 360
-		)
+		))
 		this.mesh.setBaseColor({ r: 1, g: 1, b: 1 })
 		this.mesh.setAccentColor1({ r: 1, g: 1, b: 1 })
 		this.update(0)
@@ -56,7 +56,7 @@ export class Smokeball extends Visual {
 			this.mesh.setOpacity(1 - (this.time - DURATION * 0.8) / (DURATION * 0.2))
 		}
 
-		this.mesh.scaling = vec3.fromValues(size, size, size)
+		this.mesh.setScale(size)
 		if (this.time > DURATION) {
 			this.dispose()
 		}
@@ -79,7 +79,7 @@ export class Crumb extends Visual {
 	) {
 		super()
 		this.mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
-		this.mesh.scaling = vec3.fromValues(0.5, 0.5, 0.5)
+		this.mesh.setScale(0.5)
 		this.mesh.setBaseColor(color)
 		this.position = vec3.clone(position)
 		let direction = Math.random() * 2 * Math.PI
@@ -101,13 +101,13 @@ export class Crumb extends Visual {
 		this.position[1] += this.velocity[1] * dt
 		this.position[2] += this.velocity[2] * dt
 		this.velocity[2] -= 9.81 * dt
-		this.mesh.position = this.position
-		this.mesh.orientation = quat.fromEuler(
+		this.mesh.setPosition(this.position)
+		this.mesh.setOrientation(quat.fromEuler(
 			quat.create(),
 			this.euler[0],
 			this.euler[1],
 			this.euler[2]
-		)
+		))
 
 		if (this.time > this.tNextCloud) {
 			this.tNextCloud = this.time + 0.04
@@ -130,16 +130,15 @@ export class Shockwave extends Visual {
 	) {
 		super()
 		this.mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
-		this.mesh.scaling = vec3.fromValues(0.1, 0.1, 0.1)
-		this.mesh.position = position
+		this.mesh.setScale(0.1)
+		this.mesh.setPosition(position)
 		this.mesh.setOpacity(0.2)
 		this.update(0)
 	}
 
 	update(dt: number) {
 		this.time += dt
-		let size = this.time * 50
-		this.mesh.scaling = vec3.fromValues(size, size, size)
+		this.mesh.setScale(this.time * 50)
 		this.mesh.setOpacity(0.99 - this.time / DURATION)
 		if (this.time > DURATION) {
 			this.dispose()
@@ -158,16 +157,15 @@ export class Plop extends Visual {
 	) {
 		super()
 		this.mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
-		this.mesh.scaling = vec3.fromValues(0.1, 0.1, 0.1)
-		this.mesh.position = position
+		this.mesh.setScale(0.1)
+		this.mesh.setPosition(position)
 		this.mesh.setBaseColor(color)
 		this.update(0)
 	}
 
 	update(dt: number) {
 		this.time += dt
-		let size = this.time * 25
-		this.mesh.scaling = vec3.fromValues(size, size, size)
+		this.mesh.setScale(this.time * 25)
 		this.mesh.setOpacity(0.99)
 		if (this.time > DURATION) {
 			this.dispose()
@@ -186,11 +184,11 @@ export class Piff extends Visual {
 	) {
 		super()
 		this.mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
-		this.mesh.scaling = vec3.fromValues(0.1, 0.1, 0.1)
-		this.mesh.position = [
+		this.mesh.setScale(0.1)
+		this.mesh.setPosition([
 			position[0], position[1], position[2] + 0.1 * Math.random()
-		]
-		this.mesh.orientation = quatFromAngle(Math.random() * 6.28)
+		])
+		this.mesh.setAngle(Math.random() * 6.28)
 		this.mesh.setBaseColor(color)
 		this.mesh.setAccentColor2(colorLerp(color, { r: 0, g: 0, b: 0 }, 0.5))
 		this.update(0)
@@ -202,8 +200,7 @@ export class Piff extends Visual {
 			this.dispose()
 			return
 		}
-		let size = this.progress * 5
-		this.mesh.scaling = vec3.fromValues(size, size, size)
+		this.mesh.setScale(this.progress * 5)
 		this.mesh.setOpacity(0.99)
 
 		this.mesh.setBaseColor(colorLerp(
@@ -232,7 +229,7 @@ export class Shard extends Visual {
 	) {
 		super()
 		this.mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
-		this.mesh.scaling = vec3.fromValues(3.0, 0.1, 0.1)
+		this.mesh.setScale([3.0, 0.1, 0.1])
 		this.position = vec3.clone(position)
 		let direction = Math.random() * 2 * Math.PI
 		let pitch = Math.random()
@@ -242,12 +239,12 @@ export class Shard extends Visual {
 			speed * Math.sin(direction) * Math.cos(pitch),
 			speed * Math.sin(pitch)
 		)
-		this.mesh.orientation = quat.fromEuler(
+		this.mesh.setOrientation(quat.fromEuler(
 			quat.create(),
 			0,
 			-pitch * 180 / Math.PI,
 			direction * 180 / Math.PI,
-		)
+		))
 		this.update(0)
 	}
 
@@ -256,7 +253,7 @@ export class Shard extends Visual {
 		this.position[0] += this.velocity[0] * dt
 		this.position[1] += this.velocity[1] * dt
 		this.position[2] += this.velocity[2] * dt
-		this.mesh.position = this.position
+		this.mesh.setPosition(this.position)
 
 		if (this.time > DURATION) {
 			this.dispose()
@@ -282,7 +279,7 @@ export class Flash {
 
 	flash(position: vec3, color: Color) {
 		this.time = 0
-		this.light.position = position
+		this.light.setPosition(position)
 		this.light.setColor(color)
 		if (!this.active) {
 			this.active = true
@@ -303,7 +300,7 @@ export class Flash {
 		broker.update.removeHandler(this.updateHandler)
 		this.light.setIntensity(0)
 		this.light.setColor({ r: 0, g: 0, b: 0 })
-		this.light.position = vec3.fromValues(NaN, NaN, NaN)
+		this.light.setPosition([NaN, NaN, NaN])
 	}
 }
 
