@@ -31,8 +31,8 @@ export class Speckle extends Visual {
 		this.mesh.setScale([LASER_WIDTH * 3, LASER_WIDTH * 3, 1])
 	}
 
-	set position(p: vec3) {
-		this.mesh.setPosition(p)
+	setPosition(position: vec3) {
+		this.mesh.setPosition(position)
 	}
 }
 
@@ -81,7 +81,7 @@ export class LaserBeam extends Visual {
 		if (hits.length > 0) {
 			hit = hits[0]
 			p2 = hit.position
-			this.hitSpeckle.position = vec3.fromValues(p2[0], p2[1], this.z + 0.1)
+			this.hitSpeckle.setPosition([p2[0], p2[1], this.z + 0.1])
 			onHit(hit.actor)
 		}
 		let distance = vec2.distance(p1, p2)
@@ -133,7 +133,7 @@ export class LaserBeamRoot extends LaserBeam {
 		let p1 = vec2.clone(this.parent.body.position)
 		p1[0] += Math.cos(this.parent.body.angle) * GLIDER_RADIUS
 		p1[1] += Math.sin(this.parent.body.angle) * GLIDER_RADIUS
-		this.startSpeckle.position = vec3.fromValues(p1[0], p1[1], 0.7)
+		this.startSpeckle.setPosition([p1[0], p1[1], 0.7])
 		this.cast(p1, this.parent.body.angle, 1000,
 			(actor: Actor) => this.onHit(actor, dt))
 	}
