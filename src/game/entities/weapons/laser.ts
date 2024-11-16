@@ -130,11 +130,11 @@ export class LaserBeamRoot extends LaserBeam {
 			return
 		}
 
-		let p1 = vec2.clone(this.parent.body.position)
-		p1[0] += Math.cos(this.parent.body.angle) * GLIDER_RADIUS
-		p1[1] += Math.sin(this.parent.body.angle) * GLIDER_RADIUS
+		let p1 = vec2.clone(this.parent.body.getPosition())
+		p1[0] += Math.cos(this.parent.body.getAngle()) * GLIDER_RADIUS
+		p1[1] += Math.sin(this.parent.body.getAngle()) * GLIDER_RADIUS
 		this.startSpeckle.setPosition([p1[0], p1[1], 0.7])
-		this.cast(p1, this.parent.body.angle, 1000,
+		this.cast(p1, this.parent.body.getAngle(), 1000,
 			(actor: Actor) => this.onHit(actor, dt))
 	}
 

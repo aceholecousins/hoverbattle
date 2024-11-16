@@ -5,7 +5,7 @@ import { CircleConfig } from "game/physics/circle"
 import { RigidBodyConfig } from "game/physics/rigidbody"
 import { Player } from "game/player"
 import { vec2, quat, vec3 } from "gl-matrix"
-import { angleDelta, quatFromAngle } from "utils/math"
+import { angleDelta, appendZ, quatFromAngle } from "utils/math"
 import { Entity } from "../entity"
 import { Powerup } from "game/entities/powerups/powerup"
 
@@ -44,7 +44,7 @@ export class Glider extends Entity {
 			damping: GLIDER_DAMPING,
 			angularDamping: GLIDER_ANGULAR_DAMPING
 		}))
-		this.body.position = position
+		this.body.setPosition(position)
 		this.mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
 		this.mesh.setScale(GLIDER_RADIUS)
 		this.mesh.setPositionZ(0.1)
@@ -79,13 +79,9 @@ export class Glider extends Entity {
 		this.tNextRipple -= dt
 		if (this.tNextRipple < 0) {
 			this.tNextRipple = 0.03
-			let v = vec2.length(this.body.velocity)
+			let v = vec2.length(this.body.getVelocity())
 			this.engine.graphics.water.makeRipple(
-				vec3.fromValues(
-					this.body.position[0],
-					this.body.position[1],
-					0
-				),
+				appendZ(this.body.getPosition(), 0),
 				Math.min(v / 10, 3),
 				1.0
 			)
@@ -98,7 +94,7 @@ export class Glider extends Entity {
 	requireTriggerRelease() { this.requiresRelease = true }
 
 	turnToDirection(direction: number) {
-		let delta = angleDelta(direction, this.body.angle);
+		let delta = angleDelta(direction, this.body.getAngle());
 		let threshold = 0.0001;
 		if (Math.abs(delta) > threshold) {
 			let sign = Math.sign(delta)

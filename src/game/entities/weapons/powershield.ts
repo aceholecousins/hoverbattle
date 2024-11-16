@@ -46,7 +46,7 @@ export class PowerShield extends Entity {
 			angularDamping: 0
 		})
 		this.body = engine.physics.addRigidBody(bodyCfg)
-		this.body.position = this.parent.body.position
+		this.body.copyPosition(this.parent.body)
 		this.attachment = engine.physics.attach(this.parent.body, this.body)
 		this.attachment.setCanCollide(false)
 		this.attachment.setStiffness(1e6)
@@ -70,7 +70,7 @@ export class PowerShield extends Entity {
 		this.mesh.setAccentColor1(this.currentAccentColor)
 
 		// this is slightly cheating, it hides the elasticity of the attachment
-		this.mesh.setPositionXY(this.parent.body.position)
+		this.mesh.setPositionXY(this.parent.body.getPosition())
 
 		this.mesh.setOrientation(quat.fromEuler(
 			quat.create(),

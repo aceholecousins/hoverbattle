@@ -1,11 +1,8 @@
 import * as p2 from "p2"
-import { vec2 } from "gl-matrix"
-import { P2Physics } from "./p2physics"
-import { Shape, ShapeConfig } from "game/physics/shape"
-import { P2Shape, p2shapeFactory } from "./p2shape"
+import { vec2, ReadonlyVec2 } from "gl-matrix"
+import { p2shapeFactory } from "./p2shape"
 import { RigidBody, RigidBodyConfig } from "game/physics/rigidbody"
-import { Actor } from "game/entities/actor"
-import { ExtendedP2World, ExtendedP2Body } from "./p2extensions"
+import { ExtendedP2Body } from "./p2extensions"
 
 export class P2RigidBody implements RigidBody {
 	kind: "rigidbody"
@@ -21,7 +18,15 @@ export class P2RigidBody implements RigidBody {
 		this.p2body.actor = config.actor
 
 		delete config.actor // delete temporarily
-		Object.assign(this, config)
+
+		this.setMass(config.mass)
+		this.setPosition(config.position)
+		this.setVelocity(config.velocity)
+		this.setDamping(config.damping)
+		this.setAngle(config.angle)
+		this.setAngularVelocity(config.angularVelocity)
+		this.setAngularDamping(config.angularDamping)
+
 		config.actor = this.p2body.actor
 
 		for (let shapeCfg of config.shapes) {
@@ -33,71 +38,76 @@ export class P2RigidBody implements RigidBody {
 		this.p2world.addBody(this.p2body)
 	}
 
-	get actor() {
+	getActor() {
 		return this.p2body.actor
 	}
 
-	set mass(m: number) {
-		if (m === Infinity) {
+	setMass(mass: number) {
+		if (mass === Infinity) {
 			this.p2body.type = p2.Body.STATIC
 		}
 		else {
 			this.p2body.type = p2.Body.DYNAMIC
-			this.p2body.mass = m
+			this.p2body.mass = mass
 		}
 		this.p2body.updateMassProperties()
 	}
-	get mass() {
+	getMass() {
 		return this.p2body.type === p2.Body.STATIC ? Infinity : this.p2body.mass
 	}
 
-	set position(p: vec2) {
-		vec2.copy(this.p2body.position, p)
+	setPosition(position: ReadonlyVec2) {
+		vec2.copy(this.p2body.position, position)
 	}
-	get position() {
-		return vec2.clone(this.p2body.position)
+	getPosition(): ReadonlyVec2 {
+		return this.p2body.position
 	}
-
-	set velocity(v: vec2) {
-		vec2.copy(this.p2body.velocity, v)
-	}
-	get velocity() {
-		return vec2.clone(this.p2body.velocity)
+	copyPosition(source: { getPosition(): ReadonlyVec2 }) {
+		vec2.copy(this.p2body.position, source.getPosition())
 	}
 
-	set damping(d: number) {
-		this.p2body.damping = d
+	setVelocity(velocity: ReadonlyVec2) {
+		vec2.copy(this.p2body.velocity, velocity)
 	}
-	get damping() {
+	getVelocity(): ReadonlyVec2 {
+		return this.p2body.velocity
+	}
+
+	setDamping(damping: number) {
+		this.p2body.damping = damping
+	}
+	getDamping() {
 		return this.p2body.damping
 	}
 
-
-	set angle(phi: number) {
-		this.p2body.angle = phi
+	setAngle(angle: number) {
+		this.p2body.angle = angle
 	}
-	get angle() {
+	getAngle() {
 		return this.p2body.angle
 	}
-
-	set angularVelocity(omega: number) {
-		this.p2body.angularVelocity = omega
+	copyAngle(source: { getAngle(): number }): void {
+		this.p2body.angle = source.getAngle()
 	}
-	get angularVelocity() {
+
+	setAngularVelocity(velocity: number) {
+		this.p2body.angularVelocity = velocity
+	}
+	getAngularVelocity() {
 		return this.p2body.angularVelocity
 	}
 
-	set angularDamping(d: number) {
-		this.p2body.angularDamping = d
+	setAngularDamping(damping: number) {
+		this.p2body.angularDamping = damping
 	}
-	get angularDamping() {
+	getAngularDamping() {
 		return this.p2body.angularDamping
 	}
 
 
 	applyForce(
-		force: vec2,
-		localPointOfApplication = vec2.fromValues(0, 0)
+		force: ReadonlyVec2,
+		localPointOfApplication: ReadonlyVec2 = vec2.fromValues(0, 0)
 	) {
 		this.p2body.applyForce(
 			[force[0], force[1]],
@@ -106,8 +116,8 @@ export class P2RigidBody implements RigidBody {
 	}
 
 	applyLocalForce(
-		force: vec2,
-		localPointOfApplication = vec2.fromValues(0, 0)
+		force: ReadonlyVec2,
+		localPointOfApplication: ReadonlyVec2 = vec2.fromValues(0, 0)
 	) {
 		this.p2body.applyForceLocal(
 			[force[0], force[1]],
@@ -116,8 +126,8 @@ export class P2RigidBody implements RigidBody {
 	}
 
 	applyImpulse(
-		impulse: vec2,
-		localPointOfApplication = vec2.fromValues(0, 0)
+		impulse: ReadonlyVec2,
+		localPointOfApplication: ReadonlyVec2 = vec2.fromValues(0, 0)
 	) {
 		this.p2body.applyImpulse(
 			[impulse[0], impulse[1]],
@@ -126,8 +136,8 @@ export class P2RigidBody implements RigidBody {
 	}
 
 	applyLocalImpulse(
-		impulse: vec2,
-		localPointOfApplication = vec2.fromValues(0, 0)
+		impulse: ReadonlyVec2,
+		localPointOfApplication: ReadonlyVec2 = vec2.fromValues(0, 0)
 	) {
 		this.p2body.applyImpulseLocal(
 			[impulse[0], impulse[1]],

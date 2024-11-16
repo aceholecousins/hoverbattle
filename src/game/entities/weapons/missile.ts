@@ -5,12 +5,12 @@ import { Engine } from "game/engine";
 import { CircleConfig } from "game/physics/circle";
 import { RigidBodyConfig } from "game/physics/rigidbody";
 import { Sound } from "game/sound";
-import { quat, vec2, vec3 } from "gl-matrix";
+import { quat, ReadonlyVec2, vec2, vec3 } from "gl-matrix";
 import { assignRole, Role } from "../actor";
 import { Entity } from "../entity";
 import { Glider, GLIDER_RADIUS } from "../glider/glider";
 import { Powerup } from "game/entities/powerups/powerup";
-import { angleDelta } from "utils/math";
+import { angleDelta, appendZ } from "utils/math";
 import { SmokeFactory, createSmokeFactory } from "game/graphics/explosion/smoke"
 import { memoize } from "utils/general";
 
@@ -36,7 +36,7 @@ export class Missile extends Entity {
 
 	constructor(
 		public parent: Glider,
-		position: vec2,
+		position: ReadonlyVec2,
 		angle: number,
 		public possibleTargets: Entity[],
 		private createSmoke: SmokeFactory,
@@ -61,8 +61,8 @@ export class Missile extends Entity {
 			angularDamping: MISSILE_ANGULAR_DAMPING
 		})
 		this.body = engine.physics.addRigidBody(bodyCfg)
-		this.body.position = position
-		this.body.angle = angle
+		this.body.setPosition(position)
+		this.body.setAngle(angle)
 
 		this.target = this.lockOnTarget(parent);
 
@@ -79,11 +79,11 @@ export class Missile extends Entity {
 			if (target == self) {
 				continue;
 			}
-			const toTarget = vec2.sub(vec2.create(), target.body.position, this.body.position);
+			const toTarget = vec2.sub(vec2.create(), target.body.getPosition(), this.body.getPosition());
 			vec2.normalize(toTarget, toTarget);
 			const forward = vec2.fromValues(
-				Math.cos(this.body.angle),
-				Math.sin(this.body.angle)
+				Math.cos(this.body.getAngle()),
+				Math.sin(this.body.getAngle())
 			);
 			const dot = vec2.dot(forward, toTarget);
 
@@ -98,7 +98,7 @@ export class Missile extends Entity {
 
 	update(dt: number) {
 		if (
-			vec2.distance(this.body.position, this.parent.body.position)
+			vec2.distance(this.body.getPosition(), this.parent.body.getPosition())
 			> (MISSILE_RADIUS + GLIDER_RADIUS) * 1.5
 		) {
 			this.collidesWithParent = true
@@ -108,24 +108,24 @@ export class Missile extends Entity {
 		if (this.tNextSmoke <= 0) {
 			this.tNextSmoke += 0.04
 			this.createSmoke(
-				[this.body.position[0], this.body.position[1], 0.1],
+				appendZ(this.body.getPosition(), 0.1),
 				{ r: 0.2, g: 0.2, b: 0.2 }
 			)
 		}
 
 		if (this.target != null) {
-			const toTarget = vec2.sub(vec2.create(), this.target.body.position, this.body.position);
+			const toTarget = vec2.sub(vec2.create(), this.target.body.getPosition(), this.body.getPosition());
 			const toTargetAngle = Math.atan2(toTarget[1], toTarget[0]);
-			let delta = angleDelta(this.body.angle, toTargetAngle);
+			let delta = angleDelta(this.body.getAngle(), toTargetAngle);
 			this.body.applyTorque(Math.sign(delta) * MISSILE_HOMING_TORQUE);
 		}
 
 		this.body.applyLocalForce(vec2.fromValues(MISSILE_ACCELERATION * MISSILE_MASS, 0))
 
-		this.mesh.setPosition([this.body.position[0], this.body.position[1], 0.1])
+		this.mesh.setPosition(appendZ(this.body.getPosition(), 0.1))
 		this.roll += dt * 300;
 		this.mesh.setOrientation(quat.fromEuler(
-			quat.create(), this.roll, 0, this.body.angle / Math.PI * 180))
+			quat.create(), this.roll, 0, this.body.getAngle() / Math.PI * 180))
 	}
 }
 
@@ -155,10 +155,10 @@ export class MissileLauncher {
 	}
 
 	private spawnMissile(possibleTargets: Entity[]): Missile {
-		let phi = this.parent.body.angle;
-		let pos = this.parent.body.position;
+		let phi = this.parent.body.getAngle();
+		let pos = this.parent.body.getPosition();
 		let missile = this.createMissile(this.parent, pos, phi, possibleTargets);
-		missile.body.velocity = vec2.copy([0, 0], this.parent.body.velocity)
+		missile.body.setVelocity(this.parent.body.getVelocity())
 		this.coolDown = 1 / MISSILE_FIRE_RATE
 		return missile
 	}
@@ -178,7 +178,7 @@ export let createMissileFactory = memoize(async function (engine: Engine) {
 
 	return function (
 		parent: Glider,
-		position: vec2,
+		position: ReadonlyVec2,
 		angle: number,
 		possibleTargets: Entity[]
 	): Missile {

@@ -5,7 +5,7 @@ import { Engine } from "game/engine";
 import { CircleConfig } from "game/physics/circle";
 import { RigidBodyConfig } from "game/physics/rigidbody";
 import { Sound } from "game/sound";
-import { quat, vec2, vec3 } from "gl-matrix";
+import { quat, ReadonlyVec2, vec2, vec3 } from "gl-matrix";
 import { quatFromAngle } from "utils/math"
 import { Entity } from "../entity";
 import { Glider } from "../glider/glider";
@@ -41,7 +41,7 @@ export class PhaserShot extends Entity {
 			angularDamping: 0
 		})
 		this.body = engine.physics.addRigidBody(bodyCfg)
-		this.body.position = position
+		this.body.setPosition(position)
 		this.update(0)
 	}
 
@@ -77,18 +77,18 @@ export class PhaserWeapon {
 	}
 
 	private spawnShot(offset: number) {
-		let phi = this.parent.body.angle;
-		let pos = this.parent.body.position;
+		let phi = this.parent.body.getAngle();
+		let pos = this.parent.body.getPosition();
 		pos = vec2.fromValues(
 			pos[0] - Math.sin(phi) * offset,
 			pos[1] + Math.cos(phi) * offset,
 		)
 		let shot = this.phaserFactory.createShot(this.parent, pos);
-		shot.body.angle = phi;
-		shot.body.velocity = vec2.fromValues(
+		shot.body.setAngle(phi);
+		shot.body.setVelocity([
 			Math.cos(phi) * PHASER_SPEED,
 			Math.sin(phi) * PHASER_SPEED,
-		)
+		])
 		this.coolDown = 1 / PHASER_FIRE_RATE;
 		return shot
 	}
@@ -99,7 +99,7 @@ export class PhaserWeapon {
 }
 
 export type PhaserFactory = {
-	createShot: (parent: Glider, position: vec2) => PhaserShot;
+	createShot: (parent: Glider, position: ReadonlyVec2) => PhaserShot;
 	playPhaserSound: () => void;
 };
 

@@ -1,7 +1,7 @@
 
 import * as THREE from "three"
 import { SceneNode, SceneNodeConfig } from "game/graphics/scenenode"
-import { vec2, vec3, quat } from "gl-matrix"
+import { vec2, ReadonlyVec2, vec3, ReadonlyVec3, quat } from "gl-matrix"
 import { Kind } from "utils/general"
 
 export abstract class ThreeSceneNode<K extends Kind> implements SceneNode<K> {
@@ -24,11 +24,11 @@ export abstract class ThreeSceneNode<K extends Kind> implements SceneNode<K> {
 		this.setScale(config.scale)
 	}
 
-	setPosition(position: vec3) {
+	setPosition(position: ReadonlyVec3) {
 		this.threeObject.position.set(position[0], position[1], position[2])
 	}
 
-	setPositionXY(xy: vec2) {
+	setPositionXY(xy: ReadonlyVec2) {
 		this.threeObject.position.setX(xy[0])
 		this.threeObject.position.setY(xy[1])
 	}
@@ -46,12 +46,15 @@ export abstract class ThreeSceneNode<K extends Kind> implements SceneNode<K> {
 		this.threeObject.rotation.set(0, 0, angle)
 	}
 
-	copy2dPose(source: { position: vec2, angle: number }) {
-		this.setPositionXY(source.position)
-		this.setAngle(source.angle)
+	copy2dPose(source: {
+		getPosition(): ReadonlyVec2
+		getAngle(): number
+	}) {
+		this.setPositionXY(source.getPosition())
+		this.setAngle(source.getAngle())
 	}
 
-	setScale(scale: number | vec3) {
+	setScale(scale: number | ReadonlyVec3) {
 		if (typeof scale === "number") {
 			this.threeObject.scale.setScalar(scale)
 		}

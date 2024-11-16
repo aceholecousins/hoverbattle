@@ -1,7 +1,7 @@
 import { ModelMeshConfig } from "game/graphics/mesh";
 import { Model } from "game/graphics/asset";
 import { Engine } from "game/engine";
-import { quat, vec2, vec3 } from "gl-matrix";
+import { quat, vec2, ReadonlyVec2, vec3 } from "gl-matrix";
 import { quatFromAngle } from "utils/math"
 import { Glider, GLIDER_RADIUS } from "../glider/glider";
 import { Powerup } from "game/entities/powerups/powerup";
@@ -22,7 +22,7 @@ export class NashwanPowerup implements Powerup {
 	public readonly kind = "nashwan"
 }
 
-type NashwanShotFactory = (position: vec2, angle: number) => NashwanShot;
+type NashwanShotFactory = (position: ReadonlyVec2, angle: number) => NashwanShot;
 
 export class Barrel extends Entity {
 	private deployed = 0
@@ -57,8 +57,8 @@ export class Barrel extends Entity {
 		})
 		this.body = engine.physics.addRigidBody(bodyCfg)
 
-		this.body.position = this.parent.body.position
-		this.body.angle = this.attachTo.body.angle
+		this.body.copyPosition(this.parent.body)
+		this.body.copyAngle(this.attachTo.body)
 		this.attachment = engine.physics.attach(this.attachTo.body, this.body)
 		this.attachment.setOffset([0, 0], 0)
 		this.parent.onDispose(() => this.dispose())
@@ -83,10 +83,10 @@ export class Barrel extends Entity {
 			this.tNextShot -= dt
 			if (this.tNextShot <= 0) {
 				this.tNextShot += this.rechargeTime
-				let position = vec2.copy(vec2.create(), this.body.position)
-				position[0] += Math.cos(this.body.angle) * BARREL_RADIUS * 3
-				position[1] += Math.sin(this.body.angle) * BARREL_RADIUS * 3
-				this.laserFactory(position, this.body.angle)
+				let position = vec2.copy(vec2.create(), this.body.getPosition())
+				position[0] += Math.cos(this.body.getAngle()) * BARREL_RADIUS * 3
+				position[1] += Math.sin(this.body.getAngle()) * BARREL_RADIUS * 3
+				this.laserFactory(position, this.body.getAngle())
 			}
 		}
 		this.mesh.copy2dPose(this.body)
@@ -131,7 +131,7 @@ export class Drone extends Entity {
 		this.body = engine.physics.addRigidBody(bodyCfg)
 		this.parent.onDispose(() => this.dispose())
 
-		this.body.position = this.parent.body.position
+		this.body.copyPosition(this.parent.body)
 
 		this.collidesWithParent = false
 		this.collidesWithSibling = false
@@ -152,28 +152,28 @@ export class Drone extends Entity {
 			if (this.tNextShot <= 0) {
 				this.tNextShot += 0.5
 				for (let phi = 0.0001; phi < 2 * Math.PI; phi += 2 * Math.PI / 12) {
-					let position = vec2.copy(vec2.create(), this.body.position)
-					position[0] += Math.cos(this.body.angle + phi) * DRONE_RADIUS * 2
-					position[1] += Math.sin(this.body.angle + phi) * DRONE_RADIUS * 2
-					this.particleFactory(position, this.body.angle + phi)
+					let position = vec2.copy(vec2.create(), this.body.getPosition())
+					position[0] += Math.cos(this.body.getAngle() + phi) * DRONE_RADIUS * 2
+					position[1] += Math.sin(this.body.getAngle() + phi) * DRONE_RADIUS * 2
+					this.particleFactory(position, this.body.getAngle() + phi)
 				}
 			}
 
 		}
 
-		let rotatedOffset = vec2.rotate(vec2.create(), this.offset, [0, 0], this.attachTo.body.angle)
+		let rotatedOffset = vec2.rotate(vec2.create(), this.offset, [0, 0], this.attachTo.body.getAngle())
 		let target = vec2.scaleAndAdd(
 			vec2.create(),
-			this.attachTo.body.position,
+			this.attachTo.body.getPosition(),
 			rotatedOffset,
 			this.deployed
 		)
 
-		let force = vec2.subtract(vec2.create(), target, this.body.position)
+		let force = vec2.subtract(vec2.create(), target, this.body.getPosition())
 		vec2.scale(force, force, 5 * vec2.length(force))
 		this.body.applyForce(force)
 
-		this.mesh.setPositionXY(this.body.position)
+		this.mesh.setPositionXY(this.body.getPosition())
 		this.mesh.setAngle(this.time * 6.28)
 	}
 
@@ -201,17 +201,17 @@ export class XenonQuadBlaster {
 		if (this.tNextShot <= 0) {
 			this.tNextShot += 0.3
 			let offset1 = vec2.fromValues(
-				this.parent.body.position[0] + Math.sin(this.parent.body.angle) * 0.5,
-				this.parent.body.position[1] - Math.cos(this.parent.body.angle) * 0.5
+				this.parent.body.getPosition()[0] + Math.sin(this.parent.body.getAngle()) * 0.5,
+				this.parent.body.getPosition()[1] - Math.cos(this.parent.body.getAngle()) * 0.5
 			)
 			let offset2 = vec2.fromValues(
-				this.parent.body.position[0] - Math.sin(this.parent.body.angle) * 0.5,
-				this.parent.body.position[1] + Math.cos(this.parent.body.angle) * 0.5
+				this.parent.body.getPosition()[0] - Math.sin(this.parent.body.getAngle()) * 0.5,
+				this.parent.body.getPosition()[1] + Math.cos(this.parent.body.getAngle()) * 0.5
 			)
-			this.shotFactory(offset1, this.parent.body.angle)
-			this.shotFactory(offset2, this.parent.body.angle)
-			this.shotFactory(this.parent.body.position, this.parent.body.angle + Math.PI / 2)
-			this.shotFactory(this.parent.body.position, this.parent.body.angle - Math.PI / 2)
+			this.shotFactory(offset1, this.parent.body.getAngle())
+			this.shotFactory(offset2, this.parent.body.getAngle())
+			this.shotFactory(this.parent.body.getPosition(), this.parent.body.getAngle() + Math.PI / 2)
+			this.shotFactory(this.parent.body.getPosition(), this.parent.body.getAngle() - Math.PI / 2)
 		}
 	}
 
@@ -249,12 +249,12 @@ export class NashwanShot extends Entity {
 			angularDamping: 0
 		})
 		this.body = engine.physics.addRigidBody(bodyCfg)
-		this.body.position = position
-		this.body.angle = angle
-		this.body.velocity = vec2.fromValues(
-			Math.cos(this.body.angle) * speed,
-			Math.sin(this.body.angle) * speed
-		)
+		this.body.setPosition(position)
+		this.body.setAngle(angle)
+		this.body.setVelocity([
+			Math.cos(this.body.getAngle()) * speed,
+			Math.sin(this.body.getAngle()) * speed
+		])
 
 		this.collidesWithParent = false
 		this.collidesWithSibling = false

@@ -1,5 +1,5 @@
 import { Graphics } from "game/graphics/graphics";
-import { vec3, mat3, mat4, vec2, quat } from "gl-matrix";
+import { vec3, mat3, mat4, vec2, ReadonlyVec2, quat } from "gl-matrix";
 import { Camera, CameraConfig } from "game/graphics/camera";
 import { mat3fromVectors } from "utils/math";
 import { RigidBody } from "./physics/rigidbody";
@@ -27,7 +27,7 @@ export class ActionCamConfig extends CameraConfig {
 }
 
 interface Target {
-	position: vec2
+	getPosition(): ReadonlyVec2
 }
 
 interface Lock {
@@ -105,10 +105,10 @@ export class ActionCam {
 		let yMin = 1e12
 		let yMax = -1e12
 		for (let lock of this.locks) {
-			xMin = Math.min(xMin, lock.target.position[0] - lock.radius)
-			xMax = Math.max(xMax, lock.target.position[0] + lock.radius)
-			yMin = Math.min(yMin, lock.target.position[1] - lock.radius)
-			yMax = Math.max(yMax, lock.target.position[1] + lock.radius)
+			xMin = Math.min(xMin, lock.target.getPosition()[0] - lock.radius)
+			xMax = Math.max(xMax, lock.target.getPosition()[0] + lock.radius)
+			yMin = Math.min(yMin, lock.target.getPosition()[1] - lock.radius)
+			yMax = Math.max(yMax, lock.target.getPosition()[1] + lock.radius)
 		}
 
 		let target = vec3.fromValues(

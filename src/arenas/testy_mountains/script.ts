@@ -22,10 +22,11 @@ import { MatchFactory } from "game/match"
 import { CollisionOverride, CollisionHandler } from "game/physics/collision"
 import { Player } from "game/player"
 import { SceneNodeConfig } from "game/graphics/scenenode"
-import { vec2, vec3, quat } from "gl-matrix"
+import { vec2, vec3, quat, ReadonlyVec2 } from "gl-matrix"
 import { remove } from "utils/general"
 import { createExplosionFactory, createSmallExplosionFactory } from "game/graphics/explosion/explosion"
 import { GameTimer } from "game/gametimer"
+import { appendZ } from "utils/math"
 
 let GLIDER_HP = 10
 
@@ -52,8 +53,8 @@ export let createMatch: MatchFactory = async function (engine) {
 		shield.flash()
 		let a2b = vec2.subtract(
 			vec2.create(),
-			other.body.position,
-			shield.body.position
+			other.body.getPosition(),
+			shield.body.getPosition()
 		)
 		vec2.normalize(a2b, a2b)
 		other.body.applyImpulse(vec2.scale(vec2.create(), a2b, 30))
@@ -92,12 +93,11 @@ export let createMatch: MatchFactory = async function (engine) {
 					assignRole(shot, collideWithEverythingRole)
 					assignRole(shot, projectileRole)
 					let projectile2 = makeDamaging(shot, 1, () => {
-						if("isMissile" in shot) {
-							createSmallExplosion([
-								shot.body.position[0],
-								shot.body.position[1],
-								1
-							], glider.player.color)
+						if ("isMissile" in shot) {
+							createSmallExplosion(
+								appendZ(shot.body.getPosition(), 1),
+								glider.player.color
+							)
 						}
 						shot.dispose()
 					})
@@ -236,17 +236,18 @@ export let createMatch: MatchFactory = async function (engine) {
 				glider.dispose()
 
 				createExplosion(
-					vec3.fromValues(glider.body.position[0], glider.body.position[1], 1),
+					appendZ(glider.body.getPosition(), 1),
 					player.color
 				)
 
-				let explosionPosition = {
-					position: vec2.fromValues(glider.body.position[0], glider.body.position[1])
+				let explosionPosition = glider.body.getPosition()
+				let explosionPositionGetter = {
+					getPosition() {return explosionPosition}
 				}
-				engine.actionCam.follow(explosionPosition, 1.5)
+				engine.actionCam.follow(explosionPositionGetter, 1.5)
 
 				new GameTimer(() => {
-					engine.actionCam.unfollow(explosionPosition)
+					engine.actionCam.unfollow(explosionPositionGetter)
 				}, 1)
 
 				new GameTimer(() => {
@@ -265,8 +266,8 @@ export let createMatch: MatchFactory = async function (engine) {
 		glider.mesh.setBaseColor(player.color)
 		glider.mesh.setAccentColor1(player.team == 0 ? { r: 1, g: 0.5, b: 0 } : { r: 0, g: 0.8, b: 1 })
 		glider.mesh.setAccentColor2(player.team == 0 ? { r: 0, g: 0, b: 0.8 } : { r: 1, g: 0, b: 0.2 })
-		glider.body.position = determineSpawnPoint()
-		glider.body.angle = Math.random() * 1000
+		glider.body.setPosition(determineSpawnPoint())
+		glider.body.setAngle(Math.random() * Math.PI * 2)
 		engine.actionCam.follow(glider.body, 5)
 
 		let phaserWeapon = new PhaserWeapon(phaserFactory, glider);
@@ -289,7 +290,7 @@ export let createMatch: MatchFactory = async function (engine) {
 						let explode = () => {
 							missile1.dispose()
 							createExplosion(
-								vec3.fromValues(missile1.body.position[0], missile1.body.position[1], 1),
+								appendZ(missile1.body.getPosition(), 1),
 								missile1.parent.player.color
 							)
 						}
@@ -316,7 +317,7 @@ export let createMatch: MatchFactory = async function (engine) {
 						let explode = () => {
 							mine1.dispose()
 							createExplosion(
-								[mine1.body.position[0], mine1.body.position[1], 1],
+								appendZ(mine1.body.getPosition(), 1),
 								mine1.parent.player.color
 							)
 						}

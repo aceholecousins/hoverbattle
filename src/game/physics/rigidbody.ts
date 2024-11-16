@@ -1,4 +1,4 @@
-import { vec2 } from "gl-matrix"
+import { vec2, ReadonlyVec2 } from "gl-matrix"
 import { ShapeConfig, Shape } from "./shape"
 import { copyIfPresent } from "utils/general"
 import { Actor } from "game/entities/actor"
@@ -6,24 +6,37 @@ import { Actor } from "game/entities/actor"
 export interface RigidBody {
 	kind: "rigidbody"
 
-	readonly actor: Actor
+	getActor(): Actor
 
 	//readonly shapes: Shape<any>[]
 
-	mass: number
+	setMass(mass: number): void
+	getMass(): number
 
-	position: vec2
-	velocity: vec2
-	damping: number
+	setPosition(position: ReadonlyVec2): void
+	getPosition(): ReadonlyVec2
+	copyPosition(source: { getPosition(): ReadonlyVec2 }): void
 
-	angle: number
-	angularVelocity: number
-	angularDamping: number
+	setVelocity(velocity: ReadonlyVec2): void
+	getVelocity(): ReadonlyVec2
 
-	applyForce(force: vec2, localPointOfApplication?: vec2): void
-	applyLocalForce(force: vec2, localPointOfApplication?: vec2): void
-	applyImpulse(impulse: vec2, localPointOfApplication?: vec2): void
-	applyLocalImpulse(impulse: vec2, localPointOfApplication?: vec2): void
+	setDamping(damping: number): void
+	getDamping(): number
+
+	setAngle(angle: number): void
+	getAngle(): number
+	copyAngle(source: { getAngle(): number }): void
+
+	setAngularVelocity(velocity: number): void
+	getAngularVelocity(): number
+
+	setAngularDamping(damping: number): void
+	getAngularDamping(): number
+
+	applyForce(force: ReadonlyVec2, localPointOfApplication?: ReadonlyVec2): void
+	applyLocalForce(force: ReadonlyVec2, localPointOfApplication?: ReadonlyVec2): void
+	applyImpulse(impulse: ReadonlyVec2, localPointOfApplication?: ReadonlyVec2): void
+	applyLocalImpulse(impulse: ReadonlyVec2, localPointOfApplication?: ReadonlyVec2): void
 	applyTorque(torque: number): void
 	applyAngularMomentum(angularMomentum: number): void
 

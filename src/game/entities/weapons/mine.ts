@@ -10,6 +10,7 @@ import { assignRole, Role } from "../actor";
 import { Entity } from "../entity";
 import { Glider, GLIDER_RADIUS } from "../glider/glider";
 import { Powerup } from "game/entities/powerups/powerup";
+import { appendZ } from "utils/math";
 
 const MINE_RADIUS = 1;
 const MINE_MASS = 1
@@ -49,7 +50,7 @@ export class Mine extends Entity {
 			angularDamping: MINE_ANGULAR_DAMPING
 		})
 		this.body = engine.physics.addRigidBody(bodyCfg)
-		this.body.position = this.parent.body.position
+		this.body.copyPosition(this.parent.body)
 
 		this.collidesWithParent = false
 
@@ -61,8 +62,8 @@ export class Mine extends Entity {
 		this.deployed += dt
 		this.deployed = Math.min(this.deployed, 1)
 
-		this.mesh.setPosition([
-			this.body.position[0], this.body.position[1], -0.9 + this.deployed])
+		this.mesh.setPosition(
+			appendZ(this.body.getPosition(), -0.9 + this.deployed))
 
 		if (this.deployed >= 1){
 			this.collidesWithParent = true
@@ -72,7 +73,7 @@ export class Mine extends Entity {
 			quat.create(),
 			20 * Math.sin(this.time),
 			17 * Math.sin(1.1337 * this.time),
-			this.body.angle / Math.PI * 180
+			this.body.getAngle() / Math.PI * 180
 		))
 
 		if (this.time > MINE_PRIME_DELAY) {
@@ -108,7 +109,7 @@ export class MineThrower {
 
 	private spawnMine(): Mine {
 		let mine = this.createMine(this.parent);
-		mine.body.angle = Math.random() * Math.PI * 2;
+		mine.body.setAngle(Math.random() * Math.PI * 2);
 		this.coolDown = MINE_COOLDOWN
 		return mine
 	}

@@ -31,8 +31,8 @@ export class PowerupBox extends Entity {
 			damping: 0.5,
 			angularDamping: 0.5
 		}))
-		this.body.position = position
-		this.body.angle = Math.random() * Math.PI * 2
+		this.body.setPosition(position)
+		this.body.setAngle(Math.random() * Math.PI * 2)
 		this.mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
 		this.mesh.setPositionZ(0.1)
 		this.mesh.setScale(POWERUP_BOX_SIZE)
@@ -41,12 +41,12 @@ export class PowerupBox extends Entity {
 
 	update(dt: number) {
 		this.time += dt
-		this.mesh.setPositionXY(this.body.position)
+		this.mesh.setPositionXY(this.body.getPosition())
 		this.mesh.setOrientation(quat.fromEuler(
 			quat.create(),
 			20 * Math.sin(this.time),
 			17 * Math.sin(1.1337 * this.time),
-			this.body.angle / Math.PI * 180
+			this.body.getAngle() / Math.PI * 180
 		))
 	}
 }
