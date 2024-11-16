@@ -36,18 +36,20 @@ export class P2Triangle extends P2Shape<"triangle"> implements Triangle {
 			})
 		}
 
-		Object.assign(this, config)
+		this.setCorners(config.corners)
+		this.setOffsetPosition(config.offsetPosition)
+		this.setOffsetAngle(config.offsetAngle)
 	}
 
-	set corners(c: Triangle2) {
-		this.p2shape.vertices = c as [number, number][]
+	setCorners(corners: Triangle2) {
+		this.p2shape.vertices = corners as [number, number][]
 		this.updateP2()
 	}
-	get corners(): Triangle2 {
+	getCorners(): Triangle2 {
 		return this.p2shape.vertices as Triangle2
 	}
 
-	set boundingRadius(r: number) {
+	setBoundingRadius(r: number) {
 		if (r <= 0) {
 			console.error("triangle bounding radius must be >0")
 			return
@@ -59,7 +61,7 @@ export class P2Triangle extends P2Shape<"triangle"> implements Triangle {
 		}
 		this.updateP2()
 	}
-	get boundingRadius() {
+	getBoundingRadius() {
 		return this.p2shape.boundingRadius
 	}
 }

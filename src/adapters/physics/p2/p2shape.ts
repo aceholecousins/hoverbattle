@@ -8,6 +8,14 @@ export abstract class P2Shape<K extends Kind> implements Shape<K> {
 
 	abstract p2shape: p2.Shape
 
+	// sadly we cannot have this constructor since we must call using super()
+	// before accessing this.p2shape and we must assign this.p2shape before
+	// setting the offset, hence we need to call the two setters in each subclass
+	// constructor(config: ShapeConfig<K>) {
+	// 	this.setOffsetPosition(config.offsetPosition)
+	// 	this.setOffsetAngle(config.offsetAngle)
+	// }
+
 	updateP2() {
 		this.p2shape.updateBoundingRadius()
 		if (this.p2shape.body !== null) { // when called before the shape was added to the body
@@ -16,21 +24,22 @@ export abstract class P2Shape<K extends Kind> implements Shape<K> {
 		}
 	}
 
-	set offset(p: vec2) {
-		vec2.copy(this.p2shape.position, p)
+	setOffsetPosition(position: vec2) {
+		vec2.copy(this.p2shape.position, position)
 	}
-	get offset() {
+	getOffsetPosition() {
 		return vec2.clone(this.p2shape.position)
 	}
 
-	set offsetAngle(phi: number) {
-		this.p2shape.angle = phi
+	setOffsetAngle(angle: number) {
+		this.p2shape.angle = angle
 	}
-	get offsetAngle() {
+	getOffsetAngle() {
 		return this.p2shape.angle
 	}
 
-	abstract boundingRadius: number
+	abstract setBoundingRadius(radius: number): void
+	abstract getBoundingRadius(): number
 }
 
 

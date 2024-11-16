@@ -6,18 +6,21 @@ import { Kind, copyIfPresent } from "utils/general"
 
 export interface Shape<K extends Kind> {
 	kind: K
-	offset: vec2
-	offsetAngle: number
-	boundingRadius: number
+	setOffsetPosition(position: vec2): void
+	getOffsetPosition(): vec2
+	setOffsetAngle(angle: number):void
+	getOffsetAngle(): number
+	setBoundingRadius(radius: number): void
+	getBoundingRadius(): number
 }
 
 export class ShapeConfig<K extends Kind> {
 	kind: K
-	offset = vec2.fromValues(0, 0)
+	offsetPosition = vec2.fromValues(0, 0)
 	offsetAngle = 0
 
 	constructor(config: Partial<ShapeConfig<K>>) {
 		this.kind = config.kind
-		copyIfPresent(this, config, ["offset", "offsetAngle"])
+		copyIfPresent(this, config, ["offsetPosition", "offsetAngle"])
 	}
 }

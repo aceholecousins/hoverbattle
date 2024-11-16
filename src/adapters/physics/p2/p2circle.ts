@@ -10,22 +10,24 @@ export class P2Circle extends P2Shape<"circle"> implements Circle {
 	constructor(config: CircleConfig) {
 		super()
 		this.p2shape = new p2.Circle()
-		Object.assign(this, config)
+		this.setRadius(config.radius)
+		this.setOffsetPosition(config.offsetPosition)
+		this.setOffsetAngle(config.offsetAngle)
 	}
 
-	set radius(r: number) {
-		this.p2shape.radius = r
+	setRadius(radius: number) {
+		this.p2shape.radius = radius
 		this.updateP2()
 	}
-	get radius(): number {
+	getRadius(): number {
 		return this.p2shape.radius
 	}
 
-	set boundingRadius(r: number) {
-		this.p2shape.radius = r
+	setBoundingRadius(radius: number) {
+		this.p2shape.radius = radius
 		this.updateP2()
 	}
-	get boundingRadius() {
+	getBoundingRadius() {
 		return this.p2shape.boundingRadius
 	}
 }

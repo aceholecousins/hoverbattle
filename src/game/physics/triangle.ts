@@ -6,12 +6,13 @@ import { Triangle2 } from "utils/math"
 
 export interface Triangle extends Shape<"triangle"> {
 	kind: "triangle"
-	corners: Triangle2
+	setCorners(corners: Triangle2): void
+	getCorners(): Triangle2
 }
 
 export class TriangleConfig extends ShapeConfig<"triangle"> {
 	kind: "triangle" = "triangle"
-	corners = [
+	corners: Triangle2 = [
 		vec2.fromValues(1, 0),
 		vec2.fromValues(-1, 1),
 		vec2.fromValues(-1, -1)

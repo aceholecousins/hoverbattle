@@ -4,7 +4,8 @@ import { copyIfPresent } from "utils/general"
 
 export interface Circle extends Shape<"circle"> {
 	kind: "circle"
-	radius: number
+	setRadius(radius: number): void
+	getRadius(): number
 }
 
 export class CircleConfig extends ShapeConfig<"circle"> {

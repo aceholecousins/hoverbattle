@@ -28,7 +28,7 @@ export function mat3fromVectors(out: mat3, x: ReadonlyVec3, y: ReadonlyVec3, z: 
 export type Triangle2 = [vec2, vec2, vec2]
 export type Triangle3 = [vec3, vec3, vec3]
 
-export function triangle3to2(tri: Triangle3) {
+export function triangle3to2(tri: Triangle3): Triangle2 {
 	return [
 		vec2.fromValues(tri[0][0], tri[0][1]),
 		vec2.fromValues(tri[1][0], tri[1][1]),
@@ -38,7 +38,7 @@ export function triangle3to2(tri: Triangle3) {
 
 export class LowPass {
 	private state: number[]
-	
+
 	constructor(
 		order: number,
 		public tau: number,
