@@ -5,6 +5,7 @@ import { CircleConfig } from "game/physics/circle"
 import { RigidBodyConfig } from "game/physics/rigidbody"
 import { Player } from "game/player"
 import { vec2, quat, vec3 } from "gl-matrix"
+import { LowPass } from "utils/math"
 import { angleDelta, appendZ, quatFromAngle } from "utils/math"
 import { Entity } from "../entity"
 import { Powerup } from "game/entities/powerups/powerup"
@@ -30,6 +31,8 @@ export class Glider extends Entity {
 	private requiresRelease: boolean = false
 	private tNextRipple = 0
 
+	private roll:LowPass = new LowPass(1, 0.3, 0)
+
 	constructor(
 		public player: Player,
 		position: vec2,
@@ -47,7 +50,7 @@ export class Glider extends Entity {
 		this.body.setPosition(position)
 		this.mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
 		this.mesh.setScale(GLIDER_RADIUS)
-		this.mesh.setPositionZ(0.1)
+		this.mesh.setPositionZ(0.5)
 		this.update(0)
 	}
 
@@ -75,6 +78,11 @@ export class Glider extends Entity {
 		}
 
 		this.mesh.copy2dPose(this.body)
+
+		this.mesh.setPositionXY(this.body.getPosition())
+		this.roll.update(this.body.getAngularVelocity() * -7, dt)
+		this.mesh.setOrientation(quat.fromEuler(
+			quat.create(), this.roll.get(), 0, this.body.getAngle() / Math.PI * 180))
 
 		this.tNextRipple -= dt
 		if (this.tNextRipple < 0) {
@@ -107,7 +115,7 @@ export class Glider extends Entity {
 export async function createGliderFactory(engine: Engine) {
 
 	let { model, meta } = await engine.graphics.loadModel(
-		"assets/models/glider7.glb")
+		"assets/models/glider8_halo.glb")
 
 	return function (player: Player, position: vec2) {
 		return new Glider(

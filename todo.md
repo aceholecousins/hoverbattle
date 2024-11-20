@@ -11,11 +11,11 @@
 * vec utils (euler, temp, etc)
 * config file
 * color without tint
-* shinethrower, halo?, nozzle, contrails
+* shinethrower, flame, contrails
 * physics feeling like in the old game
-* don't adapt glider looks to physics, adapt physics to glider looks
-* roll when turning
+* adapt physics to glider looks
 * create some levels with terrain editor and available assets
+* player color
 
 * MVP game:
   - menu is just a bunch of pictures that select a level

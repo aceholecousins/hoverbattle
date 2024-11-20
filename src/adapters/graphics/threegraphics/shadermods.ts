@@ -12,6 +12,9 @@ export function modMaterials(
 	if (object.type === "Mesh") {
 		let mesh = object as THREE.Mesh
 		let mat = mesh.material as THREE.Material
+		if (mat.side !== undefined) {
+			mat.side = THREE.FrontSide
+		}
 
 		if (!mat.userData.isWater && !mat.userData.useTinting) {
 			return
