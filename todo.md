@@ -1,23 +1,46 @@
 * shake camera upon explosion
 * glider jumps around after spawning
-* some nice sounds
 * reset() everything on game end? (alternatively reload the window...)
 * coast looks shit (maybe white foam as part of mountain texture, semi covered by waves?)
 * mine color
 * the powerup boxes need more pizzazz, they somehow fade into the background. Emissiveness?
 * implement standard shields and phaser charge
-* tune nashwan damage
+* remove all traces of nashwan and xenon
 * things should not spawn into each other, have more spawning points or maybe spawning areas and also check if a spawn place is free
 * refactor this extra update handler member everywhere
 * vec utils (euler, temp, etc)
 * config file
 * color without tint
+* shinethrower, halo?, nozzle, contrails
+* physics feeling like in the old game
+* don't adapt glider looks to physics, adapt physics to glider looks
+* roll when turning
+* create some levels with terrain editor and available assets
+
+* MVP game:
+  - menu is just a bunch of pictures that select a level
+  - spawn by shooting
+  - switch control by pressing a button
+  - 3 minutes game
+  - show table
+  - rinse and repeat
+
+* should it be visible what powerup someone has? -> no. minigun exception?
+* chain lightning?
+* phaser in all directions
+* minigun
+* shockwave + EMP = push everything away + disable control for some time
+* drift karts
+
+* recycle old levels
+
+* build a community :)
+
 
 for Dani:
 
-* kümmer that testing works again
-* make that index.html does not disappear
+* sound
+
+* kümmer that testing works again or scratch testing
 * npm run autoformat-all-files-in-src-and-experiments
 * raise performance warning size limit (but don't disable it)
-
-* maybe migrate to deno2 to fix all of the above

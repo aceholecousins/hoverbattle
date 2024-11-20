@@ -17,7 +17,7 @@ export class P2RigidBody implements RigidBody {
 		this.p2body = <ExtendedP2Body>new p2.Body() // mass set to 1 so the body is considered DYNAMIC
 		this.p2body.actor = config.actor
 
-		delete config.actor // delete temporarily
+		delete config.actor // delete temporarily // TODO
 
 		this.setMass(config.mass)
 		this.setPosition(config.position)
