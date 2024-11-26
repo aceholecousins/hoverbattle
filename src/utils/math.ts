@@ -60,6 +60,30 @@ export class LowPass {
 	}
 }
 
+export class Ramper {
+	private state: number
+
+	constructor(
+		public changeRate: number,
+		initialValue: number
+	) {
+		this.state = initialValue
+	}
+
+	update(input: number, dt: number) {
+		let delta = input - this.state
+		if (Math.abs(delta) < this.changeRate * dt) {
+			this.state = input
+		} else {
+			this.state += Math.sign(delta) * this.changeRate * dt
+		}
+	}
+
+	get() {
+		return this.state
+	}
+}
+
 export function quatFromAngle(angle: number) {
 	return quat.fromEuler(quat.create(), 0, 0, angle / Math.PI * 180)
 }

@@ -3,7 +3,7 @@ import { Model } from "game/graphics/asset";
 import { Engine } from "game/engine";
 import { quat, vec2, vec3 } from "gl-matrix";
 import { quatFromAngle } from "utils/math"
-import { Glider, GLIDER_RADIUS } from "../glider/glider";
+import { Vehicle, VEHICLE_RADIUS } from "game/entities/vehicles/vehicle";
 import { Visual } from "game/graphics/visual"
 import { Color } from "utils/color"
 import { Actor } from "game/entities/actor"
@@ -111,7 +111,7 @@ export class LaserBeamRoot extends LaserBeam {
 	countdown = LASER_DURATION
 
 	constructor(
-		public parent: Glider,
+		public parent: Vehicle,
 		numReflections: number,
 		public onHit: HitCallback,
 		private onDispose: () => void,
@@ -131,8 +131,8 @@ export class LaserBeamRoot extends LaserBeam {
 		}
 
 		let p1 = vec2.clone(this.parent.body.getPosition())
-		p1[0] += Math.cos(this.parent.body.getAngle()) * GLIDER_RADIUS
-		p1[1] += Math.sin(this.parent.body.getAngle()) * GLIDER_RADIUS
+		p1[0] += Math.cos(this.parent.body.getAngle()) * VEHICLE_RADIUS
+		p1[1] += Math.sin(this.parent.body.getAngle()) * VEHICLE_RADIUS
 		this.startSpeckle.setPosition([p1[0], p1[1], 0.7])
 		this.cast(p1, this.parent.body.getAngle(), 1000,
 			(actor: Actor) => this.onHit(actor, dt))
@@ -157,7 +157,7 @@ export async function createLaserFactory(engine: Engine) {
 
 	return {
 		createBeam: function (
-			parent: Glider,
+			parent: Vehicle,
 			numReflections: number,
 			onHit: HitCallback,
 			onDispose: () => void

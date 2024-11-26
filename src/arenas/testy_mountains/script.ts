@@ -3,14 +3,9 @@ import { loadArena } from "game/entities/arena/arena"
 import { Damaging, makeDamaging, Destructible, makeDestructible } from "game/entities/damage"
 import { Entity } from "game/entities/entity"
 import { Actor } from "game/entities/actor"
-import {
-	createGliderFactory,
-	Glider,
-	GLIDER_THRUST,
-	GLIDER_TURN_RATE,
-	GLIDER_DAMPING,
-	GLIDER_ANGULAR_DAMPING
-} from "game/entities/glider/glider"
+import { createGliderFactory, Glider } from "game/entities/vehicles/glider"
+import { createCarFactory, Car } from "game/entities/vehicles/car"
+import { Vehicle, VehicleFactory } from "game/entities/vehicles/vehicle"
 import { PowerupKind, createPowerupBoxFactory, PowerupBox } from "game/entities/powerups/powerup"
 import { createPhaserFactory, PhaserShot, PhaserWeapon } from "game/entities/weapons/phaser"
 import { createLaserFactory, LaserPowerup } from "game/entities/weapons/laser"
@@ -28,15 +23,24 @@ import { createExplosionFactory, createSmallExplosionFactory } from "game/graphi
 import { GameTimer } from "game/gametimer"
 import { appendZ } from "utils/math"
 
-let GLIDER_HP = 10
+let VEHICLE_HP = 10
 
 export let createMatch: MatchFactory = async function (engine) {
 
-	let gliders: Glider[] = []
+	let vehicle: string
+	const urlParams = new URLSearchParams(window.location.search);
+	if (urlParams.get('vehicle') === 'car') {
+		vehicle = "car"
+	}
+	else {
+		vehicle = "glider"
+	}
+
+	let vehicles: Vehicle[] = []
 	let powerupBoxes: PowerupBox[] = []
 
 	let collideWithEverythingRole = new Role<Entity>("collideWithEverything")
-	let gliderRole = new Role<Glider>("glider")
+	let vehicleRole = new Role<Vehicle>("vehicle")
 	let projectileRole = new Role<Entity>("projectile")
 	let powerShieldRole = new Role<PowerShield>("powerShield")
 	let powerupBoxRole = new Role<PowerupBox>("powerupBox")
@@ -77,18 +81,18 @@ export let createMatch: MatchFactory = async function (engine) {
 	))
 
 	engine.physics.registerCollisionHandler(new CollisionHandler(
-		gliderRole, powerupBoxRole, (glider: Glider, powerupBox: PowerupBox) => {
+		vehicleRole, powerupBoxRole, (vehicle: Vehicle, powerupBox: PowerupBox) => {
 			if (powerupBox.kind == "missile") {
-				glider.readyPowerups = [new MissilePowerup()]
+				vehicle.readyPowerups = [new MissilePowerup()]
 			}
 			else if (powerupBox.kind == "mine") {
-				glider.readyPowerups = [new MinePowerup()]
+				vehicle.readyPowerups = [new MinePowerup()]
 			}
 			else if (powerupBox.kind == "laser") {
-				glider.readyPowerups = [new LaserPowerup()]
+				vehicle.readyPowerups = [new LaserPowerup()]
 			}
 			else if (powerupBox.kind == "nashwan") {
-				glider.activatedPowerups = [new NashwanPowerup()]
+				vehicle.activatedPowerups = [new NashwanPowerup()]
 				let shotModifier = (shot: NashwanShot) => {
 					assignRole(shot, collideWithEverythingRole)
 					assignRole(shot, projectileRole)
@@ -96,14 +100,14 @@ export let createMatch: MatchFactory = async function (engine) {
 						if ("isMissile" in shot) {
 							createSmallExplosion(
 								appendZ(shot.body.getPosition(), 1),
-								glider.player.color
+								vehicle.player.color
 							)
 						}
 						shot.dispose()
 					})
 					assignRole(projectile2, damagingRole)
 				}
-				let extensions = nashwanFactory(glider, shotModifier)
+				let extensions = nashwanFactory(vehicle, shotModifier)
 				for (let ex of [
 					extensions.leftBarrel1,
 					extensions.leftBarrel2,
@@ -120,11 +124,11 @@ export let createMatch: MatchFactory = async function (engine) {
 				}, 10)
 			}
 			else if (powerupBox.kind == "repair") {
-				(glider as unknown as Destructible).repair(GLIDER_HP)
+				(vehicle as unknown as Destructible).repair(VEHICLE_HP)
 			}
 			else if (powerupBox.kind == "powershield") {
-				glider.activatedPowerups = [new PowerShieldPowerup()]
-				let powerShield1 = powerShieldFactory(glider);
+				vehicle.activatedPowerups = [new PowerShieldPowerup()]
+				let powerShield1 = powerShieldFactory(vehicle);
 				let powerShield2 = makeDamaging(powerShield1, 8, () => { })
 				let powerShield3 = makeDestructible(powerShield2, Infinity, () => { })
 				assignRole(powerShield3, powerShieldRole)
@@ -139,9 +143,15 @@ export let createMatch: MatchFactory = async function (engine) {
 
 	let spawnPoints: vec2[] = []
 
+	let arenaFile =
+		vehicle === "car" ? "arenas/testy_mountains/mountains_road.glb"
+			: vehicle === "glider" ? "arenas/testy_mountains/mountains.glb"
+				: undefined
+
 	let [
 		arenaParts_meta,
 		createGlider,
+		createCar,
 		createPowerupBox,
 		skybox,
 		phaserFactory,
@@ -153,8 +163,9 @@ export let createMatch: MatchFactory = async function (engine) {
 		createExplosion,
 		createSmallExplosion
 	] = await Promise.all([
-		loadArena("arenas/testy_mountains/mountains.glb", engine),
+		loadArena(arenaFile, engine),
 		createGliderFactory(engine),
+		createCarFactory(engine),
 		createPowerupBoxFactory(engine),
 		engine.graphics.loadSkybox("arenas/testy_mountains/environment/*.jpg"),
 		createPhaserFactory(engine),
@@ -166,6 +177,15 @@ export let createMatch: MatchFactory = async function (engine) {
 		createExplosionFactory(engine),
 		createSmallExplosionFactory(engine)
 	]);
+
+	let createVehicle: VehicleFactory;
+
+	if (vehicle === "car") {
+		createVehicle = createCar
+	}
+	else if (vehicle === "glider") {
+		createVehicle = createGlider
+	}
 
 	for (const [key, value] of Object.entries(arenaParts_meta.meta)) {
 		if (key.startsWith("spawn")) {
@@ -192,7 +212,7 @@ export let createMatch: MatchFactory = async function (engine) {
 		let player = new Player(controller, team, baseColor)
 
 		for (let i = 0; i < 1; i++) {
-			spawnGlider(player)
+			spawnVehicle(player)
 		}
 		team++
 	})
@@ -225,24 +245,24 @@ export let createMatch: MatchFactory = async function (engine) {
 		new GameTimer(spawnPowerup, Math.random() * 2 + 1)
 	}
 
-	function spawnGlider(player: Player) {
-		let glider = makeDestructible(
-			createGlider(
+	function spawnVehicle(player: Player) {
+		let vehicle = makeDestructible(
+			createVehicle(
 				player,
 				determineSpawnPoint()
 			),
-			GLIDER_HP,
+			VEHICLE_HP,
 			() => {
-				glider.dispose()
+				vehicle.dispose()
 
 				createExplosion(
-					appendZ(glider.body.getPosition(), 1),
+					appendZ(vehicle.body.getPosition(), 1),
 					player.color
 				)
 
-				let explosionPosition = glider.body.getPosition()
+				let explosionPosition = vehicle.body.getPosition()
 				let explosionPositionGetter = {
-					getPosition() {return explosionPosition}
+					getPosition() { return explosionPosition }
 				}
 				engine.actionCam.follow(explosionPositionGetter, 1.5)
 
@@ -251,39 +271,39 @@ export let createMatch: MatchFactory = async function (engine) {
 				}, 1)
 
 				new GameTimer(() => {
-					spawnGlider(player)
+					spawnVehicle(player)
 				}, 2)
 			}
 		)
 
-		glider.onDispose(() => {
-			engine.actionCam.unfollow(glider.body)
-			remove(gliders, glider)
+		vehicle.onDispose(() => {
+			engine.actionCam.unfollow(vehicle.body)
+			remove(vehicles, vehicle)
 		})
-		assignRole(glider, gliderRole)
-		assignRole(glider, collideWithEverythingRole)
-		assignRole(glider, destructibleRole)
-		glider.mesh.setBaseColor(player.color)
-		glider.mesh.setAccentColor1({ r: 1, g: 1, b: 1 })
-		glider.mesh.setAccentColor2(player.team == 0 ? { r: 0, g: 0, b: 0.8 } : { r: 1, g: 0, b: 0.2 })
-		glider.body.setPosition(determineSpawnPoint())
-		glider.body.setAngle(Math.random() * Math.PI * 2)
-		engine.actionCam.follow(glider.body, 5)
+		assignRole(vehicle, vehicleRole)
+		assignRole(vehicle, collideWithEverythingRole)
+		assignRole(vehicle, destructibleRole)
+		vehicle.mesh.setBaseColor(player.color)
+		vehicle.mesh.setAccentColor1({ r: 1, g: 1, b: 1 })
+		vehicle.mesh.setAccentColor2(player.team == 0 ? { r: 0, g: 0, b: 0.8 } : { r: 1, g: 0, b: 0.2 })
+		vehicle.body.setPosition(determineSpawnPoint())
+		vehicle.body.setAngle(Math.random() * Math.PI * 2)
+		engine.actionCam.follow(vehicle.body, 5)
 
-		let phaserWeapon = new PhaserWeapon(phaserFactory, glider);
-		let missileLauncher = new MissileLauncher(missileFactory, glider);
-		let mineThrower = new MineThrower(mineFactory, glider);
+		let phaserWeapon = new PhaserWeapon(phaserFactory, vehicle);
+		let missileLauncher = new MissileLauncher(missileFactory, vehicle);
+		let mineThrower = new MineThrower(mineFactory, vehicle);
 
-		glider.onPressTrigger = () => {
-			if (glider.readyPowerups.length > 0) {
-				if (glider.readyPowerups[0].kind == "missile") {
-					let maybeMissile = missileLauncher.tryShoot(gliders)
+		vehicle.onPressTrigger = () => {
+			if (vehicle.readyPowerups.length > 0) {
+				if (vehicle.readyPowerups[0].kind == "missile") {
+					let maybeMissile = missileLauncher.tryShoot(vehicles)
 					if (maybeMissile) {
-						let missilePowerup = glider.readyPowerups[0] as MissilePowerup
+						let missilePowerup = vehicle.readyPowerups[0] as MissilePowerup
 						missilePowerup.stock -= 1
-						glider.requireTriggerRelease()
+						vehicle.requireTriggerRelease()
 						if (missilePowerup.stock == 0) {
-							glider.readyPowerups = []
+							vehicle.readyPowerups = []
 						}
 
 						let missile1 = maybeMissile as Missile
@@ -303,14 +323,14 @@ export let createMatch: MatchFactory = async function (engine) {
 					}
 				}
 
-				else if (glider.readyPowerups[0].kind == "mine") {
+				else if (vehicle.readyPowerups[0].kind == "mine") {
 					let maybeMine = mineThrower.tryShoot()
 					if (maybeMine) {
-						let minePowerup = glider.readyPowerups[0] as MinePowerup
+						let minePowerup = vehicle.readyPowerups[0] as MinePowerup
 						minePowerup.stock -= 1
-						glider.requireTriggerRelease()
+						vehicle.requireTriggerRelease()
 						if (minePowerup.stock == 0) {
-							glider.readyPowerups = []
+							vehicle.readyPowerups = []
 						}
 
 						let mine1 = maybeMine as Mine
@@ -332,25 +352,25 @@ export let createMatch: MatchFactory = async function (engine) {
 					}
 				}
 
-				else if (glider.readyPowerups[0].kind == "laser") {
-					let laser = glider.readyPowerups[0] as LaserPowerup
+				else if (vehicle.readyPowerups[0].kind == "laser") {
+					let laser = vehicle.readyPowerups[0] as LaserPowerup
 					if (!laser.activated) {
 						laser.activated = true
-						laserFactory.createBeam(glider, 1,
+						laserFactory.createBeam(vehicle, 1,
 							function (actor: Actor, dt: number) {
 								if (hasRole(actor, destructibleRole)) {
 									(actor as unknown as Destructible).hit(40 * dt)
 								}
 							},
-							function () { glider.readyPowerups = [] }
+							function () { vehicle.readyPowerups = [] }
 						)
 					}
 				}
 			}
 		}
 
-		glider.onUpdate = (dt: number) => {
-			if (glider.isFiring() && glider.readyPowerups.length == 0) {
+		vehicle.onUpdate = (dt: number) => {
+			if (vehicle.isFiring() && vehicle.readyPowerups.length == 0) {
 				let phaserShots = phaserWeapon.tryShoot()
 				if (phaserShots) {
 					for (let shot1 of phaserShots) {
@@ -363,8 +383,8 @@ export let createMatch: MatchFactory = async function (engine) {
 			}
 		}
 
-		gliders.push(glider)
-		return glider
+		vehicles.push(vehicle)
+		return vehicle
 	}
 
 	function determineSpawnPoint(): vec2 {

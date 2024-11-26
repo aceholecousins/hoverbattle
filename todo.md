@@ -16,6 +16,7 @@
 * adapt physics to glider looks
 * create some levels with terrain editor and available assets
 * player color
+* tweak(myObj, "myParam")
 
 * MVP game:
   - menu is just a bunch of pictures that select a level

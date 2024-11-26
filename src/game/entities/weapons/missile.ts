@@ -8,7 +8,7 @@ import { Sound } from "game/sound";
 import { quat, ReadonlyVec2, vec2, vec3 } from "gl-matrix";
 import { assignRole, Role } from "../actor";
 import { Entity } from "../entity";
-import { Glider, GLIDER_RADIUS } from "../glider/glider";
+import { Vehicle, VEHICLE_RADIUS } from "game/entities/vehicles/vehicle";
 import { Powerup } from "game/entities/powerups/powerup";
 import { angleDelta, appendZ } from "utils/math";
 import { SmokeFactory, createSmokeFactory } from "game/graphics/explosion/smoke"
@@ -35,7 +35,7 @@ export class Missile extends Entity {
 	private tNextSmoke = 0
 
 	constructor(
-		public parent: Glider,
+		public parent: Vehicle,
 		position: ReadonlyVec2,
 		angle: number,
 		public possibleTargets: Entity[],
@@ -99,7 +99,7 @@ export class Missile extends Entity {
 	update(dt: number) {
 		if (
 			vec2.distance(this.body.getPosition(), this.parent.body.getPosition())
-			> (MISSILE_RADIUS + GLIDER_RADIUS) * 1.5
+			> (MISSILE_RADIUS + VEHICLE_RADIUS) * 1.5
 		) {
 			this.collidesWithParent = true
 		}
@@ -136,7 +136,7 @@ export class MissileLauncher {
 
 	constructor(
 		private createMissile: MissileFactory,
-		private parent: Glider
+		private parent: Vehicle
 	) {
 		broker.update.addHandler(this.updateHandler)
 	}
@@ -177,7 +177,7 @@ export let createMissileFactory = memoize(async function (engine: Engine) {
 	let createSmoke = await createSmokeFactory(engine)
 
 	return function (
-		parent: Glider,
+		parent: Vehicle,
 		position: ReadonlyVec2,
 		angle: number,
 		possibleTargets: Entity[]

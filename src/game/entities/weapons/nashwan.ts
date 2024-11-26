@@ -3,7 +3,7 @@ import { Model } from "game/graphics/asset";
 import { Engine } from "game/engine";
 import { quat, vec2, ReadonlyVec2, vec3 } from "gl-matrix";
 import { quatFromAngle } from "utils/math"
-import { Glider, GLIDER_RADIUS } from "../glider/glider";
+import { Vehicle, VEHICLE_RADIUS } from "game/entities/vehicles/vehicle";
 import { Powerup } from "game/entities/powerups/powerup";
 import { Visual } from "game/graphics/visual";
 import { Entity } from "game/entities/entity";
@@ -30,7 +30,7 @@ export class Barrel extends Entity {
 	private tNextShot = 0
 
 	constructor(
-		public parent: Glider,
+		public parent: Vehicle,
 		public attachTo: Entity,
 		public offset: vec2,
 		model: Model,
@@ -104,7 +104,7 @@ export class Drone extends Entity {
 	private deployed = 0
 
 	constructor(
-		public parent: Glider,
+		public parent: Vehicle,
 		public attachTo: Entity,
 		public offset: vec2,
 		model: Model,
@@ -188,7 +188,7 @@ export class XenonQuadBlaster {
 	private updateHandler = (e: any) => this.update(e.dt)
 
 	constructor(
-		public parent: Glider,
+		public parent: Vehicle,
 		private shotFactory: NashwanShotFactory
 	) {
 		broker.update.addHandler(this.updateHandler)
@@ -223,7 +223,7 @@ export class XenonQuadBlaster {
 export class NashwanShot extends Entity {
 
 	constructor(
-		public parent: Glider,
+		public parent: Vehicle,
 		position: vec2,
 		angle: number,
 		spriteScale: vec2,
@@ -281,7 +281,7 @@ export async function createNashwanFactory(engine: Engine) {
 
 	let createMissile = await createMissileFactory(engine)
 
-	return function (parent: Glider, shotModifier: (shot: NashwanShot) => void) {
+	return function (parent: Vehicle, shotModifier: (shot: NashwanShot) => void) {
 
 		let shotFactory = function (position: vec2, angle: number) {
 			let shot = new NashwanShot(
@@ -313,19 +313,19 @@ export async function createNashwanFactory(engine: Engine) {
 		}
 
 		let leftBarrel1 = new Barrel(parent, parent,
-			vec2.fromValues(-0.1, GLIDER_RADIUS + BARREL_RADIUS),
+			vec2.fromValues(-0.1, VEHICLE_RADIUS + BARREL_RADIUS),
 			barrelModel, missileFactory, 0.4, engine)
 		let leftBarrel2 = new Barrel(parent, leftBarrel1,
 			vec2.fromValues(-0.2, BARREL_RADIUS * 2),
 			barrelModel, laserFactory, 0.5, engine)
 		let rightBarrel1 = new Barrel(parent, parent,
-			vec2.fromValues(-0.1, -GLIDER_RADIUS - BARREL_RADIUS),
+			vec2.fromValues(-0.1, -VEHICLE_RADIUS - BARREL_RADIUS),
 			barrelModel, missileFactory, 0.4, engine)
 		let rightBarrel2 = new Barrel(parent, rightBarrel1,
 			vec2.fromValues(-0.2, -BARREL_RADIUS * 2),
 			barrelModel, laserFactory, 0.5, engine)
 		let drone = new Drone(parent, parent,
-			vec2.fromValues(-GLIDER_RADIUS - 1.5 * DRONE_RADIUS, 0),
+			vec2.fromValues(-VEHICLE_RADIUS - 1.5 * DRONE_RADIUS, 0),
 			droneModel, particleFactory, engine)
 		let quadBlaster = new XenonQuadBlaster(parent, shotFactory)
 		return { leftBarrel1, leftBarrel2, rightBarrel1, rightBarrel2, drone, quadBlaster }

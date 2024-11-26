@@ -115,6 +115,9 @@ class RelativeStrategy implements ControlStrategy {
 	}
 
 	onKeyAction(keyCode: string, isPressed: boolean) {
+		if (keyCode == this.layout.down) {
+			this.thrust = isPressed ? -1 : 0
+		}
 		if (keyCode == this.layout.up) {
 			this.thrust = isPressed ? 1 : 0
 		}

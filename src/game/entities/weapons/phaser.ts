@@ -8,7 +8,7 @@ import { Sound } from "game/sound";
 import { quat, ReadonlyVec2, vec2, vec3 } from "gl-matrix";
 import { quatFromAngle } from "utils/math"
 import { Entity } from "../entity";
-import { Glider } from "../glider/glider";
+import { Vehicle } from "game/entities/vehicles/vehicle";
 
 const PHASER_LENGTH = 0.8;
 const PHASER_SPEED = 30;
@@ -19,7 +19,7 @@ export class PhaserShot extends Entity {
 	public collidesWithSibling = false
 
 	constructor(
-		public parent: Glider,
+		public parent: Vehicle,
 		position: vec2,
 		model: Model,
 		engine: Engine
@@ -57,7 +57,7 @@ export class PhaserWeapon {
 
 	constructor(
 		private phaserFactory: PhaserFactory,
-		private parent: Glider,
+		private parent: Vehicle,
 	) {
 		broker.update.addHandler(this.updateHandler)
 	}
@@ -99,7 +99,7 @@ export class PhaserWeapon {
 }
 
 export type PhaserFactory = {
-	createShot: (parent: Glider, position: ReadonlyVec2) => PhaserShot;
+	createShot: (parent: Vehicle, position: ReadonlyVec2) => PhaserShot;
 	playPhaserSound: () => void;
 };
 
@@ -112,7 +112,7 @@ export async function createPhaserFactory(engine: Engine): Promise<PhaserFactory
 	const phaserSound = await engine.loadSound("assets/sounds/phaser.ogg")
 
 	return {
-		createShot: function (parent: Glider, position: vec2) {
+		createShot: function (parent: Vehicle, position: vec2) {
 			return new PhaserShot(parent, position, phaserSprite, engine)
 		},
 		playPhaserSound: function () {

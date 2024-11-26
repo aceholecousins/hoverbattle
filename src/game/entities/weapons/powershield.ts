@@ -2,7 +2,7 @@ import { ModelMeshConfig } from "game/graphics/mesh";
 import { Model } from "game/graphics/asset";
 import { Engine } from "game/engine";
 import { quat, vec2, vec3 } from "gl-matrix";
-import { Glider, GLIDER_RADIUS } from "../glider/glider";
+import { Vehicle, VEHICLE_RADIUS } from "game/entities/vehicles/vehicle";
 import { Powerup } from "game/entities/powerups/powerup";
 import { Visual } from "game/graphics/visual";
 import { Entity } from "game/entities/entity";
@@ -11,7 +11,7 @@ import { RigidBodyConfig } from "game/physics/rigidbody";
 import { Attachment } from "game/physics/physics";
 import { Color, colorLerp } from "utils/color";
 
-const POWERSHIELD_RADIUS = GLIDER_RADIUS * 1.5
+const POWERSHIELD_RADIUS = VEHICLE_RADIUS * 1.5
 
 export class PowerShieldPowerup implements Powerup {
 	public readonly kind = "powershield"
@@ -24,7 +24,7 @@ export class PowerShield extends Entity {
 	private currentAccentColor: Color
 
 	constructor(
-		public parent: Glider,
+		public parent: Vehicle,
 		model: Model,
 		engine: Engine
 	) {
@@ -90,7 +90,7 @@ export async function createPowerShieldFactory(engine: Engine) {
 	let { model, meta } = await engine.graphics.loadModel(
 		"assets/models/powershield.glb")
 
-	return function (parent: Glider): PowerShield {
+	return function (parent: Vehicle): PowerShield {
 		return new PowerShield(parent, model, engine);
 	}
 }

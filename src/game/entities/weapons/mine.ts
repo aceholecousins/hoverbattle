@@ -8,7 +8,7 @@ import { Sound } from "game/sound";
 import { quat, vec2, vec3 } from "gl-matrix";
 import { assignRole, Role } from "../actor";
 import { Entity } from "../entity";
-import { Glider, GLIDER_RADIUS } from "../glider/glider";
+import { Vehicle, VEHICLE_RADIUS } from "game/entities/vehicles/vehicle";
 import { Powerup } from "game/entities/powerups/powerup";
 import { appendZ } from "utils/math";
 
@@ -30,7 +30,7 @@ export class Mine extends Entity {
 	public onPrime = () => { }
 
 	constructor(
-		public parent: Glider,
+		public parent: Vehicle,
 		model: Model,
 		engine: Engine
 	) {
@@ -89,7 +89,7 @@ export class MineThrower {
 
 	constructor(
 		private createMine: MineFactory,
-		private parent: Glider
+		private parent: Vehicle
 	) {
 		broker.update.addHandler(this.updateHandler)
 	}
@@ -125,7 +125,7 @@ export async function createMineFactory(engine: Engine) {
 	let { model, meta } = await engine.graphics.loadModel(
 		"assets/models/seamine.glb")
 
-	return function (parent: Glider): Mine {
+	return function (parent: Vehicle): Mine {
 		return new Mine(parent, model, engine);
 	}
 }
