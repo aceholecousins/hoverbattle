@@ -5,6 +5,7 @@ import { Entity } from "game/entities/entity"
 import { Actor } from "game/entities/actor"
 import { createGliderFactory, Glider } from "game/entities/vehicles/glider"
 import { createCarFactory, Car } from "game/entities/vehicles/car"
+import { createOmgCarFactory, OmgCar } from "game/entities/vehicles/omgcar"
 import { Vehicle, VehicleFactory } from "game/entities/vehicles/vehicle"
 import { PowerupKind, createPowerupBoxFactory, PowerupBox } from "game/entities/powerups/powerup"
 import { createPhaserFactory, PhaserShot, PhaserWeapon } from "game/entities/weapons/phaser"
@@ -27,14 +28,8 @@ let VEHICLE_HP = 10
 
 export let createMatch: MatchFactory = async function (engine) {
 
-	let vehicle: string
 	const urlParams = new URLSearchParams(window.location.search);
-	if (urlParams.get('vehicle') === 'car') {
-		vehicle = "car"
-	}
-	else {
-		vehicle = "glider"
-	}
+	let vehicle = urlParams.get("vehicle") || "glider";
 
 	let vehicles: Vehicle[] = []
 	let powerupBoxes: PowerupBox[] = []
@@ -144,14 +139,14 @@ export let createMatch: MatchFactory = async function (engine) {
 	let spawnPoints: vec2[] = []
 
 	let arenaFile =
-		vehicle === "car" ? "arenas/testy_mountains/mountains_road.glb"
-			: vehicle === "glider" ? "arenas/testy_mountains/mountains.glb"
-				: undefined
+		vehicle.endsWith("car") ? "arenas/testy_mountains/mountains_road.glb"
+			: "arenas/testy_mountains/mountains.glb"
 
 	let [
 		arenaParts_meta,
 		createGlider,
 		createCar,
+		createOmgCar,
 		createPowerupBox,
 		skybox,
 		phaserFactory,
@@ -166,6 +161,7 @@ export let createMatch: MatchFactory = async function (engine) {
 		loadArena(arenaFile, engine),
 		createGliderFactory(engine),
 		createCarFactory(engine),
+		createOmgCarFactory(engine),
 		createPowerupBoxFactory(engine),
 		engine.graphics.loadSkybox("arenas/testy_mountains/environment/*.jpg"),
 		createPhaserFactory(engine),
@@ -180,11 +176,14 @@ export let createMatch: MatchFactory = async function (engine) {
 
 	let createVehicle: VehicleFactory;
 
-	if (vehicle === "car") {
+	if (vehicle === "glider") {
+		createVehicle = createGlider
+	}
+	else if (vehicle === "car") {
 		createVehicle = createCar
 	}
-	else if (vehicle === "glider") {
-		createVehicle = createGlider
+	else if (vehicle === "omgcar") {
+		createVehicle = createOmgCar
 	}
 
 	for (const [key, value] of Object.entries(arenaParts_meta.meta)) {
