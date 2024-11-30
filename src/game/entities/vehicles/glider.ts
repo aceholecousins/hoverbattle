@@ -1,12 +1,11 @@
 import { ModelMeshConfig } from "game/graphics/mesh"
-import { Model } from "game/graphics/asset"
+import { Model, ModelMetaData } from "game/graphics/asset"
 import { Engine } from "game/engine"
-import { CircleConfig } from "game/physics/circle"
+import { TriangleConfig } from "game/physics/triangle"
 import { RigidBodyConfig } from "game/physics/rigidbody"
 import { Player } from "game/player"
 import { vec2, quat } from "gl-matrix"
-import { LowPass } from "utils/math"
-import { angleDelta, appendZ } from "utils/math"
+import { angleDelta, appendZ, LowPass, triangle3to2, Triangle3 } from "utils/math"
 import { Vehicle, VEHICLE_RADIUS, VehicleFactory } from "game/entities/vehicles/vehicle"
 
 export const GLIDER_THRUST = 20
@@ -28,13 +27,20 @@ export class Glider extends Vehicle {
 		public player: Player,
 		position: vec2,
 		model: Model,
+		meta: ModelMetaData,
 		engine: Engine
 	) {
 		super()
 		this.engine = engine
+
+		let triangles: TriangleConfig[] = []
+		for (let tri of (meta.collision as Triangle3[])) {
+			triangles.push(new TriangleConfig({ corners: triangle3to2(tri) }))
+		}
+
 		this.body = engine.physics.addRigidBody(new RigidBodyConfig({
 			actor: this,
-			shapes: [new CircleConfig({ radius: 1 })],
+			shapes: triangles,
 			damping: GLIDER_DAMPING,
 			angularDamping: GLIDER_ANGULAR_DAMPING
 		}))
@@ -62,8 +68,10 @@ export class Glider extends Vehicle {
 
 		this.mesh.setPositionXY(this.body.getPosition())
 		this.roll.update(this.body.getAngularVelocity() * -7, dt)
+		// let roll = this.roll.get()
+		let roll = 0
 		this.mesh.setOrientation(quat.fromEuler(
-			quat.create(), this.roll.get(), 0, this.body.getAngle() / Math.PI * 180))
+			quat.create(), roll, 0, this.body.getAngle() / Math.PI * 180))
 
 		this.tNextRipple -= dt
 		if (this.tNextRipple < 0) {
@@ -101,6 +109,7 @@ export async function createGliderFactory(engine: Engine): Promise<VehicleFactor
 			player,
 			position,
 			model,
+			meta,
 			engine
 		)
 	}
