@@ -43,25 +43,32 @@ async function main() {
 	graphicsStats.dom.style.cssText = 'position:absolute;top:0px;left:0px;';
 	document.body.appendChild(graphicsStats.dom)
 
+	let debugDraw = false
+	let stutter = false
+	let graphicsNeedsUpdate = false
+
 	let time = 0
-	setInterval(() => {
+	function updatePhysics() {
 		time += dt
 		physics.step(dt)
 		actionCam.update(dt)
 		broker.update.fire({ dt })
 		broker.purge.fire()
 		engineStats.update()
-	}, 1000 * dt)
-
-	let debugDraw = false
+		graphicsNeedsUpdate = true
+		setTimeout(updatePhysics, stutter ? 200 : 1000 * dt)
+	}
+	updatePhysics()
 
 	function animate() {
 		requestAnimationFrame(animate)
-		if (debugDraw) {
-			physics.debugDraw(graphics.drawDebugLine.bind(graphics))
+
+		if (graphicsNeedsUpdate) {
+			if (debugDraw) { physics.debugDraw(graphics.drawDebugLine.bind(graphics)) }
+			graphics.update()
+			graphicsStats.update()
 		}
-		graphics.update()
-		graphicsStats.update()
+		graphicsNeedsUpdate = false
 	}
 
 	window.addEventListener('keydown', (event) => {
@@ -77,6 +84,9 @@ async function main() {
 				break
 			case 'l':
 				debugDraw = !debugDraw
+				break
+			case '-':
+				stutter = !stutter
 				break
 		}
 	})
