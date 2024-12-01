@@ -26,6 +26,11 @@ import { ThreeSkybox } from "./threeskybox"
 //@ts-ignore
 window.three = THREE
 
+const debugLineMaterial = new THREE.LineBasicMaterial({
+	color: 0xffffff,
+	depthTest: false
+})
+
 export class ThreeGraphics implements Graphics {
 
 	scene: THREE.Scene
@@ -37,7 +42,7 @@ export class ThreeGraphics implements Graphics {
 	camera: ThreeCameraFactory
 	light: ThreeLightFactory
 	mesh: ThreeMeshFactory
-	
+
 	water: ThreeWater
 
 	setEnvironment(env: Skybox) {
@@ -58,6 +63,12 @@ export class ThreeGraphics implements Graphics {
 			this.scene,
 			(this.scene.userData as SceneInfo).activeCamera
 		)
+		this.scene.children.forEach(child => {
+			if (child.userData.isTemporary && "geometry" in child) {
+				this.scene.remove(child);
+				(child.geometry as THREE.BufferGeometry).dispose();
+			}
+		});
 	}
 
 	constructor() {
@@ -107,4 +118,12 @@ export class ThreeGraphics implements Graphics {
 		resize()
 	}
 
+	drawDebugLine(points: vec3[]): void {
+		const points3d = points.map(p => new THREE.Vector3(p[0], p[1], p[2]))
+		const geometry = new THREE.BufferGeometry().setFromPoints(points3d);
+		const line = new THREE.Line(geometry, debugLineMaterial);
+		line.renderOrder = Infinity
+		line.userData.isTemporary = true
+		this.scene.add(line);
+	}
 }

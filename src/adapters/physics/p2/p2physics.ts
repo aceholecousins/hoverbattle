@@ -6,7 +6,7 @@ import * as p2 from "p2"
 import { ExtendedP2World, ExtendedP2Body, collisionDispatcher } from "./p2extensions"
 import "./p2factorylist"
 import { CollisionOverride, CollisionHandler } from "game/physics/collision"
-import { vec2 } from "gl-matrix"
+import { vec2, vec3 } from "gl-matrix"
 
 // https://github.com/schteppe/p2.js/blob/master/build/p2.js
 // code investigation entry point: World.prototype.internalStep
@@ -98,5 +98,47 @@ export class P2Physics implements Physics {
 		return this.p2world.time
 	}
 
+	debugDraw(drawLine: (points: vec3[]) => void): void {
+		const p2world = this.p2world
+		for (let body of p2world.bodies) {
+			for (let shape of body.shapes) {
+				switch (shape.type) {
+					case (p2.Shape.CIRCLE): {
+						let circle = shape as p2.Circle
+						let xy = vec2.create() as [number, number]
+						body.toWorldFrame(xy, circle.position)
+						const numSegments = 16;
+						const angleStep = (2 * Math.PI) / numSegments;
+						const points: vec3[] = [];
+						for (let i = 0; i <= numSegments; i++) {
+							const angle = i * angleStep;
+							points.push([
+								xy[0] + circle.radius * Math.cos(angle),
+								xy[1] + circle.radius * Math.sin(angle),
+								0
+							]);
+						}
+						drawLine(points);
+					}
+						break;
+					case (p2.Shape.CONVEX): {
+						let convex = shape as p2.Convex
+						const points: vec3[] = [];
+						for (let i = 0; i < convex.vertices.length; i++) {
+							const xy = vec2.create() as [number, number];
+							vec2.rotate(xy, convex.vertices[i], [0, 0], convex.angle);
+							vec2.add(xy, xy, convex.position);
+							body.toWorldFrame(xy, xy)
+							points.push([xy[0], xy[1], 0])
+						}
+						if (points.length > 0) {
+							points.push(points[0])
+						}
+						drawLine(points);
+					}
+						break;
+				}
+			}
+		}
+	}
 }
-

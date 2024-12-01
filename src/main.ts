@@ -53,8 +53,13 @@ async function main() {
 		engineStats.update()
 	}, 1000 * dt)
 
+	let debugDraw = false
+
 	function animate() {
 		requestAnimationFrame(animate)
+		if (debugDraw) {
+			physics.debugDraw(graphics.drawDebugLine.bind(graphics))
+		}
 		graphics.update()
 		graphicsStats.update()
 	}
@@ -69,6 +74,9 @@ async function main() {
 				break
 			case '9':
 				dt = 1 / 1250
+				break
+			case 'l':
+				debugDraw = !debugDraw
 				break
 		}
 	})

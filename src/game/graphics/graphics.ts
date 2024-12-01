@@ -23,4 +23,6 @@ export interface Graphics {
 	setEnvironmentOrientation(ypr: vec3): void
 
 	update(): void
+
+	drawDebugLine(points: vec3[]): void
 }
