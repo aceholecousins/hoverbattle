@@ -1,11 +1,10 @@
 
 Debug:
 
-* the debug drawer seems to draw lines from past frames. if you turn it on and off, some lines remain longer.
-* ![Todo](todo.png)
 * the gliders glitch through the walls but not all walls
 * sometimes if they collect a powerup, it gets collected multiple times
 * makes me think that the shapes are in there multiple times, gonna random wiggle each point a bit
+* physics framerate dropped
 
 Features:
 

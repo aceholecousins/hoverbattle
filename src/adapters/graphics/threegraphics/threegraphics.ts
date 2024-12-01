@@ -45,6 +45,8 @@ export class ThreeGraphics implements Graphics {
 
 	water: ThreeWater
 
+	debugLines: THREE.Line[] = []
+
 	setEnvironment(env: Skybox) {
 		this.scene.background = (env as ThreeSkybox).threeCubemap
 		this.scene.environment = (env as ThreeSkybox).threePmrem
@@ -63,12 +65,12 @@ export class ThreeGraphics implements Graphics {
 			this.scene,
 			(this.scene.userData as SceneInfo).activeCamera
 		)
-		this.scene.children.forEach(child => {
-			if (child.userData.isTemporary && "geometry" in child) {
-				this.scene.remove(child);
-				(child.geometry as THREE.BufferGeometry).dispose();
-			}
-		});
+
+		for (const line of this.debugLines) {
+			this.scene.remove(line)
+			line.geometry.dispose()
+		}
+		this.debugLines = []
 	}
 
 	constructor() {
@@ -123,7 +125,7 @@ export class ThreeGraphics implements Graphics {
 		const geometry = new THREE.BufferGeometry().setFromPoints(points3d);
 		const line = new THREE.Line(geometry, debugLineMaterial);
 		line.renderOrder = Infinity
-		line.userData.isTemporary = true
 		this.scene.add(line);
+		this.debugLines.push(line)
 	}
 }
