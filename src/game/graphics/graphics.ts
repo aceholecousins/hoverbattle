@@ -6,6 +6,7 @@ import { MeshFactory } from "./mesh"
 import { Skybox } from "./asset";
 import { Water } from "./water";
 import { vec3 } from "gl-matrix"
+import { Color } from "utils/color";
 
 export interface Graphics {
 
@@ -24,5 +25,5 @@ export interface Graphics {
 
 	update(): void
 
-	drawDebugLine(points: vec3[]): void
+	drawDebugLine(points: vec3[], color:Color): void
 }

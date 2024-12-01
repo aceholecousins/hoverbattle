@@ -3,6 +3,7 @@ import { RigidBodyConfig, RigidBody } from "./rigidbody"
 import { Actor } from "game/entities/actor"
 import { CollisionOverride, CollisionHandler } from "game/physics/collision"
 import { vec2, vec3 } from "gl-matrix"
+import { Color } from "utils/color"
 
 export interface RayHit {
 	actor: Actor
@@ -25,5 +26,5 @@ export interface Physics {
 	rayCast(from: vec2, to: vec2, skipBackfaces: boolean): RayHit[]
 	step(dt: number): void
 	getTime(): number
-	debugDraw(drawLine: (points: vec3[]) => void): void
+	debugDraw(drawLine: (points: vec3[], color: Color) => void): void
 }

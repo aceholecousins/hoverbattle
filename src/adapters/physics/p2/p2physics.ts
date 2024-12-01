@@ -7,6 +7,7 @@ import { ExtendedP2World, ExtendedP2Body, collisionDispatcher } from "./p2extens
 import "./p2factorylist"
 import { CollisionOverride, CollisionHandler } from "game/physics/collision"
 import { vec2, vec3 } from "gl-matrix"
+import { Color } from "utils/color"
 
 // https://github.com/schteppe/p2.js/blob/master/build/p2.js
 // code investigation entry point: World.prototype.internalStep
@@ -98,7 +99,7 @@ export class P2Physics implements Physics {
 		return this.p2world.time
 	}
 
-	debugDraw(drawLine: (points: vec3[]) => void): void {
+	debugDraw(drawLine: (points: vec3[], color: Color) => void): void {
 		const p2world = this.p2world
 		for (let body of p2world.bodies) {
 			for (let shape of body.shapes) {
@@ -118,23 +119,45 @@ export class P2Physics implements Physics {
 								0
 							]);
 						}
-						drawLine(points);
+						drawLine(points, { r: 1, g: 1, b: 1 });
 					}
 						break;
 					case (p2.Shape.CONVEX): {
+						let colors = [
+							{ r: 1, g: 0.2, b: 0.2 },
+							{ r: 0.2, g: 1, b: 0.2 },
+							{ r: 0.2, g: 0.2, b: 1 }
+						]
 						let convex = shape as p2.Convex
-						const points: vec3[] = [];
-						for (let i = 0; i < convex.vertices.length; i++) {
-							const xy = vec2.create() as [number, number];
-							vec2.rotate(xy, convex.vertices[i], [0, 0], convex.angle);
-							vec2.add(xy, xy, convex.position);
-							body.toWorldFrame(xy, xy)
-							points.push([xy[0], xy[1], 0])
+						let center = convex.centerOfMass
+						for (let inner of [false, true]) {
+							const points: vec3[] = [];
+							for (let i = 0; i < convex.vertices.length; i++) {
+								const xy = vec2.create() as [number, number];
+								if (inner) {
+									xy[0] = convex.vertices[i][0] * 0.9 + center[0] * 0.1;
+									xy[1] = convex.vertices[i][1] * 0.9 + center[1] * 0.1;
+								}
+								else {
+									vec2.copy(xy, convex.vertices[i]);
+								}
+								vec2.rotate(xy, xy, [0, 0], convex.angle);
+								vec2.add(xy, xy, convex.position);
+								body.toWorldFrame(xy, xy)
+								points.push([xy[0], xy[1], 0])
+							}
+							if (points.length > 0) {
+								points.push(points[0])
+							}
+							if (inner) {
+								for (let i = 0; i < points.length - 1; i++) {
+									drawLine([points[i], points[i + 1]], colors[i % 3]);
+								}
+							}
+							else {
+								drawLine(points, { r: 1, g: 1, b: 1 });
+							}
 						}
-						if (points.length > 0) {
-							points.push(points[0])
-						}
-						drawLine(points);
 					}
 						break;
 				}

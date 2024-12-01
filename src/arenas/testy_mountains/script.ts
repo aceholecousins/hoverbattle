@@ -46,6 +46,14 @@ export let createMatch: MatchFactory = async function (engine) {
 	interact(collideWithEverythingRole, collideWithEverythingRole)
 
 	engine.physics.registerCollisionHandler(new CollisionHandler(
+		collideWithEverythingRole, collideWithEverythingRole, function (
+			a: Entity, b: Entity
+		) {
+		5708
+	}
+	))
+
+	engine.physics.registerCollisionHandler(new CollisionHandler(
 		powerShieldRole, collideWithEverythingRole, function (
 			shield: PowerShield, other: Entity
 		) {
@@ -216,7 +224,7 @@ export let createMatch: MatchFactory = async function (engine) {
 		team++
 	})
 
-	new GameTimer(spawnPowerup, Math.random() * 2 + 1)
+	//new GameTimer(spawnPowerup, Math.random() * 2 + 1)
 
 	function spawnPowerup() {
 		if (powerupBoxes.length < 5) {

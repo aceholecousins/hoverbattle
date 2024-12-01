@@ -22,14 +22,10 @@ import { ThreeWater } from "./threewater"
 
 import { Skybox } from "game/graphics/asset"
 import { ThreeSkybox } from "./threeskybox"
+import { Color } from "utils/color"
 
 //@ts-ignore
 window.three = THREE
-
-const debugLineMaterial = new THREE.LineBasicMaterial({
-	color: 0xffffff,
-	depthTest: false
-})
 
 export class ThreeGraphics implements Graphics {
 
@@ -67,7 +63,8 @@ export class ThreeGraphics implements Graphics {
 		)
 
 		for (const line of this.debugLines) {
-			this.scene.remove(line)
+			this.scene.remove(line);
+			(line.material as THREE.LineBasicMaterial).dispose()
 			line.geometry.dispose()
 		}
 		this.debugLines = []
@@ -120,10 +117,14 @@ export class ThreeGraphics implements Graphics {
 		resize()
 	}
 
-	drawDebugLine(points: vec3[]): void {
+	drawDebugLine(points: vec3[], color: Color): void {
 		const points3d = points.map(p => new THREE.Vector3(p[0], p[1], p[2]))
 		const geometry = new THREE.BufferGeometry().setFromPoints(points3d);
-		const line = new THREE.Line(geometry, debugLineMaterial);
+		const material = new THREE.LineBasicMaterial({
+			color: new THREE.Color(color.r, color.g, color.b),
+			depthTest: false
+		})
+		const line = new THREE.Line(geometry, material);
 		line.renderOrder = Infinity
 		this.scene.add(line);
 		this.debugLines.push(line)
