@@ -56,9 +56,8 @@ async function main() {
 		broker.purge.fire()
 		engineStats.update()
 		graphicsNeedsUpdate = true
-		setTimeout(updatePhysics, stutter ? 200 : 1000 * dt)
 	}
-	updatePhysics()
+	let physicsTimer = setInterval(updatePhysics, 1000 * dt)
 
 	function animate() {
 		requestAnimationFrame(animate)
@@ -87,6 +86,8 @@ async function main() {
 				break
 			case '-':
 				stutter = !stutter
+				clearInterval(physicsTimer)
+				physicsTimer = setInterval(updatePhysics, stutter ? 200 : 1000 * dt)
 				break
 		}
 	})

@@ -4,7 +4,7 @@ Debug:
 * the gliders glitch through the walls but not all walls
 * sometimes if they collect a powerup, it gets collected multiple times
 * makes me think that the shapes are in there multiple times, gonna random wiggle each point a bit
-* physics framerate dropped
+* somehow seems to glitch only form the inside of the level, not once it's already left the arena and wants to go back in
 
 Features:
 
