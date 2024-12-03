@@ -10,10 +10,13 @@ import { registerRelatedEntityCollisionOverride } from "game/entities/entity"
 
 import { ThreeGraphics } from "adapters/graphics/threegraphics/threegraphics"
 import { P2Physics } from "adapters/physics/p2/p2physics"
+import { test } from "adapters/physics/matter/test"
 import { loadWebApiSound } from "adapters/sound/webapisound"
 import { DefaultControllerManager } from "adapters/controller/defaultcontrollermanager"
 
 import * as Stats from 'stats.js'
+
+console.log(test) // TODO: Remove this line
 
 let dt = 1 / 125
 

@@ -27,6 +27,7 @@
 		"@types/dat.gui": "^0.7.13",
 		"@types/jsdom": "^21.1.7",
 		"@types/jsdom-global": "^3.0.7",
+		"@types/matter-js": "^0.19.8",
 		"@types/mocha": "^10.0.8",
 		"@types/p2": "^0.7.45",
 		"@types/stats.js": "^0.17.3",
@@ -45,6 +46,7 @@
 	"dependencies": {
 		"dat.gui": "^0.7.9",
 		"gl-matrix": "^3.4.3",
+		"matter-js": "^0.20.0",
 		"p2": "^0.7.1",
 		"stats.js": "^0.17.0",
 		"three": "^0.169.0"
