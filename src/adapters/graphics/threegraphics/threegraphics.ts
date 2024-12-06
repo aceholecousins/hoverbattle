@@ -1,5 +1,5 @@
 
-import { vec3 } from "gl-matrix"
+import { Vector3, Euler } from "math"
 
 import * as THREE from "three"
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
@@ -48,9 +48,9 @@ export class ThreeGraphics implements Graphics {
 		this.scene.environment = (env as ThreeSkybox).threePmrem
 	}
 
-	setEnvironmentOrientation(ypr: vec3) {
-		this.scene.backgroundRotation.set(ypr[2], ypr[1], ypr[0], "XYZ")
-		this.scene.environmentRotation.set(ypr[2], ypr[1], ypr[0], "XYZ")
+	setEnvironmentOrientation(ori: Euler) {
+		this.scene.backgroundRotation.copy(ori)
+		this.scene.environmentRotation.copy(ori)
 	}
 
 	update() {
@@ -84,7 +84,7 @@ export class ThreeGraphics implements Graphics {
 
 		// controllable test camera
 		let defaultCam = this.camera.create(new CameraConfig())
-		defaultCam.setPosition([0, 0, 10])
+		defaultCam.setPosition(new Vector3(0, 0, 10))
 		defaultCam.activate()
 		defaultCam.threeObject.up.set(0, 0, 1)
 		this.scene.add(defaultCam.threeObject)
@@ -117,9 +117,8 @@ export class ThreeGraphics implements Graphics {
 		resize()
 	}
 
-	drawDebugLine(points: vec3[], color: Color): void {
-		const points3d = points.map(p => new THREE.Vector3(p[0], p[1], p[2]))
-		const geometry = new THREE.BufferGeometry().setFromPoints(points3d);
+	drawDebugLine(points: Vector3[], color: Color): void {
+		const geometry = new THREE.BufferGeometry().setFromPoints(points);
 		const material = new THREE.LineBasicMaterial({
 			color: new THREE.Color(color.r, color.g, color.b),
 			depthTest: false

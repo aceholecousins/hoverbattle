@@ -5,8 +5,7 @@ import { Engine } from "game/engine";
 import { CircleConfig } from "game/physics/circle";
 import { RigidBodyConfig } from "game/physics/rigidbody";
 import { Sound } from "game/sound";
-import { quat, ReadonlyVec2, vec2, vec3 } from "gl-matrix";
-import { quatFromAngle } from "utils/math"
+import { Vector2, Vector3 } from "math"
 import { Entity } from "../entity";
 import { Vehicle } from "game/entities/vehicles/vehicle";
 
@@ -20,7 +19,7 @@ export class PhaserShot extends Entity {
 
 	constructor(
 		public parent: Vehicle,
-		position: vec2,
+		position: Vector2,
 		model: Model,
 		engine: Engine
 	) {
@@ -28,7 +27,7 @@ export class PhaserShot extends Entity {
 		this.mesh = engine.graphics.mesh.createFromModel(
 			new ModelMeshConfig({
 				model,
-				scale: [PHASER_LENGTH, PHASER_LENGTH / 2, 1]
+				scale: new Vector3(PHASER_LENGTH, PHASER_LENGTH / 2, 1)
 			}))
 		this.mesh.setBaseColor(parent.player.team == 0 ? { r: 1, g: 0.2, b: 0 } : { r: 0, g: 0.5, b: 1 })
 		this.mesh.setAccentColor1({ r: 1, g: 1, b: 1 })
@@ -79,16 +78,16 @@ export class PhaserWeapon {
 	private spawnShot(offset: number) {
 		let phi = this.parent.body.getAngle();
 		let pos = this.parent.body.getPosition();
-		pos = vec2.fromValues(
-			pos[0] - Math.sin(phi) * offset,
-			pos[1] + Math.cos(phi) * offset,
+		pos = new Vector2(
+			pos.x - Math.sin(phi) * offset,
+			pos.y + Math.cos(phi) * offset,
 		)
 		let shot = this.phaserFactory.createShot(this.parent, pos);
 		shot.body.setAngle(phi);
-		shot.body.setVelocity([
+		shot.body.setVelocity(new Vector2(
 			Math.cos(phi) * PHASER_SPEED,
 			Math.sin(phi) * PHASER_SPEED,
-		])
+		))
 		this.coolDown = 1 / PHASER_FIRE_RATE;
 		return shot
 	}
@@ -99,7 +98,7 @@ export class PhaserWeapon {
 }
 
 export type PhaserFactory = {
-	createShot: (parent: Vehicle, position: ReadonlyVec2) => PhaserShot;
+	createShot: (parent: Vehicle, position: Vector2) => PhaserShot;
 	playPhaserSound: () => void;
 };
 
@@ -112,7 +111,7 @@ export async function createPhaserFactory(engine: Engine): Promise<PhaserFactory
 	const phaserSound = await engine.loadSound("assets/sounds/phaser.ogg")
 
 	return {
-		createShot: function (parent: Vehicle, position: vec2) {
+		createShot: function (parent: Vehicle, position: Vector2) {
 			return new PhaserShot(parent, position, phaserSprite, engine)
 		},
 		playPhaserSound: function () {

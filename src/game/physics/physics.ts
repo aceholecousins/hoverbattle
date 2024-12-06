@@ -2,17 +2,17 @@
 import { RigidBodyConfig, RigidBody } from "./rigidbody"
 import { Actor } from "game/entities/actor"
 import { CollisionOverride, CollisionHandler } from "game/physics/collision"
-import { vec2, vec3 } from "gl-matrix"
+import { Vector2, Vector3 } from "math"
 import { Color } from "utils/color"
 
 export interface RayHit {
 	actor: Actor
-	position: vec2
-	normal: vec2
+	position: Vector2
+	normal: Vector2
 }
 
 export interface Attachment {
-	setOffset(position: vec2, angle: number): void
+	setOffset(position: Vector2, angle: number): void
 	setCanCollide(canCollide: boolean): void
 	setStiffness(stiffness: number): void
 	detach(): void
@@ -23,8 +23,8 @@ export interface Physics {
 	attach(bodyA: RigidBody, bodyB: RigidBody): Attachment
 	registerCollisionOverride(override: CollisionOverride<any, any>): void
 	registerCollisionHandler(handler: CollisionHandler<any, any>): void
-	rayCast(from: vec2, to: vec2, skipBackfaces: boolean): RayHit[]
+	rayCast(from: Vector2, to: Vector2, skipBackfaces: boolean): RayHit[]
 	step(dt: number): void
 	getTime(): number
-	debugDraw(drawLine: (points: vec3[], color: Color) => void): void
+	debugDraw(drawLine: (points: Vector3[], color: Color) => void): void
 }

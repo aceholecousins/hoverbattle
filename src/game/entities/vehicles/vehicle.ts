@@ -1,7 +1,7 @@
 import { Entity } from "game/entities/entity"
 import { Player } from "game/player"
 import { Powerup } from "game/entities/powerups/powerup"
-import { vec2 } from "gl-matrix"
+import { Vector2 } from "math"
 
 export const VEHICLE_RADIUS = 1
 
@@ -36,5 +36,5 @@ export class Vehicle extends Entity {
 }
 
 export interface VehicleFactory {
-	(player: Player, position: vec2): Vehicle
+	(player: Player, position: Vector2): Vehicle
 }

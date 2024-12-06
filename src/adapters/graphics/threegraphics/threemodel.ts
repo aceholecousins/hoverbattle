@@ -1,11 +1,11 @@
 
 import { Model, ModelLoader, ModelMetaData } from "game/graphics/asset"
-import { vec3, quat } from "gl-matrix"
+import { Quaternion } from "math"
 import * as THREE from "three"
 import { Vector3 } from "three"
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 // `import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader"
-import { Triangle3 } from "utils/math"
+import { Triangle3 } from "math"
 import { SceneNodeConfig } from "game/graphics/scenenode"
 
 export class ThreeModel extends Model {
@@ -88,11 +88,11 @@ function extractMetaData(scene: THREE.Scene) {
 
 				for (let i = 0; i < verts.count; i += 3) {
 					let va = node.localToWorld(getVertex(verts, i))
-					let A = vec3.fromValues(va.x, va.y, va.z)
+					let A = new Vector3(va.x, va.y, va.z)
 					let vb = node.localToWorld(getVertex(verts, i + 1))
-					let B = vec3.fromValues(vb.x, vb.y, vb.z)
+					let B = new Vector3(vb.x, vb.y, vb.z)
 					let vc = node.localToWorld(getVertex(verts, i + 2))
-					let C = vec3.fromValues(vc.x, vc.y, vc.z)
+					let C = new Vector3(vc.x, vc.y, vc.z)
 					tris.push([A, B, C])
 				}
 				meta[node.name.substring(1)] = tris
@@ -100,14 +100,11 @@ function extractMetaData(scene: THREE.Scene) {
 				(node as THREE.Mesh).geometry.dispose()
 			}
 			else if (node.type == "Object3D") {
-				const p = node.position
-				const q = node.quaternion
-				const s = node.scale
 				meta[node.name.substring(1)] = new SceneNodeConfig({
 					kind: "empty",
-					position: vec3.fromValues(p.x, p.y, p.z),
-					orientation: quat.fromValues(q.x, q.y, q.z, q.w),
-					scale: vec3.fromValues(s.x, s.y, s.z)
+					position: node.position,
+					orientation: node.quaternion,
+					scale: node.scale
 				})
 				scene.remove(node);
 			}

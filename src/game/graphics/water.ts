@@ -1,5 +1,5 @@
-import { vec3 } from 'gl-matrix'
+import { Vector3 } from 'math'
 
 export interface Water {
-	makeRipple(position: vec3, size:number, strength: number): void
+	makeRipple(position: Vector3, size:number, strength: number): void
 }

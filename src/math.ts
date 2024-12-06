@@ -1,4 +1,7 @@
-import { vec2, vec3, mat3, quat, ReadonlyVec2, ReadonlyVec3 } from "gl-matrix";
+import { Vector2, Vector3, Matrix3, Matrix4, Quaternion, Euler } from 'three'
+export { Vector2, Vector3, Matrix3, Matrix4, Quaternion, Euler } from 'three'
+
+export const DEG = Math.PI / 180
 
 export function angleDelta(from: number, to: number): number {
 	let diff = (to - from) % (2 * Math.PI);
@@ -7,32 +10,18 @@ export function angleDelta(from: number, to: number): number {
 	return diff;
 }
 
-export function mat3fromVectors(out: mat3, x: ReadonlyVec3, y: ReadonlyVec3, z: ReadonlyVec3) {
-	// note that matrices are stored column-wise
-
-	out[0] = x[0]
-	out[1] = x[1]
-	out[2] = x[2]
-
-	out[3] = y[0]
-	out[4] = y[1]
-	out[5] = y[2]
-
-	out[6] = z[0]
-	out[7] = z[1]
-	out[8] = z[2]
-
-	return out
+export function matrix3FromBasis(x: Vector3, y: Vector3, z: Vector3) {
+	return new Matrix3(x.x, x.y, x.z, y.x, y.y, y.z, z.x, z.y, z.z)
 }
 
-export type Triangle2 = [vec2, vec2, vec2]
-export type Triangle3 = [vec3, vec3, vec3]
+export type Triangle2 = [Vector2, Vector2, Vector2]
+export type Triangle3 = [Vector3, Vector3, Vector3]
 
 export function triangle3to2(tri: Triangle3): Triangle2 {
 	return [
-		vec2.fromValues(tri[0][0], tri[0][1]),
-		vec2.fromValues(tri[1][0], tri[1][1]),
-		vec2.fromValues(tri[2][0], tri[2][1])
+		new Vector2(tri[0].x, tri[0].y),
+		new Vector2(tri[1].x, tri[1].y),
+		new Vector2(tri[2].x, tri[2].y)
 	]
 }
 
@@ -85,9 +74,23 @@ export class Ramper {
 }
 
 export function quatFromAngle(angle: number) {
-	return quat.fromEuler(quat.create(), 0, 0, angle / Math.PI * 180)
+	new Quaternion().setFromAxisAngle(new Vector3(0, 0, 1), angle)
+	return new Quaternion(0, 0, Math.sin(angle / 2), Math.cos(angle / 2))
 }
 
-export function appendZ(v: ReadonlyVec2, z: number) {
-	return vec3.fromValues(v[0], v[1], z)
+export function quatFromYPR(yaw: number, pitch: number, roll: number) {
+	console.warn("possible todo")
+	return new Quaternion().setFromEuler(new Euler(yaw, pitch, roll))
+}
+
+export function quatFromMatrix3(m: Matrix3) {
+	return new Quaternion().setFromRotationMatrix(new Matrix4().setFromMatrix3(m))
+}
+
+export function appendZ(v: Vector2, z: number) {
+	return new Vector3(v.x, v.y, z)
+}
+
+export function vec2FromDir(dir: number) {
+	return new Vector2(Math.cos(dir), Math.sin(dir))
 }

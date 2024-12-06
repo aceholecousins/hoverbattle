@@ -3,7 +3,7 @@ import { Model } from "game/graphics/asset"
 import { Engine } from "game/engine"
 import { CircleConfig } from "game/physics/circle"
 import { RigidBodyConfig } from "game/physics/rigidbody"
-import { vec2, vec3, quat } from "gl-matrix"
+import { Vector2, quatFromYPR, DEG } from "math"
 import { Entity } from "game/entities/entity"
 
 const POWERUP_BOX_SIZE = 1.8
@@ -19,7 +19,7 @@ export class PowerupBox extends Entity {
 
 	constructor(
 		public kind: PowerupKind,
-		position: vec2,
+		position: Vector2,
 		model: Model,
 		engine: Engine
 	) {
@@ -42,11 +42,10 @@ export class PowerupBox extends Entity {
 	update(dt: number) {
 		this.time += dt
 		this.mesh.setPositionXY(this.body.getPosition())
-		this.mesh.setOrientation(quat.fromEuler(
-			quat.create(),
-			20 * Math.sin(this.time),
-			17 * Math.sin(1.1337 * this.time),
-			this.body.getAngle() / Math.PI * 180
+		this.mesh.setOrientation(quatFromYPR(
+			this.body.getAngle(),
+			17 * DEG * Math.sin(1.1337 * this.time),
+			20 * DEG * Math.sin(this.time),
 		))
 	}
 }
@@ -64,7 +63,7 @@ export async function createPowerupBoxFactory(engine: Engine) {
 	])
 	let models = { laser, mine, missile, nashwan, repair, powershield }
 
-	return function (kind: PowerupKind, position: vec2) {
+	return function (kind: PowerupKind, position: Vector2) {
 		return new PowerupBox(
 			kind,
 			position,

@@ -1,8 +1,7 @@
 import { ModelMeshConfig } from "game/graphics/mesh";
 import { Model } from "game/graphics/asset";
 import { Engine } from "game/engine";
-import { quat, vec2, vec3 } from "gl-matrix";
-import { quatFromAngle } from "utils/math"
+import { appendZ, vec2FromDir, Vector2, Vector3 } from "math"
 import { Vehicle, VEHICLE_RADIUS } from "game/entities/vehicles/vehicle";
 import { Visual } from "game/graphics/visual"
 import { Color } from "utils/color"
@@ -28,10 +27,10 @@ export class Speckle extends Visual {
 		this.mesh = engine.graphics.mesh.createFromModel(
 			new ModelMeshConfig({ model: model })
 		)
-		this.mesh.setScale([LASER_WIDTH * 3, LASER_WIDTH * 3, 1])
+		this.mesh.setScale(new Vector3(LASER_WIDTH * 3, LASER_WIDTH * 3, 1))
 	}
 
-	setPosition(position: vec3) {
+	setPosition(position: Vector3) {
 		this.mesh.setPosition(position)
 	}
 }
@@ -66,32 +65,28 @@ export class LaserBeam extends Visual {
 	}
 
 	cast(
-		start: vec2,
+		start: Vector2,
 		angle: number,
 		maxDistance: number,
 		onHit: (actor: Actor) => void
 	) {
 		let p1 = start
-		let p2 = vec2.fromValues(
-			p1[0] + Math.cos(angle) * maxDistance,
-			p1[1] + Math.sin(angle) * maxDistance
-		)
+		let p2 = vec2FromDir(angle).multiplyScalar(maxDistance)
 		let hits = this.engine.physics.rayCast(p1, p2, true)
 		let hit = null
 		if (hits.length > 0) {
 			hit = hits[0]
 			p2 = hit.position
-			this.hitSpeckle.setPosition([p2[0], p2[1], this.z + 0.1])
+			this.hitSpeckle.setPosition(appendZ(p2, this.z + 0.1))
 			onHit(hit.actor)
 		}
-		let distance = vec2.distance(p1, p2)
-		this.mesh.setPositionXY([(p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2])
-		this.mesh.setScale([distance, LASER_WIDTH, 1])
+		let distance = p1.distanceTo(p2)
+		this.mesh.setPositionXY(p1.lerp(p2, 0.5))
+		this.mesh.setScale(new Vector3(distance, LASER_WIDTH, 1))
 		this.mesh.setAngle(angle)
 
 		if (hit && this.reflection) {
-			let normalAngle = Math.atan2(hit.normal[1], hit.normal[0])
-			let reflectionAngle = angle - 2 * (angle - normalAngle) + Math.PI;
+			let reflectionAngle = angle - 2 * (angle - hit.normal.angle()) + Math.PI;
 			this.reflection.cast(p2, reflectionAngle, maxDistance - distance, onHit)
 		}
 	}
@@ -130,10 +125,9 @@ export class LaserBeamRoot extends LaserBeam {
 			return
 		}
 
-		let p1 = vec2.clone(this.parent.body.getPosition())
-		p1[0] += Math.cos(this.parent.body.getAngle()) * VEHICLE_RADIUS
-		p1[1] += Math.sin(this.parent.body.getAngle()) * VEHICLE_RADIUS
-		this.startSpeckle.setPosition([p1[0], p1[1], 0.7])
+		let p1 = this.parent.body.getPosition().clone() as Vector2
+		p1.addScaledVector(vec2FromDir(this.parent.body.getAngle()), VEHICLE_RADIUS)
+		this.startSpeckle.setPosition(appendZ(p1, 0.7))
 		this.cast(p1, this.parent.body.getAngle(), 1000,
 			(actor: Actor) => this.onHit(actor, dt))
 	}

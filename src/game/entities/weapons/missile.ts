@@ -5,12 +5,11 @@ import { Engine } from "game/engine";
 import { CircleConfig } from "game/physics/circle";
 import { RigidBodyConfig } from "game/physics/rigidbody";
 import { Sound } from "game/sound";
-import { quat, ReadonlyVec2, vec2, vec3 } from "gl-matrix";
 import { assignRole, Role } from "../actor";
 import { Entity } from "../entity";
 import { Vehicle, VEHICLE_RADIUS } from "game/entities/vehicles/vehicle";
 import { Powerup } from "game/entities/powerups/powerup";
-import { angleDelta, appendZ } from "utils/math";
+import { angleDelta, appendZ, Vector2, quatFromYPR, vec2FromDir, DEG } from "math";
 import { SmokeFactory, createSmokeFactory } from "game/graphics/explosion/smoke"
 import { memoize } from "utils/general";
 
@@ -36,7 +35,7 @@ export class Missile extends Entity {
 
 	constructor(
 		public parent: Vehicle,
-		position: ReadonlyVec2,
+		position: Vector2,
 		angle: number,
 		public possibleTargets: Entity[],
 		private createSmoke: SmokeFactory,
@@ -79,13 +78,10 @@ export class Missile extends Entity {
 			if (target == self) {
 				continue;
 			}
-			const toTarget = vec2.sub(vec2.create(), target.body.getPosition(), this.body.getPosition());
-			vec2.normalize(toTarget, toTarget);
-			const forward = vec2.fromValues(
-				Math.cos(this.body.getAngle()),
-				Math.sin(this.body.getAngle())
-			);
-			const dot = vec2.dot(forward, toTarget);
+			const toTarget = target.body.getPosition().clone().sub(this.body.getPosition()).normalize();
+
+			const forward = vec2FromDir(this.body.getAngle())
+			const dot = forward.dot(toTarget);
 
 			if (dot > bestDot) {
 				bestDot = dot;
@@ -98,7 +94,7 @@ export class Missile extends Entity {
 
 	update(dt: number) {
 		if (
-			vec2.distance(this.body.getPosition(), this.parent.body.getPosition())
+			this.body.getPosition().distanceTo(this.parent.body.getPosition())
 			> (MISSILE_RADIUS + VEHICLE_RADIUS) * 1.5
 		) {
 			this.collidesWithParent = true
@@ -114,18 +110,18 @@ export class Missile extends Entity {
 		}
 
 		if (this.target != null) {
-			const toTarget = vec2.sub(vec2.create(), this.target.body.getPosition(), this.body.getPosition());
-			const toTargetAngle = Math.atan2(toTarget[1], toTarget[0]);
+			const toTargetAngle = this.target.body.getPosition().clone()
+				.sub(this.body.getPosition()).angle();
 			let delta = angleDelta(this.body.getAngle(), toTargetAngle);
 			this.body.applyTorque(Math.sign(delta) * MISSILE_HOMING_TORQUE);
 		}
 
-		this.body.applyLocalForce(vec2.fromValues(MISSILE_ACCELERATION * MISSILE_MASS, 0))
+		this.body.applyLocalForce(new Vector2(MISSILE_ACCELERATION * MISSILE_MASS, 0))
 
 		this.mesh.setPosition(appendZ(this.body.getPosition(), 0.1))
-		this.roll += dt * 300;
-		this.mesh.setOrientation(quat.fromEuler(
-			quat.create(), this.roll, 0, this.body.getAngle() / Math.PI * 180))
+		this.roll += dt * 300 * DEG;
+		this.mesh.setOrientation(quatFromYPR(
+			this.body.getAngle(), 0, this.roll))
 	}
 }
 
@@ -178,7 +174,7 @@ export let createMissileFactory = memoize(async function (engine: Engine) {
 
 	return function (
 		parent: Vehicle,
-		position: ReadonlyVec2,
+		position: Vector2,
 		angle: number,
 		possibleTargets: Entity[]
 	): Missile {

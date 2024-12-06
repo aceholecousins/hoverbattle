@@ -1,5 +1,5 @@
 import * as p2 from "p2"
-import { vec2, ReadonlyVec2 } from "gl-matrix"
+import { Vector2 } from "math"
 import { p2shapeFactory } from "./p2shape"
 import { RigidBody, RigidBodyConfig } from "game/physics/rigidbody"
 import { ExtendedP2Body } from "./p2extensions"
@@ -56,21 +56,23 @@ export class P2RigidBody implements RigidBody {
 		return this.p2body.type === p2.Body.STATIC ? Infinity : this.p2body.mass
 	}
 
-	setPosition(position: ReadonlyVec2) {
-		vec2.copy(this.p2body.position, position)
+	setPosition(position: Vector2) {
+		this.p2body.position[0] = position.x
+		this.p2body.position[1] = position.y
 	}
-	getPosition(): ReadonlyVec2 {
-		return this.p2body.position
+	getPosition(): Vector2 {
+		return new Vector2(this.p2body.position[0], this.p2body.position[1])
 	}
-	copyPosition(source: { getPosition(): ReadonlyVec2 }) {
-		vec2.copy(this.p2body.position, source.getPosition())
+	copyPosition(source: { getPosition(): Vector2 }) {
+		this.setPosition(source.getPosition())
 	}
 
-	setVelocity(velocity: ReadonlyVec2) {
-		vec2.copy(this.p2body.velocity, velocity)
+	setVelocity(velocity: Vector2) {
+		this.p2body.velocity[0] = velocity.x
+		this.p2body.velocity[1] = velocity.y
 	}
-	getVelocity(): ReadonlyVec2 {
-		return this.p2body.velocity
+	getVelocity(): Vector2 {
+		return new Vector2(this.p2body.velocity[0], this.p2body.velocity[1])
 	}
 
 	setDamping(damping: number) {
@@ -106,42 +108,42 @@ export class P2RigidBody implements RigidBody {
 
 
 	applyForce(
-		force: ReadonlyVec2,
-		localPointOfApplication: ReadonlyVec2 = vec2.fromValues(0, 0)
+		force: Vector2,
+		localPointOfApplication: Vector2 = new Vector2(0, 0)
 	) {
 		this.p2body.applyForce(
-			[force[0], force[1]],
-			[localPointOfApplication[0], localPointOfApplication[1]]
+			[force.x, force.y],
+			[localPointOfApplication.x, localPointOfApplication.y]
 		)
 	}
 
 	applyLocalForce(
-		force: ReadonlyVec2,
-		localPointOfApplication: ReadonlyVec2 = vec2.fromValues(0, 0)
+		force: Vector2,
+		localPointOfApplication: Vector2 = new Vector2(0, 0)
 	) {
 		this.p2body.applyForceLocal(
-			[force[0], force[1]],
-			[localPointOfApplication[0], localPointOfApplication[1]]
+			[force.x, force.y],
+			[localPointOfApplication.x, localPointOfApplication.y]
 		)
 	}
 
 	applyImpulse(
-		impulse: ReadonlyVec2,
-		localPointOfApplication: ReadonlyVec2 = vec2.fromValues(0, 0)
+		impulse: Vector2,
+		localPointOfApplication: Vector2 = new Vector2(0, 0)
 	) {
 		this.p2body.applyImpulse(
-			[impulse[0], impulse[1]],
-			[localPointOfApplication[0], localPointOfApplication[1]]
+			[impulse.x, impulse.y],
+			[localPointOfApplication.x, localPointOfApplication.y]
 		)
 	}
 
 	applyLocalImpulse(
-		impulse: ReadonlyVec2,
-		localPointOfApplication: ReadonlyVec2 = vec2.fromValues(0, 0)
+		impulse: Vector2,
+		localPointOfApplication: Vector2 = new Vector2(0, 0)
 	) {
 		this.p2body.applyImpulseLocal(
-			[impulse[0], impulse[1]],
-			[localPointOfApplication[0], localPointOfApplication[1]]
+			[impulse.x, impulse.y],
+			[localPointOfApplication.x, localPointOfApplication.y]
 		)
 	}
 

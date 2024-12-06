@@ -4,9 +4,8 @@ import { Engine } from "game/engine"
 import { CircleConfig } from "game/physics/circle"
 import { RigidBodyConfig } from "game/physics/rigidbody"
 import { Player } from "game/player"
-import { vec2, quat } from "gl-matrix"
-import { Ramper, LowPass } from "utils/math"
-import { angleDelta } from "utils/math"
+import { Ramper, LowPass } from "math"
+import { angleDelta, Vector2, quatFromYPR } from "math"
 import { Vehicle, VEHICLE_RADIUS, VehicleFactory } from "game/entities/vehicles/vehicle"
 
 export const CAR_ACCELERATION = 50
@@ -21,7 +20,7 @@ export class OmgCar extends Vehicle {
 
 	constructor(
 		public player: Player,
-		position: vec2,
+		position: Vector2,
 		model: Model,
 		engine: Engine
 	) {
@@ -42,14 +41,16 @@ export class OmgCar extends Vehicle {
 	update(dt: number) {
 
 		const f = CAR_ACCELERATION * this.body.getMass() * this.player.controller.getThrust()
-		let v = vec2.length(this.body.getVelocity())
+		let v = this.body.getVelocity().length()
 
 		if (v > CAR_MAX_SPEED) {
-			this.body.setVelocity(vec2.scale(vec2.create(), this.body.getVelocity(), CAR_MAX_SPEED / v))
+			this.body.setVelocity(
+				this.body.getVelocity().clone().setLength(CAR_MAX_SPEED)
+			);
 			v = CAR_MAX_SPEED
 		}
 
-		this.body.applyLocalForce(vec2.fromValues(f, 0))
+		this.body.applyLocalForce(new Vector2(f, 0))
 
 		const turnRate = this.player.controller.getTurnRate()
 		if (turnRate != undefined) {
@@ -62,22 +63,18 @@ export class OmgCar extends Vehicle {
 			this.turnToDirection(direction)
 		}
 
-		let lookAtDirection = vec2.fromValues(
+		let lookAtDirection = new Vector2(
 			Math.cos(this.body.getAngle()),
 			Math.sin(this.body.getAngle())
 		)
-		let motionDirection = vec2.normalize(vec2.create(), this.body.getVelocity())
+		let motionDirection = this.body.getVelocity().clone().normalize()
 
-		let lerped = vec2.lerp(vec2.create(), motionDirection, lookAtDirection, CAR_TRACTION * dt)
-		vec2.scale(lerped, lerped, v)
-
+		let lerped = motionDirection.lerp(lookAtDirection, CAR_TRACTION * dt).setLength(v)
 		this.body.setVelocity(lerped)
 
 		this.mesh.copy2dPose(this.body)
 
-		this.mesh.setPositionXY(this.body.getPosition())
-		this.mesh.setOrientation(quat.fromEuler(
-			quat.create(), 0, 0, this.body.getAngle() / Math.PI * 180))
+		this.mesh.copy2dPose(this.body)
 
 		super.update(dt)
 		this.onUpdate(dt)
@@ -99,7 +96,7 @@ export async function createOmgCarFactory(engine: Engine): Promise<VehicleFactor
 	let { model, meta } = await engine.graphics.loadModel(
 		"assets/models/car.glb")
 
-	return function (player: Player, position: vec2) {
+	return function (player: Player, position: Vector2) {
 		return new OmgCar(
 			player,
 			position,

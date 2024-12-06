@@ -1,8 +1,7 @@
 
 import { ShapeConfig, Shape } from "./shape"
 import { copyIfPresent } from "utils/general"
-import { vec2 } from "gl-matrix"
-import { Triangle2 } from "utils/math"
+import { Vector2, Triangle2 } from "math"
 
 export interface Triangle extends Shape<"triangle"> {
 	kind: "triangle"
@@ -13,9 +12,9 @@ export interface Triangle extends Shape<"triangle"> {
 export class TriangleConfig extends ShapeConfig<"triangle"> {
 	kind: "triangle" = "triangle"
 	corners: Triangle2 = [
-		vec2.fromValues(1, 0),
-		vec2.fromValues(-1, 1),
-		vec2.fromValues(-1, -1)
+		new Vector2(1, 0),
+		new Vector2(-1, 1),
+		new Vector2(-1, -1)
 	]
 
 	constructor(config: Partial<TriangleConfig> = {}) {

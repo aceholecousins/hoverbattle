@@ -1,8 +1,7 @@
 import { ModelMeshConfig } from "game/graphics/mesh"
 import { Model } from "game/graphics/asset"
 import { Engine } from "game/engine"
-import { vec3, quat } from "gl-matrix"
-import { quatFromAngle } from "utils/math"
+import { Vector3 } from "math"
 import { Color, colorLerp } from "utils/color"
 import { Visual } from "game/graphics/visual"
 import { memoize } from "utils/general"
@@ -13,7 +12,7 @@ export class Smoke extends Visual {
 	time: number = 0
 
 	constructor(
-		position: vec3,
+		position: Vector3,
 		model: Model,
 		color: Color,
 		engine: Engine
@@ -36,12 +35,12 @@ export class Smoke extends Visual {
 	}
 }
 
-export type SmokeFactory = (position: vec3, color: Color) => Smoke
+export type SmokeFactory = (position: Vector3, color: Color) => Smoke
 export let createSmokeFactory = memoize(async function (engine: Engine) {
 	let smokeModel = await engine.graphics.loadSprite(
 		"assets/sprites/smoke.png")
 
-	return function (position: vec3, color: Color) {
+	return function (position: Vector3, color: Color) {
 		return new Smoke(position, smokeModel, color, engine)
 	}
 })

@@ -6,7 +6,7 @@ import * as p2 from "p2"
 import { ExtendedP2World, ExtendedP2Body, collisionDispatcher } from "./p2extensions"
 import "./p2factorylist"
 import { CollisionOverride, CollisionHandler } from "game/physics/collision"
-import { vec2, vec3 } from "gl-matrix"
+import { Vector2, Vector3 } from "math"
 import { Color } from "utils/color"
 
 // https://github.com/schteppe/p2.js/blob/master/build/p2.js
@@ -39,8 +39,9 @@ export class P2Physics implements Physics {
 		)
 		this.p2world.addConstraint(constraint)
 		return {
-			setOffset: (position: vec2, angle: number) => {
-				vec2.copy((constraint as any).localOffsetB, position);
+			setOffset: (position: Vector2, angle: number) => {
+				(constraint as any).localOffsetB[0] = position.x;
+				(constraint as any).localOffsetB[1] = position.y;
 				(constraint as any).localAngleB = angle
 			},
 			setCanCollide: (canCollide: boolean) => {
@@ -55,28 +56,28 @@ export class P2Physics implements Physics {
 		}
 	}
 
-	rayCast(from: vec2, to: vec2, skipBackfaces: boolean): RayHit[] {
+	rayCast(from: Vector2, to: Vector2, skipBackfaces: boolean): RayHit[] {
 		let hits: RayHit[] = []
 		var ray = new p2.Ray({
 			mode: p2.Ray.ALL,
-			from: from as [number, number],
-			to: to as [number, number],
+			from: [from.x, from.y],
+			to: [to.x, to.y],
 			skipBackfaces,
 			callback: function (result) {
-				var position = vec2.create();
-				result.getHitPoint(position as [number, number], ray);
+				var position: [number, number] = [0, 0];
+				result.getHitPoint(position, ray);
 				hits.push({
 					actor: (result.body as ExtendedP2Body).actor,
-					position,
-					normal: vec2.clone(result.normal)
+					position: new Vector2(position[0], position[1]),
+					normal: new Vector2(result.normal[0], result.normal[1])
 				})
 			}
 		});
 		var result = new p2.RaycastResult();
 		this.p2world.raycast(result, ray);
 		hits.sort((a, b) => {
-			const distA = vec2.squaredDistance(from, a.position);
-			const distB = vec2.squaredDistance(from, b.position);
+			const distA = from.distanceToSquared(a.position);
+			const distB = from.distanceToSquared(b.position);
 			return distA - distB;
 		});
 		return hits
@@ -99,25 +100,25 @@ export class P2Physics implements Physics {
 		return this.p2world.time
 	}
 
-	debugDraw(drawLine: (points: vec3[], color: Color) => void): void {
+	debugDraw(drawLine: (points: Vector3[], color: Color) => void): void {
 		const p2world = this.p2world
 		for (let body of p2world.bodies) {
 			for (let shape of body.shapes) {
 				switch (shape.type) {
 					case (p2.Shape.CIRCLE): {
 						let circle = shape as p2.Circle
-						let xy = vec2.create() as [number, number]
+						let xy: [number, number] = [0, 0]
 						body.toWorldFrame(xy, circle.position)
 						const numSegments = 16;
 						const angleStep = (2 * Math.PI) / numSegments;
-						const points: vec3[] = [];
+						const points: Vector3[] = [];
 						for (let i = 0; i <= numSegments; i++) {
 							const angle = i * angleStep;
-							points.push([
+							points.push(new Vector3(
 								xy[0] + circle.radius * Math.cos(angle),
 								xy[1] + circle.radius * Math.sin(angle),
 								0
-							]);
+							));
 						}
 						drawLine(points, { r: 1, g: 1, b: 1 });
 					}
@@ -131,20 +132,20 @@ export class P2Physics implements Physics {
 						let convex = shape as p2.Convex
 						let center = convex.centerOfMass
 						for (let inner of [false, true]) {
-							const points: vec3[] = [];
+							const points: Vector3[] = [];
 							for (let i = 0; i < convex.vertices.length; i++) {
-								const xy = vec2.create() as [number, number];
+								const xy :[number, number] = [0, 0]
 								if (inner) {
 									xy[0] = convex.vertices[i][0] * 0.9 + center[0] * 0.1;
 									xy[1] = convex.vertices[i][1] * 0.9 + center[1] * 0.1;
 								}
 								else {
-									vec2.copy(xy, convex.vertices[i]);
+									p2.vec2.copy(xy, convex.vertices[i]);
 								}
-								vec2.rotate(xy, xy, [0, 0], convex.angle);
-								vec2.add(xy, xy, convex.position);
+								p2.vec2.rotate(xy, xy, convex.angle);
+								p2.vec2.add(xy, xy, convex.position);
 								body.toWorldFrame(xy, xy)
-								points.push([xy[0], xy[1], 0])
+								points.push(new Vector3(xy[0], xy[1], 0))
 							}
 							if (points.length > 0) {
 								points.push(points[0])

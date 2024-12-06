@@ -1,7 +1,7 @@
 
 import * as THREE from "three"
 import { SceneNode, SceneNodeConfig } from "game/graphics/scenenode"
-import { vec2, ReadonlyVec2, vec3, ReadonlyVec3, quat } from "gl-matrix"
+import { Vector2, Vector3, Quaternion } from "math"
 import { Kind } from "utils/general"
 
 export abstract class ThreeSceneNode<K extends Kind> implements SceneNode<K> {
@@ -24,22 +24,21 @@ export abstract class ThreeSceneNode<K extends Kind> implements SceneNode<K> {
 		this.setScale(config.scale)
 	}
 
-	setPosition(position: ReadonlyVec3) {
-		this.threeObject.position.set(position[0], position[1], position[2])
+	setPosition(position: Vector3) {
+		this.threeObject.position.copy(position)
 	}
 
-	setPositionXY(xy: ReadonlyVec2) {
-		this.threeObject.position.setX(xy[0])
-		this.threeObject.position.setY(xy[1])
+	setPositionXY(xy: Vector2) {
+		this.threeObject.position.setX(xy.x)
+		this.threeObject.position.setY(xy.y)
 	}
 
 	setPositionZ(z: number) {
 		this.threeObject.position.setZ(z)
 	}
 
-	setOrientation(orientation: quat) {
-		this.threeObject.quaternion.set(
-			orientation[0], orientation[1], orientation[2], orientation[3])
+	setOrientation(orientation: Quaternion) {
+		this.threeObject.quaternion.copy(orientation)
 	}
 
 	setAngle(angle: number) {
@@ -47,19 +46,19 @@ export abstract class ThreeSceneNode<K extends Kind> implements SceneNode<K> {
 	}
 
 	copy2dPose(source: {
-		getPosition(): ReadonlyVec2
+		getPosition(): Vector2
 		getAngle(): number
 	}) {
 		this.setPositionXY(source.getPosition())
 		this.setAngle(source.getAngle())
 	}
 
-	setScale(scale: number | ReadonlyVec3) {
+	setScale(scale: number | Vector3) {
 		if (typeof scale === "number") {
 			this.threeObject.scale.setScalar(scale)
 		}
 		else {
-			this.threeObject.scale.set(scale[0], scale[1], scale[2])
+			this.threeObject.scale.copy(scale)
 		}
 	}
 

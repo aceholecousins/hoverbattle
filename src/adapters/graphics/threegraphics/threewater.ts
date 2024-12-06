@@ -2,7 +2,7 @@
 import * as THREE from "three"
 import { renderer } from "./threerenderer"
 import { Water } from "game/graphics/water"
-import { vec3 } from "gl-matrix"
+import { Vector3 } from "math"
 import { broker } from "broker"
 
 export class ThreeWater implements Water {
@@ -67,17 +67,17 @@ export class ThreeWater implements Water {
 		broker.update.addHandler((e: any) => { this.updateRipples(e.dt) })
 	}
 
-	makeRipple(position: vec3, size: number, strength: number) {
+	makeRipple(position: Vector3, size: number, strength: number) {
 		let minusSquare = new THREE.Mesh(this.squareGeometry, this.minusMaterial.clone());
 		this.normalScene.add(minusSquare);
 		minusSquare.renderOrder = this.renderOrder++
-		minusSquare.position.set(position[0], position[1], position[2])
+		minusSquare.position.copy(position)
 		minusSquare.scale.set(size, size, 1)
 
 		let plusSquare = new THREE.Mesh(this.squareGeometry, this.plusMaterial.clone());
 		this.normalScene.add(plusSquare);
 		plusSquare.renderOrder = this.renderOrder++
-		plusSquare.position.set(position[0], position[1], position[2])
+		plusSquare.position.copy(position)
 		plusSquare.scale.set(size, size, 1)
 
 		this.ripples.push({ minusSquare, plusSquare, strength })

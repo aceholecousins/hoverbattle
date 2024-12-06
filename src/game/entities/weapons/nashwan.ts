@@ -1,8 +1,7 @@
 import { ModelMeshConfig } from "game/graphics/mesh";
 import { Model } from "game/graphics/asset";
 import { Engine } from "game/engine";
-import { quat, vec2, ReadonlyVec2, vec3 } from "gl-matrix";
-import { quatFromAngle } from "utils/math"
+import { Vector2, Vector3, quatFromYPR, vec2FromDir } from "math"
 import { Vehicle, VEHICLE_RADIUS } from "game/entities/vehicles/vehicle";
 import { Powerup } from "game/entities/powerups/powerup";
 import { Visual } from "game/graphics/visual";
@@ -22,7 +21,7 @@ export class NashwanPowerup implements Powerup {
 	public readonly kind = "nashwan"
 }
 
-type NashwanShotFactory = (position: ReadonlyVec2, angle: number) => NashwanShot;
+type NashwanShotFactory = (position: Vector2, angle: number) => NashwanShot;
 
 export class Barrel extends Entity {
 	private deployed = 0
@@ -32,7 +31,7 @@ export class Barrel extends Entity {
 	constructor(
 		public parent: Vehicle,
 		public attachTo: Entity,
-		public offset: vec2,
+		public offset: Vector2,
 		model: Model,
 		private laserFactory: NashwanShotFactory,
 		private rechargeTime: number,
@@ -60,7 +59,7 @@ export class Barrel extends Entity {
 		this.body.copyPosition(this.parent.body)
 		this.body.copyAngle(this.attachTo.body)
 		this.attachment = engine.physics.attach(this.attachTo.body, this.body)
-		this.attachment.setOffset([0, 0], 0)
+		this.attachment.setOffset(new Vector2(0, 0), 0)
 		this.parent.onDispose(() => this.dispose())
 
 		this.collidesWithParent = false
@@ -72,10 +71,8 @@ export class Barrel extends Entity {
 	update(dt: number) {
 		this.deployed += 2 * dt
 		this.deployed = Math.min(1, this.deployed)
-		this.attachment.setOffset([
-			this.offset[0] * this.deployed,
-			this.offset[1] * this.deployed
-		], 0)
+		this.attachment.setOffset(
+			this.offset.clone().multiplyScalar(this.deployed), 0)
 
 		if (this.deployed == 1) {
 			this.collidesWithParent = true
@@ -83,9 +80,8 @@ export class Barrel extends Entity {
 			this.tNextShot -= dt
 			if (this.tNextShot <= 0) {
 				this.tNextShot += this.rechargeTime
-				let position = vec2.copy(vec2.create(), this.body.getPosition())
-				position[0] += Math.cos(this.body.getAngle()) * BARREL_RADIUS * 3
-				position[1] += Math.sin(this.body.getAngle()) * BARREL_RADIUS * 3
+				let position = this.body.getPosition().clone()
+					.addScaledVector(vec2FromDir(this.body.getAngle()), BARREL_RADIUS * 3)
 				this.laserFactory(position, this.body.getAngle())
 			}
 		}
@@ -106,7 +102,7 @@ export class Drone extends Entity {
 	constructor(
 		public parent: Vehicle,
 		public attachTo: Entity,
-		public offset: vec2,
+		public offset: Vector2,
 		model: Model,
 		private particleFactory: NashwanShotFactory,
 		engine: Engine
@@ -152,25 +148,19 @@ export class Drone extends Entity {
 			if (this.tNextShot <= 0) {
 				this.tNextShot += 0.5
 				for (let phi = 0.0001; phi < 2 * Math.PI; phi += 2 * Math.PI / 12) {
-					let position = vec2.copy(vec2.create(), this.body.getPosition())
-					position[0] += Math.cos(this.body.getAngle() + phi) * DRONE_RADIUS * 2
-					position[1] += Math.sin(this.body.getAngle() + phi) * DRONE_RADIUS * 2
+					let position = this.body.getPosition().clone()
+						.addScaledVector(vec2FromDir(this.body.getAngle() + phi), DRONE_RADIUS * 2)
 					this.particleFactory(position, this.body.getAngle() + phi)
 				}
 			}
 
 		}
 
-		let rotatedOffset = vec2.rotate(vec2.create(), this.offset, [0, 0], this.attachTo.body.getAngle())
-		let target = vec2.scaleAndAdd(
-			vec2.create(),
-			this.attachTo.body.getPosition(),
-			rotatedOffset,
-			this.deployed
-		)
+		let rotatedOffset = this.offset.clone().rotateAround({ x: 0, y: 0 }, this.attachTo.body.getAngle())
+		let target = this.attachTo.body.getPosition().clone().addScaledVector(rotatedOffset, this.deployed)
 
-		let force = vec2.subtract(vec2.create(), target, this.body.getPosition())
-		vec2.scale(force, force, 5 * vec2.length(force))
+		let force = target.sub(this.body.getPosition())
+		force.multiplyScalar(5 * force.length())
 		this.body.applyForce(force)
 
 		this.mesh.setPositionXY(this.body.getPosition())
@@ -200,13 +190,13 @@ export class XenonQuadBlaster {
 		this.tNextShot -= dt
 		if (this.tNextShot <= 0) {
 			this.tNextShot += 0.3
-			let offset1 = vec2.fromValues(
-				this.parent.body.getPosition()[0] + Math.sin(this.parent.body.getAngle()) * 0.5,
-				this.parent.body.getPosition()[1] - Math.cos(this.parent.body.getAngle()) * 0.5
+			let offset1 = new Vector2(
+				this.parent.body.getPosition().x + Math.sin(this.parent.body.getAngle()) * 0.5,
+				this.parent.body.getPosition().y - Math.cos(this.parent.body.getAngle()) * 0.5
 			)
-			let offset2 = vec2.fromValues(
-				this.parent.body.getPosition()[0] - Math.sin(this.parent.body.getAngle()) * 0.5,
-				this.parent.body.getPosition()[1] + Math.cos(this.parent.body.getAngle()) * 0.5
+			let offset2 = new Vector2(
+				this.parent.body.getPosition().x - Math.sin(this.parent.body.getAngle()) * 0.5,
+				this.parent.body.getPosition().y + Math.cos(this.parent.body.getAngle()) * 0.5
 			)
 			this.shotFactory(offset1, this.parent.body.getAngle())
 			this.shotFactory(offset2, this.parent.body.getAngle())
@@ -224,9 +214,9 @@ export class NashwanShot extends Entity {
 
 	constructor(
 		public parent: Vehicle,
-		position: vec2,
+		position: Vector2,
 		angle: number,
-		spriteScale: vec2,
+		spriteScale: Vector2,
 		radius: number,
 		speed: number,
 		model: Model,
@@ -236,7 +226,7 @@ export class NashwanShot extends Entity {
 		this.mesh = engine.graphics.mesh.createFromModel(
 			new ModelMeshConfig({
 				model,
-				scale: vec3.fromValues(spriteScale[0], spriteScale[1], spriteScale[1])
+				scale: new Vector3(spriteScale.x, spriteScale.y, spriteScale.y)
 			}))
 		this.mesh.setBaseColor({ r: 1, g: 1, b: 1 })
 		this.mesh.setAccentColor1(parent.player.color)
@@ -251,10 +241,10 @@ export class NashwanShot extends Entity {
 		this.body = engine.physics.addRigidBody(bodyCfg)
 		this.body.setPosition(position)
 		this.body.setAngle(angle)
-		this.body.setVelocity([
+		this.body.setVelocity(new Vector2(
 			Math.cos(this.body.getAngle()) * speed,
 			Math.sin(this.body.getAngle()) * speed
-		])
+		))
 
 		this.collidesWithParent = false
 		this.collidesWithSibling = false
@@ -283,49 +273,49 @@ export async function createNashwanFactory(engine: Engine) {
 
 	return function (parent: Vehicle, shotModifier: (shot: NashwanShot) => void) {
 
-		let shotFactory = function (position: vec2, angle: number) {
+		let shotFactory = function (position: Vector2, angle: number) {
 			let shot = new NashwanShot(
-				parent, position, angle, [1, 1], 0.3, 20, xenonShot, engine
+				parent, position, angle, new Vector2(1, 1), 0.3, 20, xenonShot, engine
 			)
 			shotModifier(shot)
 			return shot
 		}
-		let laserFactory = function (position: vec2, angle: number) {
+		let laserFactory = function (position: Vector2, angle: number) {
 			let laser = new NashwanShot(
-				parent, position, angle, [4.0, 1.0], 0.3, 35, nashwanLaser, engine
+				parent, position, angle, new Vector2(4, 1), 0.3, 35, nashwanLaser, engine
 			)
 			shotModifier(laser)
 			return laser
 		}
-		let missileFactory = function (position: vec2, angle: number) {
+		let missileFactory = function (position: Vector2, angle: number) {
 			let missile = createMissile(
 				parent, position, angle, []
 			)
 			shotModifier(missile)
 			return missile
 		}
-		let particleFactory = function (position: vec2, angle: number) {
+		let particleFactory = function (position: Vector2, angle: number) {
 			let particle = new NashwanShot(
-				parent, position, angle, [0.5, 0.5], 0.3, 10, nashwanParticle, engine
+				parent, position, angle, new Vector2(0.5, 0.5), 0.3, 10, nashwanParticle, engine
 			)
 			shotModifier(particle)
 			return particle
 		}
 
 		let leftBarrel1 = new Barrel(parent, parent,
-			vec2.fromValues(-0.1, VEHICLE_RADIUS + BARREL_RADIUS),
+			new Vector2(-0.1, VEHICLE_RADIUS + BARREL_RADIUS),
 			barrelModel, missileFactory, 0.4, engine)
 		let leftBarrel2 = new Barrel(parent, leftBarrel1,
-			vec2.fromValues(-0.2, BARREL_RADIUS * 2),
+			new Vector2(-0.2, BARREL_RADIUS * 2),
 			barrelModel, laserFactory, 0.5, engine)
 		let rightBarrel1 = new Barrel(parent, parent,
-			vec2.fromValues(-0.1, -VEHICLE_RADIUS - BARREL_RADIUS),
+			new Vector2(-0.1, -VEHICLE_RADIUS - BARREL_RADIUS),
 			barrelModel, missileFactory, 0.4, engine)
 		let rightBarrel2 = new Barrel(parent, rightBarrel1,
-			vec2.fromValues(-0.2, -BARREL_RADIUS * 2),
+			new Vector2(-0.2, -BARREL_RADIUS * 2),
 			barrelModel, laserFactory, 0.5, engine)
 		let drone = new Drone(parent, parent,
-			vec2.fromValues(-VEHICLE_RADIUS - 1.5 * DRONE_RADIUS, 0),
+			new Vector2(-VEHICLE_RADIUS - 1.5 * DRONE_RADIUS, 0),
 			droneModel, particleFactory, engine)
 		let quadBlaster = new XenonQuadBlaster(parent, shotFactory)
 		return { leftBarrel1, leftBarrel2, rightBarrel1, rightBarrel2, drone, quadBlaster }

@@ -4,8 +4,7 @@ import { Engine } from "game/engine"
 import { TriangleConfig } from "game/physics/triangle"
 import { RigidBodyConfig } from "game/physics/rigidbody"
 import { Player } from "game/player"
-import { vec2, quat } from "gl-matrix"
-import { angleDelta, appendZ, LowPass, triangle3to2, Triangle3 } from "utils/math"
+import { angleDelta, appendZ, LowPass, triangle3to2, Vector2, Triangle3, quatFromYPR } from "math"
 import { Vehicle, VEHICLE_RADIUS, VehicleFactory } from "game/entities/vehicles/vehicle"
 
 export const GLIDER_THRUST = 20
@@ -25,7 +24,7 @@ export class Glider extends Vehicle {
 
 	constructor(
 		public player: Player,
-		position: vec2,
+		position: Vector2,
 		model: Model,
 		meta: ModelMetaData,
 		engine: Engine
@@ -53,7 +52,7 @@ export class Glider extends Vehicle {
 
 	update(dt: number) {
 		let thrust = this.player.controller.getThrust() * this.maxThrust;
-		this.body.applyLocalForce(vec2.fromValues(thrust, 0))
+		this.body.applyLocalForce(new Vector2(thrust, 0))
 
 		const turnRate = this.player.controller.getTurnRate()
 		if (turnRate != undefined) {
@@ -70,13 +69,13 @@ export class Glider extends Vehicle {
 		this.roll.update(this.body.getAngularVelocity() * -7, dt)
 		// let roll = this.roll.get()
 		let roll = 0
-		this.mesh.setOrientation(quat.fromEuler(
-			quat.create(), roll, 0, this.body.getAngle() / Math.PI * 180))
+		this.mesh.setOrientation(quatFromYPR(
+			this.body.getAngle(), 0, roll))
 
 		this.tNextRipple -= dt
 		if (this.tNextRipple < 0) {
 			this.tNextRipple = 0.03
-			let v = vec2.length(this.body.getVelocity())
+			let v = this.body.getVelocity().length()
 			this.engine.graphics.water.makeRipple(
 				appendZ(this.body.getPosition(), 0),
 				Math.min(v / 10, 3),
@@ -104,7 +103,7 @@ export async function createGliderFactory(engine: Engine): Promise<VehicleFactor
 	let { model, meta } = await engine.graphics.loadModel(
 		"assets/models/glider8_halo.glb")
 
-	return function (player: Player, position: vec2) {
+	return function (player: Player, position: Vector2) {
 		return new Glider(
 			player,
 			position,

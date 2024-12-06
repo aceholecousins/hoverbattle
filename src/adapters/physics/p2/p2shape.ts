@@ -1,6 +1,6 @@
 import { Shape, ShapeConfig } from "game/physics/shape"
 import * as p2 from "p2"
-import { vec2 } from "gl-matrix"
+import { Vector2 } from "math"
 import { Kind, Registry } from "utils/general"
 
 export abstract class P2Shape<K extends Kind> implements Shape<K> {
@@ -24,11 +24,12 @@ export abstract class P2Shape<K extends Kind> implements Shape<K> {
 		}
 	}
 
-	setOffsetPosition(position: vec2) {
-		vec2.copy(this.p2shape.position, position)
+	setOffsetPosition(position: Vector2) {
+		this.p2shape.position[0] = position.x
+		this.p2shape.position[1] = position.y
 	}
 	getOffsetPosition() {
-		return vec2.clone(this.p2shape.position)
+		return new Vector2(this.p2shape.position[0], this.p2shape.position[1])
 	}
 
 	setOffsetAngle(angle: number) {
