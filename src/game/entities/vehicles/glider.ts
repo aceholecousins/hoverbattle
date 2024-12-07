@@ -1,6 +1,7 @@
 import { ModelMeshConfig } from "game/graphics/mesh"
 import { Model, ModelMetaData } from "game/graphics/asset"
 import { Engine } from "game/engine"
+import { CircleConfig } from "game/physics/circle"
 import { TriangleConfig } from "game/physics/triangle"
 import { RigidBodyConfig } from "game/physics/rigidbody"
 import { Player } from "game/player"
@@ -39,7 +40,8 @@ export class Glider extends Vehicle {
 
 		this.body = engine.physics.addRigidBody(new RigidBodyConfig({
 			actor: this,
-			shapes: triangles,
+			// shapes: triangles,
+			shapes: [new CircleConfig({ radius: 1 })],
 			damping: GLIDER_DAMPING,
 			angularDamping: GLIDER_ANGULAR_DAMPING
 		}))
