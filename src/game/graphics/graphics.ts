@@ -5,7 +5,7 @@ import { LightFactory } from "./light"
 import { MeshFactory } from "./mesh"
 import { Skybox } from "./asset";
 import { Water } from "./water";
-import { vec3 } from "gl-matrix"
+import { Vector3, Quaternion } from "math"
 import { Color } from "utils/color";
 
 export interface Graphics {
@@ -20,10 +20,10 @@ export interface Graphics {
 
 	water: Water
 
-	setEnvironment(env: Skybox): void
-	setEnvironmentOrientation(ypr: vec3): void
+	setEnvironment(environment: Skybox): void
+	setEnvironmentOrientation(orientation: Quaternion): void
 
 	update(): void
 
-	drawDebugLine(points: vec3[], color:Color): void
+	drawDebugLine(points: Vector3[], color:Color): void
 }

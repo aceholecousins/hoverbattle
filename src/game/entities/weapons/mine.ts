@@ -5,12 +5,11 @@ import { Engine } from "game/engine";
 import { CircleConfig } from "game/physics/circle";
 import { RigidBodyConfig } from "game/physics/rigidbody";
 import { Sound } from "game/sound";
-import { quat, vec2, vec3 } from "gl-matrix";
 import { assignRole, Role } from "../actor";
 import { Entity } from "../entity";
 import { Vehicle, VEHICLE_RADIUS } from "game/entities/vehicles/vehicle";
 import { Powerup } from "game/entities/powerups/powerup";
-import { appendZ } from "utils/math";
+import { appendZ, Vector2, Vector3, ypr, DEG } from "math";
 
 const MINE_RADIUS = 1;
 const MINE_MASS = 1
@@ -65,15 +64,14 @@ export class Mine extends Entity {
 		this.mesh.setPosition(
 			appendZ(this.body.getPosition(), -0.9 + this.deployed))
 
-		if (this.deployed >= 1){
+		if (this.deployed >= 1) {
 			this.collidesWithParent = true
 		}
-		
-		this.mesh.setOrientation(quat.fromEuler(
-			quat.create(),
-			20 * Math.sin(this.time),
-			17 * Math.sin(1.1337 * this.time),
-			this.body.getAngle() / Math.PI * 180
+
+		this.mesh.setOrientation(ypr(
+			this.body.getAngle() / Math.PI * 180,
+			17 * DEG * Math.sin(1.1337 * this.time),
+			20 * DEG * Math.sin(this.time)
 		))
 
 		if (this.time > MINE_PRIME_DELAY) {

@@ -18,11 +18,11 @@ import { MatchFactory } from "game/match"
 import { CollisionOverride, CollisionHandler } from "game/physics/collision"
 import { Player } from "game/player"
 import { SceneNodeConfig } from "game/graphics/scenenode"
-import { vec2, vec3, quat, ReadonlyVec2 } from "gl-matrix"
+import { Vector2, Vector3, ypr } from "math"
 import { remove } from "utils/general"
 import { createExplosionFactory, createSmallExplosionFactory } from "game/graphics/explosion/explosion"
 import { GameTimer } from "game/gametimer"
-import { appendZ } from "utils/math"
+import { appendZ } from "math"
 
 let VEHICLE_HP = 10
 
@@ -58,13 +58,9 @@ export let createMatch: MatchFactory = async function (engine) {
 			shield: PowerShield, other: Entity
 		) {
 		shield.flash()
-		let a2b = vec2.subtract(
-			vec2.create(),
-			other.body.getPosition(),
-			shield.body.getPosition()
-		)
-		vec2.normalize(a2b, a2b)
-		other.body.applyImpulse(vec2.scale(vec2.create(), a2b, 30))
+		let impulse = other.body.getPosition().clone()
+			.sub(shield.body.getPosition()).setLength(30)
+		other.body.applyImpulse(impulse)
 	}
 	))
 
@@ -144,7 +140,7 @@ export let createMatch: MatchFactory = async function (engine) {
 		}
 	))
 
-	let spawnPoints: vec2[] = []
+	let spawnPoints: Vector2[] = []
 
 	let arenaFile =
 		vehicle.endsWith("car") ? "arenas/testy_mountains/mountains_road.glb"
@@ -197,7 +193,7 @@ export let createMatch: MatchFactory = async function (engine) {
 	for (const [key, value] of Object.entries(arenaParts_meta.meta)) {
 		if (key.startsWith("spawn")) {
 			const spawn = value as SceneNodeConfig<"empty">
-			spawnPoints.push(vec2.fromValues(spawn.position[0], spawn.position[1]))
+			spawnPoints.push(new Vector2(spawn.position.x, spawn.position.y))
 		}
 	}
 
@@ -209,7 +205,7 @@ export let createMatch: MatchFactory = async function (engine) {
 	}
 
 	engine.graphics.setEnvironment(skybox)
-	engine.graphics.setEnvironmentOrientation([Math.PI / 2, 0, Math.PI / 2])
+	engine.graphics.setEnvironmentOrientation(ypr(0, 0, Math.PI / 2))
 
 	let team = 0;
 
@@ -224,12 +220,11 @@ export let createMatch: MatchFactory = async function (engine) {
 		team++
 	})
 
-	//new GameTimer(spawnPowerup, Math.random() * 2 + 1)
+	new GameTimer(spawnPowerup, Math.random() * 2 + 1)
 
 	function spawnPowerup() {
 		if (powerupBoxes.length < 5) {
 			let kinds = ["mine", "missile", "laser", "nashwan", "powershield", "repair"]
-			// kinds = ["missile", "nashwan"]
 			const powerupKind = kinds[Math.floor(Math.random() * kinds.length)] as PowerupKind;
 			let powerupBox = makeDestructible(
 				createPowerupBox(
@@ -394,11 +389,11 @@ export let createMatch: MatchFactory = async function (engine) {
 		return vehicle
 	}
 
-	function determineSpawnPoint(): vec2 {
+	function determineSpawnPoint(): Vector2 {
 		let index = Math.floor(Math.random() * spawnPoints.length)
 		let point = spawnPoints[index]
-		point[0] += Math.random() - 0.5
-		point[1] += Math.random() - 0.5
+		point.x += Math.random() - 0.5
+		point.y += Math.random() - 0.5
 		return point
 	}
 

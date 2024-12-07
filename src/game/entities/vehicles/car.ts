@@ -4,9 +4,9 @@ import { Engine } from "game/engine"
 import { CircleConfig } from "game/physics/circle"
 import { RigidBodyConfig } from "game/physics/rigidbody"
 import { Player } from "game/player"
-import { vec2, quat } from "gl-matrix"
-import { Ramper, LowPass } from "utils/math"
-import { angleDelta } from "utils/math"
+import { Vector2, ypr, vec2FromDir, DEG } from "math"
+import { Ramper, LowPass } from "math"
+import { angleDelta } from "math"
 import { Vehicle, VEHICLE_RADIUS, VehicleFactory } from "game/entities/vehicles/vehicle"
 
 export const CAR_THRUST = 15
@@ -24,7 +24,7 @@ export class Car extends Vehicle {
 
 	constructor(
 		public player: Player,
-		position: vec2,
+		position: Vector2,
 		model: Model,
 		engine: Engine
 	) {
@@ -45,19 +45,19 @@ export class Car extends Vehicle {
 	update(dt: number) {
 
 		let v = this.body.getVelocity();
-		let forward = vec2.fromValues(Math.cos(this.body.getAngle()), Math.sin(this.body.getAngle()));
-		let right = vec2.fromValues(-forward[1], forward[0]);
-		let vForward = vec2.dot(v, forward);
-		let vRight = vec2.dot(v, right);
+		let forward = vec2FromDir(this.body.getAngle())
+		let right = new Vector2(-forward.y, forward.x);
+		let vForward = v.dot(forward);
+		let vRight = v.dot(right);
 		let vForwardDamped = vForward * Math.pow(1.0 - CAR_LONGITUDINAL_DAMPING, dt);
 		let vRightDamped = vRight * Math.pow(1.0 - CAR_LATERAL_DAMPING, dt);
-		let vDamped = vec2.create()
-		vec2.scaleAndAdd(vDamped, [0, 0], forward, vForwardDamped)
-		vec2.scaleAndAdd(vDamped, vDamped, right, vRightDamped)
+		let vDamped = new Vector2()
+			.addScaledVector(forward, vForwardDamped)
+			.addScaledVector(right, vRightDamped)
 		this.body.setVelocity(vDamped)
 
 		let thrust = this.player.controller.getThrust() * this.maxThrust;
-		this.body.applyLocalForce(vec2.fromValues(thrust, 0))
+		this.body.applyLocalForce(new Vector2(thrust, 0))
 
 		const turnRate = this.player.controller.getTurnRate()
 		if (turnRate != undefined) {
@@ -72,10 +72,11 @@ export class Car extends Vehicle {
 		this.mesh.copy2dPose(this.body)
 
 		this.mesh.setPositionXY(this.body.getPosition())
-		this.roll.update(vRightDamped * -2, dt)
+		this.roll.update(vRightDamped * -2 * DEG, dt)
 		this.roll.update(0, dt)
-		this.mesh.setOrientation(quat.fromEuler(
-			quat.create(), this.roll.get(), 0, this.body.getAngle() / Math.PI * 180))
+		this.mesh.setOrientation(ypr(
+			this.body.getAngle(), 0, this.roll.get(),
+		))
 
 		super.update(dt)
 		this.onUpdate(dt)
@@ -97,7 +98,7 @@ export async function createCarFactory(engine: Engine): Promise<VehicleFactory> 
 	let { model, meta } = await engine.graphics.loadModel(
 		"assets/models/car.glb")
 
-	return function (player: Player, position: vec2) {
+	return function (player: Player, position: Vector2) {
 		return new Car(
 			player,
 			position,

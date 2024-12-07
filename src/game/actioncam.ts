@@ -1,10 +1,9 @@
 import { Graphics } from "game/graphics/graphics";
-import { vec3, mat3, mat4, vec2, ReadonlyVec2, quat } from "gl-matrix";
+import { Vector2, Vector3, quatFromMatrix3 } from "math";
 import { Camera, CameraConfig } from "game/graphics/camera";
-import { mat3fromVectors } from "utils/math";
-import { RigidBody } from "./physics/rigidbody";
+import { matrix3FromBasis } from "math";
 import { copyIfPresent } from "utils/general";
-import { LowPass } from "utils/math";
+import { LowPass } from "math";
 
 export class ActionCamConfig extends CameraConfig {
 	/** camera will not move closer to scene than this */
@@ -27,7 +26,7 @@ export class ActionCamConfig extends CameraConfig {
 }
 
 interface Target {
-	getPosition(): ReadonlyVec2
+	getPosition(): Vector2
 }
 
 interface Lock {
@@ -105,13 +104,13 @@ export class ActionCam {
 		let yMin = 1e12
 		let yMax = -1e12
 		for (let lock of this.locks) {
-			xMin = Math.min(xMin, lock.target.getPosition()[0] - lock.radius)
-			xMax = Math.max(xMax, lock.target.getPosition()[0] + lock.radius)
-			yMin = Math.min(yMin, lock.target.getPosition()[1] - lock.radius)
-			yMax = Math.max(yMax, lock.target.getPosition()[1] + lock.radius)
+			xMin = Math.min(xMin, lock.target.getPosition().x - lock.radius)
+			xMax = Math.max(xMax, lock.target.getPosition().x + lock.radius)
+			yMin = Math.min(yMin, lock.target.getPosition().y - lock.radius)
+			yMax = Math.max(yMax, lock.target.getPosition().y + lock.radius)
 		}
 
-		let target = vec3.fromValues(
+		let targetCenter = new Vector3(
 			(xMin + xMax) / 2,
 			(yMin + yMax) / 2,
 			Math.max(
@@ -121,31 +120,31 @@ export class ActionCam {
 			)
 		)
 
-		this.positionX.update(target[0], dt)
-		this.positionY.update(target[1], dt)
-		this.positionZ.update(target[2], dt)
-		this.focusX.update(target[0], dt)
-		this.focusY.update(target[1], dt)
+		this.positionX.update(targetCenter.x, dt)
+		this.positionY.update(targetCenter.y, dt)
+		this.positionZ.update(targetCenter.z, dt)
+		this.focusX.update(targetCenter.x, dt)
+		this.focusY.update(targetCenter.y, dt)
 
-		let z = vec3.fromValues(
+		let z = new Vector3(
 			this.positionX.get() - this.focusX.get(),
 			this.positionY.get() - this.focusY.get(),
 			this.positionZ.get()
 		)
-		vec3.normalize(z, z)
-		let y = vec3.fromValues(0, 1, 0)
-		let x = vec3.cross(vec3.create(), y, z)
-		vec3.normalize(x, x)
-		vec3.cross(y, z, x)
+		z.normalize()
+		let y = new Vector3(0, 1, 0)
+		let x = new Vector3().crossVectors(y, z).normalize()
+		y.crossVectors(z, x)
 
-		let ori = mat3fromVectors(mat3.create(), x, y, z)
+		let ori = matrix3FromBasis(x, y, z)
 
-		this.camera.setPosition(vec3.fromValues(
+		this.camera.setPosition(new Vector3(
 			this.positionX.get(),
 			this.positionY.get(),
 			this.positionZ.get()
 		))
-		this.camera.setOrientation(quat.fromMat3(quat.create(), ori))
+
+		this.camera.setOrientation(quatFromMatrix3(ori))
 	}
 
 }

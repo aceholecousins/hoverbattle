@@ -1,10 +1,10 @@
 import { ModelMeshConfig } from "game/graphics/mesh";
 import { Model } from "game/graphics/asset";
 import { Engine } from "game/engine";
-import { quat, vec2, vec3 } from "gl-matrix";
 import { Vehicle, VEHICLE_RADIUS } from "game/entities/vehicles/vehicle";
 import { Powerup } from "game/entities/powerups/powerup";
 import { Visual } from "game/graphics/visual";
+import { Quaternion } from "math"
 import { Entity } from "game/entities/entity";
 import { CircleConfig } from "game/physics/circle";
 import { RigidBodyConfig } from "game/physics/rigidbody";
@@ -72,12 +72,7 @@ export class PowerShield extends Entity {
 		// this is slightly cheating, it hides the elasticity of the attachment
 		this.mesh.setPositionXY(this.parent.body.getPosition())
 
-		this.mesh.setOrientation(quat.fromEuler(
-			quat.create(),
-			Math.random() * 360,
-			Math.random() * 360,
-			Math.random() * 360
-		))
+		this.mesh.setOrientation(new Quaternion().random())
 	}
 
 	dispose() {

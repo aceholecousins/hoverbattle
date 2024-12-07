@@ -6,7 +6,7 @@ import { Color } from "utils/color"
 import { ThreeModel } from "./threemodel"
 import { modMaterials } from "./shadermods"
 import { ThreeWater } from "./threewater"
-import { vec3 } from "gl-matrix"
+import { Vector3 } from "math"
 
 export class ThreeMesh extends ThreeSceneNode<"mesh"> implements Mesh {
 
@@ -66,9 +66,9 @@ export class ThreeMesh extends ThreeSceneNode<"mesh"> implements Mesh {
 		})
 	}
 
-	setPosition(position: vec3) {
+	setPosition(position: Vector3) {
 		super.setPosition(position)
-		this.threeObject.renderOrder = position[2]
+		this.threeObject.renderOrder = position.z
 	}
 
 }

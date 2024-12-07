@@ -1,8 +1,7 @@
 import { ModelMeshConfig } from "game/graphics/mesh"
 import { Model } from "game/graphics/asset"
 import { Engine } from "game/engine"
-import { vec3, quat } from "gl-matrix"
-import { quatFromAngle } from "utils/math"
+import { Vector3, ypr, Quaternion, Euler } from "math"
 import { Color, colorLerp } from "utils/color"
 import { Visual } from "game/graphics/visual"
 import { PointLight, PointLightConfig } from "../light"
@@ -16,7 +15,7 @@ export class Smokeball extends Visual {
 	color: Color
 
 	constructor(
-		position: vec3,
+		position: Vector3,
 		color: Color,
 		model: Model,
 		engine: Engine
@@ -26,12 +25,7 @@ export class Smokeball extends Visual {
 		this.mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
 		this.mesh.setScale(0.01)
 		this.mesh.setPosition(position)
-		this.mesh.setOrientation(quat.fromEuler(
-			quat.create(),
-			Math.random() * 360,
-			Math.random() * 360,
-			Math.random() * 360
-		))
+		this.mesh.setOrientation(new Quaternion().random())
 		this.mesh.setBaseColor({ r: 1, g: 1, b: 1 })
 		this.mesh.setAccentColor1({ r: 1, g: 1, b: 1 })
 		this.update(0)
@@ -66,12 +60,12 @@ export class Smokeball extends Visual {
 export class Crumb extends Visual {
 	time = 0
 	tNextCloud = 0
-	position: vec3
-	velocity: vec3
-	euler: vec3
+	position: Vector3
+	velocity: Vector3
+	euler: Euler
 
 	constructor(
-		position: vec3,
+		position: Vector3,
 		private color: Color,
 		private createCloud: SmokeFactory,
 		model: Model,
@@ -81,40 +75,37 @@ export class Crumb extends Visual {
 		this.mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
 		this.mesh.setScale(0.5)
 		this.mesh.setBaseColor(color)
-		this.position = vec3.clone(position)
+		this.position = position.clone()
 		let direction = Math.random() * 2 * Math.PI
 		let pitch = 0.5 + Math.random() * 1.0
 		let speed = 35 + Math.random() * 10
-		this.velocity = vec3.fromValues(
+		this.velocity = new Vector3(
 			speed * Math.cos(direction) * Math.cos(pitch),
 			speed * Math.sin(direction) * Math.cos(pitch),
 			Math.sin(pitch)
 		)
-		this.euler = vec3.fromValues(Math.random() * 360, Math.random() * 360, Math.random() * 360)
+		this.euler = new Euler(
+			Math.random() * 2 * Math.PI,
+			Math.random() * 2 * Math.PI,
+			Math.random() * 2 * Math.PI
+		)
 		this.update(0)
 	}
 
 	update(dt: number) {
 		this.time += dt
-		this.euler[2] += dt * 720
-		this.position[0] += this.velocity[0] * dt
-		this.position[1] += this.velocity[1] * dt
-		this.position[2] += this.velocity[2] * dt
-		this.velocity[2] -= 9.81 * dt
+		this.euler.x += dt * 4 * Math.PI
+		this.position.addScaledVector(this.velocity, dt)
+		this.velocity.z -= 9.81 * dt
 		this.mesh.setPosition(this.position)
-		this.mesh.setOrientation(quat.fromEuler(
-			quat.create(),
-			this.euler[0],
-			this.euler[1],
-			this.euler[2]
-		))
+		this.mesh.setOrientation(new Quaternion().setFromEuler(this.euler))
 
 		if (this.time > this.tNextCloud) {
 			this.tNextCloud = this.time + 0.04
 			this.createCloud(this.position, this.color)
 		}
 
-		if (this.position[2] < 0) {
+		if (this.position.z < 0) {
 			this.dispose()
 		}
 	}
@@ -124,7 +115,7 @@ export class Shockwave extends Visual {
 	time: number = 0
 
 	constructor(
-		position: vec3,
+		position: Vector3,
 		model: Model,
 		engine: Engine
 	) {
@@ -150,7 +141,7 @@ export class Plop extends Visual {
 	time: number = 0
 
 	constructor(
-		position: vec3,
+		position: Vector3,
 		color: Color,
 		model: Model,
 		engine: Engine
@@ -177,7 +168,7 @@ export class Piff extends Visual {
 	progress: number = 0
 
 	constructor(
-		position: vec3,
+		position: Vector3,
 		private color: Color,
 		model: Model,
 		engine: Engine
@@ -185,9 +176,9 @@ export class Piff extends Visual {
 		super()
 		this.mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
 		this.mesh.setScale(0.1)
-		this.mesh.setPosition([
-			position[0], position[1], position[2] + 0.1 * Math.random()
-		])
+		let shifted = position.clone()
+		shifted.z += 0.1*Math.random()
+		this.mesh.setPosition(shifted)
 		this.mesh.setAngle(Math.random() * 6.28)
 		this.mesh.setBaseColor(color)
 		this.mesh.setAccentColor2(colorLerp(color, { r: 0, g: 0, b: 0 }, 0.5))
@@ -219,40 +210,34 @@ export class Piff extends Visual {
 
 export class Shard extends Visual {
 	time: number = 0
-	private position: vec3
-	private velocity: vec3
+	private position: Vector3
+	private velocity: Vector3
 
 	constructor(
-		position: vec3,
+		position: Vector3,
 		model: Model,
 		engine: Engine
 	) {
 		super()
 		this.mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
-		this.mesh.setScale([3.0, 0.1, 0.1])
-		this.position = vec3.clone(position)
+		this.mesh.setScale(new Vector3(3.0, 0.1, 0.1))
+		this.position = position.clone()
 		let direction = Math.random() * 2 * Math.PI
 		let pitch = Math.random()
 		let speed = 10 + Math.random() * 10
-		this.velocity = vec3.fromValues(
+		this.velocity = new Vector3(
 			speed * Math.cos(direction) * Math.cos(pitch),
 			speed * Math.sin(direction) * Math.cos(pitch),
 			speed * Math.sin(pitch)
 		)
-		this.mesh.setOrientation(quat.fromEuler(
-			quat.create(),
-			0,
-			-pitch * 180 / Math.PI,
-			direction * 180 / Math.PI,
-		))
+		this.mesh.setOrientation(ypr(
+			direction, -pitch, 0))
 		this.update(0)
 	}
 
 	update(dt: number) {
 		this.time += dt
-		this.position[0] += this.velocity[0] * dt
-		this.position[1] += this.velocity[1] * dt
-		this.position[2] += this.velocity[2] * dt
+		this.position.addScaledVector(this.velocity, dt)
 		this.mesh.setPosition(this.position)
 
 		if (this.time > DURATION) {
@@ -270,14 +255,14 @@ export class Flash {
 	constructor(engine: Engine) {
 		this.light = engine.graphics.light.createPointLight(
 			new PointLightConfig({
-				position: vec3.fromValues(NaN, NaN, NaN),
+				position: new Vector3(NaN, NaN, NaN),
 				color: { r: 0, g: 0, b: 0 },
 				intensity: 0
 			})
 		)
 	}
 
-	flash(position: vec3, color: Color) {
+	flash(position: Vector3, color: Color) {
 		this.time = 0
 		this.light.setPosition(position)
 		this.light.setColor(color)
@@ -300,7 +285,7 @@ export class Flash {
 		broker.update.removeHandler(this.updateHandler)
 		this.light.setIntensity(0)
 		this.light.setColor({ r: 0, g: 0, b: 0 })
-		this.light.setPosition([NaN, NaN, NaN])
+		this.light.setPosition(new Vector3(NaN, NaN, NaN))
 	}
 }
 
@@ -326,18 +311,18 @@ export async function createExplosionFactory(engine: Engine) {
 	}
 	let nextFlash = 0
 
-	return function (position: vec3, color: Color) {
+	return function (position: Vector3, color: Color) {
 		let smokeball = new Smokeball(position, color, smokeballModel.model, engine)
 		let crumbs: Crumb[] = []
 		let darkColor = { r: color.r * 0.33, g: color.g * 0.33, b: color.b * 0.33 }
 		for (let i = 0; i < 7; i++) {
 			crumbs.push(new Crumb(position, darkColor, createCloud, crumbModel.model, engine))
 		}
-		let shockwavePosition = vec3.clone(position)
-		shockwavePosition[2] += Math.random() * 0.1
+		let shockwavePosition = position.clone()
+		shockwavePosition.z += Math.random() * 0.1
 		let shockwave = new Shockwave(shockwavePosition, shockwaveModel, engine)
-		let plopPosition = vec3.clone(position)
-		plopPosition[2] += Math.random() * 0.1
+		let plopPosition = position.clone()
+		plopPosition.z += Math.random() * 0.1
 		let plop = new Plop(plopPosition, color, plopModel, engine)
 		let shards: Shard[] = []
 		for (let i = 0; i < 11; i++) {
@@ -353,7 +338,7 @@ export async function createSmallExplosionFactory(engine: Engine) {
 	let explosionModel = await engine.graphics.loadSprite(
 		"assets/sprites/small_explosion.tint.png")
 
-	return function (position: vec3, color: Color) {
+	return function (position: Vector3, color: Color) {
 		return new Piff(position, color, explosionModel, engine)
 	}
 }
