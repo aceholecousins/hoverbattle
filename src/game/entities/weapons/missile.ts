@@ -9,7 +9,7 @@ import { assignRole, Role } from "../actor";
 import { Entity } from "../entity";
 import { Vehicle, VEHICLE_RADIUS } from "game/entities/vehicles/vehicle";
 import { Powerup } from "game/entities/powerups/powerup";
-import { angleDelta, appendZ, Vector2, quatFromYPR, vec2FromDir, DEG } from "math";
+import { angleDelta, appendZ, Vector2, ypr, vec2FromDir, DEG } from "math";
 import { SmokeFactory, createSmokeFactory } from "game/graphics/explosion/smoke"
 import { memoize } from "utils/general";
 
@@ -120,7 +120,7 @@ export class Missile extends Entity {
 
 		this.mesh.setPosition(appendZ(this.body.getPosition(), 0.1))
 		this.roll += dt * 300 * DEG;
-		this.mesh.setOrientation(quatFromYPR(
+		this.mesh.setOrientation(ypr(
 			this.body.getAngle(), 0, this.roll))
 	}
 }

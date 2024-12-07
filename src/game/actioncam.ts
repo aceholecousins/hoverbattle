@@ -133,8 +133,8 @@ export class ActionCam {
 		)
 		z.normalize()
 		let y = new Vector3(0, 1, 0)
-		let x = y.cross(z).normalize()
-		y = z.cross(x)
+		let x = new Vector3().crossVectors(y, z).normalize()
+		y.crossVectors(z, x)
 
 		let ori = matrix3FromBasis(x, y, z)
 
@@ -143,6 +143,7 @@ export class ActionCam {
 			this.positionY.get(),
 			this.positionZ.get()
 		))
+
 		this.camera.setOrientation(quatFromMatrix3(ori))
 	}
 

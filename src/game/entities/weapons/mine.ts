@@ -9,7 +9,7 @@ import { assignRole, Role } from "../actor";
 import { Entity } from "../entity";
 import { Vehicle, VEHICLE_RADIUS } from "game/entities/vehicles/vehicle";
 import { Powerup } from "game/entities/powerups/powerup";
-import { appendZ, Vector2, Vector3, quatFromYPR, DEG } from "math";
+import { appendZ, Vector2, Vector3, ypr, DEG } from "math";
 
 const MINE_RADIUS = 1;
 const MINE_MASS = 1
@@ -68,7 +68,7 @@ export class Mine extends Entity {
 			this.collidesWithParent = true
 		}
 
-		this.mesh.setOrientation(quatFromYPR(
+		this.mesh.setOrientation(ypr(
 			this.body.getAngle() / Math.PI * 180,
 			17 * DEG * Math.sin(1.1337 * this.time),
 			20 * DEG * Math.sin(this.time)

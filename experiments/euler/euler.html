@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Three.js Euler Playground</title>
+
+	<script type="importmap">
+		{"imports": {"three": "https://cdn.jsdelivr.net/npm/three@v0.169.0/build/three.module.js"}}
+	  </script>
+	<script src="https://cdn.jsdelivr.net/npm/dat.gui@0.7.9/build/dat.gui.min.js"></script>
+	<style>
+		body {
+			margin: 0;
+			overflow: hidden;
+		}
+	</style>
+</head>
+
+<body>
+	<script type="module">
+		import * as THREE from 'three';
+		const scene = new THREE.Scene();
+		const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+		const renderer = new THREE.WebGLRenderer();
+		renderer.setSize(window.innerWidth, window.innerHeight);
+		document.body.appendChild(renderer.domElement);
+
+		const world = new THREE.AxesHelper(2);
+		scene.add(world);
+
+		const axes1 = new THREE.AxesHelper(1);
+		axes1.position.set(0.1, 0.1, 0);
+		scene.add(axes1);
+		
+		const axes2 = new THREE.AxesHelper(1);
+		axes2.position.set(-0.1, -0.1, 0);
+		scene.add(axes2);
+
+		camera.position.set(10, 10, 10);
+		camera.lookAt(0, 0, 0);
+
+		let params = {x:0, y:0, z:0, order:'XYZ'};
+
+		function updateRotation() {
+			axes1.rotation.x = params.x;
+			axes1.rotation.y = params.y;
+			axes1.rotation.z = params.z;
+			axes1.rotation.order = params.order;
+
+			let quat = new THREE.Quaternion().setFromEuler(axes1.rotation);
+			axes2.quaternion.copy(quat);
+		}
+
+		const gui = new dat.GUI();
+		gui.add(params, 'x', 0, Math.PI * 2, 0.01).name('Rotation X').onChange(updateRotation);
+		gui.add(params, 'y', 0, Math.PI * 2, 0.01).name('Rotation Y').onChange(updateRotation);
+		gui.add(params, 'z', 0, Math.PI * 2, 0.01).name('Rotation Z').onChange(updateRotation);
+		gui.add(params, 'order', ['XYZ', 'XZY', 'YXZ', 'YZX', 'ZXY', 'ZYX']).name('Order').onChange(updateRotation);
+
+		function animate() {
+			requestAnimationFrame(animate);
+			renderer.render(scene, camera);
+		}
+		animate();
+	</script>
+</body>
+
+</html>

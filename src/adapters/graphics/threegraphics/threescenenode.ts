@@ -18,6 +18,9 @@ export abstract class ThreeSceneNode<K extends Kind> implements SceneNode<K> {
 		this.threeObject = object
 		scene.add(object)
 
+		// let axes = new THREE.AxesHelper(1)
+		// this.threeObject.add(axes)
+
 		this.kind = config.kind
 		this.setPosition(config.position)
 		this.setOrientation(config.orientation)

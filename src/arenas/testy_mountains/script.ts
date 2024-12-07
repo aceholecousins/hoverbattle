@@ -18,7 +18,7 @@ import { MatchFactory } from "game/match"
 import { CollisionOverride, CollisionHandler } from "game/physics/collision"
 import { Player } from "game/player"
 import { SceneNodeConfig } from "game/graphics/scenenode"
-import { Vector2, Vector3, Quaternion, Euler } from "math"
+import { Vector2, Vector3, ypr } from "math"
 import { remove } from "utils/general"
 import { createExplosionFactory, createSmallExplosionFactory } from "game/graphics/explosion/explosion"
 import { GameTimer } from "game/gametimer"
@@ -205,8 +205,7 @@ export let createMatch: MatchFactory = async function (engine) {
 	}
 
 	engine.graphics.setEnvironment(skybox)
-	engine.graphics.setEnvironmentOrientation(
-		new Euler(Math.PI / 2, 0, Math.PI / 2))
+	engine.graphics.setEnvironmentOrientation(ypr(0, 0, Math.PI / 2))
 
 	let team = 0;
 
@@ -221,12 +220,11 @@ export let createMatch: MatchFactory = async function (engine) {
 		team++
 	})
 
-	//new GameTimer(spawnPowerup, Math.random() * 2 + 1)
+	new GameTimer(spawnPowerup, Math.random() * 2 + 1)
 
 	function spawnPowerup() {
 		if (powerupBoxes.length < 5) {
 			let kinds = ["mine", "missile", "laser", "nashwan", "powershield", "repair"]
-			// kinds = ["missile", "nashwan"]
 			const powerupKind = kinds[Math.floor(Math.random() * kinds.length)] as PowerupKind;
 			let powerupBox = makeDestructible(
 				createPowerupBox(

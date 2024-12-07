@@ -1,5 +1,5 @@
 
-import { Vector3, Euler } from "math"
+import { Vector3, Quaternion } from "math"
 
 import * as THREE from "three"
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
@@ -43,14 +43,14 @@ export class ThreeGraphics implements Graphics {
 
 	debugLines: THREE.Line[] = []
 
-	setEnvironment(env: Skybox) {
-		this.scene.background = (env as ThreeSkybox).threeCubemap
-		this.scene.environment = (env as ThreeSkybox).threePmrem
+	setEnvironment(environment: Skybox) {
+		this.scene.background = (environment as ThreeSkybox).threeCubemap
+		this.scene.environment = (environment as ThreeSkybox).threePmrem
 	}
 
-	setEnvironmentOrientation(ori: Euler) {
-		this.scene.backgroundRotation.copy(ori)
-		this.scene.environmentRotation.copy(ori)
+	setEnvironmentOrientation(orientation: Quaternion) {
+		this.scene.backgroundRotation.setFromQuaternion(orientation)
+		this.scene.environmentRotation.setFromQuaternion(orientation)
 	}
 
 	update() {

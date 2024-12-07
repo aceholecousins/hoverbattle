@@ -1,7 +1,7 @@
 import { ModelMeshConfig } from "game/graphics/mesh";
 import { Model } from "game/graphics/asset";
 import { Engine } from "game/engine";
-import { Vector2, Vector3, quatFromYPR, vec2FromDir } from "math"
+import { Vector2, Vector3, ypr, vec2FromDir } from "math"
 import { Vehicle, VEHICLE_RADIUS } from "game/entities/vehicles/vehicle";
 import { Powerup } from "game/entities/powerups/powerup";
 import { Visual } from "game/graphics/visual";

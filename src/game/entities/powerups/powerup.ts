@@ -3,7 +3,7 @@ import { Model } from "game/graphics/asset"
 import { Engine } from "game/engine"
 import { CircleConfig } from "game/physics/circle"
 import { RigidBodyConfig } from "game/physics/rigidbody"
-import { Vector2, quatFromYPR, DEG } from "math"
+import { Vector2, ypr, DEG } from "math"
 import { Entity } from "game/entities/entity"
 
 const POWERUP_BOX_SIZE = 1.8
@@ -42,7 +42,7 @@ export class PowerupBox extends Entity {
 	update(dt: number) {
 		this.time += dt
 		this.mesh.setPositionXY(this.body.getPosition())
-		this.mesh.setOrientation(quatFromYPR(
+		this.mesh.setOrientation(ypr(
 			this.body.getAngle(),
 			17 * DEG * Math.sin(1.1337 * this.time),
 			20 * DEG * Math.sin(this.time),

@@ -1,7 +1,7 @@
 import { ModelMeshConfig } from "game/graphics/mesh"
 import { Model } from "game/graphics/asset"
 import { Engine } from "game/engine"
-import { Vector3, quatFromYPR, Quaternion, Euler } from "math"
+import { Vector3, ypr, Quaternion, Euler } from "math"
 import { Color, colorLerp } from "utils/color"
 import { Visual } from "game/graphics/visual"
 import { PointLight, PointLightConfig } from "../light"
@@ -230,7 +230,7 @@ export class Shard extends Visual {
 			speed * Math.sin(direction) * Math.cos(pitch),
 			speed * Math.sin(pitch)
 		)
-		this.mesh.setOrientation(quatFromYPR(
+		this.mesh.setOrientation(ypr(
 			direction, -pitch, 0))
 		this.update(0)
 	}

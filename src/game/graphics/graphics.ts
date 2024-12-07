@@ -5,7 +5,7 @@ import { LightFactory } from "./light"
 import { MeshFactory } from "./mesh"
 import { Skybox } from "./asset";
 import { Water } from "./water";
-import { Vector3, Euler } from "math"
+import { Vector3, Quaternion } from "math"
 import { Color } from "utils/color";
 
 export interface Graphics {
@@ -20,8 +20,8 @@ export interface Graphics {
 
 	water: Water
 
-	setEnvironment(env: Skybox): void
-	setEnvironmentOrientation(ori: Euler): void
+	setEnvironment(environment: Skybox): void
+	setEnvironmentOrientation(orientation: Quaternion): void
 
 	update(): void
 

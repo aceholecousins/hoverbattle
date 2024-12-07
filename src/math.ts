@@ -11,7 +11,11 @@ export function angleDelta(from: number, to: number): number {
 }
 
 export function matrix3FromBasis(x: Vector3, y: Vector3, z: Vector3) {
-	return new Matrix3(x.x, x.y, x.z, y.x, y.y, y.z, z.x, z.y, z.z)
+	return new Matrix3(
+		x.x, y.x, z.x,
+		x.y, y.y, z.y,
+		x.z, y.z, z.z
+	)
 }
 
 export type Triangle2 = [Vector2, Vector2, Vector2]
@@ -78,9 +82,9 @@ export function quatFromAngle(angle: number) {
 	return new Quaternion(0, 0, Math.sin(angle / 2), Math.cos(angle / 2))
 }
 
-export function quatFromYPR(yaw: number, pitch: number, roll: number) {
-	console.warn("possible todo")
-	return new Quaternion().setFromEuler(new Euler(yaw, pitch, roll))
+export function ypr(yaw: number, pitch: number, roll: number): Quaternion {
+	// note "ZYX" is only order of application (intrinsic), not order of arguments
+	return new Quaternion().setFromEuler(new Euler(roll, pitch, yaw, "ZYX"))
 }
 
 export function quatFromMatrix3(m: Matrix3) {

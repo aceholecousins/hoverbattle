@@ -4,7 +4,7 @@ import { Engine } from "game/engine"
 import { TriangleConfig } from "game/physics/triangle"
 import { RigidBodyConfig } from "game/physics/rigidbody"
 import { Player } from "game/player"
-import { angleDelta, appendZ, LowPass, triangle3to2, Vector2, Triangle3, quatFromYPR } from "math"
+import { angleDelta, appendZ, LowPass, triangle3to2, Vector2, Triangle3, ypr } from "math"
 import { Vehicle, VEHICLE_RADIUS, VehicleFactory } from "game/entities/vehicles/vehicle"
 
 export const GLIDER_THRUST = 20
@@ -69,8 +69,7 @@ export class Glider extends Vehicle {
 		this.roll.update(this.body.getAngularVelocity() * -7, dt)
 		// let roll = this.roll.get()
 		let roll = 0
-		this.mesh.setOrientation(quatFromYPR(
-			this.body.getAngle(), 0, roll))
+		this.mesh.setOrientation(ypr(this.body.getAngle(), 0, roll))
 
 		this.tNextRipple -= dt
 		if (this.tNextRipple < 0) {

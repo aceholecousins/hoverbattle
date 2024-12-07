@@ -4,7 +4,7 @@ import { Engine } from "game/engine"
 import { CircleConfig } from "game/physics/circle"
 import { RigidBodyConfig } from "game/physics/rigidbody"
 import { Player } from "game/player"
-import { Vector2, quatFromYPR, vec2FromDir, DEG } from "math"
+import { Vector2, ypr, vec2FromDir, DEG } from "math"
 import { Ramper, LowPass } from "math"
 import { angleDelta } from "math"
 import { Vehicle, VEHICLE_RADIUS, VehicleFactory } from "game/entities/vehicles/vehicle"
@@ -74,7 +74,7 @@ export class Car extends Vehicle {
 		this.mesh.setPositionXY(this.body.getPosition())
 		this.roll.update(vRightDamped * -2 * DEG, dt)
 		this.roll.update(0, dt)
-		this.mesh.setOrientation(quatFromYPR(
+		this.mesh.setOrientation(ypr(
 			this.body.getAngle(), 0, this.roll.get(),
 		))
 

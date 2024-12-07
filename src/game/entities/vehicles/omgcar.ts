@@ -5,7 +5,7 @@ import { CircleConfig } from "game/physics/circle"
 import { RigidBodyConfig } from "game/physics/rigidbody"
 import { Player } from "game/player"
 import { Ramper, LowPass } from "math"
-import { angleDelta, Vector2, quatFromYPR } from "math"
+import { angleDelta, Vector2, ypr } from "math"
 import { Vehicle, VEHICLE_RADIUS, VehicleFactory } from "game/entities/vehicles/vehicle"
 
 export const CAR_ACCELERATION = 50
