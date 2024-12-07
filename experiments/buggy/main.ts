@@ -1,10 +1,11 @@
 import * as THREE from 'three'
 import * as p2 from "p2"
 import { scene, camera, run } from '../quickthree'
-import { vec2 } from 'gl-matrix'
 import * as dat from 'dat.gui';
 
 const gui = new dat.GUI();
+
+type vec2 = [number, number]
 
 // staitc friction, rubber on asphalt: dry 0.9, wet 0.5
 // staitc friction, rubber on concrete: dry 1.0, wet 0.6
@@ -148,11 +149,11 @@ for (let wheel of wheels) {
 }
 
 function arrow(position: vec2, direction: vec2, scale: number, color: THREE.Color) {
-	const normalizedDirection = vec2.normalize(vec2.create(), direction);
+	const normalizedDirection = p2.vec2.normalize(p2.vec2.create(), direction);
 	const arrowHelper = new THREE.ArrowHelper(
 		new THREE.Vector3(normalizedDirection[0], normalizedDirection[1], 0),
 		new THREE.Vector3(position[0], position[1], 0),
-		vec2.length(direction) * scale,
+		p2.vec2.length(direction) * scale,
 		color
 	)
 	arrowHelper.userData.deleteMe = true
@@ -242,23 +243,23 @@ function update(time: number) {
 				wheel.braking = keys.ArrowDown
 			}
 
-			const wheelPosition = vec2.fromValues(wheel.position, 0)
+			const wheelPosition = p2.vec2.fromValues(wheel.position, 0)
 			let wheelAngle = chassisBody.angle + wheel.steering * maxSteeringAngle
 
-			let radius = vec2.create();
-			vec2.rotate(radius, wheelPosition, [0, 0], chassisBody.angle);
-			const turningComponent = vec2.fromValues(
+			let radius = p2.vec2.create();
+			p2.vec2.rotate(radius, wheelPosition, chassisBody.angle);
+			const turningComponent = p2.vec2.fromValues(
 				-chassisBody.angularVelocity * radius[1],
 				chassisBody.angularVelocity * radius[0]
 			)
 
-			let globalWheelPosition = vec2.create()
+			let globalWheelPosition = p2.vec2.create()
 			chassisBody.toWorldFrame(
 				globalWheelPosition as [number, number],
 				wheelPosition as [number, number]
 			)
 
-			const motion = vec2.add(vec2.create(), chassisBody.velocity, turningComponent)
+			const motion = p2.vec2.add(p2.vec2.create(), chassisBody.velocity, turningComponent)
 
 			if (chassisParams.adaptiveSteering) {
 				let adaptiveSteering = angleDelta(
@@ -270,12 +271,12 @@ function update(time: number) {
 				adaptiveSteering = Math.max(-maxSteeringAngle, Math.min(maxSteeringAngle, adaptiveSteering))
 				wheelAngle = chassisBody.angle + adaptiveSteering
 			}
-			const forwardDirection = vec2.fromValues(
+			const forwardDirection = p2.vec2.fromValues(
 				Math.cos(wheelAngle),
 				Math.sin(wheelAngle),
 			)
 
-			const forwardVelocity = vec2.dot(motion, forwardDirection)
+			const forwardVelocity = p2.vec2.dot(motion, forwardDirection)
 			let drive = wheel.thrust * motorForce
 			if (wheel.braking) {
 				if (Math.abs(forwardVelocity) > 0.03) {
@@ -283,12 +284,12 @@ function update(time: number) {
 				}
 			}
 
-			const axisDirection = vec2.fromValues(
+			const axisDirection = p2.vec2.fromValues(
 				-forwardDirection[1],
 				forwardDirection[0]
 			)
 
-			const sideVelocity = vec2.dot(motion, axisDirection)
+			const sideVelocity = p2.vec2.dot(motion, axisDirection)
 			const sideSpeed = Math.abs(sideVelocity)
 
 			let forwardForceAbs = Math.abs(drive)
@@ -317,12 +318,12 @@ function update(time: number) {
 			let forwardForceSigned = Math.sign(drive) * forwardForceAbs
 			let sideForceSigned = -Math.sign(sideVelocity) * sideForceAbs
 
-			let wheelForce = vec2.fromValues(
+			let wheelForce = p2.vec2.fromValues(
 				forwardDirection[0] * forwardForceSigned + axisDirection[0] * sideForceSigned,
 				forwardDirection[1] * forwardForceSigned + axisDirection[1] * sideForceSigned
 			)
 
-			let wheelRelativePosition = vec2.create()
+			let wheelRelativePosition = p2.vec2.create()
 			chassisBody.vectorToWorldFrame(
 				wheelRelativePosition as [number, number],
 				wheelPosition as [number, number]
@@ -333,12 +334,12 @@ function update(time: number) {
 				wheelRelativePosition as [number, number]
 			)
 
-			let centerOfRotation = vec2.copy(vec2.create(), chassisBody.position)
-			let corRadius = vec2.fromValues(
+			let centerOfRotation = p2.vec2.copy(p2.vec2.create(), chassisBody.position)
+			let corRadius = p2.vec2.fromValues(
 				-chassisBody.velocity[1] / chassisBody.angularVelocity,
 				chassisBody.velocity[0] / chassisBody.angularVelocity
 			)
-			vec2.add(centerOfRotation, centerOfRotation, corRadius)
+			p2.vec2.add(centerOfRotation, centerOfRotation, corRadius)
 
 			centerOfRotationMarker.position.set(
 				centerOfRotation[0],
