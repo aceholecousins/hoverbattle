@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Matter.js Triangle Collision</title>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+</head>
+
+<body style="margin: 0; overflow: hidden;">
+	<canvas id="world"></canvas>
+	<script>
+		const { Engine, Render, World, Bodies, Body } = Matter;
+
+		// Create engine
+		const engine = Engine.create();
+		engine.gravity.scale = 0;
+
+		// Create renderer
+		const render = Render.create({
+			element: document.body,
+			engine: engine,
+			canvas: document.getElementById('world'),
+			options: {
+				width: window.innerWidth,
+				height: window.innerHeight,
+				wireframes: false,
+				background: '#fff'
+			}
+		});
+
+		function createTriangle(vertices, position, options = {}) {
+			const body = Bodies.fromVertices(position.x, position.y, [vertices], options, true);
+			return body;
+		}
+
+		const triangle1 = createTriangle(
+			[{ x: 0, y: 20 }, { x: -10, y: 0 }, { x: 10, y: 0 }],
+			{ x: 400, y: 200 }, // Adjust to desired world position
+		);
+
+		const triangle2 = createTriangle(
+			[{ x: -15, y: 15 }, { x: -20, y: 10 }, { x: -10, y: 10 }],
+			{ x: 300, y: 200 } // Adjust to desired world position
+		);
+		World.add(engine.world, [triangle1, triangle2]);
+
+		Body.setVelocity(triangle2, { x: 0.3, y: 0 });
+
+		// Run engine and renderer
+		Engine.run(engine);
+		Render.run(render);
+	</script>
+</body>
+
+</html>

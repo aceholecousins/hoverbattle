@@ -1,3 +1,4 @@
+# p2
 
 When I switched from gliders being circular to triangle based, they bounced around the world and glitched in the environment. I removed all but one triangles from arena and glider and managed to get this undetected intersection. The glider is then ejected downwards, once the next vertex comes into contact.
 
@@ -12,3 +13,8 @@ In the depicted case, the collision is missed. For each edge of the convex shape
 Since p2.js is no longer maintained and neither seems p2 es, I am considering switching to another physics engine, who knows what else pops up.
 
 Candidates: https://daily.dev/blog/top-9-open-source-2d-physics-engines-compared
+
+
+# matter
+
+First experiments were [https://github.com/liabru/matter-js/issues/1323](a bit underwhelming).

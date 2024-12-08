@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Matter.js Bouncing Ball</title>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.20.0/matter.js"></script>
+</head>
+
+<body>
+	<script>
+		const { Engine, Render, Runner, World, Body, Bodies, Events } = Matter
+
+		let g = 10 // m/s²
+		let x = 400
+		let hDrop = 180 // m
+		let rBall = 10 // m
+		let hBeam = 20 // m
+		let hZero = 300
+
+		const engine = Engine.create()
+		engine.world.gravity.y = g
+		engine.world.gravity.scale = 1
+
+		const render = Render.create({ element: document.body, engine: engine })
+
+		Render.run(render)
+
+		const ball = Bodies.circle(x, hZero - hDrop - rBall, rBall, {
+			restitution: 1, friction: 0, frictionAir: 0, mass: 1, inertia: 1
+		})
+
+		const ground = Bodies.rectangle(x, hZero + hBeam / 2, 200, hBeam, { isStatic: true })
+
+		World.add(engine.world, [ball, ground])
+
+		const dt = 1 / 120 // s
+		Matter.Body._baseDelta = 1
+		Matter.Common._baseDelta = 1
+
+		let simulationTime = 0
+
+		setInterval(() => {
+			Engine.update(engine, dt)
+			simulationTime += dt
+		}, dt * 1000)
+
+		let lastBounceSimulationTime = null
+		Events.on(engine, "collisionStart", (event) => {
+			console.log(`t=${simulationTime}`)
+			console.log(`v=${Matter.Body.getSpeed(ball)}`)
+		})
+
+	</script>
+</body>
+
+</html>
