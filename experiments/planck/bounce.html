@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Planck.js Bouncing Ball</title>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/planck-js/1.1.0/planck.min.js"></script>
+</head>
+
+<body>
+	<script>
+		const pl = planck;
+
+		const world = new pl.World({ gravity: pl.Vec2(0, -10) });
+
+		let x = 400; // Horizontal position of the ball
+		let hDrop = 180; // Initial drop height in meters
+		let rBall = 10; // Radius of the ball in meters
+		let hBeam = 20; // Height of the ground in meters
+
+		// Create the ground
+		const ground = world.createBody();
+		ground.createFixture(pl.Box(100, hBeam / 2), { density: 0, friction: 0, restitution: 1 });
+		ground.setPosition(pl.Vec2(0, -hBeam / 2));
+
+		// Create the ball
+		const ball = world.createDynamicBody(pl.Vec2(0, hDrop + rBall));
+		ball.createFixture(pl.Circle(rBall), { density: 1, friction: 0, restitution: 1 });
+		y0 = ball.getPosition().y;
+
+		// Simulation parameters
+		const dt = 1 / 120; // Time step in seconds
+		let simulationTime = 0;
+
+		// Simulation loop
+		setInterval(() => {
+			world.step(dt);
+			simulationTime += dt;
+
+			const position = ball.getPosition();
+			const velocity = ball.getLinearVelocity();
+
+			//console.log(`t=${simulationTime.toFixed(3)}s, position=(${position.x.toFixed(2)}, ${position.y.toFixed(2)}), velocity=${velocity.length().toFixed(2)}`);
+		}, dt * 1000);
+
+		// Collision detection
+		world.on('begin-contact', contact => {
+			const bodyA = contact.getFixtureA().getBody();
+			const bodyB = contact.getFixtureB().getBody();
+
+			if (bodyA === ball || bodyB === ball) {
+				const velocity = ball.getLinearVelocity().length();
+				console.log(`Collision at t=${simulationTime.toFixed(3)}s, velocity=${velocity.toFixed(2)}m/s`);
+			}
+			y1 = ball.getPosition().y;
+			console.log(y1 - y0)
+		});
+	</script>
+</body>
+
+</html>
