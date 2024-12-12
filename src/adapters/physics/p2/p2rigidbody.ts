@@ -1,6 +1,6 @@
 import * as p2 from "p2"
 import { Vector2 } from "math"
-import { p2shapeFactory } from "./p2shape"
+import { makeP2Shape } from "./p2shapes"
 import { RigidBody, RigidBodyConfig } from "game/physics/rigidbody"
 import { ExtendedP2Body } from "./p2extensions"
 
@@ -30,9 +30,9 @@ export class P2RigidBody implements RigidBody {
 		config.actor = this.p2body.actor
 
 		for (let shapeCfg of config.shapes) {
-			let shape = p2shapeFactory.createShape<any>(shapeCfg)
+			let shape = makeP2Shape(shapeCfg)
 			//this.shapes.push(shape)
-			this.p2body.addShape(shape.p2shape)
+			this.p2body.addShape(shape)
 		}
 
 		this.p2world.addBody(this.p2body)
@@ -54,6 +54,14 @@ export class P2RigidBody implements RigidBody {
 	}
 	getMass() {
 		return this.p2body.type === p2.Body.STATIC ? Infinity : this.p2body.mass
+	}
+
+	setInertia(inertia: number): void {
+		this.p2body.inertia = inertia
+		this.p2body.updateMassProperties()
+	}
+	getInertia(): number {
+		return this.p2body.inertia
 	}
 
 	setPosition(position: Vector2) {

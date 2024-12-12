@@ -1,7 +1,7 @@
 import { ModelMeshConfig } from "game/graphics/mesh"
 import { Model } from "game/graphics/asset"
 import { Engine } from "game/engine"
-import { CircleConfig } from "game/physics/circle"
+import { Circle } from "game/physics/shapes"
 import { RigidBodyConfig } from "game/physics/rigidbody"
 import { Player } from "game/player"
 import { Vector2, ypr, vec2FromDir, DEG } from "math"
@@ -31,7 +31,7 @@ export class Car extends Vehicle {
 		super()
 		this.body = engine.physics.addRigidBody(new RigidBodyConfig({
 			actor: this,
-			shapes: [new CircleConfig({ radius: 1 })],
+			shapes: [new Circle(1)],
 			damping: 0,
 			angularDamping: 0
 		}))

@@ -6,7 +6,7 @@ import { Vehicle, VEHICLE_RADIUS } from "game/entities/vehicles/vehicle";
 import { Powerup } from "game/entities/powerups/powerup";
 import { Visual } from "game/graphics/visual";
 import { Entity } from "game/entities/entity";
-import { CircleConfig } from "game/physics/circle";
+import { Circle } from "game/physics/shapes";
 import { RigidBodyConfig } from "game/physics/rigidbody";
 import { Attachment } from "game/physics/physics";
 import { Color, colorLerp } from "utils/color";
@@ -49,7 +49,7 @@ export class Barrel extends Entity {
 
 		const bodyCfg = new RigidBodyConfig({
 			actor: this,
-			shapes: [new CircleConfig({ radius: BARREL_RADIUS })],
+			shapes: [new Circle(BARREL_RADIUS)],
 			mass: 0.01,
 			damping: 0,
 			angularDamping: 0
@@ -119,7 +119,7 @@ export class Drone extends Entity {
 
 		const bodyCfg = new RigidBodyConfig({
 			actor: this,
-			shapes: [new CircleConfig({ radius: DRONE_RADIUS })],
+			shapes: [new Circle(DRONE_RADIUS)],
 			mass: 0.1,
 			damping: DRONE_DAMPING,
 			angularDamping: 0
@@ -234,7 +234,7 @@ export class NashwanShot extends Entity {
 
 		const bodyCfg = new RigidBodyConfig({
 			actor: this,
-			shapes: [new CircleConfig({ radius })],
+			shapes: [new Circle(radius)],
 			damping: 0,
 			angularDamping: 0
 		})

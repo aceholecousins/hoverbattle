@@ -1,7 +1,7 @@
 import { ModelMeshConfig } from "game/graphics/mesh"
 import { Engine } from "game/engine"
 import { RigidBodyConfig } from "game/physics/rigidbody"
-import { TriangleConfig } from "game/physics/triangle"
+import { Triangle } from "game/physics/shapes"
 import { triangle3to2, Triangle3 } from "math"
 import { Entity } from "../entity"
 
@@ -26,7 +26,7 @@ export async function loadArena(
 			new RigidBodyConfig({
 				actor: arenaPart,
 				mass: Infinity,
-				shapes: [new TriangleConfig({ corners: triangle3to2(tri) })]
+				shapes: [new Triangle(triangle3to2(tri))]
 			})
 		)
 		arenaParts.push(arenaPart)

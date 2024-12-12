@@ -1,7 +1,7 @@
 import { ModelMeshConfig } from "game/graphics/mesh"
 import { Model } from "game/graphics/asset"
 import { Engine } from "game/engine"
-import { CircleConfig } from "game/physics/circle"
+import { Circle } from "game/physics/shapes"
 import { RigidBodyConfig } from "game/physics/rigidbody"
 import { Vector2, ypr, DEG } from "math"
 import { Entity } from "game/entities/entity"
@@ -27,7 +27,7 @@ export class PowerupBox extends Entity {
 
 		this.body = engine.physics.addRigidBody(new RigidBodyConfig({
 			actor: this,
-			shapes: [new CircleConfig({ radius: POWERUP_BOX_SIZE * 0.6 })],
+			shapes: [new Circle(POWERUP_BOX_SIZE * 0.6)],
 			damping: 0.5,
 			angularDamping: 0.5
 		}))

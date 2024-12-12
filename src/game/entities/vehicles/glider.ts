@@ -1,8 +1,7 @@
 import { ModelMeshConfig } from "game/graphics/mesh"
 import { Model, ModelMetaData } from "game/graphics/asset"
 import { Engine } from "game/engine"
-import { CircleConfig } from "game/physics/circle"
-import { TriangleConfig } from "game/physics/triangle"
+import { Circle, Triangle } from "game/physics/shapes"
 import { RigidBodyConfig } from "game/physics/rigidbody"
 import { Player } from "game/player"
 import { angleDelta, appendZ, LowPass, triangle3to2, Vector2, Triangle3, ypr } from "math"
@@ -33,15 +32,15 @@ export class Glider extends Vehicle {
 		super()
 		this.engine = engine
 
-		let triangles: TriangleConfig[] = []
+		let triangles: Triangle[] = []
 		for (let tri of (meta.collision as Triangle3[])) {
-			triangles.push(new TriangleConfig({ corners: triangle3to2(tri) }))
+			triangles.push(new Triangle(triangle3to2(tri)))
 		}
 
 		this.body = engine.physics.addRigidBody(new RigidBodyConfig({
 			actor: this,
 			// shapes: triangles,
-			shapes: [new CircleConfig({ radius: 1 })],
+			shapes: [new Circle(VEHICLE_RADIUS)],
 			damping: GLIDER_DAMPING,
 			angularDamping: GLIDER_ANGULAR_DAMPING
 		}))

@@ -1,5 +1,5 @@
 import { Vector2 } from "math"
-import { ShapeConfig, Shape } from "./shape"
+import { Shape } from "./shapes"
 import { copyIfPresent } from "utils/general"
 import { Actor } from "game/entities/actor"
 
@@ -8,10 +8,11 @@ export interface RigidBody {
 
 	getActor(): Actor
 
-	//readonly shapes: Shape<any>[]
-
 	setMass(mass: number): void
 	getMass(): number
+
+	setInertia(inertia: number): void
+	getInertia(): number
 
 	setPosition(position: Vector2): void
 	getPosition(): Vector2
@@ -46,9 +47,10 @@ export interface RigidBody {
 export class RigidBodyConfig {
 	actor: Actor
 
-	shapes: ShapeConfig<any>[]
+	shapes: Shape[]
 
 	mass = 1
+	inertia = 1
 
 	position = new Vector2(0, 0)
 	velocity = new Vector2(0, 0)

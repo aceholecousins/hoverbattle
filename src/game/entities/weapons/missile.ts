@@ -2,7 +2,7 @@ import { broker } from "broker";
 import { ModelMeshConfig } from "game/graphics/mesh";
 import { Model } from "game/graphics/asset";
 import { Engine } from "game/engine";
-import { CircleConfig } from "game/physics/circle";
+import { Circle } from "game/physics/shapes";
 import { RigidBodyConfig } from "game/physics/rigidbody";
 import { Sound } from "game/sound";
 import { assignRole, Role } from "../actor";
@@ -54,7 +54,7 @@ export class Missile extends Entity {
 
 		const bodyCfg = new RigidBodyConfig({
 			actor: this,
-			shapes: [new CircleConfig({ radius: MISSILE_RADIUS })],
+			shapes: [new Circle(MISSILE_RADIUS)],
 			mass: MISSILE_MASS,
 			damping: MISSILE_DAMPING,
 			angularDamping: MISSILE_ANGULAR_DAMPING

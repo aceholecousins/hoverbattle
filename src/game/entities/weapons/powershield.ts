@@ -6,7 +6,7 @@ import { Powerup } from "game/entities/powerups/powerup";
 import { Visual } from "game/graphics/visual";
 import { Quaternion } from "math"
 import { Entity } from "game/entities/entity";
-import { CircleConfig } from "game/physics/circle";
+import { Circle } from "game/physics/shapes";
 import { RigidBodyConfig } from "game/physics/rigidbody";
 import { Attachment } from "game/physics/physics";
 import { Color, colorLerp } from "utils/color";
@@ -40,7 +40,7 @@ export class PowerShield extends Entity {
 
 		const bodyCfg = new RigidBodyConfig({
 			actor: this,
-			shapes: [new CircleConfig({ radius: POWERSHIELD_RADIUS })],
+			shapes: [new Circle(POWERSHIELD_RADIUS)],
 			mass: 0.01,
 			damping: 0,
 			angularDamping: 0

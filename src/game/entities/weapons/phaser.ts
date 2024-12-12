@@ -2,7 +2,7 @@ import { broker } from "broker";
 import { ModelMeshConfig } from "game/graphics/mesh";
 import { Model } from "game/graphics/asset";
 import { Engine } from "game/engine";
-import { CircleConfig } from "game/physics/circle";
+import { Circle } from "game/physics/shapes";
 import { RigidBodyConfig } from "game/physics/rigidbody";
 import { Sound } from "game/sound";
 import { Vector2, Vector3 } from "math"
@@ -35,7 +35,7 @@ export class PhaserShot extends Entity {
 
 		const bodyCfg = new RigidBodyConfig({
 			actor: this,
-			shapes: [new CircleConfig({ radius: 0.3 })],
+			shapes: [new Circle(0.3)],
 			damping: 0,
 			angularDamping: 0
 		})

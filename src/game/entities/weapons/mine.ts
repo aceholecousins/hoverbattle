@@ -2,7 +2,7 @@ import { broker } from "broker";
 import { ModelMeshConfig } from "game/graphics/mesh";
 import { Model } from "game/graphics/asset";
 import { Engine } from "game/engine";
-import { CircleConfig } from "game/physics/circle";
+import { Circle } from "game/physics/shapes";
 import { RigidBodyConfig } from "game/physics/rigidbody";
 import { Sound } from "game/sound";
 import { assignRole, Role } from "../actor";
@@ -43,7 +43,7 @@ export class Mine extends Entity {
 
 		const bodyCfg = new RigidBodyConfig({
 			actor: this,
-			shapes: [new CircleConfig({ radius: MINE_RADIUS })],
+			shapes: [new Circle(MINE_RADIUS)],
 			mass: MINE_MASS,
 			damping: MINE_DAMPING,
 			angularDamping: MINE_ANGULAR_DAMPING
