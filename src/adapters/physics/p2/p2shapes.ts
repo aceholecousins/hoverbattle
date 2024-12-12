@@ -1,7 +1,7 @@
 import { Shape, Circle, Triangle } from "game/physics/shapes"
 import * as p2 from "p2"
 
-export function makeP2Shape(config: Shape) {
+export function makeP2Shape(config: Shape): p2.Shape {
 
 	if (config instanceof Circle) {
 		let circle = new p2.Circle({ radius: config.radius })
@@ -20,12 +20,10 @@ export function makeP2Shape(config: Shape) {
 			console.error("degenerate triangle")
 			return new p2.Convex()
 		}
-		else if (area > 0) {
-			return new p2.Convex({ vertices: [c0, c1, c2] })
-		}
-		else {
-			return new p2.Convex({ vertices: [c0, c2, c1] })
-		}
 
+		let vertices = area > 0 ? [c0, c1, c2] : [c0, c2, c1];
+		return new p2.Convex({ vertices })
 	}
+
+	console.error("unknown shape type: ", config.constructor.name);
 }

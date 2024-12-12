@@ -1,7 +1,7 @@
 import { World, Body, BodyType, Shape, Vec2 } from "planck";
 import { Vector2 } from "math";
 import { toVec2 } from "./planckutils";
-//import { shapeFactory } from "./planckShape";
+import { makePlanckShape } from "./planckshapes";
 import { RigidBody, RigidBodyConfig } from "game/physics/rigidbody";
 import { Actor } from "game/entities/actor";
 
@@ -32,8 +32,8 @@ export class PlanckRigidBody implements RigidBody {
 		});
 
 		for (const shapeCfg of config.shapes) {
-			//const shape = shapeFactory.createShape(shapeCfg);
-			//this.body.createFixture(shape, { density: 1 });
+			const shape = makePlanckShape(shapeCfg);
+			this.body.createFixture(shape, { density: 1 });
 		}
 	}
 
