@@ -1,18 +1,21 @@
 {
 	"compilerOptions": {
 		"target": "ES6",
-		"lib": ["DOM", "ScriptHost"],
+		"lib": [ "DOM", "ScriptHost" ],
 		"moduleResolution": "node",
-		"outDir": "./dist/",		
+		"outDir": "./dist/",
 		"noImplicitAny": true,
 		"preserveConstEnums": true,
 		"sourceMap": true,
 		"allowJs": true,
 		"incremental": true,
-		"baseUrl": "./src"
+		"baseUrl": "./src",
 	},
 	"include": [
 		"src/**/*.ts",
 		"tests/**/*.ts"
-	]
+	],
+	"ts-node": {
+		"require": [ "tsconfig-paths/register" ]
+	}
 }
