@@ -1,27 +1,23 @@
-import { describe, it } from 'mocha'
-import { expect } from 'chai'
+import * as assert from 'assert'
+import test from 'node:test';
 import { broker, EventChannel } from 'broker'
 
-describe('Test broker', () => {
-	it('fire', () => {
+test('test broker', (t) => {
+	broker.newChannel('myChannel')
 
-		broker.newChannel('myChannel')
+	let myChannel: EventChannel = broker.myChannel
 
-		let myChannel: EventChannel = broker.myChannel
+	let receivedEvent: any;
 
-		let receivedEvent: any;
-
-		myChannel.addHandler(e => {
-			receivedEvent = e
-		})
-
-		myChannel.fire({
-			name: 'eventName',
-			data: 3
-		})
-
-		expect(receivedEvent.name).to.equal('eventName')
-		expect(receivedEvent.data).to.equal(3)
-
+	myChannel.addHandler(e => {
+		receivedEvent = e
 	})
-})
+
+	myChannel.fire({
+		name: 'eventName',
+		data: 3
+	})
+
+	assert.strictEqual(receivedEvent.name, 'eventName')
+	assert.strictEqual(receivedEvent.data, 3)
+});
