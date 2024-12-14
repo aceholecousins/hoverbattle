@@ -25,16 +25,17 @@ export class PlanckRigidBody implements RigidBody {
 			userData: config.actor
 		});
 
+		for (const shapeCfg of config.shapes) {
+			const shape = makePlanckShape(shapeCfg);
+			this.body.createFixture(shape, { density: 1 });
+		}
+
 		this.body.setMassData({
 			mass: config.mass,
 			center: new Vec2(0, 0),
 			I: config.inertia
 		});
 
-		for (const shapeCfg of config.shapes) {
-			const shape = makePlanckShape(shapeCfg);
-			this.body.createFixture(shape, { density: 1 });
-		}
 	}
 
 	getActor() {
@@ -58,14 +59,24 @@ export class PlanckRigidBody implements RigidBody {
 	}
 
 	setInertia(inertia: number) {
-		this.body.setMassData({
-			mass: this.body.getMass(),
-			center: new Vec2(0, 0),
-			I: inertia
-		});
+		if (inertia === Infinity) {
+			this.body.setFixedRotation(true)
+		}
+		else {
+			this.body.setMassData({
+				mass: this.body.getMass(),
+				center: new Vec2(0, 0),
+				I: inertia
+			});
+		}
 	}
 	getInertia() {
-		return this.body.getInertia();
+		if (this.body.isFixedRotation()) {
+			return Infinity;
+		}
+		else {
+			return this.body.getInertia();
+		}
 	}
 
 	setPosition(position: Vector2) {
