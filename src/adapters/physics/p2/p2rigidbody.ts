@@ -1,6 +1,6 @@
 import * as p2 from "p2"
 import { Vector2 } from "math"
-import { makeP2Shape } from "./p2shapes"
+import { addShapeToBody } from "./p2shapes"
 import { RigidBody, RigidBodyConfig } from "game/physics/rigidbody"
 import { ExtendedP2Body } from "./p2extensions"
 
@@ -30,9 +30,8 @@ export class P2RigidBody implements RigidBody {
 		config.actor = this.p2body.actor
 
 		for (let shapeCfg of config.shapes) {
-			let shape = makeP2Shape(shapeCfg)
 			//this.shapes.push(shape)
-			this.p2body.addShape(shape)
+			addShapeToBody(shapeCfg, this.p2body)
 		}
 
 		this.p2world.addBody(this.p2body)

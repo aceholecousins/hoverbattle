@@ -3,6 +3,8 @@ import { Shape } from "./shapes"
 import { copyIfPresent } from "utils/general"
 import { Actor } from "game/entities/actor"
 
+// center of mass is at (0, 0), shapes need to be positioned accordingly
+
 export interface RigidBody {
 	kind: "rigidbody"
 

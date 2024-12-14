@@ -123,41 +123,20 @@ export class P2Physics implements Physics {
 					}
 						break;
 					case (p2.Shape.CONVEX): {
-						let colors = [
-							{ r: 1, g: 0.2, b: 0.2 },
-							{ r: 0.2, g: 1, b: 0.2 },
-							{ r: 0.2, g: 0.2, b: 1 }
-						]
 						let convex = shape as p2.Convex
-						let center = convex.centerOfMass
-						for (let inner of [false, true]) {
-							const points: Vector3[] = [];
-							for (let i = 0; i < convex.vertices.length; i++) {
-								const xy :[number, number] = [0, 0]
-								if (inner) {
-									xy[0] = convex.vertices[i][0] * 0.9 + center[0] * 0.1;
-									xy[1] = convex.vertices[i][1] * 0.9 + center[1] * 0.1;
-								}
-								else {
-									p2.vec2.copy(xy, convex.vertices[i]);
-								}
-								p2.vec2.rotate(xy, xy, convex.angle);
-								p2.vec2.add(xy, xy, convex.position);
-								body.toWorldFrame(xy, xy)
-								points.push(new Vector3(xy[0], xy[1], 0))
-							}
-							if (points.length > 0) {
-								points.push(points[0])
-							}
-							if (inner) {
-								for (let i = 0; i < points.length - 1; i++) {
-									drawLine([points[i], points[i + 1]], colors[i % 3]);
-								}
-							}
-							else {
-								drawLine(points, { r: 1, g: 1, b: 1 });
-							}
+						const points: Vector3[] = [];
+						for (let i = 0; i < convex.vertices.length; i++) {
+							const xy: [number, number] = [0, 0]
+							p2.vec2.copy(xy, convex.vertices[i]);
+							p2.vec2.rotate(xy, xy, convex.angle);
+							p2.vec2.add(xy, xy, convex.position);
+							body.toWorldFrame(xy, xy)
+							points.push(new Vector3(xy[0], xy[1], 0))
 						}
+						if (points.length > 0) {
+							points.push(points[0])
+						}
+						drawLine(points, { r: 1, g: 1, b: 1 });
 					}
 						break;
 				}
