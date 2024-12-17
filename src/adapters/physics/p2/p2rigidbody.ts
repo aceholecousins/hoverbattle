@@ -158,7 +158,7 @@ export class P2RigidBody implements RigidBody {
 		this.p2body.angularForce += torque
 	}
 
-	applyAngularMomentum(angularMomentum: number) {
+	applyAngularImpulse(angularMomentum: number) {
 		this.p2body.angularVelocity += this.p2body.invInertia * angularMomentum
 	}
 

@@ -9,6 +9,8 @@ export interface RigidBody {
 	kind: "rigidbody"
 
 	getActor(): Actor
+	isStatic(): boolean
+	hasFixedRotation(): boolean
 
 	setMass(mass: number): void
 	getMass(): number
@@ -36,12 +38,12 @@ export interface RigidBody {
 	setAngularDamping(damping: number): void
 	getAngularDamping(): number
 
-	applyForce(force: Vector2, localPointOfApplication?: Vector2): void
-	applyLocalForce(force: Vector2, localPointOfApplication?: Vector2): void
-	applyImpulse(impulse: Vector2, localPointOfApplication?: Vector2): void
-	applyLocalImpulse(impulse: Vector2, localPointOfApplication?: Vector2): void
+	applyGlobalForce(force: Vector2, point?: Vector2): void
+	applyLocalForce(force: Vector2, point?: Vector2): void
+	applyGlobalImpulse(impulse: Vector2, point?: Vector2): void
+	applyLocalImpulse(impulse: Vector2, point?: Vector2): void
 	applyTorque(torque: number): void
-	applyAngularMomentum(angularMomentum: number): void
+	applyAngularImpulse(angularMomentum: number): void
 
 	destroy(): void
 }
@@ -50,6 +52,9 @@ export class RigidBodyConfig {
 	actor: Actor
 
 	shapes: Shape[]
+
+	static = false
+	fixedRotation = false
 
 	mass = 1
 	inertia = 1
@@ -65,7 +70,8 @@ export class RigidBodyConfig {
 	constructor(config: Pick<RigidBodyConfig, 'actor'> & Partial<RigidBodyConfig>) {
 		this.actor = config.actor
 		copyIfPresent(this, config, [
-			"shapes", "mass", "position", "velocity", "damping",
+			"shapes", "static", "fixedRotation", 
+			"mass", "inertia", "position", "velocity", "damping",
 			"angle", "angularVelocity", "angularDamping"
 		])
 	}

@@ -92,7 +92,7 @@ export class Glider extends Vehicle {
 		let threshold = 0.0001;
 		if (Math.abs(delta) > threshold) {
 			let sign = Math.sign(delta)
-			this.body.applyAngularMomentum(-sign * 0.3)
+			this.body.applyAngularImpulse(-sign * 0.3)
 		}
 	}
 }

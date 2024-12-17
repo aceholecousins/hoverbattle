@@ -118,3 +118,60 @@ function frobnicate({reqA, reqB, optC=13, optD=37}:FrobCfg){
 }
 frobnicate({reqA:1, reqB:2, optC:3})
 // - the only little problem is that each function can define its own defaults
+
+// ... and then I didn't actually use the final way. Instead, I wrote an awkward
+// copyIfPresent function and used it like this:
+
+export class SceneNodeConfig {
+	kind: string
+	position = [0, 0, 0]
+	orientation = [0, 0, 0, 1]
+	scale: number = 1
+
+	constructor(config: Pick<SceneNodeConfig, 'kind'> & Partial<SceneNodeConfig>) {
+		this.kind = config.kind
+		copyIfPresent(this, config, ["position", "orientation", "scale"])
+	}
+}
+
+// However, now that ChatGPT exists, we found a new solution that solves it all:
+
+type RequiredKeys<T> = {
+    [K in keyof T]: T[K] extends Required<T>[K] ? K : never;
+}[keyof T];
+
+type RequiredWithPartial<T> = Pick<T, RequiredKeys<T>> & Partial<T>;
+
+class Frob5Cfg{
+    reqA!: number
+    reqB!: number
+    optC?: number = 13
+    optD?: number = 37
+    constructor(cfg: RequiredWithPartial<Frob5Cfg>){
+        Object.assign(this, cfg)
+    }
+}
+function frobnicate5(cfg: Frob5Cfg){
+    console.log(cfg.reqA, cfg.reqB, cfg.optC, cfg.optD)
+}
+frobnicate5(new Frob5Cfg({reqA:1, reqB:2, optC:0}))
+
+// we do still have the slightly awkward constructor call...
+// here is another way:
+
+class Frob6Cfg{
+    reqA!: number
+    reqB!: number
+    optC?: number = 13
+    optD?: number = 37
+}
+const frob6Defaults = new Frob6Cfg()
+
+function frobnicate6(cfg: RequiredWithPartial<Frob6Cfg>){
+    cfg = {...frob6Defaults, ...cfg}
+    console.log(cfg.reqA, cfg.reqB, cfg.optC, cfg.optD)
+}
+frobnicate6({reqA:1, reqB:2, optC:0})
+
+// HOWEVER, cfg = {...frob6Defaults, ...cfg} is crucial and TS will not complain
+// if you forget it

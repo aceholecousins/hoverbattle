@@ -15,7 +15,8 @@ export class PlanckRigidBody implements RigidBody {
 		this.world = world;
 
 		this.body = this.world.createBody({
-			type: (config.mass === Infinity ? "static" : "dynamic") as BodyType,
+			type: (config.static ? "static" : "dynamic") as BodyType,
+			fixedRotation: config.fixedRotation,
 			position: toVec2(config.position),
 			angle: config.angle,
 			linearVelocity: toVec2(config.velocity),
@@ -41,42 +42,33 @@ export class PlanckRigidBody implements RigidBody {
 	getActor() {
 		return this.body.getUserData() as Actor
 	}
+	isStatic(){
+		return this.body.getType() === "static";
+	}
+	hasFixedRotation(){
+		return this.body.isFixedRotation();
+	}
 
 	setMass(mass: number) {
-		if (mass === Infinity) {
-			this.body.setType("static");
-		} else {
-			this.body.setType("dynamic");
-			this.body.setMassData({
-				mass,
-				center: new Vec2(0, 0),
-				I: this.body.getInertia()
-			});
-		}
+		this.body.setMassData({
+			mass,
+			center: new Vec2(0, 0),
+			I: this.body.getInertia()
+		});
 	}
 	getMass() {
-		return this.body.getType() === "static" ? Infinity : this.body.getMass();
+		return this.body.getMass()
 	}
 
 	setInertia(inertia: number) {
-		if (inertia === Infinity) {
-			this.body.setFixedRotation(true)
-		}
-		else {
-			this.body.setMassData({
-				mass: this.body.getMass(),
-				center: new Vec2(0, 0),
-				I: inertia
-			});
-		}
+		this.body.setMassData({
+			mass: this.body.getMass(),
+			center: new Vec2(0, 0),
+			I: inertia
+		})
 	}
 	getInertia() {
-		if (this.body.isFixedRotation()) {
-			return Infinity;
-		}
-		else {
-			return this.body.getInertia();
-		}
+		return this.body.getInertia();
 	}
 
 	setPosition(position: Vector2) {
@@ -129,29 +121,32 @@ export class PlanckRigidBody implements RigidBody {
 		return this.body.getAngularDamping();
 	}
 
-	applyForce(force: Vector2, localPoint: Vector2 = new Vector2(0, 0)) {
-		this.body.applyForce(new Vec2(force.x, force.y), new Vec2(localPoint.x, localPoint.y));
+	applyGlobalForce(force: Vector2, point: Vector2 = new Vector2(0, 0)) {
+		this.body.applyForce(new Vec2(force.x, force.y), new Vec2(point.x, point.y), true);
 	}
 
-	applyLocalForce(force: Vector2, localPoint: Vector2 = new Vector2(0, 0)) {
-		this.body.applyForceToCenter(new Vec2(force.x, force.y));
+	applyLocalForce(force: Vector2, point: Vector2 = new Vector2(0, 0)) {
+		let globalPoint = this.body.getWorldPoint(new Vec2(point.x, point.y));
+		let globalForce = this.body.getWorldVector(new Vec2(force.x, force.y));
+		this.body.applyForce(globalForce, globalPoint, true)
 	}
 
-	applyImpulse(impulse: Vector2, localPoint: Vector2 = new Vector2(0, 0)) {
-		this.body.applyLinearImpulse(new Vec2(impulse.x, impulse.y), new Vec2(localPoint.x, localPoint.y), true);
+	applyGlobalImpulse(impulse: Vector2, point: Vector2 = new Vector2(0, 0)) {
+		this.body.applyLinearImpulse(new Vec2(impulse.x, impulse.y), new Vec2(point.x, point.y), true);
 	}
 
-	applyLocalImpulse(impulse: Vector2, localPoint: Vector2 = new Vector2(0, 0)) {
-		this.body.applyLinearImpulse(new Vec2(impulse.x, impulse.y), this.body.getWorldCenter(), true);
+	applyLocalImpulse(impulse: Vector2, point: Vector2 = new Vector2(0, 0)) {
+		let globalPoint = this.body.getWorldPoint(new Vec2(point.x, point.y));
+		let globalImplulse = this.body.getWorldVector(new Vec2(impulse.x, impulse.y));
+		this.body.applyLinearImpulse(globalImplulse, globalPoint, true);
 	}
 
 	applyTorque(torque: number) {
-		this.body.applyTorque(torque);
+		this.body.applyTorque(torque, true);
 	}
 
-	applyAngularMomentum(angularMomentum: number) {
-		const inertia = this.body.getInertia();
-		this.body.setAngularVelocity(this.body.getAngularVelocity() + angularMomentum / inertia);
+	applyAngularImpulse(angularMomentum: number) {
+		this.body.applyAngularImpulse(angularMomentum, true);
 	}
 
 	destroy() {

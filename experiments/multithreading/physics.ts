@@ -43,7 +43,7 @@ interface RigidBody {
 	/*
 	applyImpulse(impulse:Vec2):RigidBody
 	applyTorque(torque:number):RigidBody
-	applyAngularMomentum(angularMomentum:number):RigidBody
+	applyAngularImpulse(angularMomentum:number):RigidBody
 	*/
 }
 
