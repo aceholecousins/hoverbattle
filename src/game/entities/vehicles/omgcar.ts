@@ -25,12 +25,12 @@ export class OmgCar extends Vehicle {
 		engine: Engine
 	) {
 		super()
-		this.body = engine.physics.addRigidBody(new RigidBodyConfig({
+		this.body = engine.physics.addRigidBody({
 			actor: this,
 			shapes: [new Circle(1)],
 			damping: CAR_DRAG,
 			angularDamping: 0
-		}))
+		})
 		this.body.setPosition(position)
 		this.mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
 		this.mesh.setScale(VEHICLE_RADIUS)

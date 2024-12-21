@@ -25,12 +25,12 @@ export class PowerupBox extends Entity {
 	) {
 		super()
 
-		this.body = engine.physics.addRigidBody(new RigidBodyConfig({
+		this.body = engine.physics.addRigidBody({
 			actor: this,
 			shapes: [new Circle(POWERUP_BOX_SIZE * 0.6)],
 			damping: 0.5,
 			angularDamping: 0.5
-		}))
+		})
 		this.body.setPosition(position)
 		this.body.setAngle(Math.random() * Math.PI * 2)
 		this.mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))

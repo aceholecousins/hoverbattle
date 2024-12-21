@@ -2,7 +2,7 @@ import { World, Body, BodyType, Shape, Vec2 } from "planck";
 import { Vector2 } from "math";
 import { toVec2 } from "./planckutils";
 import { makePlanckShape } from "./planckshapes";
-import { RigidBody, RigidBodyConfig } from "game/physics/rigidbody";
+import { RigidBody, RigidBodyConfig, rigidBodyDefaults } from "game/physics/rigidbody";
 import { Actor } from "game/entities/actor";
 
 export class PlanckRigidBody implements RigidBody {
@@ -12,29 +12,31 @@ export class PlanckRigidBody implements RigidBody {
 	toBeDeleted: boolean = false;
 
 	constructor(world: World, config: RigidBodyConfig) {
+		let cfg: Required<RigidBodyConfig> = { ...rigidBodyDefaults, ...config };
+
 		this.world = world;
 
 		this.body = this.world.createBody({
-			type: (config.static ? "static" : "dynamic") as BodyType,
-			fixedRotation: config.fixedRotation,
-			position: toVec2(config.position),
-			angle: config.angle,
-			linearVelocity: toVec2(config.velocity),
-			angularVelocity: config.angularVelocity,
-			linearDamping: config.damping,
-			angularDamping: config.angularDamping,
-			userData: config.actor
+			type: (cfg.static ? "static" : "dynamic") as BodyType,
+			fixedRotation: cfg.fixedRotation,
+			position: toVec2(cfg.position),
+			angle: cfg.angle,
+			linearVelocity: toVec2(cfg.velocity),
+			angularVelocity: cfg.angularVelocity,
+			linearDamping: cfg.damping,
+			angularDamping: cfg.angularDamping,
+			userData: cfg.actor
 		});
 
-		for (const shapeCfg of config.shapes) {
+		for (const shapeCfg of cfg.shapes) {
 			const shape = makePlanckShape(shapeCfg);
 			this.body.createFixture(shape, { density: 1 });
 		}
 
 		this.body.setMassData({
-			mass: config.mass,
+			mass: cfg.mass,
 			center: new Vec2(0, 0),
-			I: config.inertia
+			I: cfg.inertia
 		});
 
 	}
@@ -42,10 +44,10 @@ export class PlanckRigidBody implements RigidBody {
 	getActor() {
 		return this.body.getUserData() as Actor
 	}
-	isStatic(){
+	isStatic() {
 		return this.body.getType() === "static";
 	}
-	hasFixedRotation(){
+	hasFixedRotation() {
 		return this.body.isFixedRotation();
 	}
 

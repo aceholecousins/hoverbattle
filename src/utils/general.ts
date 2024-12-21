@@ -8,7 +8,7 @@ type OptionalKeys<T> = { [K in keyof T]-?:
 	({} extends { [P in K]: T[K] } ? K : never)
 }[keyof T]
 
-export type Optionals<T> = Required<Pick<T, OptionalKeys<T>>>
+export type Optionals<T> = Pick<T, OptionalKeys<T>>
 
 export function copy<T1, T2, K extends keyof T1 & keyof T2>(
 	target: T1, source: T2, keys: K[]) {

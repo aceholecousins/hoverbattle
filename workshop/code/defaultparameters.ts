@@ -157,6 +157,8 @@ function frobnicate5(cfg: Frob5Cfg){
 frobnicate5(new Frob5Cfg({reqA:1, reqB:2, optC:0}))
 
 // we do still have the slightly awkward constructor call...
+// uh, oh, frobnicate5({reqA:1, reqB:2}) will fail silently
+
 // here is another way:
 
 class Frob6Cfg{
@@ -175,3 +177,5 @@ frobnicate6({reqA:1, reqB:2, optC:0})
 
 // HOWEVER, cfg = {...frob6Defaults, ...cfg} is crucial and TS will not complain
 // if you forget it
+
+// I asked on StackOverflow: https://stackoverflow.com/questions/79289563/elegant-way-to-handle-common-parameters-across-multiple-functions-in-typescript

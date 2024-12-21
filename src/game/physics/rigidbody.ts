@@ -1,6 +1,6 @@
 import { Vector2 } from "math"
 import { Shape } from "./shapes"
-import { copyIfPresent } from "utils/general"
+import { Optionals } from "utils/general"
 import { Actor } from "game/entities/actor"
 
 // center of mass is at (0, 0), shapes need to be positioned accordingly
@@ -48,31 +48,36 @@ export interface RigidBody {
 	destroy(): void
 }
 
-export class RigidBodyConfig {
+export interface RigidBodyConfig {
 	actor: Actor
 
-	shapes: Shape[]
+	shapes?: Shape[]
 
-	static = false
-	fixedRotation = false
+	static?: boolean
+	fixedRotation?: boolean
 
-	mass = 1
-	inertia = 1
+	mass?: number
+	inertia?: number
 
-	position = new Vector2(0, 0)
-	velocity = new Vector2(0, 0)
-	damping = 0.1
+	position?: Vector2
+	velocity?: Vector2
+	damping?: number
 
-	angle = 0
-	angularVelocity = 0
-	angularDamping = 0.1
+	angle?: number
+	angularVelocity?: number
+	angularDamping?: number
+}
 
-	constructor(config: Pick<RigidBodyConfig, 'actor'> & Partial<RigidBodyConfig>) {
-		this.actor = config.actor
-		copyIfPresent(this, config, [
-			"shapes", "static", "fixedRotation", 
-			"mass", "inertia", "position", "velocity", "damping",
-			"angle", "angularVelocity", "angularDamping"
-		])
-	}
+export let rigidBodyDefaults: Required<Optionals<RigidBodyConfig>> = {
+	shapes: [],
+	static: false,
+	fixedRotation: false,
+	mass: 1,
+	inertia: 1,
+	position: new Vector2(0, 0),
+	velocity: new Vector2(0, 0),
+	damping: 0.1,
+	angle: 0,
+	angularVelocity: 0,
+	angularDamping: 0.1
 }

@@ -37,13 +37,13 @@ export class Glider extends Vehicle {
 			triangles.push(new Triangle(triangle3to2(tri)))
 		}
 
-		this.body = engine.physics.addRigidBody(new RigidBodyConfig({
+		this.body = engine.physics.addRigidBody({
 			actor: this,
 			// shapes: triangles,
 			shapes: [new Circle(VEHICLE_RADIUS)],
 			damping: GLIDER_DAMPING,
 			angularDamping: GLIDER_ANGULAR_DAMPING
-		}))
+		})
 		this.body.setPosition(position)
 		this.mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
 		this.mesh.setScale(VEHICLE_RADIUS)

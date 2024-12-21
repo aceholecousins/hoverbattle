@@ -52,14 +52,13 @@ export class Missile extends Entity {
 		this.mesh.setAccentColor1({ r: 1, g: 1, b: 1 })
 		this.mesh.setAccentColor2(parent.player.color)
 
-		const bodyCfg = new RigidBodyConfig({
+		this.body = engine.physics.addRigidBody({
 			actor: this,
 			shapes: [new Circle(MISSILE_RADIUS)],
 			mass: MISSILE_MASS,
 			damping: MISSILE_DAMPING,
 			angularDamping: MISSILE_ANGULAR_DAMPING
 		})
-		this.body = engine.physics.addRigidBody(bodyCfg)
 		this.body.setPosition(position)
 		this.body.setAngle(angle)
 

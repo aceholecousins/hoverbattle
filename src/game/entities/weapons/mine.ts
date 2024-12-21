@@ -41,14 +41,13 @@ export class Mine extends Entity {
 			}))
 		this.mesh.setBaseColor({ r: 0, g: 0, b: 0 })
 
-		const bodyCfg = new RigidBodyConfig({
+		this.body = engine.physics.addRigidBody({
 			actor: this,
 			shapes: [new Circle(MINE_RADIUS)],
 			mass: MINE_MASS,
 			damping: MINE_DAMPING,
 			angularDamping: MINE_ANGULAR_DAMPING
 		})
-		this.body = engine.physics.addRigidBody(bodyCfg)
 		this.body.copyPosition(this.parent.body)
 
 		this.collidesWithParent = false

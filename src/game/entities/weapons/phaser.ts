@@ -33,13 +33,12 @@ export class PhaserShot extends Entity {
 		this.mesh.setAccentColor1({ r: 1, g: 1, b: 1 })
 		this.mesh.setPositionZ(0.1)
 
-		const bodyCfg = new RigidBodyConfig({
+		this.body = engine.physics.addRigidBody({
 			actor: this,
 			shapes: [new Circle(0.3)],
 			damping: 0,
 			angularDamping: 0
 		})
-		this.body = engine.physics.addRigidBody(bodyCfg)
 		this.body.setPosition(position)
 		this.update(0)
 	}

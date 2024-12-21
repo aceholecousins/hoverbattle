@@ -22,13 +22,11 @@ export async function loadArena(
 
 	for (let tri of (meta.collision as Triangle3[])) {
 		let arenaPart = new Entity()
-		arenaPart.body = engine.physics.addRigidBody(
-			new RigidBodyConfig({
-				actor: arenaPart,
-				mass: Infinity,
-				shapes: [new Triangle(triangle3to2(tri))]
-			})
-		)
+		arenaPart.body = engine.physics.addRigidBody({
+			actor: arenaPart,
+			mass: Infinity,
+			shapes: [new Triangle(triangle3to2(tri))]
+		})
 		arenaParts.push(arenaPart)
 	}
 

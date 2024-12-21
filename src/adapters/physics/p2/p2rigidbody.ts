@@ -1,7 +1,7 @@
 import * as p2 from "p2"
 import { Vector2 } from "math"
 import { addShapeToBody } from "./p2shapes"
-import { RigidBody, RigidBodyConfig } from "game/physics/rigidbody"
+import { RigidBody, RigidBodyConfig, rigidBodyDefaults } from "game/physics/rigidbody"
 import { ExtendedP2Body } from "./p2extensions"
 
 export class P2RigidBody implements RigidBody {
@@ -12,24 +12,26 @@ export class P2RigidBody implements RigidBody {
 	toBeDeleted: boolean = false
 
 	constructor(p2world: p2.World, config: RigidBodyConfig) {
+		let cfg: Required<RigidBodyConfig> = { ...rigidBodyDefaults, ...config }
+
 		this.p2world = p2world
 
 		this.p2body = <ExtendedP2Body>new p2.Body() // mass set to 1 so the body is considered DYNAMIC
-		this.p2body.actor = config.actor
+		this.p2body.actor = cfg.actor
 
-		delete config.actor // delete temporarily // TODO
+		delete cfg.actor // delete temporarily // TODO
 
-		this.setMass(config.mass)
-		this.setPosition(config.position)
-		this.setVelocity(config.velocity)
-		this.setDamping(config.damping)
-		this.setAngle(config.angle)
-		this.setAngularVelocity(config.angularVelocity)
-		this.setAngularDamping(config.angularDamping)
+		this.setMass(cfg.mass)
+		this.setPosition(cfg.position)
+		this.setVelocity(cfg.velocity)
+		this.setDamping(cfg.damping)
+		this.setAngle(cfg.angle)
+		this.setAngularVelocity(cfg.angularVelocity)
+		this.setAngularDamping(cfg.angularDamping)
 
-		config.actor = this.p2body.actor
+		cfg.actor = this.p2body.actor
 
-		for (let shapeCfg of config.shapes) {
+		for (let shapeCfg of cfg.shapes) {
 			//this.shapes.push(shape)
 			addShapeToBody(shapeCfg, this.p2body)
 		}
@@ -40,19 +42,19 @@ export class P2RigidBody implements RigidBody {
 	getActor() {
 		return this.p2body.actor
 	}
+	isStatic(){
+		return this.p2body.type === p2.Body.STATIC
+	}
+	hasFixedRotation(): boolean {
+		return this.p2body.fixedRotation
+	}
 
 	setMass(mass: number) {
-		if (mass === Infinity) {
-			this.p2body.type = p2.Body.STATIC
-		}
-		else {
-			this.p2body.type = p2.Body.DYNAMIC
-			this.p2body.mass = mass
-		}
+		this.p2body.mass = mass
 		this.p2body.updateMassProperties()
 	}
 	getMass() {
-		return this.p2body.type === p2.Body.STATIC ? Infinity : this.p2body.mass
+		return  this.p2body.mass
 	}
 
 	setInertia(inertia: number): void {
@@ -114,43 +116,43 @@ export class P2RigidBody implements RigidBody {
 	}
 
 
-	applyForce(
+	applyGlobalForce(
 		force: Vector2,
-		localPointOfApplication: Vector2 = new Vector2(0, 0)
+		point: Vector2 = new Vector2(0, 0)
 	) {
 		this.p2body.applyForce(
 			[force.x, force.y],
-			[localPointOfApplication.x, localPointOfApplication.y]
+			[point.x, point.y]
 		)
 	}
 
 	applyLocalForce(
 		force: Vector2,
-		localPointOfApplication: Vector2 = new Vector2(0, 0)
+		point: Vector2 = new Vector2(0, 0)
 	) {
 		this.p2body.applyForceLocal(
 			[force.x, force.y],
-			[localPointOfApplication.x, localPointOfApplication.y]
+			[point.x, point.y]
 		)
 	}
 
-	applyImpulse(
+	applyGlobalImpulse(
 		impulse: Vector2,
-		localPointOfApplication: Vector2 = new Vector2(0, 0)
+		point: Vector2 = new Vector2(0, 0)
 	) {
 		this.p2body.applyImpulse(
 			[impulse.x, impulse.y],
-			[localPointOfApplication.x, localPointOfApplication.y]
+			[point.x, point.y]
 		)
 	}
 
 	applyLocalImpulse(
 		impulse: Vector2,
-		localPointOfApplication: Vector2 = new Vector2(0, 0)
+		point: Vector2 = new Vector2(0, 0)
 	) {
 		this.p2body.applyImpulseLocal(
 			[impulse.x, impulse.y],
-			[localPointOfApplication.x, localPointOfApplication.y]
+			[point.x, point.y]
 		)
 	}
 

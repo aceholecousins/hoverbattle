@@ -24,7 +24,7 @@ function assertApprox(actual: number, expected: number, message: string) {
 	}
 }
 
-let testBodyConfig = new RigidBodyConfig({
+let testBodyConfig:RigidBodyConfig = {
 	actor: null,
 	shapes: [new Circle(1)],
 	static: false,
@@ -36,7 +36,7 @@ let testBodyConfig = new RigidBodyConfig({
 	angle: 0,
 	angularVelocity: 0,
 	angularDamping: 0
-})
+}
 
 test('initialization', (t) => {
 
@@ -44,7 +44,7 @@ test('initialization', (t) => {
 
 	let testActor = { roles: new RoleSet() }
 
-	let body = physics.addRigidBody(new RigidBodyConfig({
+	let body = physics.addRigidBody({
 		actor: testActor,
 		shapes: [new Circle(1)],
 		static: false,
@@ -56,7 +56,7 @@ test('initialization', (t) => {
 		angle: 0.5,
 		angularVelocity: 10,
 		angularDamping: 11
-	}))
+	})
 
 	assert.equal(body.getActor(), testActor, "actor")
 	assert.equal(body.getMass(), 2, "mass")

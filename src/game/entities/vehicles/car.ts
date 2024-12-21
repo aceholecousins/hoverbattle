@@ -29,12 +29,12 @@ export class Car extends Vehicle {
 		engine: Engine
 	) {
 		super()
-		this.body = engine.physics.addRigidBody(new RigidBodyConfig({
+		this.body = engine.physics.addRigidBody({
 			actor: this,
 			shapes: [new Circle(1)],
 			damping: 0,
 			angularDamping: 0
-		}))
+		})
 		this.body.setPosition(position)
 		this.mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
 		this.mesh.setScale(VEHICLE_RADIUS)

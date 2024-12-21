@@ -38,14 +38,13 @@ export class PowerShield extends Entity {
 		this.currentAccentColor = colorLerp(parent.player.color, { r: 0, g: 0, b: 0 }, 0.5)
 		this.targetAccentColor = colorLerp(parent.player.color, { r: 0, g: 0, b: 0 }, 0.5)
 
-		const bodyCfg = new RigidBodyConfig({
+		this.body = engine.physics.addRigidBody({
 			actor: this,
 			shapes: [new Circle(POWERSHIELD_RADIUS)],
 			mass: 0.01,
 			damping: 0,
 			angularDamping: 0
 		})
-		this.body = engine.physics.addRigidBody(bodyCfg)
 		this.body.copyPosition(this.parent.body)
 		this.attachment = engine.physics.attach(this.parent.body, this.body)
 		this.attachment.setCanCollide(false)

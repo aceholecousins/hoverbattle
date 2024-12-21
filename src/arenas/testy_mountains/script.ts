@@ -60,7 +60,7 @@ export let createMatch: MatchFactory = async function (engine) {
 		shield.flash()
 		let impulse = other.body.getPosition().clone()
 			.sub(shield.body.getPosition()).setLength(30)
-		other.body.applyImpulse(impulse)
+		other.body.applyGlobalImpulse(impulse)
 	}
 	))
 

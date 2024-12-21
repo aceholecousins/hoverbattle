@@ -47,14 +47,13 @@ export class Barrel extends Entity {
 		this.mesh.setAccentColor2({ r: 0, g: 0, b: 0 })
 		this.mesh.setPositionZ(0.1)
 
-		const bodyCfg = new RigidBodyConfig({
+		this.body = engine.physics.addRigidBody({
 			actor: this,
 			shapes: [new Circle(BARREL_RADIUS)],
 			mass: 0.01,
 			damping: 0,
 			angularDamping: 0
 		})
-		this.body = engine.physics.addRigidBody(bodyCfg)
 
 		this.body.copyPosition(this.parent.body)
 		this.body.copyAngle(this.attachTo.body)
@@ -117,14 +116,13 @@ export class Drone extends Entity {
 		this.mesh.setAccentColor2(colorLerp(parent.player.color, { r: 0, g: 0, b: 0 }, 0.5))
 		this.mesh.setPositionZ(0.1)
 
-		const bodyCfg = new RigidBodyConfig({
+		this.body = engine.physics.addRigidBody({
 			actor: this,
 			shapes: [new Circle(DRONE_RADIUS)],
 			mass: 0.1,
 			damping: DRONE_DAMPING,
 			angularDamping: 0
 		})
-		this.body = engine.physics.addRigidBody(bodyCfg)
 		this.parent.onDispose(() => this.dispose())
 
 		this.body.copyPosition(this.parent.body)
@@ -161,7 +159,7 @@ export class Drone extends Entity {
 
 		let force = target.sub(this.body.getPosition())
 		force.multiplyScalar(5 * force.length())
-		this.body.applyForce(force)
+		this.body.applyGlobalForce(force)
 
 		this.mesh.setPositionXY(this.body.getPosition())
 		this.mesh.setAngle(this.time * 6.28)
@@ -232,13 +230,12 @@ export class NashwanShot extends Entity {
 		this.mesh.setAccentColor1(parent.player.color)
 		this.mesh.setPositionZ(0.1)
 
-		const bodyCfg = new RigidBodyConfig({
+		this.body = engine.physics.addRigidBody({
 			actor: this,
 			shapes: [new Circle(radius)],
 			damping: 0,
 			angularDamping: 0
 		})
-		this.body = engine.physics.addRigidBody(bodyCfg)
 		this.body.setPosition(position)
 		this.body.setAngle(angle)
 		this.body.setVelocity(new Vector2(
