@@ -1,5 +1,5 @@
 import * as assert from 'assert'
-import test from 'node:test';
+import { test } from 'node:test';
 import { broker, EventChannel } from 'broker'
 
 test('test broker', (t) => {

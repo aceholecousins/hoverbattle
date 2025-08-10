@@ -3,7 +3,7 @@ import { P2Physics } from "adapters/physics/p2/p2physics"
 import { PlanckPhysics } from "adapters/physics/planck/planckphysics"
 
 import * as assert from 'assert'
-import test from 'node:test';
+import { test } from 'node:test';
 import { Circle } from "game/physics/shapes";
 import { Vector2 } from "math";
 

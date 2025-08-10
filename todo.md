@@ -47,6 +47,7 @@ Features:
 
 * build a community :)
 
+* crate texture might not be free
 
 for Dani:
 
