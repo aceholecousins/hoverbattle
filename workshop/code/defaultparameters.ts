@@ -179,3 +179,24 @@ frobnicate6({reqA:1, reqB:2, optC:0})
 // if you forget it
 
 // I asked on StackOverflow: https://stackoverflow.com/questions/79289563/elegant-way-to-handle-common-parameters-across-multiple-functions-in-typescript
+
+// latest solution:
+
+
+type Defaults<T> = { [K in keyof T as undefined extends T[K] ? K : never]-?: T[K]; };
+
+interface Config {
+    req: number
+    opt?: number
+}
+
+const configDefaults: Defaults<Config> = {
+    opt: 5
+}
+
+function frobnicateA(config: Config) {
+    let cfg:Required<Config> = { ...configDefaults, ...config }
+    console.log(cfg.req, cfg.opt)
+}
+
+frobnicateA({ req: 1, opt: 2 })
