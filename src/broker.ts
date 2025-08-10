@@ -18,16 +18,16 @@ class EventChannel {
 		})
 	}
 
-	fetch(request: any) {
-		let responses: any[] = []
-		this.handlers.forEach(function (handler) {
-			let response: any = handler(request)
-			if (response !== undefined) {
-				responses.push(response)
-			}
-		})
-		return responses
-	}
+	// fetch(request: any) {
+	// 	let responses: any[] = []
+	// 	this.handlers.forEach(function (handler) {
+	// 		let response: any = handler(request)
+	// 		if (response !== undefined) {
+	// 			responses.push(response)
+	// 		}
+	// 	})
+	// 	return responses
+	// }
 }
 
 let broker: any = {}
