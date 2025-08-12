@@ -72,10 +72,8 @@ export class LaserBeam extends Visual {
 	) {
 		let p1 = start
 		let p2 = vec2FromDir(angle).multiplyScalar(maxDistance)
-		let hits = this.engine.physics.rayCast(p1, p2, true)
-		let hit = null
-		if (hits.length > 0) {
-			hit = hits[0]
+		let hit = this.engine.physics.rayCast(p1, p2)
+		if (hit !== null) {
 			p2 = hit.position
 			this.hitSpeckle.setPosition(appendZ(p2, this.z + 0.1))
 			onHit(hit.actor)

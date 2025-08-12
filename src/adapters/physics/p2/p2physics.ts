@@ -3,7 +3,7 @@ import { RigidBodyConfig, RigidBody } from "game/physics/rigidbody"
 import { Physics, RayHit, Attachment } from "game/physics/physics"
 import { P2RigidBody } from "./p2rigidbody"
 import * as p2 from "p2"
-import { ExtendedP2World, ExtendedP2Body, collisionDispatcher } from "./p2extensions"
+import { ExtendedP2World, ExtendedP2Body, collisionDispatcher } from "./p2collisionhandling"
 import { CollisionOverride, CollisionHandler } from "game/physics/collision"
 import { Vector2, Vector3 } from "math"
 import { Color } from "utils/color"
@@ -55,31 +55,54 @@ export class P2Physics implements Physics {
 		}
 	}
 
-	rayCast(from: Vector2, to: Vector2, skipBackfaces: boolean): RayHit[] {
-		let hits: RayHit[] = []
+	// rayCast(from: Vector2, to: Vector2): RayHit[] { // reports all hits
+	// 	let hits: RayHit[] = []
+	// 	var ray = new p2.Ray({
+	// 		mode: p2.Ray.ALL,
+	// 		from: [from.x, from.y],
+	// 		to: [to.x, to.y],
+	// 		skipBackfaces: true,
+	// 		callback: function (result) {
+	// 			var position: [number, number] = [0, 0];
+	// 			result.getHitPoint(position, ray);
+	// 			hits.push({
+	// 				actor: (result.body as ExtendedP2Body).actor,
+	// 				position: new Vector2(position[0], position[1]),
+	// 				normal: new Vector2(result.normal[0], result.normal[1])
+	// 			})
+	// 		}
+	// 	});
+	// 	var result = new p2.RaycastResult();
+	// 	this.p2world.raycast(result, ray);
+	// 	hits.sort((a, b) => {
+	// 		const distA = from.distanceToSquared(a.position);
+	// 		const distB = from.distanceToSquared(b.position);
+	// 		return distA - distB;
+	// 	});
+	// 	return hits
+	// }
+
+	rayCast(from: Vector2, to: Vector2): RayHit | null { // reports closest hit
 		var ray = new p2.Ray({
-			mode: p2.Ray.ALL,
+			mode: p2.Ray.CLOSEST,
 			from: [from.x, from.y],
 			to: [to.x, to.y],
-			skipBackfaces,
-			callback: function (result) {
-				var position: [number, number] = [0, 0];
-				result.getHitPoint(position, ray);
-				hits.push({
-					actor: (result.body as ExtendedP2Body).actor,
-					position: new Vector2(position[0], position[1]),
-					normal: new Vector2(result.normal[0], result.normal[1])
-				})
-			}
+			skipBackfaces: true
 		});
-		var result = new p2.RaycastResult();
-		this.p2world.raycast(result, ray);
-		hits.sort((a, b) => {
-			const distA = from.distanceToSquared(a.position);
-			const distB = from.distanceToSquared(b.position);
-			return distA - distB;
-		});
-		return hits
+
+		var result = new p2.RaycastResult()
+		let hit = this.p2world.raycast(result, ray)
+		if (!hit){
+			return null
+		}
+		let position = p2.vec2.create()
+		result.getHitPoint(position, ray)
+
+		return {
+			actor: (result.body as ExtendedP2Body).actor,
+			position: new Vector2(position[0], position[1]),
+			normal: new Vector2(result.normal[0], result.normal[1])
+		}
 	}
 
 	registerCollisionOverride(override: CollisionOverride<any, any>) {

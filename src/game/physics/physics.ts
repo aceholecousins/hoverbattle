@@ -23,7 +23,8 @@ export interface Physics {
 	attach(bodyA: RigidBody, bodyB: RigidBody): Attachment
 	registerCollisionOverride(override: CollisionOverride<any, any>): void
 	registerCollisionHandler(handler: CollisionHandler<any, any>): void
-	rayCast(from: Vector2, to: Vector2, skipBackfaces: boolean): RayHit[]
+	// rayCast(from: Vector2, to: Vector2): RayHit[] // return all hits
+	rayCast(from: Vector2, to: Vector2): RayHit | null // return closest hit
 	step(dt: number): void
 	getTime(): number
 	debugDraw(drawLine: (points: Vector3[], color: Color) => void): void
