@@ -42,10 +42,10 @@ export class PlanckPhysics implements Physics {
 					let handler = handlers[roleA.bit | roleB.bit]
 					if (handler !== undefined) {
 						if (handler.roleA === roleA) {
-							this.collisionBuffer.push({handler, actorA, actorB})
+							this.collisionBuffer.push({ handler, actorA, actorB })
 						}
 						else {
-							this.collisionBuffer.push({handler, actorA: actorB, actorB: actorA})
+							this.collisionBuffer.push({ handler, actorA: actorB, actorB: actorA })
 						}
 					}
 				}
@@ -115,7 +115,7 @@ export class PlanckPhysics implements Physics {
 	step(dt: number) {
 		this.time += dt;
 		this.planckWorld.step(dt);
-		for(let collision of this.collisionBuffer) {
+		for (let collision of this.collisionBuffer) {
 			collision.handler.onCollision(collision.actorA, collision.actorB);
 		}
 		this.collisionBuffer = []
@@ -126,27 +126,36 @@ export class PlanckPhysics implements Physics {
 	}
 
 	debugDraw(drawLine: (points: Vector3[], color: Color) => void): void {
-		// for (let body = this.planckWorld.getBodyList(); body; body = body.getNext()) {
-		// 	for (let fixture = body.getFixtureList(); fixture; fixture = fixture.getNext()) {
-		// 		const shape = fixture.getShape();
-		// 		if (shape.getType() === "circle") {
-		// 			const circle = shape as planck.Circle;
-		// 			const center = body.getWorldPoint(circle.m_p);
-		// 			const radius = circle.m_radius;
-		// 			const numSegments = 16;
-		// 			const angleStep = (2 * Math.PI) / numSegments;
-		// 			const points: Vector3[] = [];
-		// 			for (let i = 0; i <= numSegments; i++) {
-		// 				const angle = i * angleStep;
-		// 				points.push(new Vector3(
-		// 					center.x + radius * Math.cos(angle),
-		// 					center.y + radius * Math.sin(angle),
-		// 					0
-		// 				));
-		// 			}
-		// 			drawLine(points, { r: 1, g: 1, b: 1 });
-		// 		}
-		// 	}
-		// }
+		for (let body = this.planckWorld.getBodyList(); body; body = body.getNext()) {
+			for (let fixture = body.getFixtureList(); fixture; fixture = fixture.getNext()) {
+				const shape = fixture.getShape();
+				if (shape.getType() === "circle") {
+					const circle = shape as planck.Circle;
+					const center = body.getWorldPoint(circle.m_p);
+					const radius = circle.m_radius;
+					const numSegments = 16;
+					const angleStep = (2 * Math.PI) / numSegments;
+					const points: Vector3[] = [];
+					for (let i = 0; i <= numSegments; i++) {
+						const angle = i * angleStep;
+						points.push(new Vector3(
+							center.x + radius * Math.cos(angle),
+							center.y + radius * Math.sin(angle),
+							0
+						));
+					}
+					drawLine(points, { r: 1, g: 1, b: 1 });
+				}
+				else if (shape.getType() === "polygon") {
+					const polygon = shape as planck.Polygon;
+					const vertices = polygon.m_vertices.map(v => body.getWorldPoint(v));
+					const points: Vector3[] = vertices.map(v => new Vector3(v.x, v.y, 0));
+					if (points.length > 0) {
+						points.push(points[0])
+					}
+					drawLine(points, { r: 1, g: 1, b: 1 });
+				}
+			}
+		}
 	}
 }

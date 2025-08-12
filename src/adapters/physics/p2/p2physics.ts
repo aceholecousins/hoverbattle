@@ -92,7 +92,7 @@ export class P2Physics implements Physics {
 
 		var result = new p2.RaycastResult()
 		let hit = this.p2world.raycast(result, ray)
-		if (!hit){
+		if (!hit) {
 			return null
 		}
 		let position = p2.vec2.create()
