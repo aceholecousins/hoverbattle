@@ -15,7 +15,7 @@ import { createMissileFactory } from "./missile"
 
 let BARREL_RADIUS = 0.5
 let DRONE_RADIUS = 0.6
-let DRONE_DAMPING = 0.5
+let DRONE_DAMPING = 0.7
 
 export class NashwanPowerup implements Powerup {
 	public readonly kind = "nashwan"

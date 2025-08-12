@@ -10,7 +10,7 @@ import { Vehicle, VEHICLE_RADIUS, VehicleFactory } from "game/entities/vehicles/
 
 export const CAR_ACCELERATION = 50
 export const CAR_MAX_SPEED = 15
-export const CAR_DRAG = 0.5
+export const CAR_DRAG = 0.7
 export const CAR_TURN_RATE = 20 * Math.PI / 180
 export const CAR_TRACTION = 1
 

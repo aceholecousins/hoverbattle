@@ -11,8 +11,8 @@ import { Vehicle, VEHICLE_RADIUS, VehicleFactory } from "game/entities/vehicles/
 
 export const CAR_THRUST = 15
 export const CAR_TURN_RATE = 0.3
-export const CAR_LONGITUDINAL_DAMPING = 0.3
-export const CAR_LATERAL_DAMPING = 0.95
+export const CAR_LONGITUDINAL_VELOCITY_DECAY = 0.3
+export const CAR_LATERAL_VELOCITY_DECAY = 0.95
 
 export class Car extends Vehicle {
 
@@ -49,8 +49,8 @@ export class Car extends Vehicle {
 		let right = new Vector2(-forward.y, forward.x);
 		let vForward = v.dot(forward);
 		let vRight = v.dot(right);
-		let vForwardDamped = vForward * Math.pow(1.0 - CAR_LONGITUDINAL_DAMPING, dt);
-		let vRightDamped = vRight * Math.pow(1.0 - CAR_LATERAL_DAMPING, dt);
+		let vForwardDamped = vForward * Math.pow(1.0 - CAR_LONGITUDINAL_VELOCITY_DECAY, dt);
+		let vRightDamped = vRight * Math.pow(1.0 - CAR_LATERAL_VELOCITY_DECAY, dt);
 		let vDamped = new Vector2()
 			.addScaledVector(forward, vForwardDamped)
 			.addScaledVector(right, vRightDamped)

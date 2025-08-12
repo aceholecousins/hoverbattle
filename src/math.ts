@@ -98,3 +98,18 @@ export function appendZ(v: Vector2, z: number) {
 export function vec2FromDir(dir: number) {
 	return new Vector2(Math.cos(dir), Math.sin(dir))
 }
+
+export function decayRateFromDamping(damping: number): number {
+	// input: damping coefficient k such that a = -k * v
+	// output: fraction of velocity that is lost after 1s
+	return 1.0 - Math.exp(-damping)
+}
+
+export function dampingFromDecayRate(decayRate: number): number {
+	// input: fraction of velocity that is lost after 1s
+	// output: damping coefficient k such that a = -k * v
+	if (decayRate <= 0 || decayRate >= 1) {
+		throw new Error("Decay rate must be in (0, 1)")
+	}
+	return -Math.log(1 - decayRate)
+}

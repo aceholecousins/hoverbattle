@@ -24,6 +24,7 @@ async function main() {
 
 	// let physics = new P2Physics() as Physics
 	let physics = new PlanckPhysics() as Physics
+	console.log('physics engine:', physics.constructor.name)
 	registerRelatedEntityCollisionOverride(physics)
 	let graphics = new ThreeGraphics() as Graphics
 	let actionCam = new ActionCam(graphics, new ActionCamConfig())

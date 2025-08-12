@@ -13,7 +13,7 @@ import { appendZ, Vector2, Vector3, ypr, DEG } from "math";
 
 const MINE_RADIUS = 1;
 const MINE_MASS = 1
-const MINE_DAMPING = 0.8
+const MINE_DAMPING = 1.6
 const MINE_ANGULAR_DAMPING = 0.3
 const MINE_COOLDOWN = 1
 const MINE_PRIME_DELAY = 0.3

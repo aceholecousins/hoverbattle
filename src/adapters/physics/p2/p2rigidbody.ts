@@ -3,6 +3,7 @@ import { Vector2 } from "math"
 import { addShapeToBody } from "./p2shapes"
 import { RigidBody, RigidBodyConfig, rigidBodyDefaults } from "game/physics/rigidbody"
 import { ExtendedP2Body } from "./p2collisionhandling"
+import { dampingFromDecayRate, decayRateFromDamping } from "math"
 
 export class P2RigidBody implements RigidBody {
 	kind: "rigidbody"
@@ -21,18 +22,23 @@ export class P2RigidBody implements RigidBody {
 		this.p2body.type = cfg.static ? p2.Body.STATIC : p2.Body.DYNAMIC
 		this.p2body.fixedRotation = cfg.fixedRotation
 
-		this.setMass(cfg.mass)
+		for (let shapeCfg of cfg.shapes) {
+			//this.shapes.push(shape)
+			addShapeToBody(shapeCfg, this.p2body)
+		}
+
+		if (!cfg.static) {
+			this.setMass(cfg.mass)
+		}
+		if (!cfg.static && !cfg.fixedRotation) {
+			this.setInertia(cfg.inertia)
+		}
 		this.setPosition(cfg.position)
 		this.setVelocity(cfg.velocity)
 		this.setDamping(cfg.damping)
 		this.setAngle(cfg.angle)
 		this.setAngularVelocity(cfg.angularVelocity)
 		this.setAngularDamping(cfg.angularDamping)
-
-		for (let shapeCfg of cfg.shapes) {
-			//this.shapes.push(shape)
-			addShapeToBody(shapeCfg, this.p2body)
-		}
 
 		this.p2world.addBody(this.p2body)
 	}
@@ -48,18 +54,32 @@ export class P2RigidBody implements RigidBody {
 	}
 
 	setMass(mass: number) {
-		this.p2body.mass = mass
-		this.p2body.updateMassProperties()
+		if (this.isStatic()) {
+			throw new Error('trying to set mass of static object')
+		}
+		else {
+			this.p2body.mass = mass
+			this.p2body.invMass = 1.0 / mass
+		}
 	}
 	getMass() {
+		if (this.isStatic()) {
+			return Infinity
+		}
 		return this.p2body.mass
 	}
 
 	setInertia(inertia: number): void {
+		if (this.isStatic() || this.hasFixedRotation()) {
+			throw new Error('trying to set inertia of static or fixed rotation object')
+		}
 		this.p2body.inertia = inertia
-		this.p2body.updateMassProperties()
+		this.p2body.invInertia = 1.0 / inertia
 	}
 	getInertia(): number {
+		if (this.isStatic() || this.hasFixedRotation()) {
+			return Infinity
+		}
 		return this.p2body.inertia
 	}
 
@@ -83,10 +103,14 @@ export class P2RigidBody implements RigidBody {
 	}
 
 	setDamping(damping: number) {
-		this.p2body.damping = damping
+		// p2 understands damping as the fraction of velocity that is lost per second
+		// in physics we understand damping as k in a = -k * v
+		this.p2body.damping = decayRateFromDamping(damping)
 	}
 	getDamping() {
-		return this.p2body.damping
+		// p2 understands damping as the fraction of velocity that is lost per second
+		// in physics we understand damping as k in a = -k * v
+		return dampingFromDecayRate(this.p2body.damping)
 	}
 
 	setAngle(angle: number) {
@@ -107,10 +131,14 @@ export class P2RigidBody implements RigidBody {
 	}
 
 	setAngularDamping(damping: number) {
-		this.p2body.angularDamping = damping
+		// p2 understands damping as the fraction of velocity that is lost per second
+		// in physics we understand damping as k in a = -k * v
+		this.p2body.angularDamping = decayRateFromDamping(damping)
 	}
 	getAngularDamping() {
-		return this.p2body.angularDamping
+		// p2 understands damping as the fraction of velocity that is lost per second
+		// in physics we understand damping as k in a = -k * v
+		return dampingFromDecayRate(this.p2body.angularDamping)
 	}
 
 

@@ -9,8 +9,8 @@ import { Vehicle, VEHICLE_RADIUS, VehicleFactory } from "game/entities/vehicles/
 
 export const GLIDER_THRUST = 20
 export const GLIDER_TURN_RATE = 20
-export const GLIDER_DAMPING = 0.7
-export const GLIDER_ANGULAR_DAMPING = 0.99
+export const GLIDER_DAMPING = 1.2 // these values have not been fine-tuned, they were converted from decay rates
+export const GLIDER_ANGULAR_DAMPING = 4.6
 
 export class Glider extends Vehicle {
 
