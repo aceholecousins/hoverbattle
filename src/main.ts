@@ -22,8 +22,8 @@ async function main() {
 	broker.newChannel('update')
 	broker.newChannel('purge')
 
-	let physics = new P2Physics() as Physics
-	// let physics = new PlanckPhysics() as Physics
+	// let physics = new P2Physics() as Physics
+	let physics = new PlanckPhysics() as Physics
 	registerRelatedEntityCollisionOverride(physics)
 	let graphics = new ThreeGraphics() as Graphics
 	let actionCam = new ActionCam(graphics, new ActionCamConfig())
