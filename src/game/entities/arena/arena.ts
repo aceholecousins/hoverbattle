@@ -24,7 +24,7 @@ export async function loadArena(
 		let arenaPart = new Entity()
 		arenaPart.body = engine.physics.addRigidBody({
 			actor: arenaPart,
-			mass: Infinity,
+			static: true,
 			shapes: [new Triangle(triangle3to2(tri))]
 		})
 		arenaParts.push(arenaPart)

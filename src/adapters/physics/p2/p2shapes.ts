@@ -7,8 +7,7 @@ export function addShapeToBody(config: Shape, body: p2.Body) {
 		let circle = new p2.Circle({ radius: config.radius })
 		body.addShape(circle, [config.center.x, config.center.y])
 	}
-
-	if (config instanceof Triangle) {
+	else if (config instanceof Triangle) {
 		let c0 = [config.corners[0].x, config.corners[0].y]
 		let c1 = [config.corners[1].x, config.corners[1].y]
 		let c2 = [config.corners[2].x, config.corners[2].y]
@@ -23,6 +22,7 @@ export function addShapeToBody(config: Shape, body: p2.Body) {
 		let vertices = area > 0 ? [c0, c1, c2] : [c0, c2, c1];
 		body.addShape(new p2.Convex({ vertices }))
 	}
-
-	console.error("unknown shape type: ", config.constructor.name);
+	else {
+		console.error("unknown shape type: ", config.constructor.name);
+	}
 }

@@ -2,7 +2,7 @@ import * as p2 from "p2"
 import { Vector2 } from "math"
 import { addShapeToBody } from "./p2shapes"
 import { RigidBody, RigidBodyConfig, rigidBodyDefaults } from "game/physics/rigidbody"
-import { ExtendedP2Body } from "./p2extensions"
+import { ExtendedP2Body } from "./p2collisionhandling"
 
 export class P2RigidBody implements RigidBody {
 	kind: "rigidbody"
@@ -16,10 +16,10 @@ export class P2RigidBody implements RigidBody {
 
 		this.p2world = p2world
 
-		this.p2body = <ExtendedP2Body>new p2.Body() // mass set to 1 so the body is considered DYNAMIC
+		this.p2body = <ExtendedP2Body>new p2.Body()
 		this.p2body.actor = cfg.actor
-
-		delete cfg.actor // delete temporarily // TODO
+		this.p2body.type = cfg.static ? p2.Body.STATIC : p2.Body.DYNAMIC
+		this.p2body.fixedRotation = cfg.fixedRotation
 
 		this.setMass(cfg.mass)
 		this.setPosition(cfg.position)
@@ -28,8 +28,6 @@ export class P2RigidBody implements RigidBody {
 		this.setAngle(cfg.angle)
 		this.setAngularVelocity(cfg.angularVelocity)
 		this.setAngularDamping(cfg.angularDamping)
-
-		cfg.actor = this.p2body.actor
 
 		for (let shapeCfg of cfg.shapes) {
 			//this.shapes.push(shape)
@@ -42,7 +40,7 @@ export class P2RigidBody implements RigidBody {
 	getActor() {
 		return this.p2body.actor
 	}
-	isStatic(){
+	isStatic() {
 		return this.p2body.type === p2.Body.STATIC
 	}
 	hasFixedRotation(): boolean {
@@ -54,7 +52,7 @@ export class P2RigidBody implements RigidBody {
 		this.p2body.updateMassProperties()
 	}
 	getMass() {
-		return  this.p2body.mass
+		return this.p2body.mass
 	}
 
 	setInertia(inertia: number): void {
