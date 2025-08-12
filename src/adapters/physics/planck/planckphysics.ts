@@ -5,13 +5,53 @@ import { PlanckRigidBody } from "./planckrigidbody";
 import { Color } from "utils/color";
 import { CollisionOverride, CollisionHandler } from "game/physics/collision";
 import * as planck from "planck";
+import './planckcollisionfilter'
+import { Actor } from "game/entities/actor";
+import { ExtendedPlanckWorld } from "./planckcollisionfilter";
+
+class BufferedCollision {
+	handler: CollisionHandler<any, any>
+	actorA: Actor
+	actorB: Actor
+}
 
 export class PlanckPhysics implements Physics {
-	planckWorld: planck.World;
+	planckWorld: ExtendedPlanckWorld;
+	collisionHandlers: CollisionHandler<any, any>[] = []
+	collisionBuffer: BufferedCollision[] = []
 	time = 0
 
 	constructor() {
-		this.planckWorld = new planck.World();
+		this.planckWorld = new planck.World() as ExtendedPlanckWorld;
+		this.planckWorld.collisionOverrides = []
+		this.planckWorld.collisionOverridesBitMask = 0
+
+		let bufferCollision = (
+			contact: planck.Contact,
+			impulse: planck.ContactImpulse
+		) => {
+			let actorA = contact.getFixtureA().getBody().getUserData() as Actor
+			let actorB = contact.getFixtureB().getBody().getUserData() as Actor
+			let rolesA = actorA.roles
+			let rolesB = actorB.roles
+
+			let handlers = this.collisionHandlers
+
+			for (let roleA of rolesA.set) {
+				for (let roleB of rolesB.set) {
+					let handler = handlers[roleA.bit | roleB.bit]
+					if (handler !== undefined) {
+						if (handler.roleA === roleA) {
+							this.collisionBuffer.push({handler, actorA, actorB})
+						}
+						else {
+							this.collisionBuffer.push({handler, actorA: actorB, actorB: actorA})
+						}
+					}
+				}
+			}
+		}
+		this.planckWorld.on('post-solve', bufferCollision);
 	}
 
 	addRigidBody(config: RigidBodyConfig): RigidBody {
@@ -41,54 +81,44 @@ export class PlanckPhysics implements Physics {
 		// 	}
 		// };
 		return {
-			setOffset: (position: Vector2, angle: number) => {},
-			setCanCollide: (canCollide: boolean) => {},
-			setStiffness: (stiffness: number) => {},
-			detach: () => {}
+			setOffset: (position: Vector2, angle: number) => { },
+			setCanCollide: (canCollide: boolean) => { },
+			setStiffness: (stiffness: number) => { },
+			detach: () => { }
 		};
 	}
 
-	rayCast(from: Vector2, to: Vector2, skipBackfaces: boolean): RayHit[] {
-		// const hits: RayHit[] = [];
-		// const callback = (fixture, point, normal, fraction) => {
-		// 	hits.push({
-		// 		actor: fixture.getBody().getUserData(),
-		// 		position: new Vector2(point.x, point.y),
-		// 		normal: new Vector2(normal.x, normal.y)
-		// 	});
-		// 	return 1; // Continue for all intersections
-		// };
-		// this.planckWorld.rayCast(
-		// 	planck.Vec2(from.x, from.y),
-		// 	planck.Vec2(to.x, to.y),
-		// 	callback
-		// );
+	rayCast(from: Vector2, to: Vector2): RayHit | null {
+		let hit: RayHit | null = null;
+		const callback = (fixture: planck.Fixture, point: planck.Vec2, normal: planck.Vec2, fraction: number) => {
+			hit = {
+				actor: fixture.getBody().getUserData() as Actor,
+				position: new Vector2(point.x, point.y),
+				normal: new Vector2(normal.x, normal.y)
+			};
+			return fraction
+		};
+		this.planckWorld.rayCast(from, to, callback);
 
-		// hits.sort((a, b) => {
-		// 	const distA = from.distanceToSquared(a.position);
-		// 	const distB = from.distanceToSquared(b.position);
-		// 	return distA - distB;
-		// });
-
-		return [];
+		return null;
 	}
 
 	registerCollisionOverride(override: CollisionOverride<any, any>) {
-		// Handle collision overrides manually as Planck.js doesn't have a built-in feature
+		this.planckWorld.collisionOverrides.push(override)
+		this.planckWorld.collisionOverridesBitMask |= override.roleA.bit | override.roleB.bit
 	}
 
 	registerCollisionHandler(handler: CollisionHandler<any, any>) {
-		// Add collision handling via world contact listeners
-		// this.planckWorld.on('begin-contact', (contact) => {
-		// 	const fixtureA = contact.getFixtureA();
-		// 	const fixtureB = contact.getFixtureB();
-		// 	handler({ fixtureA, fixtureB, contact });
-		// });
+		this.collisionHandlers[handler.mask] = handler
 	}
 
 	step(dt: number) {
 		this.time += dt;
 		this.planckWorld.step(dt);
+		for(let collision of this.collisionBuffer) {
+			collision.handler.onCollision(collision.actorA, collision.actorB);
+		}
+		this.collisionBuffer = []
 	}
 
 	getTime(): number {
