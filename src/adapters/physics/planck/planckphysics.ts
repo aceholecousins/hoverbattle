@@ -1,5 +1,5 @@
 import { RigidBodyConfig, RigidBody } from "game/physics/rigidbody";
-import { Physics, RayHit, Attachment } from "game/physics/physics";
+import { Physics, RayHit, Attachment, AttachmentConfig } from "game/physics/physics";
 import { Vector2, Vector3 } from "math";
 import { PlanckRigidBody } from "./planckrigidbody";
 import { Color } from "utils/color";
@@ -59,32 +59,42 @@ export class PlanckPhysics implements Physics {
 		return body
 	}
 
-	attach(bodyA: RigidBody, bodyB: RigidBody): Attachment {
-		// const joint = planck.WeldJoint({
-		// 	bodyA: bodyA.body,
-		// 	bodyB: bodyB.body
-		// });
-		// this.planckWorld.createJoint(joint);
+	attach(config: AttachmentConfig): Attachment {
 
-		// return {
-		// 	setOffset: (position: Vector2, angle: number) => {
-		// 		// Planck.js doesn't support offsets directly; handle manually
-		// 	},
-		// 	setCanCollide: (canCollide: boolean) => {
-		// 		joint.collideConnected = canCollide;
-		// 	},
-		// 	setStiffness: (stiffness: number) => {
-		// 		// Planck.js doesn't have direct stiffness control; handle manually
-		// 	},
-		// 	detach: () => {
-		// 		this.planckWorld.destroyJoint(joint);
-		// 	}
-		// };
+		let bodyA = (config.bodyA as PlanckRigidBody).body
+		let bodyB = (config.bodyB as PlanckRigidBody).body
+
+		let offsetB: planck.Vec2
+		if (config.offsetB !== undefined) {
+			offsetB = new planck.Vec2(config.offsetB.x, config.offsetB.y);
+		} else {
+			offsetB = bodyA.getLocalPoint(bodyB.getPosition())
+		}
+		let referenceAngle = config.angleB ?? bodyB.getAngle() - bodyA.getAngle();
+
+		let localAnchorA = offsetB.clone().mul(0.5)
+
+		const dx = localAnchorA.x - offsetB.x
+		const dy = localAnchorA.y - offsetB.y
+		const c = Math.cos(referenceAngle)
+		const s = Math.sin(referenceAngle)
+
+		let localAnchorB = new planck.Vec2(c * dx + s * dy, -s * dx + c * dy)
+
+		const joint = new planck.WeldJoint({
+			bodyA,
+			bodyB,
+			localAnchorA,
+			localAnchorB,
+			referenceAngle,
+			collideConnected: config.canCollide
+		});
+		this.planckWorld.createJoint(joint);
+
 		return {
-			setOffset: (position: Vector2, angle: number) => { },
-			setCanCollide: (canCollide: boolean) => { },
-			setStiffness: (stiffness: number) => { },
-			detach: () => { }
+			detach: () => {
+				this.planckWorld.destroyJoint(joint);
+			}
 		};
 	}
 

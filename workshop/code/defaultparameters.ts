@@ -195,8 +195,8 @@ const configDefaults: Defaults<Config> = {
 }
 
 function frobnicateA(config: Config) {
-    let cfg:Required<Config> = { ...configDefaults, ...config }
-    console.log(cfg.req, cfg.opt)
+    let fullConfig:Required<Config> = { ...configDefaults, ...config }
+    console.log(fullConfig.req, fullConfig.opt)
 }
 
 frobnicateA({ req: 1, opt: 2 })

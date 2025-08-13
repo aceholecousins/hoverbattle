@@ -46,9 +46,11 @@ export class PowerShield extends Entity {
 			angularDamping: 0
 		})
 		this.body.copyPosition(this.parent.body)
-		this.attachment = engine.physics.attach(this.parent.body, this.body)
-		this.attachment.setCanCollide(false)
-		this.attachment.setStiffness(1e6)
+		this.attachment = engine.physics.attach({
+			bodyA: this.parent.body,
+			bodyB: this.body,
+			canCollide: false
+		})
 		this.parent.onDispose(() => this.dispose())
 		this.update(0)
 	}

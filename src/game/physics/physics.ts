@@ -12,15 +12,19 @@ export interface RayHit {
 }
 
 export interface Attachment {
-	setOffset(position: Vector2, angle: number): void
-	setCanCollide(canCollide: boolean): void
-	setStiffness(stiffness: number): void
 	detach(): void
 }
 
+export interface AttachmentConfig {
+	bodyA: RigidBody
+	bodyB: RigidBody
+	canCollide: boolean
+	offsetB?: Vector2 // if offset is omitted, it is inferred from the current positions
+	angleB?: number // same for angle
+}
 export interface Physics {
 	addRigidBody(body: RigidBodyConfig): RigidBody
-	attach(bodyA: RigidBody, bodyB: RigidBody): Attachment
+	attach(config: AttachmentConfig): Attachment
 	registerCollisionOverride(override: CollisionOverride<any, any>): void
 	registerCollisionHandler(handler: CollisionHandler<any, any>): void
 	// rayCast(from: Vector2, to: Vector2): RayHit[] // return all hits

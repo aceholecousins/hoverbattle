@@ -1,6 +1,6 @@
 
 import { RigidBodyConfig, RigidBody } from "game/physics/rigidbody"
-import { Physics, RayHit, Attachment } from "game/physics/physics"
+import { Physics, RayHit, Attachment, AttachmentConfig } from "game/physics/physics"
 import { P2RigidBody } from "./p2rigidbody"
 import * as p2 from "p2"
 import { ExtendedP2World, ExtendedP2Body, collisionDispatcher } from "./p2collisionhandling"
@@ -29,26 +29,20 @@ export class P2Physics implements Physics {
 	}
 
 	attach(
-		bodyA: RigidBody,
-		bodyB: RigidBody,
+		config: AttachmentConfig
 	): Attachment {
 		let constraint = new p2.LockConstraint(
-			(bodyA as P2RigidBody).p2body,
-			(bodyB as P2RigidBody).p2body
+			(config.bodyA as P2RigidBody).p2body,
+			(config.bodyB as P2RigidBody).p2body,
+			{
+				localOffsetB: config.offsetB ? [config.offsetB.x, config.offsetB.y] : undefined,
+				localAngleB: config.angleB
+			}
 		)
+		constraint.collideConnected = config.canCollide
+		
 		this.p2world.addConstraint(constraint)
 		return {
-			setOffset: (position: Vector2, angle: number) => {
-				(constraint as any).localOffsetB[0] = position.x;
-				(constraint as any).localOffsetB[1] = position.y;
-				(constraint as any).localAngleB = angle
-			},
-			setCanCollide: (canCollide: boolean) => {
-				constraint.collideConnected = canCollide
-			},
-			setStiffness: (stiffness: number) => {
-				constraint.setStiffness(stiffness)
-			},
 			detach: () => {
 				this.p2world.removeConstraint(constraint)
 			}

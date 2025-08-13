@@ -55,10 +55,14 @@ export class Barrel extends Entity {
 			angularDamping: 0
 		})
 
-		this.body.copyPosition(this.parent.body)
+		this.body.copyPosition(this.attachTo.body)
 		this.body.copyAngle(this.attachTo.body)
-		this.attachment = engine.physics.attach(this.attachTo.body, this.body)
-		this.attachment.setOffset(new Vector2(0, 0), 0)
+		this.attachment = engine.physics.attach({
+			bodyA: this.attachTo.body,
+			bodyB: this.body,
+			canCollide: true,
+			offsetB: this.offset
+		})
 		this.parent.onDispose(() => this.dispose())
 
 		this.collidesWithParent = false
@@ -70,8 +74,6 @@ export class Barrel extends Entity {
 	update(dt: number) {
 		this.deployed += 2 * dt
 		this.deployed = Math.min(1, this.deployed)
-		this.attachment.setOffset(
-			this.offset.clone().multiplyScalar(this.deployed), 0)
 
 		if (this.deployed == 1) {
 			this.collidesWithParent = true
