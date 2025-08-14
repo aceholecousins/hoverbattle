@@ -8,6 +8,8 @@ import { Water } from "./water";
 import { Vector3, Quaternion } from "math"
 import { Color } from "utils/color";
 
+export type DrawDebugLine = (points: Vector3[], color: Color) => void
+export type DrawDebugText = (text: string, position: Vector3, color: Color) => void
 export interface Graphics {
 
 	loadModel: ModelLoader
@@ -25,5 +27,6 @@ export interface Graphics {
 
 	update(): void
 
-	drawDebugLine(points: Vector3[], color:Color): void
+	drawDebugLine: DrawDebugLine
+	drawDebugText: DrawDebugText
 }

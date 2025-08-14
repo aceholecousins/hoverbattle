@@ -7,7 +7,7 @@ moved away from js magic set bla get bla to setBla() getBla() since it's more ex
 
 replace glmatrix with threejs vector math (which can be used as a separate module so we dont marry threejs) because the syntax of glmatrix is super awkward and its also no longer efficient with modern js engines
 
-replace p2 with planck js:
+replace p2 with planck js (lots of effort and I did the half year break in the middle):
 - p2 no longer maintained
 - convex-circle collision can be missed in p2
 - triangle-triangle collision can be missed in p2
@@ -21,8 +21,11 @@ planck js seems a bit overpowered and a simpler engine might suffice but it also
 was about to tackle these bugs:
 * laser starts at weird origin in planck
 * one of the nashwan barrels does not collide with the environment in both physics engines
+* just noticed that p2 resets inertia when updating mass, so after I fixed that, the glider spins slower now, need to readjust
 
 next steps:
 replace the default parameter handling to the scheme at the bottom of workshop/code/defaultparameters.ts
 remove nashwan because the company that bought bitmap brothers are anal about it
 implement minigun
+
+just implemented debug text drawing, still missing in p2, want to use it for the barrel bug

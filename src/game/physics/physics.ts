@@ -1,4 +1,5 @@
 
+import { DrawDebugLine, DrawDebugText } from "game/graphics/graphics"
 import { RigidBodyConfig, RigidBody } from "./rigidbody"
 import { Actor } from "game/entities/actor"
 import { CollisionOverride, CollisionHandler } from "game/physics/collision"
@@ -31,5 +32,8 @@ export interface Physics {
 	rayCast(from: Vector2, to: Vector2): RayHit | null // return closest hit
 	step(dt: number): void
 	getTime(): number
-	debugDraw(drawLine: (points: Vector3[], color: Color) => void): void
+	debugDraw(
+		drawLine: DrawDebugLine,
+		drawText: DrawDebugText
+	): void
 }

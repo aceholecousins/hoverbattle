@@ -8,6 +8,7 @@ import * as planck from "planck";
 import './planckcollisionfilter'
 import { Actor } from "game/entities/actor";
 import { ExtendedPlanckWorld } from "./planckcollisionfilter";
+import { DrawDebugLine, DrawDebugText } from "game/graphics/graphics";
 
 class BufferedCollision {
 	handler: CollisionHandler<any, any>
@@ -135,7 +136,7 @@ export class PlanckPhysics implements Physics {
 		return this.time
 	}
 
-	debugDraw(drawLine: (points: Vector3[], color: Color) => void): void {
+	debugDraw(drawLine: DrawDebugLine, drawText: DrawDebugText): void {
 		for (let body = this.planckWorld.getBodyList(); body; body = body.getNext()) {
 			for (let fixture = body.getFixtureList(); fixture; fixture = fixture.getNext()) {
 				const shape = fixture.getShape();
@@ -155,6 +156,7 @@ export class PlanckPhysics implements Physics {
 						));
 					}
 					drawLine(points, { r: 1, g: 1, b: 1 });
+					drawText((shape as any).id, new Vector3(center.x, center.y, 0), { r: 1, g: 1, b: 1 });
 				}
 				else if (shape.getType() === "polygon") {
 					const polygon = shape as planck.Polygon;
@@ -164,6 +166,12 @@ export class PlanckPhysics implements Physics {
 						points.push(points[0])
 					}
 					drawLine(points, { r: 1, g: 1, b: 1 });
+					const center = new Vector3(
+						(points[0].x + points[1].x + points[2].x) / 3,
+						(points[0].y + points[1].y + points[2].y) / 3,
+						0
+					)
+					drawText((shape as any).id, center, { r: 1, g: 1, b: 1 });
 				}
 			}
 		}

@@ -66,7 +66,12 @@ async function main() {
 		requestAnimationFrame(animate)
 
 		if (graphicsNeedsUpdate) {
-			if (debugDraw) { physics.debugDraw(graphics.drawDebugLine.bind(graphics)) }
+			if (debugDraw) {
+				physics.debugDraw(
+					graphics.drawDebugLine.bind(graphics),
+					graphics.drawDebugText.bind(graphics)
+				)
+			}
 			graphics.update()
 			graphicsStats.update()
 		}
@@ -76,7 +81,7 @@ async function main() {
 	window.addEventListener('keydown', (event) => {
 		switch (event.key) {
 			case '0':
-				dt = 0
+				dt = 1e-12 // avoid division by zero
 				break
 			case '1':
 				dt = 1 / 125

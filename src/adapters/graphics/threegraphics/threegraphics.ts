@@ -3,6 +3,7 @@ import { Vector3, Quaternion } from "math"
 
 import * as THREE from "three"
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer.js'
 
 import { Graphics } from "game/graphics/graphics"
 import { CameraConfig } from "game/graphics/camera"
@@ -30,6 +31,7 @@ window.three = THREE
 export class ThreeGraphics implements Graphics {
 
 	scene: THREE.Scene
+	labelRenderer: CSS2DRenderer = new CSS2DRenderer()
 
 	loadModel: ThreeModelLoader
 	loadSprite: ThreeSpriteLoader
@@ -42,6 +44,8 @@ export class ThreeGraphics implements Graphics {
 	water: ThreeWater
 
 	debugLines: THREE.Line[] = []
+	debugLabels: CSS2DObject[] = []
+	oldDebugLabels: CSS2DObject[] = []
 
 	setEnvironment(environment: Skybox) {
 		this.scene.background = (environment as ThreeSkybox).threeCubemap
@@ -57,10 +61,22 @@ export class ThreeGraphics implements Graphics {
 		this.water.render(
 			(this.scene.userData as SceneInfo).activeCamera
 		)
+
+		for (const label of this.oldDebugLabels) {
+			this.scene.remove(label);
+			label.element.remove()
+		}
+
 		renderer.render(
 			this.scene,
 			(this.scene.userData as SceneInfo).activeCamera
 		)
+		if (this.debugLabels.length > 0) {
+			this.labelRenderer.render(
+				this.scene,
+				(this.scene.userData as SceneInfo).activeCamera
+			)
+		}
 
 		for (const line of this.debugLines) {
 			this.scene.remove(line);
@@ -68,6 +84,9 @@ export class ThreeGraphics implements Graphics {
 			line.geometry.dispose()
 		}
 		this.debugLines = []
+
+		this.oldDebugLabels = this.debugLabels;
+		this.debugLabels = [];
 	}
 
 	constructor() {
@@ -104,13 +123,19 @@ export class ThreeGraphics implements Graphics {
 		controls.screenSpacePanning = true
 
 		// origin
-		//this.scene.add(new THREE.AxesHelper())
+		// this.scene.add(new THREE.AxesHelper())
+
+		this.labelRenderer.setSize(window.innerWidth, window.innerHeight);
+		this.labelRenderer.domElement.style.position = 'absolute';
+		this.labelRenderer.domElement.style.top = '0px';
+		document.body.appendChild(this.labelRenderer.domElement);
 
 		const resize = () => {
 			let w = renderer.domElement.clientWidth
 			let h = renderer.domElement.clientHeight
 			renderer.setSize(w, h, false)
 			this.water.setSize(w, h)
+			this.labelRenderer.setSize(w, h);
 		}
 
 		window.addEventListener('resize', resize)
@@ -127,5 +152,17 @@ export class ThreeGraphics implements Graphics {
 		line.renderOrder = Infinity
 		this.scene.add(line);
 		this.debugLines.push(line)
+	}
+
+	drawDebugText(text: string, position: Vector3, color: Color = { r: 1, g: 1, b: 1 }) {
+		const div = document.createElement('div');
+		div.textContent = text;
+		div.style.color = `rgb(${color.r * 255}, ${color.g * 255}, ${color.b * 255})`;
+		const label = new CSS2DObject(div);
+		label.position.copy(position);
+		label.center.set(0.5, 0.5);
+		this.scene.add(label);
+		label.layers.set(0);
+		this.debugLabels.push(label);
 	}
 }

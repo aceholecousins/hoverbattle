@@ -5,6 +5,7 @@ import { makePlanckShape } from "./planckshapes";
 import { RigidBody, RigidBodyConfig, rigidBodyDefaults } from "game/physics/rigidbody";
 import { Actor } from "game/entities/actor";
 
+let bodyCounter = 0;
 export class PlanckRigidBody implements RigidBody {
 	kind: "rigidbody";
 	world: World;
@@ -28,10 +29,17 @@ export class PlanckRigidBody implements RigidBody {
 			userData: cfg.actor
 		});
 
+		; (this.body as any).id = bodyCounter;
+
+		let shapeCounter = 0;
+
 		for (const shapeCfg of cfg.shapes) {
 			const shape = makePlanckShape(shapeCfg);
+			; (shape as any).id = bodyCounter + ":" + shapeCounter++;
 			this.body.createFixture(shape, { density: 1 });
 		}
+
+		bodyCounter++
 
 		this.body.setMassData({
 			mass: cfg.mass,

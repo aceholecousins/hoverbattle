@@ -7,6 +7,7 @@ import { ExtendedP2World, ExtendedP2Body, collisionDispatcher } from "./p2collis
 import { CollisionOverride, CollisionHandler } from "game/physics/collision"
 import { Vector2, Vector3 } from "math"
 import { Color } from "utils/color"
+import { DrawDebugLine, DrawDebugText } from "game/graphics/graphics"
 
 // https://github.com/schteppe/p2.js/blob/master/build/p2.js
 // code investigation entry point: World.prototype.internalStep
@@ -116,7 +117,7 @@ export class P2Physics implements Physics {
 		return this.p2world.time
 	}
 
-	debugDraw(drawLine: (points: Vector3[], color: Color) => void): void {
+	debugDraw(drawLine: DrawDebugLine, drawText: DrawDebugText): void {
 		const p2world = this.p2world
 		for (let body of p2world.bodies) {
 			for (let shape of body.shapes) {
@@ -137,6 +138,11 @@ export class P2Physics implements Physics {
 							));
 						}
 						drawLine(points, { r: 1, g: 1, b: 1 });
+						drawText(
+							body.id + ":" + shape.id,
+							new Vector3(xy[0], xy[1], 0),
+							{ r: 1, g: 1, b: 1 }
+						);
 					}
 						break;
 					case (p2.Shape.CONVEX): {
@@ -154,6 +160,16 @@ export class P2Physics implements Physics {
 							points.push(points[0])
 						}
 						drawLine(points, { r: 1, g: 1, b: 1 });
+						let center = new Vector3(
+							(points[0].x + points[1].x + points[2].x) / 3,
+							(points[0].y + points[1].y + points[2].y) / 3,
+							0
+						)
+						drawText(
+							body.id + ":" + shape.id,
+							center,
+							{ r: 1, g: 1, b: 1 }
+						);
 					}
 						break;
 				}
