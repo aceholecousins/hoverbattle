@@ -111,7 +111,7 @@ export class PlanckPhysics implements Physics {
 		};
 		this.planckWorld.rayCast(from, to, callback);
 
-		return null;
+		return hit;
 	}
 
 	registerCollisionOverride(override: CollisionOverride<any, any>) {

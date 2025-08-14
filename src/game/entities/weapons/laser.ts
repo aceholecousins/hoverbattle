@@ -71,22 +71,43 @@ export class LaserBeam extends Visual {
 		onHit: (actor: Actor) => void
 	) {
 		let p1 = start
-		let p2 = vec2FromDir(angle).multiplyScalar(maxDistance)
+		let p2 = vec2FromDir(angle).multiplyScalar(maxDistance).add(p1)
 		let hit = this.engine.physics.rayCast(p1, p2)
 		if (hit !== null) {
 			p2 = hit.position
 			this.hitSpeckle.setPosition(appendZ(p2, this.z + 0.1))
 			onHit(hit.actor)
 		}
+		else{
+			this.hitSpeckle.mesh.setPositionZ(-1000)
+		}
 		let distance = p1.distanceTo(p2)
 		this.mesh.setPositionXY(p1.lerp(p2, 0.5))
 		this.mesh.setScale(new Vector3(distance, LASER_WIDTH, 1))
 		this.mesh.setAngle(angle)
 
-		if (hit && this.reflection) {
-			let reflectionAngle = angle - 2 * (angle - hit.normal.angle()) + Math.PI;
-			this.reflection.cast(p2, reflectionAngle, maxDistance - distance, onHit)
+		if (this.reflection) {
+			if (hit) {
+				this.reflection.show()
+				let reflectionAngle = angle - 2 * (angle - hit.normal.angle()) + Math.PI;
+				this.reflection.cast(p2, reflectionAngle, maxDistance - distance, onHit)
+			}
+			else {
+				this.reflection.hide()
+			}
 		}
+	}
+
+	hide() {
+		this.mesh.setPositionZ(-1000)
+		this.hitSpeckle.mesh.setPositionZ(-1000)
+		if (this.reflection) {
+			this.reflection.hide()
+		}
+	}
+
+	show() {
+		this.mesh.setPositionZ(this.z)
 	}
 
 	dispose() {

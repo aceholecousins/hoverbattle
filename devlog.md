@@ -19,12 +19,9 @@ planck js seems a bit overpowered and a simpler engine might suffice but it also
     - both allow me to tweak stiffness and stuff but since they work so differently, I just leave that at default settings
 
 was about to tackle these bugs:
-* laser starts at weird origin in planck
 * just noticed that p2 resets inertia when updating mass, so after I fixed that, the glider spins slower now, need to readjust
 
 next steps:
 replace the default parameter handling to the scheme at the bottom of workshop/code/defaultparameters.ts
 remove nashwan because the company that bought bitmap brothers are anal about it
 implement minigun
-
-just implemented debug text drawing
