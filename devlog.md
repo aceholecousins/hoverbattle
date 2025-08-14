@@ -20,7 +20,6 @@ planck js seems a bit overpowered and a simpler engine might suffice but it also
 
 was about to tackle these bugs:
 * laser starts at weird origin in planck
-* one of the nashwan barrels does not collide with the environment in both physics engines
 * just noticed that p2 resets inertia when updating mass, so after I fixed that, the glider spins slower now, need to readjust
 
 next steps:
@@ -28,4 +27,4 @@ replace the default parameter handling to the scheme at the bottom of workshop/c
 remove nashwan because the company that bought bitmap brothers are anal about it
 implement minigun
 
-just implemented debug text drawing, still missing in p2, want to use it for the barrel bug
+just implemented debug text drawing

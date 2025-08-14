@@ -6,7 +6,6 @@ Debug:
 * makes me think that the shapes are in there multiple times, gonna random wiggle each point a bit
 * somehow seems to glitch only form the inside of the level, not once it's already left the arena and wants to go back in
 * laser starts at weird origin in planck
-* one of the nashwan barrels does not collide with the environment in both physics engines
 * planck just glitched out when I collected a shield while nashwan was running
 
 Features:

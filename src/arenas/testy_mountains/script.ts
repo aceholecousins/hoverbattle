@@ -111,7 +111,7 @@ export let createMatch: MatchFactory = async function (engine) {
 					extensions.leftBarrel1,
 					extensions.leftBarrel2,
 					extensions.rightBarrel1,
-					extensions.rightBarrel1,
+					extensions.rightBarrel2,
 					extensions.drone]
 				) {
 					assignRole(ex, collideWithEverythingRole)
