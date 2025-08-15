@@ -4,8 +4,8 @@ import { renderer } from "./threerenderer"
 import { Skybox, SkyboxLoader } from "game/graphics/asset"
 
 export class ThreeSkybox extends Skybox {
-	threeCubemap: THREE.CubeTexture = undefined
-	threePmrem: THREE.Texture = undefined
+	threeCubemap: THREE.CubeTexture | undefined = undefined
+	threePmrem: THREE.Texture | undefined = undefined
 }
 
 export interface ThreeSkyboxLoader extends SkyboxLoader {

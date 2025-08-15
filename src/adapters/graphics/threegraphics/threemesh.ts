@@ -7,10 +7,9 @@ import { ThreeModel } from "./threemodel"
 import { modMaterials } from "./shadermods"
 import { ThreeWater } from "./threewater"
 import { Vector3 } from "math"
+import { assertDefined } from "utils/general"
 
 export class ThreeMesh extends ThreeSceneNode<"mesh"> implements Mesh {
-
-	threeObject: THREE.Object3D
 
 	constructor(
 		scene: THREE.Scene,
@@ -19,6 +18,7 @@ export class ThreeMesh extends ThreeSceneNode<"mesh"> implements Mesh {
 	) {
 		let threeModel = config.model as ThreeModel
 		let template = threeModel.threeObject
+		assertDefined(template)
 		super(scene, template.clone(), config)
 
 		this.threeObject.userData.tintMatrix = { value: new THREE.Matrix3() }
@@ -90,4 +90,5 @@ export class ThreeMeshFactory implements MeshFactory {
 		)
 		return mesh
 	}
+
 }

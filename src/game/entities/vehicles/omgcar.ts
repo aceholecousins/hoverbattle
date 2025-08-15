@@ -7,6 +7,7 @@ import { Player } from "game/player"
 import { Ramper, LowPass } from "math"
 import { angleDelta, Vector2, ypr } from "math"
 import { Vehicle, VEHICLE_RADIUS, VehicleFactory } from "game/entities/vehicles/vehicle"
+import { Entity } from "game/entities/entity"
 
 export const CAR_ACCELERATION = 50
 export const CAR_MAX_SPEED = 15
@@ -19,22 +20,30 @@ export class OmgCar extends Vehicle {
 	private softTurnRate = new Ramper(10, 0)
 
 	constructor(
-		public player: Player,
+		player: Player,
 		position: Vector2,
 		model: Model,
 		engine: Engine
 	) {
-		super()
-		this.body = engine.physics.addRigidBody({
-			actor: this,
-			shapes: [new Circle(1)],
-			damping: CAR_DRAG,
-			angularDamping: 0
-		})
-		this.body.setPosition(position)
-		this.mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
-		this.mesh.setScale(VEHICLE_RADIUS)
-		this.mesh.setPositionZ(0.5)
+		let createBody = (self: Entity) => {
+			let body = engine.physics.addRigidBody({
+				actor: self,
+				shapes: [new Circle(1)],
+				damping: CAR_DRAG,
+				angularDamping: 0
+			})
+			body.setPosition(position)
+			return body
+		}
+		let createMesh = (self: Entity) => {
+			let mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
+			mesh.setScale(VEHICLE_RADIUS)
+			mesh.setPositionZ(0.5)
+			return mesh
+		}
+
+		super(player, createBody, createMesh);
+
 		this.update(0)
 	}
 

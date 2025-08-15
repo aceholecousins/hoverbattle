@@ -7,7 +7,6 @@ import { test } from 'node:test';
 import { Circle } from "game/physics/shapes";
 import { Vector2 } from "math";
 
-import * as ac from 'asciichart'
 import { RigidBodyConfig } from "game/physics/rigidbody";
 import { RoleSet } from "game/entities/actor";
 
@@ -28,7 +27,7 @@ function assertApprox(actual: number, expected: number, message: string) {
 }
 
 let testBodyConfig: RigidBodyConfig = {
-	actor: null,
+	actor: { roles: new RoleSet() },
 	shapes: [new Circle(1)],
 	static: false,
 	mass: 1,

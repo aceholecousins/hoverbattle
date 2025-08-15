@@ -24,6 +24,7 @@ import { ThreeWater } from "./threewater"
 import { Skybox } from "game/graphics/asset"
 import { ThreeSkybox } from "./threeskybox"
 import { Color } from "utils/color"
+import { assertDefined } from "utils/general"
 
 //@ts-ignore
 window.three = THREE
@@ -48,8 +49,12 @@ export class ThreeGraphics implements Graphics {
 	oldDebugLabels: CSS2DObject[] = []
 
 	setEnvironment(environment: Skybox) {
-		this.scene.background = (environment as ThreeSkybox).threeCubemap
-		this.scene.environment = (environment as ThreeSkybox).threePmrem
+		let cubemap = (environment as ThreeSkybox).threeCubemap
+		let pmrem = (environment as ThreeSkybox).threePmrem
+		assertDefined(cubemap)
+		this.scene.background = cubemap
+		assertDefined(pmrem)
+		this.scene.environment = pmrem
 	}
 
 	setEnvironmentOrientation(orientation: Quaternion) {

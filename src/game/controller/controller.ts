@@ -12,7 +12,7 @@ export interface Controller {
 	 * 			Always between -pi and pi.
 	 * 			May be undefined.
 	 */
-	getAbsoluteDirection(): number
+	getAbsoluteDirection(): number | undefined
 
 	/**
 	 * @returns the current change rate of the direction as a floating point value between -1 and 1.
@@ -20,7 +20,7 @@ export interface Controller {
 	 * 			0 means no change, 1 means maximum rate to the left, -1 means maximum rate to the right.
 	 * 			May be undefined.
 	 */
-	getTurnRate(): number
+	getTurnRate(): number | undefined
 
 	/**
 	 * @returns the current thrust value as a floating point value between 0 and 1.

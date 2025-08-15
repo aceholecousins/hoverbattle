@@ -7,7 +7,7 @@ export function executeFile(
 	url: string,
 	args: Object,
 	onLoaded: (returned: any) => void,
-	onError?: (err: ErrorEvent) => void
+	onError?: (err: ProgressEvent<XMLHttpRequestEventTarget>) => void
 ) {
 	if (url in functionCache) {
 		let returned = functionCache[url](args)

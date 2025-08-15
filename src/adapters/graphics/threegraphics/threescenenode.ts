@@ -4,14 +4,14 @@ import { SceneNode, SceneNodeConfig } from "game/graphics/scenenode"
 import { Vector2, Vector3, Quaternion } from "math"
 import { Kind } from "utils/general"
 
-export abstract class ThreeSceneNode<K extends Kind> implements SceneNode<K> {
+export abstract class ThreeSceneNode<K extends Kind, T extends THREE.Object3D = THREE.Object3D> implements SceneNode<K> {
 	kind: K
 	threeScene: THREE.Scene
-	threeObject: THREE.Object3D
+	threeObject: T
 
 	constructor(
 		scene: THREE.Scene,
-		object: THREE.Object3D,
+		object: T,
 		config: SceneNodeConfig<K>
 	) {
 		this.threeScene = scene

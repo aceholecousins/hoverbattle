@@ -6,7 +6,7 @@ import { ExtendedP2Body } from "./p2collisionhandling"
 import { dampingFromDecayRate, decayRateFromDamping } from "math"
 
 export class P2RigidBody implements RigidBody {
-	kind: "rigidbody"
+	kind: "rigidbody" = "rigidbody"
 	p2world: p2.World
 	p2body: ExtendedP2Body
 	//readonly shapes: Shape<any>[]

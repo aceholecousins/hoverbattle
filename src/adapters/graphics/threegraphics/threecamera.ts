@@ -5,9 +5,8 @@ import { SceneInfo } from "./sceneinfo"
 import * as THREE from "three"
 import { renderer } from "./threerenderer"
 
-export class ThreeCamera extends ThreeSceneNode<"camera"> implements Camera {
+export class ThreeCamera extends ThreeSceneNode<"camera", THREE.PerspectiveCamera> implements Camera {
 
-	threeObject: THREE.PerspectiveCamera
 	onAspectChange: (aspect: number) => void
 
 	constructor(scene: THREE.Scene, config: CameraConfig) {

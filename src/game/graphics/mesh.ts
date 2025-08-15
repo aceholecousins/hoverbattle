@@ -3,6 +3,7 @@ import { copyIfPresent } from "utils/general"
 import { Color } from "utils/color"
 import { SceneNode, SceneNodeConfig } from "./scenenode"
 import { Model } from "./asset"
+import { Vector2, Vector3, Quaternion } from "math"
 
 export interface Mesh extends SceneNode<"mesh"> {
 	setBaseColor(color: Color): void
@@ -11,6 +12,24 @@ export interface Mesh extends SceneNode<"mesh"> {
 	setOpacity(opacity: number): void
 }
 
+export class EmptyMesh implements Mesh {
+	kind: "mesh" = "mesh"
+	setPosition(position: Vector3) { }
+	setPositionXY(xy: Vector2) { }
+	setPositionZ(z: number) { }
+	setOrientation(orientation: Quaternion) { }
+	setAngle(angle: number) { }
+	copy2dPose(source: {
+		getPosition(): Vector2
+		getAngle(): number
+	}) { }
+	setScale(scale: number | Vector3) { }
+	destroy() { }
+	setBaseColor(color: Color) { }
+	setAccentColor1(color: Color) { }
+	setAccentColor2(color: Color) { }
+	setOpacity(opacity: number) { }
+}
 export class MeshConfig extends SceneNodeConfig<"mesh"> {
 	kind: "mesh" = "mesh"
 	baseColor: Color = { r: 1, g: 1, b: 1 }

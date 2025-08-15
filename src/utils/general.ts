@@ -3,12 +3,29 @@ export type Registry<T> = { [index: string]: T }
 
 export type Kind = string
 
-// https://stackoverflow.com/a/49579497/3825996
-type OptionalKeys<T> = { [K in keyof T]-?:
-	({} extends { [P in K]: T[K] } ? K : never)
+// Defaults<T> extracts all optional properties and makes them required,
+// in order to define default values for them.
+//*
+// this works only in strict mode ("strict": true in tsconfig.json):
+export type Defaults<T> = { [K in keyof T as undefined extends T[K] ? K : never]-?: T[K]; };
+/*/
+// this works only in non-strict mode:
+type OptionalKeys<T> = {
+	[K in keyof T]-?: {} extends Pick<T, K> ? K : never
 }[keyof T]
 
-export type Optionals<T> = Pick<T, OptionalKeys<T>>
+export type Defaults<T> = Required<Pick<T, OptionalKeys<T>>>
+/**/
+
+
+export function assertDefined<T>(
+	value: T,
+	message?: string
+): asserts value is NonNullable<T> {
+	if (value === undefined || value === null) {
+		throw new Error(message ?? 'Value must be defined')
+	}
+}
 
 export function copy<T1, T2, K extends keyof T1 & keyof T2>(
 	target: T1, source: T2, keys: K[]) {

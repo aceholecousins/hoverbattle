@@ -6,7 +6,7 @@ import { Circle } from "game/physics/shapes";
 import { RigidBodyConfig } from "game/physics/rigidbody";
 import { Sound } from "game/sound";
 import { Vector2, Vector3 } from "math"
-import { Entity } from "../entity";
+import { Entity } from "game/entities/entity";
 import { Vehicle } from "game/entities/vehicles/vehicle";
 
 const PHASER_LENGTH = 0.8;
@@ -23,23 +23,29 @@ export class PhaserShot extends Entity {
 		model: Model,
 		engine: Engine
 	) {
-		super();
-		this.mesh = engine.graphics.mesh.createFromModel(
-			new ModelMeshConfig({
-				model,
-				scale: new Vector3(PHASER_LENGTH, PHASER_LENGTH / 2, 1)
-			}))
-		this.mesh.setBaseColor(parent.player.team == 0 ? { r: 1, g: 0.2, b: 0 } : { r: 0, g: 0.5, b: 1 })
-		this.mesh.setAccentColor1({ r: 1, g: 1, b: 1 })
-		this.mesh.setPositionZ(0.1)
+		let createBody = (self: Entity) => {
+			let body = engine.physics.addRigidBody({
+				actor: self,
+				shapes: [new Circle(0.3)],
+				damping: 0,
+				angularDamping: 0
+			})
+			body.setPosition(position)
+			return body
+		}
+		let createMesh = (self: Entity) => {
+			let mesh = engine.graphics.mesh.createFromModel(
+				new ModelMeshConfig({
+					model,
+					scale: new Vector3(PHASER_LENGTH, PHASER_LENGTH / 2, 1)
+				}))
+			mesh.setBaseColor(parent.player.team == 0 ? { r: 1, g: 0.2, b: 0 } : { r: 0, g: 0.5, b: 1 })
+			mesh.setAccentColor1({ r: 1, g: 1, b: 1 })
+			mesh.setPositionZ(0.1)
+			return mesh
+		}
+		super(createBody, createMesh);
 
-		this.body = engine.physics.addRigidBody({
-			actor: this,
-			shapes: [new Circle(0.3)],
-			damping: 0,
-			angularDamping: 0
-		})
-		this.body.setPosition(position)
 		this.update(0)
 	}
 

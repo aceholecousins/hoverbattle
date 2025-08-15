@@ -1,6 +1,6 @@
 import { Vector2 } from "math"
 import { Shape } from "./shapes"
-import { Optionals } from "utils/general"
+import { Defaults } from "utils/general"
 import { Actor } from "game/entities/actor"
 
 // center of mass is at (0, 0), shapes need to be positioned accordingly
@@ -68,7 +68,7 @@ export interface RigidBodyConfig {
 	angularDamping?: number
 }
 
-export let rigidBodyDefaults: Required<Optionals<RigidBodyConfig>> = {
+export let rigidBodyDefaults: Defaults<RigidBodyConfig> = {
 	shapes: [],
 	static: false,
 	fixedRotation: false,

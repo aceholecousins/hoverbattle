@@ -108,12 +108,16 @@ export class ThreeWater implements Water {
 	render(camera: THREE.Camera) {
 		if (this.sceneHasWater) {
 			let previousParent = camera.parent
-			camera.parent.remove(camera)
+			if (previousParent) {
+				camera.removeFromParent()
+			}
 			renderer.setRenderTarget(this.normalTarget);
 			this.normalScene.add(camera)
 			renderer.render(this.normalScene, camera);
 			this.normalScene.remove(camera)
-			previousParent.add(camera)
+			if (previousParent) {
+				previousParent.add(camera)
+			}
 			renderer.setRenderTarget(null);
 		}
 	}

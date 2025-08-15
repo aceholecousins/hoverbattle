@@ -10,9 +10,7 @@ import {
 } from "game/graphics/light"
 import * as THREE from "three"
 
-export class ThreePointLight extends ThreeSceneNode<"pointlight"> implements PointLight {
-
-	threeObject: THREE.PointLight
+export class ThreePointLight extends ThreeSceneNode<"pointlight", THREE.PointLight> implements PointLight {
 
 	setIntensity(intensity: number) {
 		this.threeObject.intensity = intensity
@@ -30,9 +28,7 @@ export class ThreePointLight extends ThreeSceneNode<"pointlight"> implements Poi
 	}
 }
 
-export class ThreeHemisphereLight extends ThreeSceneNode<"hemispherelight"> implements HemisphereLight {
-
-	threeObject: THREE.HemisphereLight
+export class ThreeHemisphereLight extends ThreeSceneNode<"hemispherelight", THREE.HemisphereLight> implements HemisphereLight {
 
 	setGroundColor(color: Color) {
 		this.threeObject.groundColor.setRGB(color.r, color.g, color.b)

@@ -44,7 +44,7 @@ export function revokeRole<I>(actor: Actor & I, role: Role<I>) {
 		actor.roles.bits &= (0xFFFFFFFF ^ role.bit)
 		actor.roles.mask = 0
 		for (let role of actor.roles.set) {
-			this.mask |= role.mask
+			actor.roles.mask |= role.mask
 		}
 	}
 }

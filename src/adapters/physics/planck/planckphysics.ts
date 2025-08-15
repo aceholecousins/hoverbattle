@@ -10,7 +10,7 @@ import { Actor } from "game/entities/actor";
 import { ExtendedPlanckWorld } from "./planckcollisionfilter";
 import { DrawDebugLine, DrawDebugText } from "game/graphics/graphics";
 
-class BufferedCollision {
+interface BufferedCollision {
 	handler: CollisionHandler<any, any>
 	actorA: Actor
 	actorB: Actor

@@ -4,10 +4,12 @@ import { RigidBody } from "game/physics/rigidbody"
 import { broker } from "broker"
 import { Physics } from "game/physics/physics"
 import { CollisionOverride } from "game/physics/collision"
+import { Engine } from "game/engine"
 
 export let entityRole = new Role<Actor>("entity")
 
-export class Entity implements Actor {
+
+export abstract class Entity implements Actor {
 
 	roles: RoleSet
 	body: RigidBody
@@ -24,7 +26,19 @@ export class Entity implements Actor {
 	private updateHandler = (e: any) => this.update(e.dt)
 	private purgeHandler = () => this.removeIfDisposed()
 
-	constructor() {
+	constructor(
+		createBody: (self: Entity) => RigidBody,
+		createMesh: (self: Entity) => Mesh
+	) {
+
+		// this is somewhat convoluted, the problem is that body needs to reference the actor (this)
+		// but the derived class constructor needs to call super() before it can access `this` to construct the body
+		// we also don't want body and mesh to be Thing | undefined, otherwise we have to check for undefined everywhere
+		// and we also don't want to use body=null! because we want to make sure that they are created in all derived constructors
+		// abstract factories also don't work because then the derived classes cannot pass parameters to the factory methods
+
+		this.body = createBody(this)
+		this.mesh = createMesh(this)
 		this.roles = new RoleSet()
 		assignRole(this, entityRole)
 		broker.update.addHandler(this.updateHandler)
@@ -54,9 +68,9 @@ export class Entity implements Actor {
 			broker.update.removeHandler(this.updateHandler)
 
 			this.body.destroy()
-			this.body = null
+			this.body = null!
 			this.mesh.destroy()
-			this.mesh = null
+			this.mesh = null!
 		}
 	}
 }

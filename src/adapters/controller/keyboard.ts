@@ -35,11 +35,11 @@ export class Keyboard implements Controller {
 		})
 	}
 
-	getAbsoluteDirection(): number {
+	getAbsoluteDirection(): number | undefined {
 		return this.currentStrategy.getAbsoluteDirection();
 	}
 
-	getTurnRate(): number {
+	getTurnRate(): number | undefined {
 		return this.currentStrategy.getTurnRate();
 	}
 
@@ -85,8 +85,8 @@ export class Keyboard implements Controller {
 }
 
 interface ControlStrategy {
-	getAbsoluteDirection(): number
-	getTurnRate(): number
+	getAbsoluteDirection(): number | undefined
+	getTurnRate(): number | undefined
 	getThrust(): number
 	onKeyAction(keyCode: string, isPressed: boolean): void
 }
@@ -102,7 +102,7 @@ class RelativeStrategy implements ControlStrategy {
 	constructor(private layout: KeyboardLayout) {
 	}
 
-	getAbsoluteDirection(): number {
+	getAbsoluteDirection(): undefined {
 		return undefined;
 	}
 
@@ -133,7 +133,7 @@ class RelativeStrategy implements ControlStrategy {
 
 class AbsoluteStrategy implements ControlStrategy {
 
-	private absoluteDirection: number = undefined
+	private absoluteDirection: number | undefined = undefined
 	private thrust: number = 0
 
 	private valueUp: number = 0
@@ -144,11 +144,11 @@ class AbsoluteStrategy implements ControlStrategy {
 	constructor(private layout: KeyboardLayout) {
 	}
 
-	getAbsoluteDirection(): number {
+	getAbsoluteDirection(): number | undefined {
 		return this.absoluteDirection
 	}
 
-	getTurnRate(): number {
+	getTurnRate(): undefined {
 		return undefined
 	}
 

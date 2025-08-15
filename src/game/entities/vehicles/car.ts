@@ -8,6 +8,7 @@ import { Vector2, ypr, vec2FromDir, DEG } from "math"
 import { Ramper, LowPass } from "math"
 import { angleDelta } from "math"
 import { Vehicle, VEHICLE_RADIUS, VehicleFactory } from "game/entities/vehicles/vehicle"
+import { Entity } from "game/entities/entity"
 
 export const CAR_THRUST = 15
 export const CAR_TURN_RATE = 0.3
@@ -23,22 +24,30 @@ export class Car extends Vehicle {
 	private roll = new LowPass(1, 0.1, 0)
 
 	constructor(
-		public player: Player,
+		player: Player,
 		position: Vector2,
 		model: Model,
 		engine: Engine
 	) {
-		super()
-		this.body = engine.physics.addRigidBody({
-			actor: this,
-			shapes: [new Circle(1)],
-			damping: 0,
-			angularDamping: 0
-		})
-		this.body.setPosition(position)
-		this.mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
-		this.mesh.setScale(VEHICLE_RADIUS)
-		this.mesh.setPositionZ(0.5)
+		let createBody = (self: Entity) => {
+			let body = engine.physics.addRigidBody({
+				actor: self,
+				shapes: [new Circle(1)],
+				damping: 0,
+				angularDamping: 0
+			})
+			body.setPosition(position)
+			return body
+		}
+		let createMesh = (self: Entity) => {
+			let mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
+			mesh.setScale(VEHICLE_RADIUS)
+			mesh.setPositionZ(0.5)
+			return mesh
+		}
+
+		super(player, createBody, createMesh);
+
 		this.update(0)
 	}
 

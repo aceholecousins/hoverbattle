@@ -3,10 +3,7 @@ import { ModelMeshConfig } from "game/graphics/mesh";
 import { Model } from "game/graphics/asset";
 import { Engine } from "game/engine";
 import { Circle } from "game/physics/shapes";
-import { RigidBodyConfig } from "game/physics/rigidbody";
-import { Sound } from "game/sound";
-import { assignRole, Role } from "../actor";
-import { Entity } from "../entity";
+import { Entity } from "game/entities/entity";
 import { Vehicle, VEHICLE_RADIUS } from "game/entities/vehicles/vehicle";
 import { Powerup } from "game/entities/powerups/powerup";
 import { appendZ, Vector2, Vector3, ypr, DEG } from "math";
@@ -33,22 +30,27 @@ export class Mine extends Entity {
 		model: Model,
 		engine: Engine
 	) {
-		super();
-		this.mesh = engine.graphics.mesh.createFromModel(
-			new ModelMeshConfig({
-				model,
-				scale: MINE_RADIUS
-			}))
-		this.mesh.setBaseColor({ r: 0, g: 0, b: 0 })
-
-		this.body = engine.physics.addRigidBody({
-			actor: this,
-			shapes: [new Circle(MINE_RADIUS)],
-			mass: MINE_MASS,
-			damping: MINE_DAMPING,
-			angularDamping: MINE_ANGULAR_DAMPING
-		})
-		this.body.copyPosition(this.parent.body)
+		let createBody = (self: Entity) => {
+			let body = engine.physics.addRigidBody({
+				actor: self,
+				shapes: [new Circle(MINE_RADIUS)],
+				mass: MINE_MASS,
+				damping: MINE_DAMPING,
+				angularDamping: MINE_ANGULAR_DAMPING
+			})
+			body.copyPosition(parent.body)
+			return body
+		}
+		let createMesh = (self: Entity) => {
+			let mesh = engine.graphics.mesh.createFromModel(
+				new ModelMeshConfig({
+					model,
+					scale: MINE_RADIUS
+				}))
+			mesh.setBaseColor({ r: 0, g: 0, b: 0 })
+			return mesh
+		}
+		super(createBody, createMesh);
 
 		this.collidesWithParent = false
 

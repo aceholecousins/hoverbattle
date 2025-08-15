@@ -32,8 +32,8 @@ export class HemisphereLightConfig extends SceneNodeConfig<"hemispherelight"> {
 
 	constructor(config: Partial<HemisphereLightConfig> = {}) {
 		super(config)
-		if ("groundColor" in config) { this.groundColor = config.groundColor }
-		if ("skyColor" in config) { this.skyColor = config.skyColor }
+		if (config.groundColor !== undefined) { this.groundColor = config.groundColor }
+		if (config.skyColor !== undefined) { this.skyColor = config.skyColor }
 	}
 }
 

@@ -4,7 +4,7 @@ import { Engine } from "game/engine"
 import { Vector3, ypr, Quaternion, Euler } from "math"
 import { Color, colorLerp } from "utils/color"
 import { Visual } from "game/graphics/visual"
-import { PointLight, PointLightConfig } from "../light"
+import { PointLight, PointLightConfig } from "game/graphics/light"
 import { broker } from "broker"
 import { SmokeFactory, createSmokeFactory } from "./smoke"
 
@@ -20,14 +20,14 @@ export class Smokeball extends Visual {
 		model: Model,
 		engine: Engine
 	) {
-		super()
+		let mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
+		mesh.setScale(0.01)
+		mesh.setPosition(position)
+		mesh.setOrientation(new Quaternion().random())
+		mesh.setBaseColor({ r: 1, g: 1, b: 1 })
+		mesh.setAccentColor1({ r: 1, g: 1, b: 1 })
+		super(mesh)
 		this.color = color
-		this.mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
-		this.mesh.setScale(0.01)
-		this.mesh.setPosition(position)
-		this.mesh.setOrientation(new Quaternion().random())
-		this.mesh.setBaseColor({ r: 1, g: 1, b: 1 })
-		this.mesh.setAccentColor1({ r: 1, g: 1, b: 1 })
 		this.update(0)
 	}
 
@@ -71,10 +71,10 @@ export class Crumb extends Visual {
 		model: Model,
 		engine: Engine
 	) {
-		super()
-		this.mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
-		this.mesh.setScale(0.5)
-		this.mesh.setBaseColor(color)
+		let mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
+		mesh.setScale(0.5)
+		mesh.setBaseColor(color)
+		super(mesh)
 		this.position = position.clone()
 		let direction = Math.random() * 2 * Math.PI
 		let pitch = 0.5 + Math.random() * 1.0
@@ -119,11 +119,11 @@ export class Shockwave extends Visual {
 		model: Model,
 		engine: Engine
 	) {
-		super()
-		this.mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
-		this.mesh.setScale(0.1)
-		this.mesh.setPosition(position)
-		this.mesh.setOpacity(0.2)
+		let mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
+		mesh.setScale(0.1)
+		mesh.setPosition(position)
+		mesh.setOpacity(0.2)
+		super(mesh)
 		this.update(0)
 	}
 
@@ -146,11 +146,11 @@ export class Plop extends Visual {
 		model: Model,
 		engine: Engine
 	) {
-		super()
-		this.mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
-		this.mesh.setScale(0.1)
-		this.mesh.setPosition(position)
-		this.mesh.setBaseColor(color)
+		let mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
+		mesh.setScale(0.1)
+		mesh.setPosition(position)
+		mesh.setBaseColor(color)
+		super(mesh)
 		this.update(0)
 	}
 
@@ -173,15 +173,15 @@ export class Piff extends Visual {
 		model: Model,
 		engine: Engine
 	) {
-		super()
-		this.mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
-		this.mesh.setScale(0.1)
+		let mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
+		mesh.setScale(0.1)
 		let shifted = position.clone()
-		shifted.z += 0.1*Math.random()
-		this.mesh.setPosition(shifted)
-		this.mesh.setAngle(Math.random() * 6.28)
-		this.mesh.setBaseColor(color)
-		this.mesh.setAccentColor2(colorLerp(color, { r: 0, g: 0, b: 0 }, 0.5))
+		shifted.z += 0.1 * Math.random()
+		mesh.setPosition(shifted)
+		mesh.setAngle(Math.random() * 6.28)
+		mesh.setBaseColor(color)
+		mesh.setAccentColor2(colorLerp(color, { r: 0, g: 0, b: 0 }, 0.5))
+		super(mesh)
 		this.update(0)
 	}
 
@@ -218,20 +218,21 @@ export class Shard extends Visual {
 		model: Model,
 		engine: Engine
 	) {
-		super()
-		this.mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
-		this.mesh.setScale(new Vector3(3.0, 0.1, 0.1))
-		this.position = position.clone()
+		let mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
+		mesh.setScale(new Vector3(3.0, 0.1, 0.1))
 		let direction = Math.random() * 2 * Math.PI
 		let pitch = Math.random()
+		mesh.setOrientation(ypr(
+			direction, -pitch, 0))
+		super(mesh)
+
+		this.position = position.clone()
 		let speed = 10 + Math.random() * 10
 		this.velocity = new Vector3(
 			speed * Math.cos(direction) * Math.cos(pitch),
 			speed * Math.sin(direction) * Math.cos(pitch),
 			speed * Math.sin(pitch)
 		)
-		this.mesh.setOrientation(ypr(
-			direction, -pitch, 0))
 		this.update(0)
 	}
 

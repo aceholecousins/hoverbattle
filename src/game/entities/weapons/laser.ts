@@ -23,11 +23,12 @@ export class Speckle extends Visual {
 		model: Model,
 		engine: Engine
 	) {
-		super()
-		this.mesh = engine.graphics.mesh.createFromModel(
+		let mesh = engine.graphics.mesh.createFromModel(
 			new ModelMeshConfig({ model: model })
 		)
-		this.mesh.setScale(new Vector3(LASER_WIDTH * 3, LASER_WIDTH * 3, 1))
+		mesh.setScale(new Vector3(LASER_WIDTH * 3, LASER_WIDTH * 3, 1))
+
+		super(mesh)
 	}
 
 	setPosition(position: Vector3) {
@@ -48,10 +49,9 @@ export class LaserBeam extends Visual {
 		speckleModel: Model,
 		private engine: Engine
 	) {
-		super()
-		this.mesh = engine.graphics.mesh.createFromModel(
+		super(engine.graphics.mesh.createFromModel(
 			new ModelMeshConfig({ model: beamModel })
-		)
+		))
 		this.mesh.setBaseColor(color)
 		this.mesh.setAccentColor1({ r: 1, g: 1, b: 1 })
 		this.mesh.setPositionZ(this.z)

@@ -37,26 +37,35 @@ export class Barrel extends Entity {
 		private rechargeTime: number,
 		engine: Engine
 	) {
-		super()
-		this.mesh = engine.graphics.mesh.createFromModel(
-			new ModelMeshConfig({ model: model })
-		)
-		this.mesh.setScale(BARREL_RADIUS)
-		this.mesh.setBaseColor(parent.player.color)
-		this.mesh.setAccentColor1(colorLerp(parent.player.color, { r: 0, g: 0, b: 0 }, 0.5))
-		this.mesh.setAccentColor2({ r: 0, g: 0, b: 0 })
-		this.mesh.setPositionZ(0.1)
 
-		this.body = engine.physics.addRigidBody({
-			actor: this,
-			shapes: [new Circle(BARREL_RADIUS)],
-			mass: 0.01,
-			damping: 0,
-			angularDamping: 0
-		})
+		let createBody = (self: Entity) => {
+			let body = engine.physics.addRigidBody({
+				actor: self,
+				shapes: [new Circle(BARREL_RADIUS)],
+				mass: 0.01,
+				damping: 0,
+				angularDamping: 0
+			})
 
-		this.body.copyPosition(this.attachTo.body)
-		this.body.copyAngle(this.attachTo.body)
+			body.copyPosition(attachTo.body)
+			body.copyAngle(attachTo.body)
+			return body
+		}
+
+		let createMesh = (self: Entity) => {
+			let mesh = engine.graphics.mesh.createFromModel(
+				new ModelMeshConfig({ model: model })
+			)
+			mesh.setScale(BARREL_RADIUS)
+			mesh.setBaseColor(parent.player.color)
+			mesh.setAccentColor1(colorLerp(parent.player.color, { r: 0, g: 0, b: 0 }, 0.5))
+			mesh.setAccentColor2({ r: 0, g: 0, b: 0 })
+			mesh.setPositionZ(0.1)
+			return mesh
+		}
+
+		super(createBody, createMesh);
+
 		this.attachment = engine.physics.attach({
 			bodyA: this.attachTo.body,
 			bodyB: this.body,
@@ -108,26 +117,33 @@ export class Drone extends Entity {
 		private particleFactory: NashwanShotFactory,
 		engine: Engine
 	) {
-		super()
-		this.mesh = engine.graphics.mesh.createFromModel(
-			new ModelMeshConfig({ model: model })
-		)
-		this.mesh.setScale(DRONE_RADIUS)
-		this.mesh.setBaseColor(parent.player.color)
-		this.mesh.setAccentColor1({ r: 1, g: 0.5, b: 0 })
-		this.mesh.setAccentColor2(colorLerp(parent.player.color, { r: 0, g: 0, b: 0 }, 0.5))
-		this.mesh.setPositionZ(0.1)
+		let createBody = (self: Entity) => {
+			let body = engine.physics.addRigidBody({
+				actor: self,
+				shapes: [new Circle(DRONE_RADIUS)],
+				mass: 0.1,
+				damping: DRONE_DAMPING,
+				angularDamping: 0
+			})
+			body.copyPosition(parent.body)
+			return body
+		}
 
-		this.body = engine.physics.addRigidBody({
-			actor: this,
-			shapes: [new Circle(DRONE_RADIUS)],
-			mass: 0.1,
-			damping: DRONE_DAMPING,
-			angularDamping: 0
-		})
+		let createMesh = (self: Entity) => {
+			let mesh = engine.graphics.mesh.createFromModel(
+				new ModelMeshConfig({ model: model })
+			)
+			mesh.setScale(DRONE_RADIUS)
+			mesh.setBaseColor(parent.player.color)
+			mesh.setAccentColor1({ r: 1, g: 0.5, b: 0 })
+			mesh.setAccentColor2(colorLerp(parent.player.color, { r: 0, g: 0, b: 0 }, 0.5))
+			mesh.setPositionZ(0.1)
+			return mesh
+		}
+
+		super(createBody, createMesh);
+
 		this.parent.onDispose(() => this.dispose())
-
-		this.body.copyPosition(this.parent.body)
 
 		this.collidesWithParent = false
 		this.collidesWithSibling = false
@@ -222,28 +238,35 @@ export class NashwanShot extends Entity {
 		model: Model,
 		engine: Engine
 	) {
-		super();
-		this.mesh = engine.graphics.mesh.createFromModel(
-			new ModelMeshConfig({
-				model,
-				scale: new Vector3(spriteScale.x, spriteScale.y, spriteScale.y)
-			}))
-		this.mesh.setBaseColor({ r: 1, g: 1, b: 1 })
-		this.mesh.setAccentColor1(parent.player.color)
-		this.mesh.setPositionZ(0.1)
+		let createBody = (self: Entity) => {
+			let body = engine.physics.addRigidBody({
+				actor: self,
+				shapes: [new Circle(radius)],
+				damping: 0,
+				angularDamping: 0
+			})
+			body.setPosition(position)
+			body.setAngle(angle)
+			body.setVelocity(new Vector2(
+				Math.cos(body.getAngle()) * speed,
+				Math.sin(body.getAngle()) * speed
+			))
+			return body
+		}
 
-		this.body = engine.physics.addRigidBody({
-			actor: this,
-			shapes: [new Circle(radius)],
-			damping: 0,
-			angularDamping: 0
-		})
-		this.body.setPosition(position)
-		this.body.setAngle(angle)
-		this.body.setVelocity(new Vector2(
-			Math.cos(this.body.getAngle()) * speed,
-			Math.sin(this.body.getAngle()) * speed
-		))
+		let createMesh = (self: Entity) => {
+			let mesh = engine.graphics.mesh.createFromModel(
+				new ModelMeshConfig({
+					model,
+					scale: new Vector3(spriteScale.x, spriteScale.y, spriteScale.y)
+				}))
+			mesh.setBaseColor({ r: 1, g: 1, b: 1 })
+			mesh.setAccentColor1(parent.player.color)
+			mesh.setPositionZ(0.1)
+			return mesh
+		}
+
+		super(createBody, createMesh);
 
 		this.collidesWithParent = false
 		this.collidesWithSibling = false

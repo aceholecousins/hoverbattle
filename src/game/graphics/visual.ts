@@ -1,4 +1,4 @@
-import { Mesh } from "../graphics/mesh"
+import { Mesh } from "game/graphics/mesh"
 import { broker } from "broker"
 
 export class Visual {
@@ -7,7 +7,8 @@ export class Visual {
 
 	private updateHandler = (e: any) => this.update(e.dt)
 
-	constructor() {
+	constructor(mesh: Mesh) {
+		this.mesh = mesh
 		broker.update.addHandler(this.updateHandler)
 	}
 
@@ -16,6 +17,6 @@ export class Visual {
 	dispose() {
 		broker.update.removeHandler(this.updateHandler)
 		this.mesh.destroy()
-		this.mesh = null
+		this.mesh = null!
 	}
 }

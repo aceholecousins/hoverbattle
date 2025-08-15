@@ -1,6 +1,6 @@
 
-import { Actor, Role } from "game/entities/actor"
-
+import { Role } from "game/entities/actor"
+import { Entity } from "game/entities/entity"
 export class CollisionOverride<A, B> {
 	/// this will only be consulted if the two roles can interact, it can veto a collision
 
@@ -8,16 +8,16 @@ export class CollisionOverride<A, B> {
 	readonly roleB: Role<B>
 
 	allowCollision: (
-		actorA: Actor & A,
-		actorB: Actor & B
+		entityA: Entity & A,
+		entityB: Entity & B
 	) => boolean
 
 	constructor(
 		roleA: Role<A>,
 		roleB: Role<B>,
 		allowCollision: (
-			actorA: Actor & A,
-			actorB: Actor & B
+			entityA: Entity & A,
+			entityB: Entity & B
 		) => boolean
 	) {
 		this.roleA = roleA
@@ -34,16 +34,16 @@ export class CollisionHandler<A, B> {
 	readonly mask: number
 
 	onCollision: (
-		actorA: Actor & A,
-		actorB: Actor & B
+		entityA: Entity & A,
+		entityB: Entity & B
 	) => void
 
 	constructor(
 		roleA: Role<A>,
 		roleB: Role<B>,
 		onCollision: (
-			actorA: Actor & A,
-			actorB: Actor & B
+			entityA: Entity & A,
+			entityB: Entity & B
 		) => void
 	) {
 		this.roleA = roleA

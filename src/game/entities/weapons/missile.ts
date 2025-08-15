@@ -3,10 +3,7 @@ import { ModelMeshConfig } from "game/graphics/mesh";
 import { Model } from "game/graphics/asset";
 import { Engine } from "game/engine";
 import { Circle } from "game/physics/shapes";
-import { RigidBodyConfig } from "game/physics/rigidbody";
-import { Sound } from "game/sound";
-import { assignRole, Role } from "../actor";
-import { Entity } from "../entity";
+import { Entity } from "game/entities/entity";
 import { Vehicle, VEHICLE_RADIUS } from "game/entities/vehicles/vehicle";
 import { Powerup } from "game/entities/powerups/powerup";
 import { angleDelta, appendZ, Vector2, ypr, vec2FromDir, DEG } from "math";
@@ -42,25 +39,30 @@ export class Missile extends Entity {
 		model: Model,
 		engine: Engine
 	) {
-		super();
-		this.mesh = engine.graphics.mesh.createFromModel(
-			new ModelMeshConfig({
-				model,
-				scale: MISSILE_LENGTH / 2
-			}))
-		this.mesh.setBaseColor({ r: 0, g: 0, b: 0 })
-		this.mesh.setAccentColor1({ r: 1, g: 1, b: 1 })
-		this.mesh.setAccentColor2(parent.player.color)
-
-		this.body = engine.physics.addRigidBody({
-			actor: this,
-			shapes: [new Circle(MISSILE_RADIUS)],
-			mass: MISSILE_MASS,
-			damping: MISSILE_DAMPING,
-			angularDamping: MISSILE_ANGULAR_DAMPING
-		})
-		this.body.setPosition(position)
-		this.body.setAngle(angle)
+		let createBody = (self: Entity) => {
+			let body = engine.physics.addRigidBody({
+				actor: self,
+				shapes: [new Circle(MISSILE_RADIUS)],
+				mass: MISSILE_MASS,
+				damping: MISSILE_DAMPING,
+				angularDamping: MISSILE_ANGULAR_DAMPING
+			})
+			body.setPosition(position)
+			body.setAngle(angle)
+			return body
+		}
+		let createMesh = (self: Entity) => {
+			let mesh = engine.graphics.mesh.createFromModel(
+				new ModelMeshConfig({
+					model,
+					scale: MISSILE_LENGTH / 2
+				}))
+			mesh.setBaseColor({ r: 0, g: 0, b: 0 })
+			mesh.setAccentColor1({ r: 1, g: 1, b: 1 })
+			mesh.setAccentColor2(parent.player.color)
+			return mesh
+		}
+		super(createBody, createMesh);
 
 		this.target = this.lockOnTarget(parent);
 

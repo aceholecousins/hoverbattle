@@ -6,6 +6,7 @@ import { RigidBodyConfig } from "game/physics/rigidbody"
 import { Player } from "game/player"
 import { angleDelta, appendZ, LowPass, triangle3to2, Vector2, Triangle3, ypr } from "math"
 import { Vehicle, VEHICLE_RADIUS, VehicleFactory } from "game/entities/vehicles/vehicle"
+import { Entity } from "game/entities/entity"
 
 export const GLIDER_THRUST = 20
 export const GLIDER_TURN_RATE = 20
@@ -20,34 +21,43 @@ export class Glider extends Vehicle {
 	private engine: Engine
 	private tNextRipple = 0
 
-	private roll:LowPass = new LowPass(1, 0.3, 0)
+	private roll: LowPass = new LowPass(1, 0.3, 0)
 
 	constructor(
-		public player: Player,
+		player: Player,
 		position: Vector2,
 		model: Model,
 		meta: ModelMetaData,
 		engine: Engine
 	) {
-		super()
-		this.engine = engine
 
 		let triangles: Triangle[] = []
 		for (let tri of (meta.collision as Triangle3[])) {
 			triangles.push(new Triangle(triangle3to2(tri)))
 		}
 
-		this.body = engine.physics.addRigidBody({
-			actor: this,
-			// shapes: triangles,
-			shapes: [new Circle(VEHICLE_RADIUS)],
-			damping: GLIDER_DAMPING,
-			angularDamping: GLIDER_ANGULAR_DAMPING
-		})
-		this.body.setPosition(position)
-		this.mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
-		this.mesh.setScale(VEHICLE_RADIUS)
-		this.mesh.setPositionZ(0.5)
+		let createBody = (self: Entity) => {
+			let body = engine.physics.addRigidBody({
+				actor: self,
+				// shapes: triangles,
+				shapes: [new Circle(VEHICLE_RADIUS)],
+				damping: GLIDER_DAMPING,
+				angularDamping: GLIDER_ANGULAR_DAMPING
+			})
+			body.setPosition(position)
+			return body
+		}
+
+		let createMesh = (self: Entity) => {
+			let mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
+			mesh.setScale(VEHICLE_RADIUS)
+			mesh.setPositionZ(0.5)
+			return mesh
+		}
+
+		super(player, createBody, createMesh);
+
+		this.engine = engine
 		this.update(0)
 	}
 

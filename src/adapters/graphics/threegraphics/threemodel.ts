@@ -9,7 +9,7 @@ import { Triangle3 } from "math"
 import { SceneNodeConfig } from "game/graphics/scenenode"
 
 export class ThreeModel extends Model {
-	threeObject: THREE.Object3D = undefined
+	threeObject: THREE.Object3D | undefined = undefined
 }
 
 export interface ThreeModelLoader extends ModelLoader {

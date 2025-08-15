@@ -7,7 +7,7 @@ import { Actor } from "game/entities/actor";
 
 let bodyCounter = 0;
 export class PlanckRigidBody implements RigidBody {
-	kind: "rigidbody";
+	kind: "rigidbody" = "rigidbody";
 	world: World;
 	body: Body;
 	toBeDeleted: boolean = false;
@@ -35,8 +35,10 @@ export class PlanckRigidBody implements RigidBody {
 
 		for (const shapeCfg of cfg.shapes) {
 			const shape = makePlanckShape(shapeCfg);
-			; (shape as any).id = bodyCounter + ":" + shapeCounter++;
-			this.body.createFixture(shape, { density: 1 });
+			if (shape !== null) {
+				; (shape as any).id = bodyCounter + ":" + shapeCounter++;
+				this.body.createFixture(shape, { density: 1 });
+			}
 		}
 
 		bodyCounter++

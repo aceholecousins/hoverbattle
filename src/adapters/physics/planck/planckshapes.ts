@@ -1,12 +1,12 @@
 import { Shape, Circle, Triangle } from "game/physics/shapes";
 import * as planck from "planck";
 
-export function makePlanckShape(config: Shape): planck.Shape {
+export function makePlanckShape(config: Shape): planck.Shape | null {
 	if (config instanceof Circle) {
 		return new planck.Circle(new planck.Vec2(config.center.x, config.center.y), config.radius);
 	}
 
-	if (config instanceof Triangle) {
+	else if (config instanceof Triangle) {
 		let c0 = new planck.Vec2(config.corners[0].x, config.corners[0].y);
 		let c1 = new planck.Vec2(config.corners[1].x, config.corners[1].y);
 		let c2 = new planck.Vec2(config.corners[2].x, config.corners[2].y);
@@ -22,5 +22,5 @@ export function makePlanckShape(config: Shape): planck.Shape {
 		return new planck.Polygon(vertices);
 	}
 
-	console.error("unknown shape type: ", config.constructor.name);
+	throw new Error("unhandled shape type: " + config.constructor.name);
 }

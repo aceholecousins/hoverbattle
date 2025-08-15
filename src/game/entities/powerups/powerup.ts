@@ -23,19 +23,24 @@ export class PowerupBox extends Entity {
 		model: Model,
 		engine: Engine
 	) {
-		super()
-
-		this.body = engine.physics.addRigidBody({
-			actor: this,
-			shapes: [new Circle(POWERUP_BOX_SIZE * 0.6)],
-			damping: 0.7,
-			angularDamping: 0.7
-		})
-		this.body.setPosition(position)
-		this.body.setAngle(Math.random() * Math.PI * 2)
-		this.mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
-		this.mesh.setPositionZ(0.1)
-		this.mesh.setScale(POWERUP_BOX_SIZE)
+		let createBody = (self: Entity) => {
+			let body = engine.physics.addRigidBody({
+				actor: self,
+				shapes: [new Circle(POWERUP_BOX_SIZE * 0.6)],
+				damping: 0.7,
+				angularDamping: 0.7
+			})
+			body.setPosition(position)
+			body.setAngle(Math.random() * Math.PI * 2)
+			return body
+		}
+		let createMesh = (self: Entity) => {
+			let mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
+			mesh.setPositionZ(0.1)
+			mesh.setScale(POWERUP_BOX_SIZE)
+			return mesh
+		}
+		super(createBody, createMesh)
 		this.update(0)
 	}
 

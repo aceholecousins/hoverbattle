@@ -28,24 +28,32 @@ export class PowerShield extends Entity {
 		model: Model,
 		engine: Engine
 	) {
-		super()
-		this.mesh = engine.graphics.mesh.createFromModel(
-			new ModelMeshConfig({ model: model })
-		)
-		this.mesh.setPositionZ(0.1)
-		this.mesh.setScale(POWERSHIELD_RADIUS)
-		this.mesh.setBaseColor(parent.player.color)
+		let createBody = (self: Entity) => {
+			let body = engine.physics.addRigidBody({
+				actor: self,
+				shapes: [new Circle(POWERSHIELD_RADIUS)],
+				mass: 0.01,
+				damping: 0,
+				angularDamping: 0
+			})
+			body.copyPosition(parent.body)
+			return body
+		}
+		let createMesh = (self: Entity) => {
+			let mesh = engine.graphics.mesh.createFromModel(
+				new ModelMeshConfig({ model: model })
+			)
+			mesh.setPositionZ(0.1)
+			mesh.setScale(POWERSHIELD_RADIUS)
+			mesh.setBaseColor(parent.player.color)
+			return mesh
+		}
+
+		super(createBody, createMesh);
+
 		this.currentAccentColor = colorLerp(parent.player.color, { r: 0, g: 0, b: 0 }, 0.5)
 		this.targetAccentColor = colorLerp(parent.player.color, { r: 0, g: 0, b: 0 }, 0.5)
 
-		this.body = engine.physics.addRigidBody({
-			actor: this,
-			shapes: [new Circle(POWERSHIELD_RADIUS)],
-			mass: 0.01,
-			damping: 0,
-			angularDamping: 0
-		})
-		this.body.copyPosition(this.parent.body)
 		this.attachment = engine.physics.attach({
 			bodyA: this.parent.body,
 			bodyB: this.body,
