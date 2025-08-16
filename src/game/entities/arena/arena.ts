@@ -46,7 +46,7 @@ export async function loadArena(
 		arenaParts.push(new ArenaPart(tri, engine))
 	}
 
-	engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
+	engine.graphics.mesh.createFromModel({ model })
 
 	return { arenaParts, meta }
 }

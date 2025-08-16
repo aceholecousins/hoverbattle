@@ -1,6 +1,6 @@
 
 import { Vector2, Vector3, Quaternion } from "math"
-import { Kind, assertDefined, copyIfPresent } from "utils/general"
+import { Defaults, Kind } from "utils/general"
 
 export interface SceneNode<K extends Kind> {
 	kind: K
@@ -17,14 +17,15 @@ export interface SceneNode<K extends Kind> {
 	destroy(): void
 }
 
-export class SceneNodeConfig<K extends Kind> {
-	kind: K
-	position = new Vector3(0, 0, 0)
-	orientation = new Quaternion(0, 0, 0, 1)
-	scale: number | Vector3 = 1
+export interface SceneNodeConfig<K extends Kind> {
+	kind?: K
+	position?: Vector3
+	orientation?: Quaternion
+	scale?: number | Vector3
+}
 
-	constructor(config: Partial<SceneNodeConfig<K>> = {}) {
-		this.kind = config.kind! // todo
-		copyIfPresent(this, config, ["position", "orientation", "scale"])
-	}
+export const sceneNodeDefaults: Omit<Defaults<SceneNodeConfig<"">>, "kind"> = {
+	position: new Vector3(0, 0, 0),
+	orientation: new Quaternion(0, 0, 0, 1),
+	scale: 1
 }

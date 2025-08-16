@@ -34,11 +34,10 @@ export class PhaserShot extends Entity {
 			return body
 		}
 		let createMesh = (self: Entity) => {
-			let mesh = engine.graphics.mesh.createFromModel(
-				new ModelMeshConfig({
-					model,
-					scale: new Vector3(PHASER_LENGTH, PHASER_LENGTH / 2, 1)
-				}))
+			let mesh = engine.graphics.mesh.createFromModel({
+				model,
+				scale: new Vector3(PHASER_LENGTH, PHASER_LENGTH / 2, 1)
+			})
 			mesh.setBaseColor(parent.player.team == 0 ? { r: 1, g: 0.2, b: 0 } : { r: 0, g: 0.5, b: 1 })
 			mesh.setAccentColor1({ r: 1, g: 1, b: 1 })
 			mesh.setPositionZ(0.1)

@@ -100,12 +100,12 @@ function extractMetaData(scene: THREE.Scene) {
 				(node as THREE.Mesh).geometry.dispose()
 			}
 			else if (node.type == "Object3D") {
-				meta[node.name.substring(1)] = new SceneNodeConfig({
+				meta[node.name.substring(1)] = {
 					kind: "empty",
 					position: node.position,
 					orientation: node.quaternion,
 					scale: node.scale
-				})
+				}
 				scene.remove(node);
 			}
 			else {

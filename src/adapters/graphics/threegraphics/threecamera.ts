@@ -1,6 +1,6 @@
 
 import { ThreeSceneNode } from "./threescenenode"
-import { Camera, CameraConfig, CameraFactory } from "game/graphics/camera"
+import { Camera, CameraConfig, cameraDefaults, CameraFactory } from "game/graphics/camera"
 import { SceneInfo } from "./sceneinfo"
 import * as THREE from "three"
 import { renderer } from "./threerenderer"
@@ -11,14 +11,15 @@ export class ThreeCamera extends ThreeSceneNode<"camera", THREE.PerspectiveCamer
 
 	constructor(scene: THREE.Scene, config: CameraConfig) {
 		let threeCam = new THREE.PerspectiveCamera()
+		const fullConfig: Required<CameraConfig> = {...cameraDefaults, ...config}
 
-		super(scene, threeCam, config)
+		super(scene, threeCam, fullConfig)
 
-		this.threeObject.near = config.nearClip
-		this.threeObject.far = config.farClip
-		this.threeObject.fov = config.verticalAngleOfViewInDeg
+		this.threeObject.near = fullConfig.nearClip
+		this.threeObject.far = fullConfig.farClip
+		this.threeObject.fov = fullConfig.verticalAngleOfViewInDeg
 		this.threeObject.updateProjectionMatrix()
-		this.onAspectChange = config.onAspectChange
+		this.onAspectChange = fullConfig.onAspectChange
 
 		const resize = () => {
 			let aspect = renderer.domElement.clientWidth / renderer.domElement.clientHeight

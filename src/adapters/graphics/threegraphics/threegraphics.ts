@@ -107,7 +107,7 @@ export class ThreeGraphics implements Graphics {
 		this.camera = new ThreeCameraFactory(this.scene)
 
 		// controllable test camera
-		let defaultCam = this.camera.create(new CameraConfig())
+		let defaultCam = this.camera.create({})
 		defaultCam.setPosition(new Vector3(0, 0, 10))
 		defaultCam.activate()
 		defaultCam.threeObject.up.set(0, 0, 1)

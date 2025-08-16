@@ -27,7 +27,7 @@ async function main() {
 	console.log('physics engine:', physics.constructor.name)
 	registerRelatedEntityCollisionOverride(physics)
 	let graphics = new ThreeGraphics() as Graphics
-	let actionCam = new ActionCam(graphics, new ActionCamConfig())
+	let actionCam = new ActionCam(graphics, {})
 	actionCam.camera.activate()
 	let controllerManager = new DefaultControllerManager()
 	let loadSound = loadWebApiSound as SoundLoader

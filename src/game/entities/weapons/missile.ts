@@ -52,11 +52,10 @@ export class Missile extends Entity {
 			return body
 		}
 		let createMesh = (self: Entity) => {
-			let mesh = engine.graphics.mesh.createFromModel(
-				new ModelMeshConfig({
-					model,
-					scale: MISSILE_LENGTH / 2
-				}))
+			let mesh = engine.graphics.mesh.createFromModel({
+				model,
+				scale: MISSILE_LENGTH / 2
+			})
 			mesh.setBaseColor({ r: 0, g: 0, b: 0 })
 			mesh.setAccentColor1({ r: 1, g: 1, b: 1 })
 			mesh.setAccentColor2(parent.player.color)

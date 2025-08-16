@@ -49,7 +49,7 @@ export class Glider extends Vehicle {
 		}
 
 		let createMesh = (self: Entity) => {
-			let mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
+			let mesh = engine.graphics.mesh.createFromModel({ model })
 			mesh.setScale(VEHICLE_RADIUS)
 			mesh.setPositionZ(0.5)
 			return mesh

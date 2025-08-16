@@ -18,10 +18,10 @@ planck js seems a bit overpowered and a simpler engine might suffice but it also
     - planck requires some anchor point which I now just set in the middle between both origins
     - both allow me to tweak stiffness and stuff but since they work so differently, I just leave that at default settings
 
-was about to tackle these bugs:
+was about to tackle:
 * just noticed that p2 resets inertia when updating mass, so after I fixed that, the glider spins slower now, need to readjust
 
 next steps:
-replace the default parameter handling to the scheme at the bottom of workshop/code/defaultparameters.ts
 remove nashwan because the company that bought bitmap brothers are anal about it
 implement minigun
+the whole kind:K thing in sceneNodes is somewhat annoying to drag around and why is it a template parameter as well? I think I wanted to have both compile time as well as runtime type information but I never even use either. also, object.constructor.name reveals the type as well. Could I regret kicking it out or should I yagni it?

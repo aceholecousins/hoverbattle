@@ -35,15 +35,15 @@ export function copy<T1, T2, K extends keyof T1 & keyof T2>(
 	}
 }
 
-export function copyIfPresent<T1 extends object, T2 extends object, K extends keyof T1 & keyof T2>(
-	target: T1, source: T2, keys: K[]) {
+// export function copyIfPresent<T1 extends object, T2 extends object, K extends keyof T1 & keyof T2>(
+// 	target: T1, source: T2, keys: K[]) {
 
-	for (const k of keys) {
-		if (k in source) {
-			(target as any)[k] = (source as any)[k]
-		}
-	}
-}
+// 	for (const k of keys) {
+// 		if (k in source) {
+// 			(target as any)[k] = (source as any)[k]
+// 		}
+// 	}
+// }
 
 export function remove<T>(a: Array<T>, b: T) {
 	let index = a.indexOf(b);

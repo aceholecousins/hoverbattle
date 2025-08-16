@@ -17,7 +17,7 @@ export class Smoke extends Visual {
 		color: Color,
 		engine: Engine
 	) {
-		let mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
+		let mesh = engine.graphics.mesh.createFromModel({ model })
 		mesh.setScale(2)
 		mesh.setPosition(position)
 		mesh.setAngle(Math.random() * 6.28)

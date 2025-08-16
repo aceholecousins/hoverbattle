@@ -1,7 +1,7 @@
 
-import { copyIfPresent } from "utils/general"
+import { Defaults } from "utils/general"
 import { Color } from "utils/color"
-import { SceneNode, SceneNodeConfig } from "./scenenode"
+import { SceneNode, SceneNodeConfig, sceneNodeDefaults } from "./scenenode"
 import { Model } from "./asset"
 import { Vector2, Vector3, Quaternion } from "math"
 
@@ -30,26 +30,28 @@ export class EmptyMesh implements Mesh {
 	setAccentColor2(color: Color) { }
 	setOpacity(opacity: number) { }
 }
-export class MeshConfig extends SceneNodeConfig<"mesh"> {
-	kind: "mesh" = "mesh"
-	baseColor: Color = { r: 1, g: 1, b: 1 }
-	accentColor1: Color = { r: 1, g: 0, b: 0 }
-	accentColor2: Color = { r: 0, g: 1, b: 0 }
-	opacity: number = 1
 
-	constructor(config: Partial<MeshConfig> = {}) {
-		super(config)
-		copyIfPresent(this, config, ["baseColor", "accentColor1", "accentColor2", "opacity"])
-	}
+export interface MeshConfig extends SceneNodeConfig<"mesh"> {
+	baseColor?: Color
+	accentColor1?: Color
+	accentColor2?: Color
+	opacity?: number
 }
 
-export class ModelMeshConfig extends MeshConfig {
+export const meshConfigDefaults: Defaults<MeshConfig> = {
+	...sceneNodeDefaults,
+	kind: "mesh",
+	baseColor: { r: 1, g: 1, b: 1 },
+	accentColor1: { r: 1, g: 0, b: 0 },
+	accentColor2: { r: 0, g: 1, b: 0 },
+	opacity: 1
+}
+
+export interface ModelMeshConfig extends MeshConfig {
 	model: Model
-	constructor(config: Partial<MeshConfig> & Pick<ModelMeshConfig, "model">) {
-		super(config)
-		this.model = config.model
-	}
 }
+
+export const modelMeshDefaults: Defaults<ModelMeshConfig> = meshConfigDefaults
 
 export interface MeshFactory {
 	createFromModel: (config: ModelMeshConfig) => Mesh

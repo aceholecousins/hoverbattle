@@ -40,9 +40,7 @@ export class PowerShield extends Entity {
 			return body
 		}
 		let createMesh = (self: Entity) => {
-			let mesh = engine.graphics.mesh.createFromModel(
-				new ModelMeshConfig({ model: model })
-			)
+			let mesh = engine.graphics.mesh.createFromModel({ model })
 			mesh.setPositionZ(0.1)
 			mesh.setScale(POWERSHIELD_RADIUS)
 			mesh.setBaseColor(parent.player.color)

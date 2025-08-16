@@ -1,5 +1,5 @@
 
-import { Mesh, ModelMeshConfig, MeshFactory } from "game/graphics/mesh"
+import { Mesh, ModelMeshConfig, MeshFactory, modelMeshDefaults } from "game/graphics/mesh"
 import { ThreeSceneNode } from "./threescenenode"
 import * as THREE from "three"
 import { Color } from "utils/color"
@@ -16,17 +16,18 @@ export class ThreeMesh extends ThreeSceneNode<"mesh"> implements Mesh {
 		config: ModelMeshConfig,
 		water: ThreeWater
 	) {
-		let threeModel = config.model as ThreeModel
+		const fullConfig: Required<ModelMeshConfig> = { ...modelMeshDefaults, ...config }
+		let threeModel = fullConfig.model as ThreeModel
 		let template = threeModel.threeObject
 		assertDefined(template)
-		super(scene, template.clone(), config)
+		super(scene, template.clone(), fullConfig)
 
 		this.threeObject.userData.tintMatrix = { value: new THREE.Matrix3() }
 		modMaterials(this.threeObject, this.threeObject.userData.tintMatrix, water)
 
-		this.setBaseColor(config.baseColor)
-		this.setAccentColor1(config.accentColor1)
-		this.setAccentColor2(config.accentColor2)
+		this.setBaseColor(fullConfig.baseColor)
+		this.setAccentColor1(fullConfig.accentColor1)
+		this.setAccentColor2(fullConfig.accentColor2)
 	}
 
 	setBaseColor(color: Color) {

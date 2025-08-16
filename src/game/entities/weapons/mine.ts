@@ -42,11 +42,10 @@ export class Mine extends Entity {
 			return body
 		}
 		let createMesh = (self: Entity) => {
-			let mesh = engine.graphics.mesh.createFromModel(
-				new ModelMeshConfig({
-					model,
-					scale: MINE_RADIUS
-				}))
+			let mesh = engine.graphics.mesh.createFromModel({
+				model,
+				scale: MINE_RADIUS
+			})
 			mesh.setBaseColor({ r: 0, g: 0, b: 0 })
 			return mesh
 		}

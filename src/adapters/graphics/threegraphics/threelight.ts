@@ -6,7 +6,9 @@ import {
 	PointLightConfig,
 	HemisphereLight,
 	HemisphereLightConfig,
-	LightFactory
+	LightFactory,
+	pointLightDefaults,
+	hemisphereLightDefaults
 } from "game/graphics/light"
 import * as THREE from "three"
 
@@ -21,10 +23,11 @@ export class ThreePointLight extends ThreeSceneNode<"pointlight", THREE.PointLig
 	}
 
 	constructor(scene: THREE.Scene, config: PointLightConfig) {
-		super(scene, new THREE.PointLight(), config)
+		const fullConfig: Required<PointLightConfig> = {...pointLightDefaults, ...config}
+		super(scene, new THREE.PointLight(), fullConfig)
 
-		this.setIntensity(config.intensity)
-		this.setColor(config.color)
+		this.setIntensity(fullConfig.intensity)
+		this.setColor(fullConfig.color)
 	}
 }
 
@@ -39,10 +42,11 @@ export class ThreeHemisphereLight extends ThreeSceneNode<"hemispherelight", THRE
 	}
 
 	constructor(scene: THREE.Scene, config: HemisphereLightConfig) {
-		super(scene, new THREE.HemisphereLight(), config)
+		const fullConfig: Required<HemisphereLightConfig> = { ...hemisphereLightDefaults, ...config }
+		super(scene, new THREE.HemisphereLight(), fullConfig)
 
-		this.setGroundColor(config.groundColor)
-		this.setSkyColor(config.skyColor)
+		this.setGroundColor(fullConfig.groundColor)
+		this.setSkyColor(fullConfig.skyColor)
 	}
 }
 

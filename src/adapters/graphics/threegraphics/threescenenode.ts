@@ -1,6 +1,6 @@
 
 import * as THREE from "three"
-import { SceneNode, SceneNodeConfig } from "game/graphics/scenenode"
+import { SceneNode, SceneNodeConfig, sceneNodeDefaults } from "game/graphics/scenenode"
 import { Vector2, Vector3, Quaternion } from "math"
 import { Kind } from "utils/general"
 
@@ -12,8 +12,9 @@ export abstract class ThreeSceneNode<K extends Kind, T extends THREE.Object3D = 
 	constructor(
 		scene: THREE.Scene,
 		object: T,
-		config: SceneNodeConfig<K>
+		config: SceneNodeConfig<K> & { kind: K }
 	) {
+		const fullConfig: Required<SceneNodeConfig<K>> = {...sceneNodeDefaults, ...config}
 		this.threeScene = scene
 		this.threeObject = object
 		scene.add(object)
@@ -21,10 +22,10 @@ export abstract class ThreeSceneNode<K extends Kind, T extends THREE.Object3D = 
 		// let axes = new THREE.AxesHelper(1)
 		// this.threeObject.add(axes)
 
-		this.kind = config.kind
-		this.setPosition(config.position)
-		this.setOrientation(config.orientation)
-		this.setScale(config.scale)
+		this.kind = fullConfig.kind
+		this.setPosition(fullConfig.position)
+		this.setOrientation(fullConfig.orientation)
+		this.setScale(fullConfig.scale)
 	}
 
 	setPosition(position: Vector3) {

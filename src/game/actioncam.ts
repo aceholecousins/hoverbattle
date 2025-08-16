@@ -1,28 +1,34 @@
 import { Graphics } from "game/graphics/graphics";
 import { Vector2, Vector3, quatFromMatrix3 } from "math";
-import { Camera, CameraConfig } from "game/graphics/camera";
+import { Camera, CameraConfig, cameraDefaults } from "game/graphics/camera";
 import { matrix3FromBasis } from "math";
-import { copyIfPresent } from "utils/general";
+import { Defaults } from "utils/general";
 import { LowPass } from "math";
 
-export class ActionCamConfig extends CameraConfig {
+export interface ActionCamConfig extends CameraConfig {
 	/** camera will not move closer to scene than this */
-	dMin = 5
+	minDistance?: number
 
 	/** camera will make the image higher and wider than necessary by this factor */
-	marginFactor = 1.33
+	marginFactor?: number
 
-	/** time constants for camera motion smoothing */
-	tauXY = 1.5
-	tauZ = 0.5
+	/** time constant for camera motion smoothing in xy plane */
+	tauXY?: number
+
+	/** time constant for camera motion smoothing in z direction */
+	tauZ?: number
 
 	/** time constant for camera focus point smoothing */
-	tauFocus = 0.3
+	tauFocus?: number
+}
 
-	constructor(config: Partial<ActionCamConfig> = {}) {
-		super(config)
-		copyIfPresent(this, config, ["dMin", "tauXY", "tauZ", "tauFocus", "marginFactor"])
-	}
+export const actionCamDefaults: Defaults<ActionCamConfig> = {
+	...cameraDefaults,
+	minDistance: 5,
+	marginFactor: 1.33,
+	tauXY: 1.5,
+	tauZ: 0.5,
+	tauFocus: 0.3,
 }
 
 interface Target {
@@ -43,7 +49,7 @@ export class ActionCam {
 
 	camera: Camera
 
-	dMin: number
+	minDistance: number
 
 	positionX: LowPass
 	positionY: LowPass
@@ -60,30 +66,31 @@ export class ActionCam {
 		graphics: Graphics,
 		config: ActionCamConfig
 	) {
+		const fullConfig: Required<ActionCamConfig> = { ...actionCamDefaults, ...config }
 
 		this.distanceOverHeight =
-			0.5 / Math.tan(0.5 * config.verticalAngleOfViewInDeg / 180 * Math.PI) * config.marginFactor
+			0.5 / Math.tan(0.5 * fullConfig.verticalAngleOfViewInDeg / 180 * Math.PI) * fullConfig.marginFactor
 
 		let cam = this
 
-		let oldAspectChange = config.onAspectChange
-		config.onAspectChange = function (aspect: number) {
+		let oldAspectChange = fullConfig.onAspectChange
+		fullConfig.onAspectChange = function (aspect: number) {
 			cam.distanceOverWidth = cam.distanceOverHeight / aspect
 			oldAspectChange(aspect)
 		}
 
-		this.camera = graphics.camera.create(config)
+		this.camera = graphics.camera.create(fullConfig)
 
-		this.dMin = config.dMin
+		this.minDistance = fullConfig.minDistance
 
 		const order = 3
 
-		this.positionX = new LowPass(order, config.tauXY / order, 0)
-		this.positionY = new LowPass(order, config.tauXY / order, 0)
-		this.positionZ = new LowPass(order, config.tauZ / order, 100)
+		this.positionX = new LowPass(order, fullConfig.tauXY / order, 0)
+		this.positionY = new LowPass(order, fullConfig.tauXY / order, 0)
+		this.positionZ = new LowPass(order, fullConfig.tauZ / order, 100)
 
-		this.focusX = new LowPass(order, config.tauFocus / order, 0)
-		this.focusY = new LowPass(order, config.tauFocus / order, 0)
+		this.focusX = new LowPass(order, fullConfig.tauFocus / order, 0)
+		this.focusY = new LowPass(order, fullConfig.tauFocus / order, 0)
 	}
 
 	follow(target: Target, radius: number) {
@@ -116,7 +123,7 @@ export class ActionCam {
 			Math.max(
 				(xMax - xMin) * this.distanceOverWidth,
 				(yMax - yMin) * this.distanceOverHeight,
-				this.dMin
+				this.minDistance
 			)
 		)
 

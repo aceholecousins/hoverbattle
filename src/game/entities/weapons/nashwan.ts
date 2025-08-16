@@ -53,9 +53,7 @@ export class Barrel extends Entity {
 		}
 
 		let createMesh = (self: Entity) => {
-			let mesh = engine.graphics.mesh.createFromModel(
-				new ModelMeshConfig({ model: model })
-			)
+			let mesh = engine.graphics.mesh.createFromModel({ model })
 			mesh.setScale(BARREL_RADIUS)
 			mesh.setBaseColor(parent.player.color)
 			mesh.setAccentColor1(colorLerp(parent.player.color, { r: 0, g: 0, b: 0 }, 0.5))
@@ -130,9 +128,7 @@ export class Drone extends Entity {
 		}
 
 		let createMesh = (self: Entity) => {
-			let mesh = engine.graphics.mesh.createFromModel(
-				new ModelMeshConfig({ model: model })
-			)
+			let mesh = engine.graphics.mesh.createFromModel({ model })
 			mesh.setScale(DRONE_RADIUS)
 			mesh.setBaseColor(parent.player.color)
 			mesh.setAccentColor1({ r: 1, g: 0.5, b: 0 })
@@ -255,11 +251,10 @@ export class NashwanShot extends Entity {
 		}
 
 		let createMesh = (self: Entity) => {
-			let mesh = engine.graphics.mesh.createFromModel(
-				new ModelMeshConfig({
-					model,
-					scale: new Vector3(spriteScale.x, spriteScale.y, spriteScale.y)
-				}))
+			let mesh = engine.graphics.mesh.createFromModel({
+				model,
+				scale: new Vector3(spriteScale.x, spriteScale.y, spriteScale.y)
+			})
 			mesh.setBaseColor({ r: 1, g: 1, b: 1 })
 			mesh.setAccentColor1(parent.player.color)
 			mesh.setPositionZ(0.1)

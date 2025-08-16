@@ -20,7 +20,7 @@ export class Smokeball extends Visual {
 		model: Model,
 		engine: Engine
 	) {
-		let mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
+		let mesh = engine.graphics.mesh.createFromModel({ model })
 		mesh.setScale(0.01)
 		mesh.setPosition(position)
 		mesh.setOrientation(new Quaternion().random())
@@ -71,7 +71,7 @@ export class Crumb extends Visual {
 		model: Model,
 		engine: Engine
 	) {
-		let mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
+		let mesh = engine.graphics.mesh.createFromModel({ model })
 		mesh.setScale(0.5)
 		mesh.setBaseColor(color)
 		super(mesh)
@@ -119,7 +119,7 @@ export class Shockwave extends Visual {
 		model: Model,
 		engine: Engine
 	) {
-		let mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
+		let mesh = engine.graphics.mesh.createFromModel({ model })
 		mesh.setScale(0.1)
 		mesh.setPosition(position)
 		mesh.setOpacity(0.2)
@@ -146,7 +146,7 @@ export class Plop extends Visual {
 		model: Model,
 		engine: Engine
 	) {
-		let mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
+		let mesh = engine.graphics.mesh.createFromModel({ model })
 		mesh.setScale(0.1)
 		mesh.setPosition(position)
 		mesh.setBaseColor(color)
@@ -173,7 +173,7 @@ export class Piff extends Visual {
 		model: Model,
 		engine: Engine
 	) {
-		let mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
+		let mesh = engine.graphics.mesh.createFromModel({ model })
 		mesh.setScale(0.1)
 		let shifted = position.clone()
 		shifted.z += 0.1 * Math.random()
@@ -218,7 +218,7 @@ export class Shard extends Visual {
 		model: Model,
 		engine: Engine
 	) {
-		let mesh = engine.graphics.mesh.createFromModel(new ModelMeshConfig({ model }))
+		let mesh = engine.graphics.mesh.createFromModel({ model })
 		mesh.setScale(new Vector3(3.0, 0.1, 0.1))
 		let direction = Math.random() * 2 * Math.PI
 		let pitch = Math.random()
@@ -254,13 +254,11 @@ export class Flash {
 	private updateHandler = (e: any) => this.update(e.dt)
 
 	constructor(engine: Engine) {
-		this.light = engine.graphics.light.createPointLight(
-			new PointLightConfig({
-				position: new Vector3(NaN, NaN, NaN),
-				color: { r: 0, g: 0, b: 0 },
-				intensity: 0
-			})
-		)
+		this.light = engine.graphics.light.createPointLight({
+			position: new Vector3(NaN, NaN, NaN),
+			color: { r: 0, g: 0, b: 0 },
+			intensity: 0
+		})
 	}
 
 	flash(position: Vector3, color: Color) {
