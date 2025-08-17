@@ -16,20 +16,24 @@ THREE.ShaderLib.physical.fragmentShader = THREE.ShaderLib.physical.fragmentShade
 
 THREE.ShaderChunk.map_fragment = `
 #ifdef USE_MAP
-	vec4 texelColor = texture2D( map, vUv );
-	texelColor = mapTexelToLinear( texelColor );
+	vec4 sampledDiffuseColor = texture2D( map, vMapUv );
+	#ifdef DECODE_VIDEO_TEXTURE
+		sampledDiffuseColor = sRGBTransferEOTF( sampledDiffuseColor );
+	#endif
 	#ifdef MOD
-		diffuseColor.rgb = diffuseColor.rgb*(1.0-texelColor.a) + texelColor.rgb*texelColor.a;
+		diffuseColor.rgb = diffuseColor.rgb*(1.0-sampledDiffuseColor.a) + sampledDiffuseColor.rgb*sampledDiffuseColor.a;
 	#else
-		diffuseColor *= texelColor;
+		diffuseColor *= sampledDiffuseColor;
 	#endif
 #endif
 `
 
 THREE.ShaderChunk.emissivemap_fragment = `
 #ifdef USE_EMISSIVEMAP
-	vec4 emissiveColor = texture2D( emissiveMap, vUv );
-	emissiveColor.rgb = emissiveMapTexelToLinear( emissiveColor ).rgb;
+	vec4 emissiveColor = texture2D( emissiveMap, vEmissiveMapUv );
+	#ifdef DECODE_VIDEO_TEXTURE_EMISSIVE
+		emissiveColor = sRGBTransferEOTF( emissiveColor );
+	#endif
 	#ifdef MOD
 		totalEmissiveRadiance = totalEmissiveRadiance*(1.0-emissiveColor.a) + emissiveColor.rgb*emissiveColor.a;
 	#else
@@ -42,7 +46,7 @@ let tex = new THREE.TextureLoader().load('test.png')
 let alpha = new THREE.TextureLoader().load('alpha.png')
 let stdmat = new THREE.MeshStandardMaterial({ map: tex, alphaMap: alpha, color: "orange", transparent: true })
 let custommat = new THREE.MeshStandardMaterial({ map: tex, alphaMap: alpha, color: "orange", transparent: true })
-custommat.defines["MOD"] = ""
+;(custommat as any).defines["MOD"] = ""
 let geom = new THREE.TorusKnotGeometry()
 
 let m1 = new THREE.Mesh(geom, stdmat)
