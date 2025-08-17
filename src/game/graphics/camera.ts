@@ -2,11 +2,11 @@
 import { SceneNode, SceneNodeConfig, sceneNodeDefaults } from "./scenenode"
 import { Defaults } from "utils/general"
 
-export interface Camera extends SceneNode<"camera"> {
+export interface Camera extends SceneNode {
 	activate(): void
 }
 
-export interface CameraConfig extends SceneNodeConfig<"camera"> {
+export interface CameraConfig extends SceneNodeConfig {
 	nearClip?: number
 	farClip?: number
 	verticalAngleOfViewInDeg?: number

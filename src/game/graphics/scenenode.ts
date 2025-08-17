@@ -1,9 +1,9 @@
 
 import { Vector2, Vector3, Quaternion } from "math"
-import { Defaults, Kind } from "utils/general"
+import { Defaults } from "utils/general"
 
-export interface SceneNode<K extends Kind> {
-	kind: K
+export interface SceneNode {
+	kind: string
 	setPosition(position: Vector3): void
 	setPositionXY(xy: Vector2): void
 	setPositionZ(z: number): void
@@ -17,14 +17,15 @@ export interface SceneNode<K extends Kind> {
 	destroy(): void
 }
 
-export interface SceneNodeConfig<K extends Kind> {
-	kind?: K
+export interface SceneNodeConfig {
+	kind?: string
 	position?: Vector3
 	orientation?: Quaternion
 	scale?: number | Vector3
 }
 
-export const sceneNodeDefaults: Omit<Defaults<SceneNodeConfig<"">>, "kind"> = {
+export const sceneNodeDefaults: Defaults<SceneNodeConfig> = {
+	kind: "scenenode",
 	position: new Vector3(0, 0, 0),
 	orientation: new Quaternion(0, 0, 0, 1),
 	scale: 1

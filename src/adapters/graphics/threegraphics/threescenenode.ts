@@ -2,19 +2,18 @@
 import * as THREE from "three"
 import { SceneNode, SceneNodeConfig, sceneNodeDefaults } from "game/graphics/scenenode"
 import { Vector2, Vector3, Quaternion } from "math"
-import { Kind } from "utils/general"
 
-export abstract class ThreeSceneNode<K extends Kind, T extends THREE.Object3D = THREE.Object3D> implements SceneNode<K> {
-	kind: K
+export abstract class ThreeSceneNode<T extends THREE.Object3D = THREE.Object3D> implements SceneNode {
+	kind: string
 	threeScene: THREE.Scene
 	threeObject: T
 
 	constructor(
 		scene: THREE.Scene,
 		object: T,
-		config: SceneNodeConfig<K> & { kind: K }
+		config: SceneNodeConfig
 	) {
-		const fullConfig: Required<SceneNodeConfig<K>> = {...sceneNodeDefaults, ...config}
+		const fullConfig: Required<SceneNodeConfig> = {...sceneNodeDefaults, ...config}
 		this.threeScene = scene
 		this.threeObject = object
 		scene.add(object)

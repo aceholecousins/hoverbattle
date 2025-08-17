@@ -192,7 +192,7 @@ export let createMatch: MatchFactory = async function (engine) {
 
 	for (const [key, value] of Object.entries(arenaParts_meta.meta)) {
 		if (key.startsWith("spawn")) {
-			const spawn = value as Required<SceneNodeConfig<"empty">>
+			const spawn = value as Required<SceneNodeConfig>
 			spawnPoints.push(new Vector2(spawn.position.x, spawn.position.y))
 		}
 	}

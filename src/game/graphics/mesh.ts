@@ -5,7 +5,7 @@ import { SceneNode, SceneNodeConfig, sceneNodeDefaults } from "./scenenode"
 import { Model } from "./asset"
 import { Vector2, Vector3, Quaternion } from "math"
 
-export interface Mesh extends SceneNode<"mesh"> {
+export interface Mesh extends SceneNode {
 	setBaseColor(color: Color): void
 	setAccentColor1(color: Color): void
 	setAccentColor2(color: Color): void
@@ -13,7 +13,7 @@ export interface Mesh extends SceneNode<"mesh"> {
 }
 
 export class EmptyMesh implements Mesh {
-	kind: "mesh" = "mesh"
+	kind = "mesh"
 	setPosition(position: Vector3) { }
 	setPositionXY(xy: Vector2) { }
 	setPositionZ(z: number) { }
@@ -31,7 +31,7 @@ export class EmptyMesh implements Mesh {
 	setOpacity(opacity: number) { }
 }
 
-export interface MeshConfig extends SceneNodeConfig<"mesh"> {
+export interface MeshConfig extends SceneNodeConfig {
 	baseColor?: Color
 	accentColor1?: Color
 	accentColor2?: Color

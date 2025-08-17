@@ -3,12 +3,12 @@ import { Defaults } from "utils/general"
 import { Color } from "utils/color"
 import { SceneNode, SceneNodeConfig, sceneNodeDefaults } from "./scenenode"
 
-export interface PointLight extends SceneNode<"pointlight"> {
+export interface PointLight extends SceneNode {
 	setColor(color: Color): void
 	setIntensity(intensity: number): void
 }
 
-export interface PointLightConfig extends SceneNodeConfig<"pointlight"> {
+export interface PointLightConfig extends SceneNodeConfig {
 	kind?: "pointlight"
 	color?: Color
 	intensity?: number
@@ -21,12 +21,12 @@ export const pointLightDefaults: Defaults<PointLightConfig> = {
 	intensity: 1
 }
 
-export interface HemisphereLight extends SceneNode<"hemispherelight"> {
+export interface HemisphereLight extends SceneNode {
 	setGroundColor(color: Color): void
 	setSkyColor(color: Color): void
 }
 
-export interface HemisphereLightConfig extends SceneNodeConfig<"hemispherelight"> {
+export interface HemisphereLightConfig extends SceneNodeConfig {
 	kind?: "hemispherelight"
 	groundColor?: Color
 	skyColor?: Color

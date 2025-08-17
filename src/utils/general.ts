@@ -1,7 +1,7 @@
 
 export type Registry<T> = { [index: string]: T }
 
-export type Kind = string
+// export type Kind = string
 
 // Defaults<T> extracts all optional properties and makes them required,
 // in order to define default values for them.
@@ -26,24 +26,6 @@ export function assertDefined<T>(
 		throw new Error(message ?? 'Value must be defined')
 	}
 }
-
-export function copy<T1, T2, K extends keyof T1 & keyof T2>(
-	target: T1, source: T2, keys: K[]) {
-
-	for (const k of keys) {
-		(target as any)[k] = (source as any)[k]
-	}
-}
-
-// export function copyIfPresent<T1 extends object, T2 extends object, K extends keyof T1 & keyof T2>(
-// 	target: T1, source: T2, keys: K[]) {
-
-// 	for (const k of keys) {
-// 		if (k in source) {
-// 			(target as any)[k] = (source as any)[k]
-// 		}
-// 	}
-// }
 
 export function remove<T>(a: Array<T>, b: T) {
 	let index = a.indexOf(b);

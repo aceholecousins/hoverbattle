@@ -9,7 +9,7 @@ import { ThreeWater } from "./threewater"
 import { Vector3 } from "math"
 import { assertDefined } from "utils/general"
 
-export class ThreeMesh extends ThreeSceneNode<"mesh"> implements Mesh {
+export class ThreeMesh extends ThreeSceneNode implements Mesh {
 
 	constructor(
 		scene: THREE.Scene,

@@ -6,7 +6,7 @@ export class Model { readonly kind = "model" }
 export class Skybox { readonly kind = "skybox" }
 
 export class ModelMetaData {
-	[key: string]: Triangle3[] | SceneNodeConfig<"empty">
+	[key: string]: Triangle3[] | SceneNodeConfig
 }
 
 export interface ModelLoader {
