@@ -25,3 +25,4 @@ next steps:
 remove nashwan because the company that bought bitmap brothers are anal about it
 implement minigun
 the whole kind:K thing in sceneNodes is somewhat annoying to drag around and why is it a template parameter as well? I think I wanted to have both compile time as well as runtime type information but I never even use either. also, object.constructor.name reveals the type as well. Could I regret kicking it out or should I yagni it?
+https://chatgpt.com/share/68a0fafd-427c-8006-824e-eb5feaa58078
