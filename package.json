@@ -4,7 +4,7 @@
 	"description": "AceChase Remastered",
 	"private": true,
 	"scripts": {
-		"test": "node --import tsx --test \"tests/**/*.test.ts\"",
+		"test": "node --import tsx --test $(find ./tests -name \"*.test.ts\")", 
 		"watch": "webpack --watch --mode=development --config=webpack.config.js",
 		"dev-build": "webpack --mode=development --config=webpack.config.js",
 		"build": "webpack --mode=production --config=webpack.config.js",
