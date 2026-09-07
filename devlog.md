@@ -22,8 +22,9 @@ the whole kind:K thing in sceneNodes is somewhat annoying to drag around and why
 
 was about to tackle:
 * just noticed that p2 resets inertia when updating mass, so after I fixed that, the glider spins slower now, need to readjust
+* implementing minigun
 
 next steps:
 remove nashwan because the company that bought bitmap brothers are anal about it
-implement minigun
+
 

@@ -9,6 +9,8 @@ Debug:
 * planck just glitched out when I collected a shield while nashwan was running
 * if colliding gliders both have power shields, they get shot apart
 * shooting missiles while having powershield makes the missiles explode right away
+* this.parent.onDispose(() => this.dispose()) -> this can lead to multiple disposals
+* fix orbit control
 
 Features:
 

@@ -16,7 +16,7 @@ import { DefaultControllerManager } from "adapters/controller/defaultcontrollerm
 
 import * as Stats from 'stats.js'
 
-let dt = 1 / 125
+export let dt = 1 / 125
 
 async function main() {
 	broker.newChannel('update')
@@ -74,6 +74,9 @@ async function main() {
 			}
 			graphics.update()
 			graphicsStats.update()
+		}
+		else{
+			console.log("lag")
 		}
 		graphicsNeedsUpdate = false
 	}
