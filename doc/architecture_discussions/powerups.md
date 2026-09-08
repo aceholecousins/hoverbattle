@@ -1,0 +1,52 @@
+# Real World Concepts
+
+- General
+    - Friendly fire
+- Phaser:
+    - Default weapon
+    - infinite phaser shots but
+    - Phaser energy depletes but recovers slower than it depletes
+    - Deactivates when other weapons are selected
+    - Re-activates when other weapons deactivate again
+- Missle: 
+    - Collecting the crate selects the weapon, fire button launches weapon
+    - not fired missles are visible (e.g. hovering over the glider)
+    - After 3 fired missles, weapon deactivates
+- Laser:
+    - Collecting the crate selects the weapon, fire button launches weapon
+    - Either laser on off per fire button or laser on forever after one fire button hit
+    - After laser energy (net time) consumed, laser deactivates
+    - Laser reflects once
+- Mine:
+    - Collecting the crate selects the weapon, fire button launches weapon
+    - On fire button hit, mine spawns under glider with certain water depth and slowly bubbles to the surface. Collision with own glider without move possible
+    - After 1 mine is dropped, weapon deactivates
+- Minigun:
+    - Collecting the crate selects the weapon
+    - holding fire button spins up
+    - Fires after 1 second
+    - Releasing fire button stops and spins down
+    - Extremely fast with high recoil and spread
+    - After limited ammo consumed, weapon deactivates
+- Powershield:
+    - Collecting the crate activates shield
+    - Deactivates any other powerup
+    - Fallback to phaser
+    - Either new powerup crate replaces shield or shield destroys crate
+- Repair KIT:
+    - Collecting the crate repairs hull damage
+    - Either other active or selected powerups remain independently
+    - or other active or selected powerups deactivate
+- Shock Wave:
+    - TBD
+- Turbo:
+    - TBD
+
+
+# Implementation Concepts
+
+- Each concrete weapon class (laser, phaser etc.) may have a corresponding concrete powerup class (base interface Powerup).
+- Powerups and weapons don't know each other but are connected via arena logic.
+- Concrete powerup classes contain
+    - Entity of the crate
+    - 

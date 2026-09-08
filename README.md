@@ -35,3 +35,7 @@ xdg-open http://localhost:8000
 # unit tests
 npm run test
 ```
+
+## Source of information
+
+./doc
