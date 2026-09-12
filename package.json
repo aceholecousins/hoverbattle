@@ -4,7 +4,7 @@
 	"description": "AceChase Remastered",
 	"private": true,
 	"scripts": {
-		"test": "node --import tsx --test \"tests/**/*.test.ts\"", 
+		"test": "node --import tsx --test \"tests/**/*.test.ts\"",
 		"watch": "webpack --watch --mode=development --config=webpack.config.js",
 		"dev-build": "webpack --mode=development --config=webpack.config.js",
 		"build": "webpack --mode=production --config=webpack.config.js",
@@ -25,27 +25,30 @@
 	"devDependencies": {
 		"@types/asciichart": "^1.5.8",
 		"@types/dat.gui": "^0.7.13",
-		"@types/jsdom": "^21.1.7",
+		"@types/jsdom": "^30.0.0",
 		"@types/jsdom-global": "^3.0.7",
 		"@types/node": "^24.2.1",
 		"@types/p2": "^0.7.45",
 		"@types/stats.js": "^0.17.4",
-		"@types/three": "^0.179.0",
+		"@types/three": "^0.186.0",
 		"asciichart": "^1.5.25",
-		"copy-webpack-plugin": "^13.0.1",
-		"jsdom": "^26.1.0",
+		"copy-webpack-plugin": "^14.0.0",
+		"jsdom": "^30.0.1",
 		"jsdom-global": "^3.0.2",
-		"ts-loader": "^9.5.2",
-		"tsx": "^4.20.4",
-		"typescript": "^5.9.2",
-		"webpack": "^5.101.2",
-		"webpack-cli": "^6.0.1"
+		"ts-loader": "^9.6.2",
+		"tsx": "^4.23.13",
+		"typescript": "^6.0.3",
+		"webpack": "^5.110.3",
+		"webpack-cli": "^7.2.3"
 	},
 	"dependencies": {
 		"dat.gui": "^0.7.9",
 		"p2": "^0.7.1",
-		"planck": "^1.4.2",
+		"planck": "^1.5.0",
 		"stats.js": "^0.17.0",
-		"three": "^0.179.1"
+		"three": "^0.186.0"
+	},
+	"allowScripts": {
+		"esbuild@0.28.2": true
 	}
 }

@@ -10,9 +10,9 @@ AceChase Remastered
 ```sh
 # install nvm, node.js and npm
 # https://nodejs.org/en/download/package-manager
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.7/install.sh | bash
 \. "$HOME/.nvm/nvm.sh"
-nvm install 22
+nvm install 24
 
 # clone game
 git clone https://github.com/aceholecousins/hoverbattle.git

@@ -63,4 +63,3 @@ for Dani:
 
 * kümmer that testing works again or scratch testing
 * npm run autoformat-all-files-in-src-and-experiments
-* raise performance warning size limit (but don't disable it)

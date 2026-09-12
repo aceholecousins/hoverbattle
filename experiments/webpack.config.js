@@ -39,4 +39,8 @@ module.exports = {
 		path: path.resolve(__dirname, '../dist/experiments'),
 		clean: true,
 	},
+	performance: {
+		maxEntrypointSize: 1.2 * 1024 * 1024,
+		maxAssetSize: 10 * 1024 * 1024
+	}
 };

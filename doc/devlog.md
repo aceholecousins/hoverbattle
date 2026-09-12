@@ -27,4 +27,6 @@ was about to tackle:
 next steps:
 remove nashwan because the company that bought bitmap brothers are anal about it
 
-
+just updated node/deps/everything, ran into this:
+https://github.com/TypeStrong/ts-loader/issues/1671
+so not upgrading to ts7

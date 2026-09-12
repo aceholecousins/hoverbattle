@@ -14,7 +14,7 @@ import { PlanckPhysics } from "adapters/physics/planck/planckphysics"
 import { loadWebApiSound } from "adapters/sound/webapisound"
 import { DefaultControllerManager } from "adapters/controller/defaultcontrollermanager"
 
-import * as Stats from 'stats.js'
+import Stats from 'stats.js'
 
 export let dt = 1 / 125
 
@@ -24,7 +24,6 @@ async function main() {
 
 	// let physics = new P2Physics() as Physics
 	let physics = new PlanckPhysics() as Physics
-	console.log('physics engine:', physics.constructor.name)
 	registerRelatedEntityCollisionOverride(physics)
 	let graphics = new ThreeGraphics() as Graphics
 	let actionCam = new ActionCam(graphics, {})

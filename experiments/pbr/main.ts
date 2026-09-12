@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { scene, renderer, run } from '../quickthree'
 
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
 
 

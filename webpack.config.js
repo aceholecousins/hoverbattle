@@ -47,6 +47,10 @@ module.exports = (env, argv) => {
 				chunks: 'initial',
 				name: 'acechase'
 			},
+		},
+		performance: {
+			maxEntrypointSize: 1.2 * 1024 * 1024,
+			maxAssetSize: 10 * 1024 * 1024
 		}
 	}
 }

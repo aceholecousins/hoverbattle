@@ -1,7 +1,7 @@
 
-import * as Stats from 'stats.js'
+import Stats from 'stats.js'
 import * as THREE from 'three'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
 let stats = new Stats()
 stats.showPanel(0)

@@ -3,7 +3,7 @@ import { Model, ModelLoader, ModelMetaData } from "game/graphics/asset"
 import { Quaternion } from "math"
 import * as THREE from "three"
 import { Vector3 } from "three"
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 // `import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader"
 import { Triangle3 } from "math"
 import { SceneNodeConfig } from "game/graphics/scenenode"

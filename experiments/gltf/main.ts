@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { scene, run } from '../quickthree'
 
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
 let envmap = new THREE.CubeTextureLoader()
 	.setPath('./skatepark/')

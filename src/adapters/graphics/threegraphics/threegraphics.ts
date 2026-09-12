@@ -2,7 +2,7 @@
 import { Vector3, Quaternion } from "math"
 
 import * as THREE from "three"
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer.js'
 
 import { Graphics } from "game/graphics/graphics"
@@ -95,6 +95,8 @@ export class ThreeGraphics implements Graphics {
 	}
 
 	constructor() {
+
+		console.log("Three.js version " + THREE.REVISION);
 
 		this.scene = new THREE.Scene()
 		//@ts-ignore
