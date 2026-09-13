@@ -136,6 +136,7 @@ export class ThreeGraphics implements Graphics {
 		this.labelRenderer.domElement.style.position = 'absolute';
 		this.labelRenderer.domElement.style.top = '0px';
 		document.body.appendChild(this.labelRenderer.domElement);
+		this.labelRenderer.domElement.style.pointerEvents = "none";
 
 		const resize = () => {
 			let w = renderer.domElement.clientWidth
