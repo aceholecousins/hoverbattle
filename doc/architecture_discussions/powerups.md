@@ -52,7 +52,8 @@
 # Implementation Concepts
 
 - Each concrete weapon class (laser, phaser etc.) may have a corresponding concrete powerup class (base interface Powerup).
-- Powerups and weapons don't know each other but are connected via arena logic.
+- Powerups know their weapons but not vice versa
 - Concrete powerup classes contain
     - Entity of the crate
+    - Knows weapon
     - 
