@@ -236,7 +236,7 @@ export let createMatch: MatchFactory = async function (engine) {
 
 	function spawnPowerup() {
 		if (powerupBoxes.length < 5) {
-			let kinds = ["mine", "missile", "laser", "nashwan", "powershield", "repair", "minigun"]
+			let kinds = ["mine", "missile", "laser", "nashwan", "powershield", "repair", /* "minigun" */]
 			const powerupKind = kinds[Math.floor(Math.random() * kinds.length)] as PowerupKind;
 			let powerupBox = makeDestructible(
 				createPowerupBox(
