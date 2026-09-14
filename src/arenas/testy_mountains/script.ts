@@ -82,6 +82,9 @@ export let createMatch: MatchFactory = async function (engine) {
 
 	engine.physics.registerCollisionHandler(new CollisionHandler(
 		vehicleRole, powerupBoxRole, (vehicle: Vehicle, powerupBox: PowerupBox) => {
+
+			powerupBox.onCollect(vehicle)
+
 			if (powerupBox.kind == "missile") {
 				vehicle.readyPowerups = [new MissilePowerup()]
 			}
