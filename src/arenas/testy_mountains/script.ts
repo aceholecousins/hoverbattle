@@ -89,6 +89,8 @@ export let createMatch: MatchFactory = async function (engine) {
 				minigunPowerup.guns[1].dispose()
 				vehicle.readyPowerups = []
 			}
+			
+			powerupBox.onCollect(vehicle)
 
 			if (powerupBox.kind == "missile") {
 				vehicle.readyPowerups = [new MissilePowerup()]

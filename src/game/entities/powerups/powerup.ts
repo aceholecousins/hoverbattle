@@ -5,20 +5,19 @@ import { Circle } from "game/physics/shapes"
 import { RigidBodyConfig } from "game/physics/rigidbody"
 import { Vector2, ypr, DEG } from "math"
 import { Entity } from "game/entities/entity"
+import { Vehicle } from "../vehicles/vehicle"
 
 const POWERUP_BOX_SIZE = 1.8
 
-export type PowerupKind = "laser" | "mine" | "missile" | "nashwan" | "repair" | "powershield" | "minigun"
+export interface PowerupHandle {
 
-export interface Powerup {
-	readonly kind: string
+	cancel(): void
 }
 
 export class PowerupBox extends Entity {
 	time: number = 0
 
 	constructor(
-		public kind: PowerupKind,
 		position: Vector2,
 		model: Model,
 		engine: Engine
@@ -42,6 +41,11 @@ export class PowerupBox extends Entity {
 		}
 		super(createBody, createMesh)
 		this.update(0)
+	}
+
+	onCollect(collector: Vehicle): PowerupHandle {
+		this.dispose()
+		return {cancel(){}}
 	}
 
 	update(dt: number) {
