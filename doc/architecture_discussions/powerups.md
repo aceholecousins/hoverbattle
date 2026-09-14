@@ -38,10 +38,16 @@
     - Either other active or selected powerups remain independently
     - or other active or selected powerups deactivate
 - Shock Wave:
-    - TBD
+    - Collecting the crate selects the weapon, fire button releases shock wave
+    - No damage to opponents, but pushes and deactivates control
+    - After 1 shock wave, weapon deactivates
+    - for MVP, impact only on gliders, later also on mines etc.
+    - for MVP, immedate effect on all gliders, later slow spread
 - Turbo:
-    - TBD
-
+    - Collecting the crate selects turbo
+    - Either fire button or thrust activates solid boosters
+    - Boosters remain active until exhausted (limited time), releasing fire button doesn't stop boosters
+    - Not in death match
 
 # Implementation Concepts
 
