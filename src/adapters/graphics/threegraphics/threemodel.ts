@@ -31,6 +31,7 @@ export const loadThreeModel: ThreeModelLoader = function (file: string) {
 				file,
 				function (gltf) {
 					model.threeObject = gltf.scene
+					model.threeObject.animations = gltf.animations
 					adaptModel(model.threeObject)
 					let meta = extractMetaData(model.threeObject as THREE.Scene)
 					resolve({ model, meta })

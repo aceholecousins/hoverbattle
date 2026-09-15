@@ -9,7 +9,7 @@ import { Circle } from "game/physics/shapes";
 import { Attachment } from "game/physics/physics";
 import { Actor } from "game/entities/actor";
 
-let MINIGUN_LENGTH = 0.5
+let MINIGUN_LENGTH = 1.6
 let MINIGUN_DIAMETER = 0.2 * MINIGUN_LENGTH
 let SPINUP_TIME = 1.0
 let FIRE_RATE = 4000 / 60
@@ -23,6 +23,7 @@ export class MinigunPowerup implements Powerup {
 
 export class Minigun extends Entity {
 	private attachment: Attachment
+	private time = 0
 	private tNextShot = 0
 	private holdingTrigger = false
 
@@ -30,8 +31,7 @@ export class Minigun extends Entity {
 		public parent: Vehicle,
 		public offset: Vector2,
 		public onHit: (actor: Actor) => void,
-		statorModel: Model,
-		rotorModel: Model,
+		gunModel: Model,
 		private shotModel: Model,
 		private sparkModel: Model,
 		public engine: Engine
@@ -52,10 +52,10 @@ export class Minigun extends Entity {
 		}
 
 		let createMesh = (self: Entity) => {
-			let mesh = engine.graphics.mesh.createFromModel({ model: rotorModel })
+			let mesh = engine.graphics.mesh.createFromModel({ model: gunModel })
 			mesh.setScale(MINIGUN_LENGTH / 2)
 			mesh.setBaseColor(parent.player.color)
-			mesh.setPositionZ(0.1)
+			mesh.setPositionZ(0.5)
 			return mesh
 		}
 
@@ -80,7 +80,7 @@ export class Minigun extends Entity {
 	}
 
 	update(dt: number) {
-
+		this.time += dt
 		this.tNextShot -= dt
 		while (this.holdingTrigger && this.tNextShot <= 0) {
 			this.tNextShot += 1 / FIRE_RATE
@@ -96,6 +96,7 @@ export class Minigun extends Entity {
 		}
 
 		this.mesh.copy2dPose(this.body)
+		this.mesh.setAnimationProgress(this.time * Math.sign(this.offset.y))
 	}
 
 	dispose() {
@@ -171,10 +172,8 @@ export class MinigunShot extends Visual {
 
 export async function createMinigunFactory(engine: Engine) {
 
-	let statorModel = (await engine.graphics.loadModel(
-		"assets/models/minigun_stator.glb")).model
-	let rotorModel = (await engine.graphics.loadModel(
-		"assets/models/minigun_rotor.glb")).model
+	let gunModel = (await engine.graphics.loadModel(
+		"assets/models/minigun.glb")).model
 	let shotModel = await engine.graphics.loadSprite(
 		"assets/sprites/minigun_shot.tint.png")
 	let sparkModel = await engine.graphics.loadSprite(
@@ -183,14 +182,14 @@ export async function createMinigunFactory(engine: Engine) {
 	return function (parent: Vehicle, onHit: (actor: Actor) => void) {
 
 		let leftGun = new Minigun(parent,
-			new Vector2(0, -VEHICLE_RADIUS - MINIGUN_DIAMETER / 2),
+			new Vector2(0.3, -VEHICLE_RADIUS*0.7 - MINIGUN_DIAMETER / 2),
 			onHit,
-			statorModel, rotorModel, shotModel, sparkModel,
+			gunModel, shotModel, sparkModel,
 			engine)
 		let rightGun = new Minigun(parent,
-			new Vector2(0, VEHICLE_RADIUS + MINIGUN_DIAMETER / 2),
+			new Vector2(0.3, VEHICLE_RADIUS*0.7 + MINIGUN_DIAMETER / 2),
 			onHit,
-			statorModel, rotorModel, shotModel, sparkModel,
+			gunModel, shotModel, sparkModel,
 			engine)
 		return [leftGun, rightGun]
 	}

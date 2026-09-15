@@ -10,7 +10,7 @@ Debug:
 * if colliding gliders both have power shields, they get shot apart
 * shooting missiles while having powershield makes the missiles explode right away
 * this.parent.onDispose(() => this.dispose()) -> this can lead to multiple disposals
-* fix orbit control
+* water reflection direction is wrong. use debug camera, hover flat over water and do one rotation along horizon
 
 Features:
 

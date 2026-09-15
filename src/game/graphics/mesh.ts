@@ -10,6 +10,7 @@ export interface Mesh extends SceneNode {
 	setAccentColor1(color: Color): void
 	setAccentColor2(color: Color): void
 	setOpacity(opacity: number): void
+	setAnimationProgress(progress: number): void
 }
 
 export class EmptyMesh implements Mesh {
@@ -29,6 +30,7 @@ export class EmptyMesh implements Mesh {
 	setAccentColor1(color: Color) { }
 	setAccentColor2(color: Color) { }
 	setOpacity(opacity: number) { }
+	setAnimationProgress(progress: number) { }
 }
 
 export interface MeshConfig extends SceneNodeConfig {

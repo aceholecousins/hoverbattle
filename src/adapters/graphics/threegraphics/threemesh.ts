@@ -11,6 +11,8 @@ import { assertDefined } from "utils/general"
 
 export class ThreeMesh extends ThreeSceneNode implements Mesh {
 
+	animationMixer: THREE.AnimationMixer | undefined = undefined;
+
 	constructor(
 		scene: THREE.Scene,
 		config: ModelMeshConfig,
@@ -24,6 +26,13 @@ export class ThreeMesh extends ThreeSceneNode implements Mesh {
 
 		this.threeObject.userData.tintMatrix = { value: new THREE.Matrix3() }
 		modMaterials(this.threeObject, this.threeObject.userData.tintMatrix, water)
+		if (this.threeObject.animations.length > 0) {
+			this.animationMixer = new THREE.AnimationMixer(this.threeObject)
+			let mixer = this.animationMixer;
+			for (const clip of this.threeObject.animations) {
+				mixer.clipAction(clip).play()
+			}
+		}
 
 		this.setBaseColor(fullConfig.baseColor)
 		this.setAccentColor1(fullConfig.accentColor1)
@@ -70,6 +79,10 @@ export class ThreeMesh extends ThreeSceneNode implements Mesh {
 	setPosition(position: Vector3) {
 		super.setPosition(position)
 		this.threeObject.renderOrder = position.z
+	}
+
+	setAnimationProgress(progress: number) {
+		this.animationMixer?.setTime(progress)
 	}
 
 }
