@@ -115,9 +115,17 @@ export class ThreeGraphics implements Graphics {
 		defaultCam.threeObject.up.set(0, 0, 1)
 		this.scene.add(defaultCam.threeObject)
 
+		let camBefore: THREE.PerspectiveCamera
+		let sceneInfo = defaultCam.threeScene.userData as SceneInfo
 		window.addEventListener('keydown', (event) => {
 			if (event.key === 'c') {
-				defaultCam.activate()
+				if (sceneInfo.activeCamera !== defaultCam.threeObject) {
+					camBefore = sceneInfo.activeCamera
+					defaultCam.activate()
+				}
+				else{
+					sceneInfo.activeCamera = camBefore
+				}
 			}
 		})
 
