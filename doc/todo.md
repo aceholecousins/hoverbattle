@@ -11,6 +11,9 @@ Debug:
 * shooting missiles while having powershield makes the missiles explode right away
 * this.parent.onDispose(() => this.dispose()) -> this can lead to multiple disposals
 * water reflection direction is wrong. use debug camera, hover flat over water and do one rotation along horizon
+* do something about the position glitching when an object spawns into another (?)
+* the minigun needs a graphic makeover, it is way too complicated and only wobbles graphically. Maybe more silvery, just a hexagon and AO?
+* check if tinting works with color management, r+g+b=1 must not get distorted by three gamma management
 
 Features:
 
@@ -34,6 +37,7 @@ Features:
 * player color
 * tweak(myObj, "myParam")
 * explosions need to look a bit different for mines, gliders and missiles
+* muzzle flashes
 
 * MVP game:
   - menu is just a bunch of pictures that select a level

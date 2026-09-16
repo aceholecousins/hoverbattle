@@ -9,6 +9,9 @@ export class Role<I> {
 	mask: number // bitmask storing all roles that this role collides with
 
 	constructor(public readonly tag: string = "unnamed") {
+		if (Role.numRoles >= 32) {
+			throw new Error('too many roles')
+		}
 		this.bit = 1 << (Role.numRoles)
 		this.mask = 0
 		Role.numRoles += 1

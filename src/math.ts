@@ -10,6 +10,10 @@ export function angleDelta(from: number, to: number): number {
 	return diff;
 }
 
+export function randBetween(min: number, max: number) {
+	return min + Math.random() * (max - min)
+}
+
 export function matrix3FromBasis(x: Vector3, y: Vector3, z: Vector3) {
 	return new Matrix3(
 		x.x, y.x, z.x,

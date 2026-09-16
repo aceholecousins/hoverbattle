@@ -82,6 +82,14 @@ export let createMatch: MatchFactory = async function (engine) {
 
 	engine.physics.registerCollisionHandler(new CollisionHandler(
 		vehicleRole, powerupBoxRole, (vehicle: Vehicle, powerupBox: PowerupBox) => {
+
+			if (vehicle.readyPowerups.length > 0 && vehicle.readyPowerups[0].kind == "minigun") {
+				let minigunPowerup = vehicle.readyPowerups[0] as MinigunPowerup
+				minigunPowerup.guns[0].dispose()
+				minigunPowerup.guns[1].dispose()
+				vehicle.readyPowerups = []
+			}
+
 			if (powerupBox.kind == "missile") {
 				vehicle.readyPowerups = [new MissilePowerup()]
 			}
@@ -139,11 +147,16 @@ export let createMatch: MatchFactory = async function (engine) {
 			}
 			else if (powerupBox.kind == "minigun") {
 				let powerup = new MinigunPowerup()
-				powerup.guns = minigunFactory(vehicle, (actor: Actor) => {
-					if (hasRole(actor, destructibleRole)) {
-						(actor as unknown as Destructible).hit(0.2)
+				powerup.guns = minigunFactory(vehicle,
+					(actor: Actor) => {
+						if (hasRole(actor, destructibleRole)) {
+							(actor as unknown as Destructible).hit(0.3)
+						}
+					},
+					() => {
+						vehicle.readyPowerups = []
 					}
-				})
+				)
 				vehicle.readyPowerups = [powerup]
 			}
 			powerupBox.dispose()
@@ -236,7 +249,7 @@ export let createMatch: MatchFactory = async function (engine) {
 
 	function spawnPowerup() {
 		if (powerupBoxes.length < 5) {
-			let kinds = ["mine", "missile", "laser", "nashwan", "powershield", "repair", /* "minigun" */]
+			let kinds = ["mine", "missile", "laser", "nashwan", "powershield", "repair", "minigun"]
 			const powerupKind = kinds[Math.floor(Math.random() * kinds.length)] as PowerupKind;
 			let powerupBox = makeDestructible(
 				createPowerupBox(
