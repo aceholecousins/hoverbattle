@@ -10,16 +10,16 @@ import { Attachment } from "game/physics/physics";
 import { Actor } from "game/entities/actor";
 import { randBetween } from "math"
 
-let MINIGUN_LENGTH = 1.6
+let MINIGUN_LENGTH = 2.0
 let MINIGUN_DIAMETER = 0.3 * MINIGUN_LENGTH
-let SPINUP_TIME = 1.0 // about 0.5 seconds for M134
-let SPINDOWN_TIME = 1.0 // about 0.25 seconds for M134
+let SPINUP_TIME = 0.7 // about 0.5 seconds for M134
+let SPINDOWN_TIME = 0.25 // about 0.25 seconds for M134
 let FIRE_RATE = 6000 / 60 // 2000..6000 rounds per minute for M134
 let AMMO_PER_GUN = FIRE_RATE * 5 // 5 seconds worth of ammo
 let DISPERSION = 1.6 * DEG // about 0.35 deg for M134
 let SHOT_SPRITE_LENGTH = 6.0
 let SHOT_SPRITE_WIDTH = 0.1
-let SHOT_IMPULSE = 0.6
+let SHOT_IMPULSE = 0.45
 
 export class MinigunPowerup implements Powerup {
 	public readonly kind = "minigun"
@@ -31,7 +31,8 @@ export class Minigun extends Entity {
 	private frameAmmo = 0 // can fire this many shots during the current frame
 	private holdingTrigger = false
 	private attachment: Attachment
-	private time = 0
+	private spin = 0 // 0 = still, 1 = full spinning speed and firing
+	private roll = 0 // barrel roll angle for graphics
 
 	constructor(
 		public parent: Vehicle,
@@ -39,6 +40,7 @@ export class Minigun extends Entity {
 		public onHit: (actor: Actor) => void,
 		onDispose: () => void,
 		gunModel: Model,
+		private flashModel: Model,
 		private shotModel: Model,
 		private sparkModel: Model,
 		public engine: Engine
@@ -94,13 +96,21 @@ export class Minigun extends Entity {
 	}
 
 	update(dt: number) {
-		this.time += dt
+		if (this.holdingTrigger) {
+			this.spin = Math.min(this.spin + dt / SPINUP_TIME, 1)
+		}
+		else {
+			this.spin = Math.max(this.spin - dt / SPINDOWN_TIME, 0)
+		}
 
-		if (this.holdingTrigger || this.frameAmmo < 1) {
+		let firing = this.spin == 1
+		this.roll += this.spin * FIRE_RATE / 6 * dt * randBetween(0.9, 1.1)
+
+		if (firing || this.frameAmmo < 1) {
 			this.frameAmmo += FIRE_RATE * dt
 		}
 
-		while (this.holdingTrigger && this.ammo > 0 && this.frameAmmo >= 1) {
+		while (firing && this.ammo > 0 && this.frameAmmo >= 1) {
 			this.ammo -= 1
 			this.frameAmmo -= 1
 
@@ -109,6 +119,7 @@ export class Minigun extends Entity {
 				this.body.getAngle() + DISPERSION * Math.random(),
 				1000,
 				this.onHit,
+				this.flashModel,
 				this.shotModel,
 				this.sparkModel,
 				this.engine
@@ -122,7 +133,7 @@ export class Minigun extends Entity {
 		}
 
 		this.mesh.copy2dPose(this.body)
-		this.mesh.setAnimationProgress(this.time * Math.sign(this.offset.y))
+		this.mesh.setAnimationProgress(this.roll * Math.sign(this.offset.y))
 	}
 
 	dispose() {
@@ -160,6 +171,38 @@ export class Spark extends Visual {
 	}
 }
 
+export class MuzzleFlash extends Visual {
+	time: number = 0
+
+	constructor(
+		position: Vector3,
+		angle: number,
+		model: Model,
+		engine: Engine
+	) {
+		let mesh = engine.graphics.mesh.createFromModel({ model })
+		let size = Math.pow(randBetween(0.6, 1.0), 2) * 2.2
+		position.x += Math.cos(angle) * (size / 2 + MINIGUN_LENGTH / 2)
+		position.y += Math.sin(angle) * (size / 2 + MINIGUN_LENGTH / 2)
+		mesh.setPosition(position)
+		mesh.setAngle(angle + randBetween(-3 * DEG, 3 * DEG))
+		let flip = Math.random() > 0.5 ? 1 : -1
+		mesh.setScale(new Vector3(size, flip * size / 2, 1))
+		mesh.setBaseColor({ r: 1.0, g: 1.0, b: 1.0 })
+		mesh.setAccentColor1({ r: 1.0, g: 1.0, b: 0.2 })
+		mesh.setAccentColor2({ r: 1.0, g: 0.2, b: 0.0 })
+		mesh.setOpacity(randBetween(0.2, 1.0))
+		super(mesh)
+	}
+
+	update(dt: number) {
+		this.time += dt;
+		if (this.time > 0.02) {
+			this.dispose()
+		}
+	}
+}
+
 export class MinigunShot extends Visual {
 	time: number = 0
 
@@ -168,6 +211,7 @@ export class MinigunShot extends Visual {
 		angle: number,
 		maxDistance: number,
 		onHit: (actor: Actor) => void,
+		flashModel: Model,
 		shotModel: Model,
 		sparkModel: Model,
 		private engine: Engine
@@ -182,6 +226,7 @@ export class MinigunShot extends Visual {
 		if (hit !== null) {
 			p2 = hit.position
 			new Spark(appendZ(p2, z + 0.1), angle, sparkModel, engine)
+			new MuzzleFlash(appendZ(p1, z + 0.1), angle, flashModel, engine)
 			let impulse = new Vector2(
 				Math.cos(angle) * SHOT_IMPULSE,
 				Math.sin(angle) * SHOT_IMPULSE
@@ -224,10 +269,12 @@ export async function createMinigunFactory(engine: Engine) {
 
 	let gunModel = (await engine.graphics.loadModel(
 		"assets/models/minigun.glb")).model
+	let flashModel = await engine.graphics.loadSprite(
+		"assets/sprites/muzzle_flash.tint.png")
 	let shotModel = await engine.graphics.loadSprite(
 		"assets/sprites/minigun_shot.tint.png")
 	let sparkModel = await engine.graphics.loadSprite(
-		"assets/sprites/sparks.png")
+		"assets/sprites/sparks.tint.png")
 
 	return function (parent: Vehicle, onHit: (actor: Actor) => void, onDispose: () => void) {
 
@@ -235,13 +282,13 @@ export async function createMinigunFactory(engine: Engine) {
 			new Vector2(0.3, -VEHICLE_RADIUS * 0.7 - MINIGUN_DIAMETER / 2),
 			onHit,
 			onDispose,
-			gunModel, shotModel, sparkModel,
+			gunModel, flashModel, shotModel, sparkModel,
 			engine)
 		let rightGun = new Minigun(parent,
 			new Vector2(0.3, VEHICLE_RADIUS * 0.7 + MINIGUN_DIAMETER / 2),
 			onHit,
 			() => { },
-			gunModel, shotModel, sparkModel,
+			gunModel, flashModel, shotModel, sparkModel,
 			engine)
 		return [leftGun, rightGun]
 	}
