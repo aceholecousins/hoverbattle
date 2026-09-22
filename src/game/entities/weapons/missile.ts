@@ -1,7 +1,7 @@
 import { broker } from "broker";
 import { ModelMeshConfig } from "game/graphics/mesh";
 import { Model } from "game/graphics/asset";
-import { Engine } from "game/engine";
+import { Engine, getEngine } from "game/engine";
 import { Circle } from "game/physics/shapes";
 import { Entity } from "game/entities/entity";
 import { Vehicle, VEHICLE_RADIUS } from "game/entities/vehicles/vehicle";
@@ -9,6 +9,7 @@ import { Powerup } from "game/entities/powerups/powerup";
 import { angleDelta, appendZ, Vector2, ypr, vec2FromDir, DEG } from "math";
 import { SmokeFactory, createSmokeFactory } from "game/graphics/explosion/smoke"
 import { memoize } from "utils/general";
+import { Resource } from "game/resourcemanager"
 
 const MISSILE_LENGTH = 1.3;
 const MISSILE_RADIUS = 0.3 * MISSILE_LENGTH;
@@ -19,10 +20,9 @@ const MISSILE_ANGULAR_DAMPING = 7.0;
 const MISSILE_HOMING_TORQUE = 1.2;
 const MISSILE_FIRE_RATE = 1;
 
-export class MissilePowerup implements Powerup {
-	public readonly kind = "missile"
-	public stock = 3
-}
+let missileModel = new Resource(
+	getEngine().graphics.loadModel("assets/models/missile.glb")
+)
 
 export class Missile extends Entity {
 	public isMissile = true
@@ -36,11 +36,9 @@ export class Missile extends Entity {
 		angle: number,
 		public possibleTargets: Entity[],
 		private createSmoke: SmokeFactory,
-		model: Model,
-		engine: Engine
 	) {
 		let createBody = (self: Entity) => {
-			let body = engine.physics.addRigidBody({
+			let body = getEngine().physics.addRigidBody({
 				actor: self,
 				shapes: [new Circle(MISSILE_RADIUS)],
 				mass: MISSILE_MASS,
@@ -52,8 +50,8 @@ export class Missile extends Entity {
 			return body
 		}
 		let createMesh = (self: Entity) => {
-			let mesh = engine.graphics.mesh.createFromModel({
-				model,
+			let mesh = getEngine().graphics.mesh.createFromModel({
+				model: missileModel.get(),
 				scale: MISSILE_LENGTH / 2
 			})
 			mesh.setBaseColor({ r: 0, g: 0, b: 0 })
@@ -184,9 +182,7 @@ export let createMissileFactory = memoize(async function (engine: Engine) {
 			position,
 			angle,
 			possibleTargets,
-			createSmoke,
-			model,
-			engine
+			createSmoke
 		)
 	}
 })

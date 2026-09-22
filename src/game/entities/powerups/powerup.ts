@@ -10,11 +10,14 @@ import { Vehicle } from "../vehicles/vehicle"
 const POWERUP_BOX_SIZE = 1.8
 
 export interface PowerupHandle {
+	// interface to control collected powerups
 
 	cancel(): void
 }
 
 export class PowerupBox extends Entity {
+	// base class for powerup boxes
+
 	time: number = 0
 
 	constructor(
@@ -44,6 +47,7 @@ export class PowerupBox extends Entity {
 	}
 
 	onCollect(collector: Vehicle): PowerupHandle {
+		// abstract method to be extended by subclasses
 		this.dispose()
 		return {cancel(){}}
 	}
@@ -59,7 +63,7 @@ export class PowerupBox extends Entity {
 	}
 }
 
-
+/*
 export async function createPowerupBoxFactory(engine: Engine) {
 
 	let [laser, mine, missile, nashwan, repair, powershield, minigun] = await Promise.all([
@@ -82,3 +86,4 @@ export async function createPowerupBoxFactory(engine: Engine) {
 		)
 	}
 }
+*/
