@@ -6,14 +6,18 @@ import { RigidBodyConfig } from "game/physics/rigidbody"
 import { Vector2, ypr, DEG } from "math"
 import { Entity } from "game/entities/entity"
 import { Vehicle } from "../vehicles/vehicle"
+import { getEngine } from "game/engine"
 
 const POWERUP_BOX_SIZE = 1.8
 
-export interface PowerupHandle {
+export interface Powerup {
 	// interface to control collected powerups
-
-	cancel(): void
+	pressTrigger?: () => void
+	releaseTrigger?: () => void
+	cancel?: () => void
 }
+
+export type PowerupBoxCtor = new (position: Vector2) => PowerupBox;
 
 export class PowerupBox extends Entity {
 	// base class for powerup boxes
@@ -22,11 +26,10 @@ export class PowerupBox extends Entity {
 
 	constructor(
 		position: Vector2,
-		model: Model,
-		engine: Engine
+		model: Model
 	) {
 		let createBody = (self: Entity) => {
-			let body = engine.physics.addRigidBody({
+			let body = getEngine().physics.addRigidBody({
 				actor: self,
 				shapes: [new Circle(POWERUP_BOX_SIZE * 0.6)],
 				damping: 0.7,
@@ -37,7 +40,7 @@ export class PowerupBox extends Entity {
 			return body
 		}
 		let createMesh = (self: Entity) => {
-			let mesh = engine.graphics.mesh.createFromModel({ model })
+			let mesh = getEngine().graphics.mesh.createFromModel({ model })
 			mesh.setPositionZ(0.1)
 			mesh.setScale(POWERUP_BOX_SIZE)
 			return mesh
@@ -46,10 +49,10 @@ export class PowerupBox extends Entity {
 		this.update(0)
 	}
 
-	onCollect(collector: Vehicle): PowerupHandle {
+	onCollect(collector: Vehicle): void {
 		// abstract method to be extended by subclasses
+		collector.activePowerup?.cancel?.()
 		this.dispose()
-		return {cancel(){}}
 	}
 
 	update(dt: number) {

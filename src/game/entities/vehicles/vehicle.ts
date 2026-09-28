@@ -9,8 +9,9 @@ export const VEHICLE_RADIUS = 1
 
 export class Vehicle extends Entity {
 	public player: Player
-	public readyPowerups: Powerup[] = []
-	public activatedPowerups: Powerup[] = []
+	// public readyPowerups: Powerup[] = []
+	// public activatedPowerups: Powerup[] = []
+	public activePowerup: Powerup | null = null
 	public onPressTrigger = () => { }
 	public onReleaseTrigger = () => { }
 	public onUpdate = (dt: number) => { }

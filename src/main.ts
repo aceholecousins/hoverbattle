@@ -2,10 +2,12 @@
 import { createMatch } from "arenas/testy_mountains/script"
 import { Match } from "game/match"
 import { broker } from "broker"
+import { setEngine } from "game/engine"
 import { Graphics } from "game/graphics/graphics"
 import { ActionCam, ActionCamConfig } from "game/actioncam"
 import { Physics } from "game/physics/physics"
 import { SoundLoader } from "game/sound"
+import { loadAllResources } from "game/resourcemanager"
 import { registerRelatedEntityCollisionOverride } from "game/entities/entity"
 
 import { ThreeGraphics } from "adapters/graphics/threegraphics/threegraphics"
@@ -30,6 +32,9 @@ async function main() {
 	actionCam.camera.activate()
 	let controllerManager = new DefaultControllerManager()
 	let loadSound = loadWebApiSound as SoundLoader
+
+	setEngine({ graphics, physics, controllerManager, actionCam, loadSound })
+	loadAllResources()
 
 	let match = await createMatch({
 		physics, graphics, actionCam, controllerManager, loadSound

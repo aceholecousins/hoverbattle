@@ -5,7 +5,7 @@ let loadedResources = false
 export class Resource<T> {
 	private value!: T
 
-	constructor(private promise: Promise<T>) {
+	constructor(private loader: () => Promise<T>) {
 		if (loadedResources) {
 			throw new Error("resources already loaded")
 		}
@@ -14,7 +14,7 @@ export class Resource<T> {
 	}
 
 	async load() {
-		this.value = await this.promise
+		this.value = await this.loader()
 	}
 
 	get(): T {

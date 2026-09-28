@@ -1,11 +1,10 @@
 import { broker } from "broker";
 import { ModelMeshConfig } from "game/graphics/mesh";
-import { Model } from "game/graphics/asset";
+import { Model, ModelMetaData } from "game/graphics/asset";
 import { Engine, getEngine } from "game/engine";
 import { Circle } from "game/physics/shapes";
 import { Entity } from "game/entities/entity";
 import { Vehicle, VEHICLE_RADIUS } from "game/entities/vehicles/vehicle";
-import { Powerup } from "game/entities/powerups/powerup";
 import { angleDelta, appendZ, Vector2, ypr, vec2FromDir, DEG } from "math";
 import { SmokeFactory, createSmokeFactory } from "game/graphics/explosion/smoke"
 import { memoize } from "utils/general";
@@ -20,7 +19,7 @@ const MISSILE_ANGULAR_DAMPING = 7.0;
 const MISSILE_HOMING_TORQUE = 1.2;
 const MISSILE_FIRE_RATE = 1;
 
-let missileModel = new Resource(
+let missileModel = new Resource(() =>
 	getEngine().graphics.loadModel("assets/models/missile.glb")
 )
 
@@ -34,8 +33,7 @@ export class Missile extends Entity {
 		public parent: Vehicle,
 		position: Vector2,
 		angle: number,
-		public possibleTargets: Entity[],
-		private createSmoke: SmokeFactory,
+		public possibleTargets: Entity[]
 	) {
 		let createBody = (self: Entity) => {
 			let body = getEngine().physics.addRigidBody({
@@ -51,7 +49,7 @@ export class Missile extends Entity {
 		}
 		let createMesh = (self: Entity) => {
 			let mesh = getEngine().graphics.mesh.createFromModel({
-				model: missileModel.get(),
+				model: missileModel.get().model,
 				scale: MISSILE_LENGTH / 2
 			})
 			mesh.setBaseColor({ r: 0, g: 0, b: 0 })
@@ -101,10 +99,10 @@ export class Missile extends Entity {
 		this.tNextSmoke -= dt
 		if (this.tNextSmoke <= 0) {
 			this.tNextSmoke += 0.04
-			this.createSmoke(
-				appendZ(this.body.getPosition(), 0.1),
-				{ r: 0.2, g: 0.2, b: 0.2 }
-			)
+			// this.createSmoke(
+			// 	appendZ(this.body.getPosition(), 0.1),
+			// 	{ r: 0.2, g: 0.2, b: 0.2 }
+			// )
 		}
 
 		if (this.target != null) {
@@ -130,7 +128,6 @@ export class MissileLauncher {
 	private updateHandler = (e: any) => this.update(e.dt)
 
 	constructor(
-		private createMissile: MissileFactory,
 		private parent: Vehicle
 	) {
 		broker.update.addHandler(this.updateHandler)
@@ -152,7 +149,7 @@ export class MissileLauncher {
 	private spawnMissile(possibleTargets: Entity[]): Missile {
 		let phi = this.parent.body.getAngle();
 		let pos = this.parent.body.getPosition();
-		let missile = this.createMissile(this.parent, pos, phi, possibleTargets);
+		let missile = new Missile(this.parent, pos, phi, possibleTargets);
 		missile.body.setVelocity(this.parent.body.getVelocity())
 		this.coolDown = 1 / MISSILE_FIRE_RATE
 		return missile
@@ -162,27 +159,3 @@ export class MissileLauncher {
 		this.coolDown = Math.max(0, this.coolDown - dt)
 	}
 }
-
-export type MissileFactory = Awaited<ReturnType<typeof createMissileFactory>>
-
-export let createMissileFactory = memoize(async function (engine: Engine) {
-
-	let { model, meta } = await engine.graphics.loadModel(
-		"assets/models/missile.glb")
-	let createSmoke = await createSmokeFactory(engine)
-
-	return function (
-		parent: Vehicle,
-		position: Vector2,
-		angle: number,
-		possibleTargets: Entity[]
-	): Missile {
-		return new Missile(
-			parent,
-			position,
-			angle,
-			possibleTargets,
-			createSmoke
-		)
-	}
-})
