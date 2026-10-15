@@ -52,7 +52,7 @@ export function revokeRole<I>(actor: Actor & I, role: Role<I>) {
 	}
 }
 
-export function interact(roleA: Role<any>, roleB: Role<any>) {
+export function canCollide(roleA: Role<any>, roleB: Role<any>) {
 	if (Object.isFrozen(roleA) || Object.isFrozen(roleB)) {
 		throw new Error('roles can not be changed after being assigned to actors')
 	}

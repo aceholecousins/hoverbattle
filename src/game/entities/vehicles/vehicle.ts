@@ -4,8 +4,11 @@ import { Powerup } from "game/entities/powerups/powerup"
 import { Vector2 } from "math"
 import { RigidBody } from "game/physics/rigidbody"
 import { Mesh } from "game/graphics/mesh"
+import { assignRole, Role } from "../actor"
 
 export const VEHICLE_RADIUS = 1
+
+export let vehicleRole = new Role<Vehicle>("vehicle")
 
 export class Vehicle extends Entity {
 	public player: Player
@@ -29,6 +32,7 @@ export class Vehicle extends Entity {
 	) {
 		super(createBody, createMesh);
 		this.player = player
+		assignRole(this, vehicleRole)
 	}
 
 	update(dt:number){

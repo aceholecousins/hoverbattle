@@ -1,10 +1,14 @@
 import { Entity } from "./entity";
-
+import { Role, assignRole } from "./actor";
+import { onEngineReady } from "game/engine";
+import { CollisionHandler } from "game/physics/collision";
 
 export interface Damaging {
 	damage: number
 	impact(): void
 }
+
+let damagingRole = new Role<Damaging>("damaging")
 
 export function makeDamaging<T extends Entity>(
 	entity: T,
@@ -16,14 +20,16 @@ export function makeDamaging<T extends Entity>(
 	extendedEntity.impact = () => {
 		impactCallback(extendedEntity)
 	}
+	assignRole(extendedEntity, damagingRole)
 	return extendedEntity
 }
-
 
 export interface Destructible {
 	hit(damage: number): void
 	repair(restore: number): void
 }
+
+let destructibleRole = new Role<Destructible>("destructible")
 
 export function makeDestructible<T extends Entity>(
 	entity: T,
@@ -42,5 +48,15 @@ export function makeDestructible<T extends Entity>(
 	extendedEntity.repair = (restore: number) => {
 		hitpoints = Math.min(hitpoints + restore, initialHitpoints)
 	}
+	assignRole(extendedEntity, destructibleRole)
 	return extendedEntity
 }
+
+onEngineReady(engine => {
+	engine.physics.registerCollisionHandler(new CollisionHandler(
+		damagingRole, destructibleRole, (damaging: Damaging, destructible: Destructible) => {
+			damaging.impact()
+			destructible.hit(damaging.damage)
+		}
+	))
+})

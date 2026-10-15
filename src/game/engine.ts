@@ -14,8 +14,17 @@ export interface Engine {
 
 let engine: Engine | null = null
 
+let engineInitCallbacks: ((e: Engine) => void)[] = []
+
+export function onEngineReady(cb: (e: Engine) => void) {
+	engineInitCallbacks.push(cb)
+}
+
 export function setEngine(e: Engine) {
 	engine = e
+	for (let cb of engineInitCallbacks) {
+		cb(e)
+	}
 }
 
 export function getEngine(): Engine{

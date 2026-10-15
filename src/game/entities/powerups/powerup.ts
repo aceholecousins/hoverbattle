@@ -1,12 +1,14 @@
 import { ModelMeshConfig } from "game/graphics/mesh"
 import { Model } from "game/graphics/asset"
-import { Engine } from "game/engine"
+import { Engine, onEngineReady } from "game/engine"
 import { Circle } from "game/physics/shapes"
 import { RigidBodyConfig } from "game/physics/rigidbody"
 import { Vector2, ypr, DEG } from "math"
 import { Entity } from "game/entities/entity"
-import { Vehicle } from "../vehicles/vehicle"
+import { Vehicle, vehicleRole } from "../vehicles/vehicle"
 import { getEngine } from "game/engine"
+import { assignRole, Role } from "../actor"
+import { CollisionHandler } from "game/physics/collision"
 
 const POWERUP_BOX_SIZE = 1.8
 
@@ -18,6 +20,8 @@ export interface Powerup {
 }
 
 export type PowerupBoxCtor = new (position: Vector2) => PowerupBox;
+
+let powerupBoxRole = new Role<PowerupBox>("powerupBox")
 
 export class PowerupBox extends Entity {
 	// base class for powerup boxes
@@ -47,6 +51,7 @@ export class PowerupBox extends Entity {
 		}
 		super(createBody, createMesh)
 		this.update(0)
+		assignRole(this, powerupBoxRole)
 	}
 
 	onCollect(collector: Vehicle): void {
@@ -65,6 +70,15 @@ export class PowerupBox extends Entity {
 		))
 	}
 }
+
+onEngineReady(engine => {
+	engine.physics.registerCollisionHandler(new CollisionHandler(
+		vehicleRole, powerupBoxRole, (vehicle: Vehicle, powerupBox: PowerupBox) => {
+			powerupBox.onCollect(vehicle)
+			powerupBox.dispose()
+		}
+	))
+})
 
 /*
 export async function createPowerupBoxFactory(engine: Engine) {

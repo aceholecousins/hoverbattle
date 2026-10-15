@@ -8,7 +8,6 @@ import { ActionCam, ActionCamConfig } from "game/actioncam"
 import { Physics } from "game/physics/physics"
 import { SoundLoader } from "game/sound"
 import { loadAllResources } from "game/resourcemanager"
-import { registerRelatedEntityCollisionOverride } from "game/entities/entity"
 
 import { ThreeGraphics } from "adapters/graphics/threegraphics/threegraphics"
 import { P2Physics } from "adapters/physics/p2/p2physics"
@@ -26,7 +25,6 @@ async function main() {
 
 	// let physics = new P2Physics() as Physics
 	let physics = new PlanckPhysics() as Physics
-	registerRelatedEntityCollisionOverride(physics)
 	let graphics = new ThreeGraphics() as Graphics
 	let actionCam = new ActionCam(graphics, {})
 	actionCam.camera.activate()
