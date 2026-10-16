@@ -1,14 +1,13 @@
 import { broker } from "broker";
 import { ModelMeshConfig } from "game/graphics/mesh";
 import { Model, ModelMetaData } from "game/graphics/asset";
-import { Engine, getEngine } from "game/engine";
+import { getEngine } from "game/engine";
 import { Circle } from "game/physics/shapes";
 import { Entity } from "game/entities/entity";
 import { Vehicle, VEHICLE_RADIUS } from "game/entities/vehicles/vehicle";
 import { angleDelta, appendZ, Vector2, ypr, vec2FromDir, DEG } from "math";
-import { SmokeFactory, createSmokeFactory } from "game/graphics/explosion/smoke"
-import { memoize } from "utils/general";
 import { Resource } from "game/resourcemanager"
+import { Smoke } from "game/graphics/explosion/smoke";
 
 const MISSILE_LENGTH = 1.3;
 const MISSILE_RADIUS = 0.3 * MISSILE_LENGTH;
@@ -19,15 +18,15 @@ const MISSILE_ANGULAR_DAMPING = 7.0;
 const MISSILE_HOMING_TORQUE = 1.2;
 const MISSILE_FIRE_RATE = 1;
 
-let missileModel = new Resource(() =>
-	getEngine().graphics.loadModel("assets/models/missile.glb")
-)
-
 export class Missile extends Entity {
 	public isMissile = true
 	public target: Entity | null;
 	public roll: number = 0;
 	private tNextSmoke = 0
+
+	private static model = new Resource(() =>
+		getEngine().graphics.loadModel("assets/models/missile.glb")
+	)
 
 	constructor(
 		public parent: Vehicle,
@@ -49,7 +48,7 @@ export class Missile extends Entity {
 		}
 		let createMesh = (self: Entity) => {
 			let mesh = getEngine().graphics.mesh.createFromModel({
-				model: missileModel.get().model,
+				model: Missile.model.get().model,
 				scale: MISSILE_LENGTH / 2
 			})
 			mesh.setBaseColor({ r: 0, g: 0, b: 0 })
@@ -99,10 +98,10 @@ export class Missile extends Entity {
 		this.tNextSmoke -= dt
 		if (this.tNextSmoke <= 0) {
 			this.tNextSmoke += 0.04
-			// this.createSmoke(
-			// 	appendZ(this.body.getPosition(), 0.1),
-			// 	{ r: 0.2, g: 0.2, b: 0.2 }
-			// )
+			new Smoke(
+				appendZ(this.body.getPosition(), 0.1),
+				{ r: 0.2, g: 0.2, b: 0.2 }
+			)
 		}
 
 		if (this.target != null) {

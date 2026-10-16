@@ -1,12 +1,13 @@
 import { ModelMeshConfig } from "game/graphics/mesh"
 import { Model } from "game/graphics/asset"
-import { Engine } from "game/engine"
+import { Engine, getEngine, onEngineReady } from "game/engine"
 import { Vector3, ypr, Quaternion, Euler } from "math"
 import { Color, colorLerp } from "utils/color"
 import { Visual } from "game/graphics/visual"
 import { PointLight, PointLightConfig } from "game/graphics/light"
 import { broker } from "broker"
-import { SmokeFactory, createSmokeFactory } from "./smoke"
+import { Smoke } from "./smoke"
+import { Resource } from "game/resourcemanager"
 
 const DURATION = 0.5
 
@@ -14,13 +15,15 @@ export class Smokeball extends Visual {
 	time: number = 0
 	color: Color
 
+	private static model = new Resource(() =>
+		getEngine().graphics.loadModel("assets/models/smokeball.glb")
+	)
+
 	constructor(
 		position: Vector3,
-		color: Color,
-		model: Model,
-		engine: Engine
+		color: Color
 	) {
-		let mesh = engine.graphics.mesh.createFromModel({ model })
+		let mesh = getEngine().graphics.mesh.createFromModel({ model: Smokeball.model.get().model })
 		mesh.setScale(0.01)
 		mesh.setPosition(position)
 		mesh.setOrientation(new Quaternion().random())
@@ -64,14 +67,15 @@ export class Crumb extends Visual {
 	velocity: Vector3
 	euler: Euler
 
+	private static model = new Resource(() =>
+		getEngine().graphics.loadModel("assets/models/crumb.glb")
+	)
+
 	constructor(
 		position: Vector3,
-		private color: Color,
-		private createCloud: SmokeFactory,
-		model: Model,
-		engine: Engine
+		private color: Color
 	) {
-		let mesh = engine.graphics.mesh.createFromModel({ model })
+		let mesh = getEngine().graphics.mesh.createFromModel({ model: Crumb.model.get().model })
 		mesh.setScale(0.5)
 		mesh.setBaseColor(color)
 		super(mesh)
@@ -102,7 +106,7 @@ export class Crumb extends Visual {
 
 		if (this.time > this.tNextCloud) {
 			this.tNextCloud = this.time + 0.04
-			this.createCloud(this.position, this.color)
+			new Smoke(this.position, this.color)
 		}
 
 		if (this.position.z < 0) {
@@ -114,12 +118,14 @@ export class Crumb extends Visual {
 export class Shockwave extends Visual {
 	time: number = 0
 
+	private static model = new Resource(() =>
+		getEngine().graphics.loadSprite("assets/sprites/shockwave.png")
+	)
+
 	constructor(
-		position: Vector3,
-		model: Model,
-		engine: Engine
+		position: Vector3
 	) {
-		let mesh = engine.graphics.mesh.createFromModel({ model })
+		let mesh = getEngine().graphics.mesh.createFromModel({ model: Shockwave.model.get() })
 		mesh.setScale(0.1)
 		mesh.setPosition(position)
 		mesh.setOpacity(0.2)
@@ -140,13 +146,15 @@ export class Shockwave extends Visual {
 export class Plop extends Visual {
 	time: number = 0
 
+	private static model = new Resource(() =>
+		getEngine().graphics.loadSprite("assets/sprites/plop.tint.png")
+	)
+
 	constructor(
 		position: Vector3,
-		color: Color,
-		model: Model,
-		engine: Engine
+		color: Color
 	) {
-		let mesh = engine.graphics.mesh.createFromModel({ model })
+		let mesh = getEngine().graphics.mesh.createFromModel({ model: Plop.model.get() })
 		mesh.setScale(0.1)
 		mesh.setPosition(position)
 		mesh.setBaseColor(color)
@@ -164,16 +172,18 @@ export class Plop extends Visual {
 	}
 }
 
-export class Piff extends Visual {
+export class SmallExplosion extends Visual {
 	progress: number = 0
+
+	private static model = new Resource(() =>
+		getEngine().graphics.loadSprite("assets/sprites/small_explosion.tint.png")
+	)
 
 	constructor(
 		position: Vector3,
-		private color: Color,
-		model: Model,
-		engine: Engine
+		private color: Color
 	) {
-		let mesh = engine.graphics.mesh.createFromModel({ model })
+		let mesh = getEngine().graphics.mesh.createFromModel({ model: SmallExplosion.model.get() })
 		mesh.setScale(0.1)
 		let shifted = position.clone()
 		shifted.z += 0.1 * Math.random()
@@ -213,12 +223,14 @@ export class Shard extends Visual {
 	private position: Vector3
 	private velocity: Vector3
 
+	private static model = new Resource(() =>
+		getEngine().graphics.loadModel("assets/models/shard.glb")
+	)
+
 	constructor(
-		position: Vector3,
-		model: Model,
-		engine: Engine
+		position: Vector3
 	) {
-		let mesh = engine.graphics.mesh.createFromModel({ model })
+		let mesh = getEngine().graphics.mesh.createFromModel({ model: Shard.model.get().model })
 		mesh.setScale(new Vector3(3.0, 0.1, 0.1))
 		let direction = Math.random() * 2 * Math.PI
 		let pitch = Math.random()
@@ -253,14 +265,15 @@ export class Flash {
 	private light: PointLight
 	private updateHandler = (e: any) => this.update(e.dt)
 
-	constructor(engine: Engine) {
-		this.light = engine.graphics.light.createPointLight({
+	constructor() {
+		this.light = getEngine().graphics.light.createPointLight({
 			position: new Vector3(NaN, NaN, NaN),
 			color: { r: 0, g: 0, b: 0 },
 			intensity: 0
 		})
 	}
 
+	// call to reuse this instance somewhere else
 	flash(position: Vector3, color: Color) {
 		this.time = 0
 		this.light.setPosition(position)
@@ -288,56 +301,40 @@ export class Flash {
 	}
 }
 
-export async function createExplosionFactory(engine: Engine) {
-
-	let smokeballModel = await engine.graphics.loadModel(
-		"assets/models/smokeball.glb")
-	let crumbModel = await engine.graphics.loadModel(
-		"assets/models/crumb.glb")
-	let shardModel = await engine.graphics.loadModel(
-		"assets/models/shard.glb")
-	let shockwaveModel = await engine.graphics.loadSprite(
-		"assets/sprites/shockwave.png")
-	let plopModel = await engine.graphics.loadSprite(
-		"assets/sprites/plop.tint.png")
-	let createCloud = await createSmokeFactory(engine)
-
+export class Explosion {
 	// light sources are very expensive, especially creating them dynamically,
-	// so we create a pool of them and reuse them
-	let flashes: Flash[] = []
-	for (let i = 0; i < 3; i++) {
-		flashes.push(new Flash(engine))
-	}
-	let nextFlash = 0
+	// so we create a pool of them and reuse them (initialized below class)
+	static flashes: Flash[] = []
+	static nextFlash = 0
 
-	return function (position: Vector3, color: Color) {
-		let smokeball = new Smokeball(position, color, smokeballModel.model, engine)
-		let crumbs: Crumb[] = []
+	smokeball: Smokeball
+	crumbs: Crumb[] = []
+	shockwave: Shockwave
+	plop: Plop
+	shards: Shard[] = []
+
+	constructor(position: Vector3, color: Color) {
+		this.smokeball = new Smokeball(position, color)
 		let darkColor = { r: color.r * 0.33, g: color.g * 0.33, b: color.b * 0.33 }
 		for (let i = 0; i < 7; i++) {
-			crumbs.push(new Crumb(position, darkColor, createCloud, crumbModel.model, engine))
+			this.crumbs.push(new Crumb(position, darkColor))
 		}
 		let shockwavePosition = position.clone()
 		shockwavePosition.z += Math.random() * 0.1
-		let shockwave = new Shockwave(shockwavePosition, shockwaveModel, engine)
+		this.shockwave = new Shockwave(shockwavePosition)
 		let plopPosition = position.clone()
 		plopPosition.z += Math.random() * 0.1
-		let plop = new Plop(plopPosition, color, plopModel, engine)
-		let shards: Shard[] = []
+		this.plop = new Plop(plopPosition, color)
 		for (let i = 0; i < 11; i++) {
-			shards.push(new Shard(position, shardModel.model, engine))
+			this.shards.push(new Shard(position))
 		}
-		flashes[nextFlash].flash(position, color)
-		nextFlash = (nextFlash + 1) % flashes.length
-		return { smokeball, crumbs, shockwave, plop, shards }
+		Explosion.flashes[Explosion.nextFlash].flash(position, color)
+		Explosion.nextFlash = (Explosion.nextFlash + 1) % Explosion.flashes.length
 	}
 }
 
-export async function createSmallExplosionFactory(engine: Engine) {
-	let explosionModel = await engine.graphics.loadSprite(
-		"assets/sprites/small_explosion.tint.png")
-
-	return function (position: Vector3, color: Color) {
-		return new Piff(position, color, explosionModel, engine)
+onEngineReady(engine => { // TODO code smell
+	for (let i = 0; i < 3; i++) {
+		Explosion.flashes.push(new Flash())
 	}
-}
+})

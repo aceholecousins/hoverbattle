@@ -1,23 +1,26 @@
 import { ModelMeshConfig } from "game/graphics/mesh"
 import { Model } from "game/graphics/asset"
-import { Engine } from "game/engine"
+import { Engine, getEngine } from "game/engine"
 import { Vector3 } from "math"
 import { Color, colorLerp } from "utils/color"
 import { Visual } from "game/graphics/visual"
 import { memoize } from "utils/general"
+import { Resource } from "game/resourcemanager"
 
 let DURATION = 0.5
 
 export class Smoke extends Visual {
 	time: number = 0
 
+	private static model = new Resource(() =>
+		getEngine().graphics.loadSprite("assets/sprites/smoke.png")
+	)
+
 	constructor(
 		position: Vector3,
-		model: Model,
 		color: Color,
-		engine: Engine
 	) {
-		let mesh = engine.graphics.mesh.createFromModel({ model })
+		let mesh = getEngine().graphics.mesh.createFromModel({ model: Smoke.model.get() })
 		mesh.setScale(2)
 		mesh.setPosition(position)
 		mesh.setAngle(Math.random() * 6.28)
@@ -34,13 +37,3 @@ export class Smoke extends Visual {
 		}
 	}
 }
-
-export type SmokeFactory = (position: Vector3, color: Color) => Smoke
-export let createSmokeFactory = memoize(async function (engine: Engine) {
-	let smokeModel = await engine.graphics.loadSprite(
-		"assets/sprites/smoke.png")
-
-	return function (position: Vector3, color: Color) {
-		return new Smoke(position, smokeModel, color, engine)
-	}
-})

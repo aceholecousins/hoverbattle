@@ -21,7 +21,7 @@ import { Player } from "game/player"
 import { SceneNodeConfig } from "game/graphics/scenenode"
 import { Vector2, Vector3, ypr } from "math"
 import { remove } from "utils/general"
-import { createExplosionFactory, createSmallExplosionFactory } from "game/graphics/explosion/explosion"
+import { Explosion } from "game/graphics/explosion/explosion"
 import { GameTimer } from "game/gametimer"
 import { appendZ } from "math"
 import { MissilePowerupBox } from "game/entities/powerups/missilepowerup"
@@ -159,7 +159,7 @@ export let createMatch: MatchFactory = async function (engine) {
 		// powerShieldFactory,
 		// nashwanFactory,
 		// minigunFactory,
-		createExplosion,
+		// createExplosion,
 		// createSmallExplosion
 	] = await Promise.all([
 		loadArena(arenaFile, engine),
@@ -173,7 +173,7 @@ export let createMatch: MatchFactory = async function (engine) {
 		// createPowerShieldFactory(engine),
 		// createNashwanFactory(engine),
 		// createMinigunFactory(engine),
-		createExplosionFactory(engine),
+		// createExplosionFactory(engine),
 		// createSmallExplosionFactory(engine)
 	]);
 
@@ -252,7 +252,7 @@ export let createMatch: MatchFactory = async function (engine) {
 			() => {
 				vehicle.dispose()
 
-				createExplosion(
+				new Explosion(
 					appendZ(vehicle.body.getPosition(), 1),
 					player.color
 				)
