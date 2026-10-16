@@ -25,6 +25,8 @@ import { Explosion } from "game/graphics/explosion/explosion"
 import { GameTimer } from "game/gametimer"
 import { appendZ } from "math"
 import { MissilePowerupBox } from "game/entities/powerups/missilepowerup"
+import { MinePowerupBox } from "game/entities/powerups/minepowerup"
+
 
 let VEHICLE_HP = 10
 
@@ -224,7 +226,7 @@ export let createMatch: MatchFactory = async function (engine) {
 		if (powerupBoxes.length < 5) {
 			// let kinds = ["mine", "missile", "laser", "nashwan", "powershield", "repair", "minigun"]
 
-			let powerupBoxCtors : PowerupBoxCtor[] = [MissilePowerupBox]
+			let powerupBoxCtors : PowerupBoxCtor[] = [MissilePowerupBox, MinePowerupBox]
 			let pick = Math.floor(Math.random() * powerupBoxCtors.length)
 			let powerupBox = makeDestructible(
 				new powerupBoxCtors[pick](determineSpawnPoint()),

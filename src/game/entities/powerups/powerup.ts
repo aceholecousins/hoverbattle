@@ -9,6 +9,7 @@ import { Vehicle, vehicleRole } from "../vehicles/vehicle"
 import { getEngine } from "game/engine"
 import { assignRole, Role } from "../actor"
 import { CollisionHandler } from "game/physics/collision"
+import { assertNull } from "utils/general"
 
 const POWERUP_BOX_SIZE = 1.8
 
@@ -56,7 +57,7 @@ export class PowerupBox extends Entity {
 
 	onCollect(collector: Vehicle): void {
 		// abstract method to be extended by subclasses
-		collector.activePowerup?.cancel?.()
+		assertNull(collector.activePowerup, "activePowerup not empty")
 		this.dispose()
 	}
 
@@ -74,6 +75,7 @@ export class PowerupBox extends Entity {
 onEngineReady(engine => {
 	engine.physics.registerCollisionHandler(new CollisionHandler(
 		vehicleRole, powerupBoxRole, (vehicle: Vehicle, powerupBox: PowerupBox) => {
+			vehicle.activePowerup?.cancel?.()
 			powerupBox.onCollect(vehicle)
 			powerupBox.dispose()
 		}

@@ -18,6 +18,15 @@ export type Defaults<T> = Required<Pick<T, OptionalKeys<T>>>
 /**/
 
 
+export function assertNull(
+	value: unknown,
+	message?: string
+): asserts value is null {
+	if (value !== null) {
+		throw new Error(message ?? 'Expected null')
+	}
+}
+
 export function assertDefined<T>(
 	value: T,
 	message?: string

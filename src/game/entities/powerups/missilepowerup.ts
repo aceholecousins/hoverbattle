@@ -8,6 +8,7 @@ import { assignRole } from "../actor";
 import { collideWithEverythingRole, fragileRole } from "../entity";
 import { makeDamaging, makeDestructible } from "../damage";
 import { Explosion } from "game/graphics/explosion/explosion";
+import { assertNull } from "utils/general";
 
 export class MissilePowerupBox extends PowerupBox {
 
@@ -24,6 +25,7 @@ export class MissilePowerupBox extends PowerupBox {
 	onCollect(collector: Vehicle) {
 		super.onCollect(collector)
 		let launcher = new MissileLauncher(collector);
+		let stock = 3
 		collector.activePowerup = {
 			pressTrigger() {
 				let missile = launcher.tryShoot([]);
@@ -41,7 +43,14 @@ export class MissilePowerupBox extends PowerupBox {
 					makeDamaging(missile, 17, () => { explode() })
 					makeDestructible(missile, 3, () => { explode() })
 
+					stock -= 1
+					if(stock == 0){
+						collector.activePowerup?.cancel?.()
+					}
 				}
+			},
+			cancel(){
+				collector.activePowerup = null
 			}
 		}
 	}

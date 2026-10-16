@@ -122,7 +122,6 @@ export class Missile extends Entity {
 
 export class MissileLauncher {
 
-	public stock = 3
 	private coolDown: number = 0
 	private updateHandler = (e: any) => this.update(e.dt)
 
