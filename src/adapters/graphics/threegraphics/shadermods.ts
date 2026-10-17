@@ -45,16 +45,33 @@ export function modMaterials(
 					shader.uniforms['resolution'] = water.resolutionUniform
 					shader.uniforms['rippleMap'] = water.normalTextureUniform
 
-					let chunk = ""
-					for (let angle = 0.001; angle < 2 * Math.PI; angle += 2 * Math.PI / 3) {
+					let chunk = "vec3 disturbanceSum = vec3(0.0, 0.0, 0.0);\n\n"
+
+					// we don't start at 0 because ${0.0} becomes "0" and int instead of float doesn't compile
+					for (let angle = 0.1; angle < 2 * Math.PI; angle += 2 * Math.PI / 3) {
+						const s = Math.sin(angle)
+						const c = Math.cos(angle)
+						const rot2d = `mat2(${c}, ${-s}, ${s}, ${c})`
 						chunk += `{
-							mat2 rotmat = mat2(${Math.cos(angle)}, ${-Math.sin(angle)}, ${Math.sin(angle)}, ${Math.cos(angle)});
-							vec3 normalPart = texture2D( normalMap, rotmat * vNormalMapUv + vec2(time*${speed}, ${angle}) ).xyz * 2.0 - 1.0;
-							normalPart.xy = rotmat * normalPart.xy;
-							normal += normalPart;
+							vec3 noise = texture2D( normalMap, ${rot2d} * vNormalMapUv + vec2(time*${speed}, ${angle}) ).xyz * 2.0 - 1.0;
+							noise.xy = ${rot2d} * noise.xy;
+							disturbanceSum += noise;
 						}
 						`
 					}
+
+					chunk += `
+						vec3 ripples = texture2D( rippleMap, gl_FragCoord.xy / resolution ).rgb * 2.0 - 1.0;
+						disturbanceSum += 2.0 * ripples;
+
+						#ifdef FLIP_SIDED
+							disturbanceSum = - disturbanceSum;
+						#endif
+						#ifdef DOUBLE_SIDED
+							disturbanceSum = disturbanceSum * faceDirection;
+						#endif
+						normal = normalize(normal + normalMatrix * disturbanceSum);
+					`
 
 					shader.fragmentShader = `#define USE_NORMALMAP_OBJECTSPACE
 						uniform float time;
@@ -63,18 +80,10 @@ export function modMaterials(
 						`
 						+ shader.fragmentShader.replace(
 							"\t#include <normal_fragment_maps>",
-							chunk + `
-								vec3 ripple = texture2D( rippleMap, gl_FragCoord.xy / resolution ).rgb * 2.0 - 1.0;
-								normal += 3.0 * ripple;
-								#ifdef FLIP_SIDED
-									normal = - normal;
-								#endif
-								#ifdef DOUBLE_SIDED
-									normal = normal * faceDirection;
-								#endif
-								normal = normalize( normalMatrix * normal );
-							`
+							chunk
 						)
+
+					//shader.fragmentShader = shader.fragmentShader.substring(0,shader.fragmentShader.length-1) + "gl_FragColor = vec4(normal * 0.5 + 0.5, 1.0);}"
 
 					shader.vertexShader = "\nuniform float time;\n"
 						+ shader.vertexShader.replace(

@@ -18,6 +18,7 @@ Debug:
 * do something about the position glitching when an object spawns into another (?)
 * the minigun needs a graphic makeover, it is way too complicated and only wobbles graphically. Maybe more silvery, just a hexagon and AO?
 * check if tinting works with color management, r+g+b=1 must not get distorted by three gamma management
+* mine thrower should not need recharging when a new box is collected
 
 Features:
 
