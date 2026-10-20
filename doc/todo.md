@@ -1,6 +1,5 @@
 Refactory:
 
-* all interactions hinge on canCollide which is right now only called once for collidesWithEverything
 * missiles are now always damaging and destructible
 
 Debug:

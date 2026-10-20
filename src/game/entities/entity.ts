@@ -1,4 +1,4 @@
-import { Actor, Role, RoleSet, assignRole, canCollide } from "./actor"
+import { Actor, Role, RoleSet, assignRole, enableCollision } from "./actor"
 import { Mesh } from "game/graphics/mesh"
 import { RigidBody } from "game/physics/rigidbody"
 import { broker } from "broker"
@@ -11,7 +11,7 @@ export let collideWithEverythingRole = new Role<Entity>("collideWithEverything")
 export let fragileRole = new Role<Entity>("fragile") // disposed on impact
 
 onEngineReady(engine => {
-	canCollide(collideWithEverythingRole, collideWithEverythingRole)
+	enableCollision(collideWithEverythingRole, collideWithEverythingRole)
 
 	engine.physics.registerCollisionHandler(new CollisionHandler(
 		collideWithEverythingRole, collideWithEverythingRole, (
@@ -22,9 +22,9 @@ onEngineReady(engine => {
 
 	engine.physics.registerCollisionHandler(new CollisionHandler(
 		fragileRole, collideWithEverythingRole, (
-			projectile: Entity, _: Entity
+			fragile: Entity, _: Entity
 		) => {
-		projectile.dispose()
+		fragile.dispose()
 	}))
 
 	engine.physics.registerCollisionOverride(new CollisionOverride(

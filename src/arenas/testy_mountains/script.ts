@@ -1,4 +1,4 @@
-import { Role, canCollide, hasRole, assignRole } from "game/entities/actor"
+import { Role, enableCollision, hasRole, assignRole } from "game/entities/actor"
 import { loadArena } from "game/entities/arena/arena"
 import { Damaging, makeDamaging, Destructible, makeDestructible } from "game/entities/damage"
 import { collideWithEverythingRole, Entity } from "game/entities/entity"

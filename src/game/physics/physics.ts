@@ -27,6 +27,8 @@ export interface Physics {
 	addRigidBody(body: RigidBodyConfig): RigidBody
 	attach(config: AttachmentConfig): Attachment
 	registerCollisionOverride(override: CollisionOverride<any, any>): void
+
+	// collision handling requires that enableCollision() enables collision for some roles of participating actors
 	registerCollisionHandler(handler: CollisionHandler<any, any>): void
 	// rayCast(from: Vector2, to: Vector2): RayHit[] // return all hits
 	rayCast(from: Vector2, to: Vector2): RayHit | null // return closest hit
