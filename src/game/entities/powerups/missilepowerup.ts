@@ -25,6 +25,7 @@ export class MissilePowerupBox extends PowerupBox {
 				launcher.tryShoot([]);
 			},
 			cancel(){
+				launcher.dispose()
 				collector.activePowerup = null
 			}
 		}

@@ -3,11 +3,14 @@ import { ModelMeshConfig } from "game/graphics/mesh";
 import { Model } from "game/graphics/asset";
 import { Engine, getEngine } from "game/engine";
 import { Circle } from "game/physics/shapes";
-import { Entity } from "game/entities/entity";
+import { collideWithEverythingRole, Entity } from "game/entities/entity";
 import { Vehicle, VEHICLE_RADIUS } from "game/entities/vehicles/vehicle";
 import { Powerup } from "game/entities/powerups/powerup";
 import { appendZ, Vector2, Vector3, ypr, DEG } from "math";
 import { Resource } from "game/resourcemanager";
+import { Explosion } from "game/graphics/explosion/explosion";
+import { assignRole } from "../actor";
+import { makeDamaging, makeDestructible } from "../damage";
 
 const MINE_RADIUS = 1;
 const MINE_MASS = 1
@@ -19,6 +22,7 @@ const MINE_PRIME_DELAY = 0.3
 export class Mine extends Entity {
 	private time = 0;
 	private deployed = 0
+	private primed = false
 	public onPrime = () => { }
 
 	private static model = new Resource(() =>
@@ -72,7 +76,8 @@ export class Mine extends Entity {
 			20 * DEG * Math.sin(this.time)
 		))
 
-		if (this.time > MINE_PRIME_DELAY) {
+		if (this.time > MINE_PRIME_DELAY && !this.primed) {
+			this.primed = true
 			this.onPrime()
 		}
 	}
@@ -81,6 +86,7 @@ export class Mine extends Entity {
 export class MineThrower {
 
 	private coolDown = 0
+	private stock = 1
 	private updateHandler = (e: any) => this.update(e.dt)
 
 	constructor(
@@ -93,13 +99,28 @@ export class MineThrower {
 		broker.update.removeHandler(this.updateHandler)
 	}
 
-	tryShoot(): Mine | null {
-		if (this.coolDown <= 0) {
-			return this.spawnMine();
-		}
-		else {
-			return null
-		}
+	tryShoot() {
+		if (this.coolDown <= 0 && this.stock > 0) {
+			let mine = this.spawnMine()
+			mine.onPrime = () => {
+				assignRole(mine, collideWithEverythingRole)
+
+				let explode = () => {
+					mine.dispose()
+					new Explosion(
+						appendZ(mine.body.getPosition(), 1),
+						mine.parent.player.color
+					)
+				}
+
+				makeDamaging(mine, 17, explode)
+				makeDestructible(mine, 3, explode)
+			}
+			this.stock -= 1
+			if (this.stock === 0) {
+				this.parent.activePowerup?.cancel?.()
+			}		
+		}		
 	}
 
 	private spawnMine(): Mine {

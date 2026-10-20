@@ -25,6 +25,7 @@ export class MinePowerupBox extends PowerupBox {
 				launcher.tryShoot();
 			},
 			cancel() {
+				launcher.dispose()
 				collector.activePowerup = null
 			}
 		}
