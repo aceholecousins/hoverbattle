@@ -23,7 +23,6 @@ export class Mine extends Entity {
 	private time = 0;
 	private deployed = 0
 	private primed = false
-	public onPrime = () => { }
 
 	private static model = new Resource(() =>
 		getEngine().graphics.loadModel("assets/models/seamine.glb")
@@ -53,9 +52,25 @@ export class Mine extends Entity {
 		}
 		super(createBody, createMesh);
 
+		this.body.setAngle(Math.random() * Math.PI * 2);
 		this.collidesWithParent = false
 
 		this.update(0)
+	}
+
+	onPrime() {
+		assignRole(this, collideWithEverythingRole)
+
+		let explode = () => {
+			this.dispose()
+			new Explosion(
+				appendZ(this.body.getPosition(), 1),
+				this.parent.player.color
+			)
+		}
+
+		makeDamaging(this, 17, explode)
+		makeDestructible(this, 3, explode)
 	}
 
 	update(dt: number) {
@@ -101,33 +116,13 @@ export class MineThrower {
 
 	tryShoot() {
 		if (this.coolDown <= 0 && this.stock > 0) {
-			let mine = this.spawnMine()
-			mine.onPrime = () => {
-				assignRole(mine, collideWithEverythingRole)
-
-				let explode = () => {
-					mine.dispose()
-					new Explosion(
-						appendZ(mine.body.getPosition(), 1),
-						mine.parent.player.color
-					)
-				}
-
-				makeDamaging(mine, 17, explode)
-				makeDestructible(mine, 3, explode)
-			}
+			new Mine(this.parent)
+			this.coolDown = MINE_COOLDOWN
 			this.stock -= 1
 			if (this.stock === 0) {
 				this.parent.activePowerup?.cancel?.()
 			}		
 		}		
-	}
-
-	private spawnMine(): Mine {
-		let mine = new Mine(this.parent);
-		mine.body.setAngle(Math.random() * Math.PI * 2);
-		this.coolDown = MINE_COOLDOWN
-		return mine
 	}
 
 	update(dt: number) {
