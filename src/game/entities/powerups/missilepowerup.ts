@@ -1,14 +1,9 @@
 import { Resource } from "game/resourcemanager";
 import { Vehicle } from "../vehicles/vehicle";
 import { MissileLauncher } from "../weapons/missile";
-import { PowerupBox, Powerup } from "./powerup";
+import { PowerupBox } from "./powerup";
 import { getEngine } from "game/engine";
-import { appendZ, Vector2 } from "math";
-import { assignRole } from "../actor";
-import { collideWithEverythingRole, fragileRole } from "../entity";
-import { makeDamaging, makeDestructible } from "../damage";
-import { Explosion } from "game/graphics/explosion/explosion";
-import { assertNull } from "utils/general";
+import { Vector2 } from "math";
 
 export class MissilePowerupBox extends PowerupBox {
 
@@ -25,29 +20,9 @@ export class MissilePowerupBox extends PowerupBox {
 	onCollect(collector: Vehicle) {
 		super.onCollect(collector)
 		let launcher = new MissileLauncher(collector);
-		let stock = 3
 		collector.activePowerup = {
 			pressTrigger() {
-				let missile = launcher.tryShoot([]);
-				if (missile) {
-					assignRole(missile, collideWithEverythingRole)
-
-					let explode = () => {
-						missile.dispose()
-						new Explosion(
-							appendZ(missile.body.getPosition(), 1),
-							missile.parent.player.color
-						)
-					}
-
-					makeDamaging(missile, 17, () => { explode() })
-					makeDestructible(missile, 3, () => { explode() })
-
-					stock -= 1
-					if(stock == 0){
-						collector.activePowerup?.cancel?.()
-					}
-				}
+				launcher.tryShoot([]);
 			},
 			cancel(){
 				collector.activePowerup = null

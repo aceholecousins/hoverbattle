@@ -3,11 +3,14 @@ import { ModelMeshConfig } from "game/graphics/mesh";
 import { Model, ModelMetaData } from "game/graphics/asset";
 import { getEngine } from "game/engine";
 import { Circle } from "game/physics/shapes";
-import { Entity } from "game/entities/entity";
+import { collideWithEverythingRole, Entity } from "game/entities/entity";
 import { Vehicle, VEHICLE_RADIUS } from "game/entities/vehicles/vehicle";
 import { angleDelta, appendZ, Vector2, ypr, vec2FromDir, DEG } from "math";
 import { Resource } from "game/resourcemanager"
 import { Smoke } from "game/graphics/explosion/smoke";
+import { Explosion } from "game/graphics/explosion/explosion";
+import { assignRole } from "../actor";
+import { makeDamaging, makeDestructible } from "../damage";
 
 const MISSILE_LENGTH = 1.3;
 const MISSILE_RADIUS = 0.3 * MISSILE_LENGTH;
@@ -122,9 +125,10 @@ export class Missile extends Entity {
 
 export class MissileLauncher {
 
-	private coolDown: number = 0
+	private coolDown = 0
 	private updateHandler = (e: any) => this.update(e.dt)
-
+	private stock = 3
+	
 	constructor(
 		private parent: Vehicle
 	) {
@@ -135,12 +139,27 @@ export class MissileLauncher {
 		broker.update.removeHandler(this.updateHandler)
 	}
 
-	tryShoot(possibleTargets: Entity[]): Missile | null {
+	tryShoot(possibleTargets: Entity[]) {
 		if (this.coolDown <= 0) {
-			return this.spawnMissile(possibleTargets);
-		}
-		else {
-			return null
+			let missile = this.spawnMissile(possibleTargets);
+			
+			assignRole(missile, collideWithEverythingRole)
+
+			let explode = () => {
+				missile.dispose()
+				new Explosion(
+					appendZ(missile.body.getPosition(), 1),
+					missile.parent.player.color
+				)
+			}
+
+			makeDamaging(missile, 17, () => { explode() })
+			makeDestructible(missile, 3, () => { explode() })
+
+			this.stock -= 1
+			if(this.stock == 0){
+				this.parent.activePowerup?.cancel?.()
+			}			
 		}
 	}
 

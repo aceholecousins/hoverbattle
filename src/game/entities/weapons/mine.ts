@@ -80,7 +80,7 @@ export class Mine extends Entity {
 
 export class MineThrower {
 
-	private coolDown: number = 1
+	private coolDown = 0
 	private updateHandler = (e: any) => this.update(e.dt)
 
 	constructor(
