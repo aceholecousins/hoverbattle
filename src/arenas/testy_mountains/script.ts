@@ -7,7 +7,7 @@ import { createGliderFactory, Glider } from "game/entities/vehicles/glider"
 import { createCarFactory, Car } from "game/entities/vehicles/car"
 import { createOmgCarFactory, OmgCar } from "game/entities/vehicles/omgcar"
 import { Vehicle, VehicleFactory } from "game/entities/vehicles/vehicle"
-import { PowerupBox, PowerupBoxCtor } from "game/entities/powerups/powerup"
+import { ignoreNewPowerup, PowerupBox, PowerupBoxCtor, setPowerupCollectionHandler } from "game/entities/powerups/powerup"
 import { createPhaserFactory, PhaserShot, PhaserWeapon } from "game/entities/weapons/phaser"
 //import { createLaserFactory, LaserPowerup } from "game/entities/weapons/laser"
 import { Missile, MissileLauncher } from "game/entities/weapons/missile"
@@ -37,6 +37,8 @@ export let createMatch: MatchFactory = async function (engine) {
 
 	let vehicles: Vehicle[] = []
 	let powerupBoxes: PowerupBox[] = []
+
+	setPowerupCollectionHandler(ignoreNewPowerup)
 
 	//let powerShieldRole = new Role<PowerShield>("powerShield")
 	
