@@ -82,6 +82,13 @@ export const replaceCurrentPowerup = (vehicle: Vehicle, powerupBox: PowerupBox) 
 export const ignoreNewPowerup = (vehicle: Vehicle, powerupBox: PowerupBox) => { 
 	if(vehicle.activePowerup === null){
 		powerupBox.onCollect(vehicle)
+		powerupBox.dispose()
+	}
+}
+
+export const destroyNewPowerup = (vehicle: Vehicle, powerupBox: PowerupBox) => { 
+	if(vehicle.activePowerup === null){
+		powerupBox.onCollect(vehicle)
 	}
 	powerupBox.dispose()
 }
