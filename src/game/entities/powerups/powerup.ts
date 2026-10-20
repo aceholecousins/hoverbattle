@@ -10,6 +10,7 @@ import { getEngine } from "game/engine"
 import { assignRole, Role } from "../actor"
 import { CollisionHandler } from "game/physics/collision"
 import { assertNull } from "utils/general"
+import constants from "node:constants"
 
 const POWERUP_BOX_SIZE = 1.8
 
@@ -72,12 +73,29 @@ export class PowerupBox extends Entity {
 	}
 }
 
+export const replaceCurrentPowerup = (vehicle: Vehicle, powerupBox: PowerupBox) => {
+	vehicle.activePowerup?.cancel?.()
+	powerupBox.onCollect(vehicle)
+	powerupBox.dispose()
+}
+
+export const ignoreNewPowerup = (vehicle: Vehicle, powerupBox: PowerupBox) => { 
+	if(vehicle.activePowerup === null){
+		powerupBox.onCollect(vehicle)
+	}
+	powerupBox.dispose()
+}
+
+let powerupCollectionHandler: (vehicle: Vehicle, powerupBox: PowerupBox) => void = replaceCurrentPowerup
+
+export const setPowerupCollectionHandler = (handler: (vehicle: Vehicle, powerupBox: PowerupBox) => void) => {
+	powerupCollectionHandler = handler
+}
+
 onEngineReady(engine => {
 	engine.physics.registerCollisionHandler(new CollisionHandler(
 		vehicleRole, powerupBoxRole, (vehicle: Vehicle, powerupBox: PowerupBox) => {
-			vehicle.activePowerup?.cancel?.()
-			powerupBox.onCollect(vehicle)
-			powerupBox.dispose()
+			powerupCollectionHandler(vehicle, powerupBox)
 		}
 	))
 })
