@@ -12,11 +12,6 @@ const LASER_WIDTH = 1.0;
 const LASER_DURATION = 2.0;
 const LASER_DAMAGE_PER_SECOND = 40;
 
-//export class LaserPowerup implements Powerup {
-//	public readonly kind = "laser"
-//	activated = false
-//}
-
 export class Speckle extends Visual {
 
 	private static model = new Resource(() =>
@@ -77,7 +72,7 @@ export class LaserBeam extends Visual {
 				(hit.actor as unknown as Destructible).hit(LASER_DAMAGE_PER_SECOND * dt)
 			}
 		}
-		else{
+		else {
 			this.hitSpeckle.mesh.setPositionZ(-1000)
 		}
 		let distance = p1.distanceTo(p2)

@@ -1,6 +1,7 @@
 Refactory:
 
 * missiles are now always damaging and destructible
+* weapons call this.parent.activePowerup?.cancel?.() although they should not know about powerups
 
 Debug:
 

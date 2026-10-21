@@ -11,7 +11,6 @@ import { ignoreNewPowerup, PowerupBox, PowerupBoxCtor, setPowerupCollectionHandl
 import { createPhaserFactory, PhaserShot, PhaserWeapon } from "game/entities/weapons/phaser"
 //import { createPowerShieldFactory, PowerShield, PowerShieldPowerup } from "game/entities/weapons/powershield"
 //import { createNashwanFactory, NashwanPowerup, NashwanShot } from "game/entities/weapons/nashwan"
-//import { createMinigunFactory, MinigunPowerup, Minigun } from "game/entities/weapons/minigun"
 import { MatchFactory } from "game/match"
 import { CollisionOverride, CollisionHandler } from "game/physics/collision"
 import { Player } from "game/player"
@@ -24,6 +23,7 @@ import { appendZ } from "math"
 import { MissilePowerupBox } from "game/entities/powerups/missilepowerup"
 import { MinePowerupBox } from "game/entities/powerups/minepowerup"
 import { LaserPowerupBox } from "game/entities/powerups/laserpowerup"
+import { MinigunPowerupBox } from "game/entities/powerups/minigunpowerup"
 
 
 let VEHICLE_HP = 10
@@ -40,10 +40,6 @@ export let createMatch: MatchFactory = async function (engine) {
 
 	//let powerShieldRole = new Role<PowerShield>("powerShield")
 
-
-
-
-
 	// engine.physics.registerCollisionHandler(new CollisionHandler(
 	// 	powerShieldRole, collideWithEverythingRole, function (
 	// 		shield: PowerShield, other: Entity
@@ -55,8 +51,6 @@ export let createMatch: MatchFactory = async function (engine) {
 	// }
 	// ))
 
-
-
 	// engine.physics.registerCollisionHandler(new CollisionHandler(
 	// 	vehicleRole, powerupBoxRole, (vehicle: Vehicle, powerupBox: PowerupBox) => {
 
@@ -67,49 +61,6 @@ export let createMatch: MatchFactory = async function (engine) {
 	// 		// 	vehicle.readyPowerups = []
 	// 		// }
 
-	// 		powerupBox.onCollect(vehicle)
-
-	// 		// if (powerupBox.kind == "missile") {
-	// 		// 	vehicle.readyPowerups = [new MissilePowerup()]
-	// 		// }
-	// 		// else if (powerupBox.kind == "mine") {
-	// 		// 	vehicle.readyPowerups = [new MinePowerup()]
-	// 		// }
-	// 		// else if (powerupBox.kind == "laser") {
-	// 		// 	vehicle.readyPowerups = [new LaserPowerup()]
-	// 		// }
-	// 		// else if (powerupBox.kind == "nashwan") {
-	// 		// 	vehicle.activatedPowerups = [new NashwanPowerup()]
-	// 		// 	let shotModifier = (shot: NashwanShot) => {
-	// 		// 		assignRole(shot, collideWithEverythingRole)
-	// 		// 		assignRole(shot, projectileRole)
-	// 		// 		let projectile2 = makeDamaging(shot, 1, () => {
-	// 		// 			if ("isMissile" in shot) {
-	// 		// 				createSmallExplosion(
-	// 		// 					appendZ(shot.body.getPosition(), 1),
-	// 		// 					vehicle.player.color
-	// 		// 				)
-	// 		// 			}
-	// 		// 			shot.dispose()
-	// 		// 		})
-	// 		// 		assignRole(projectile2, damagingRole)
-	// 		// 	}
-	// 		// 	let extensions = nashwanFactory(vehicle, shotModifier)
-	// 		// 	for (let ex of [
-	// 		// 		extensions.leftBarrel1,
-	// 		// 		extensions.leftBarrel2,
-	// 		// 		extensions.rightBarrel1,
-	// 		// 		extensions.rightBarrel2,
-	// 		// 		extensions.drone]
-	// 		// 	) {
-	// 		// 		assignRole(ex, collideWithEverythingRole)
-	// 		// 	}
-	// 		// 	new GameTimer(() => {
-	// 		// 		for (let ex of Object.values(extensions)) {
-	// 		// 			ex.dispose()
-	// 		// 		}
-	// 		// 	}, 10)
-	// 		// }
 	// 		// else if (powerupBox.kind == "repair") {
 	// 		// 	(vehicle as unknown as Destructible).repair(VEHICLE_HP)
 	// 		// }
@@ -124,22 +75,6 @@ export let createMatch: MatchFactory = async function (engine) {
 	// 		// 	assignRole(powerShield3, destructibleRole)
 	// 		// 	new GameTimer(() => { powerShield3.dispose() }, 10)
 	// 		// }
-	// 		// else if (powerupBox.kind == "minigun") {
-	// 		// 	let powerup = new MinigunPowerup()
-	// 		// 	powerup.guns = minigunFactory(vehicle,
-	// 		// 		(actor: Actor) => {
-	// 		// 			if (hasRole(actor, destructibleRole)) {
-	// 		// 				(actor as unknown as Destructible).hit(0.3)
-	// 		// 			}
-	// 		// 		},
-	// 		// 		() => {
-	// 		// 			vehicle.readyPowerups = []
-	// 		// 		}
-	// 		// 	)
-	// 		// 	vehicle.readyPowerups = [powerup]
-	// 		// }
-
-	// 		powerupBox.dispose()
 	// 	}
 	// ))
 
@@ -156,11 +91,7 @@ export let createMatch: MatchFactory = async function (engine) {
 		createOmgCar,
 		skybox,
 		phaserFactory,
-		// laserFactory,
-		// mineFactory,
 		// powerShieldFactory,
-		// nashwanFactory,
-		// minigunFactory,
 		// createExplosion,
 		// createSmallExplosion
 	] = await Promise.all([
@@ -170,11 +101,7 @@ export let createMatch: MatchFactory = async function (engine) {
 		createOmgCarFactory(engine),
 		engine.graphics.loadSkybox("arenas/testy_mountains/environment/*.jpg"),
 		createPhaserFactory(engine),
-		// createLaserFactory(engine),
-		// createMineFactory(engine),
 		// createPowerShieldFactory(engine),
-		// createNashwanFactory(engine),
-		// createMinigunFactory(engine),
 		// createExplosionFactory(engine),
 		// createSmallExplosionFactory(engine)
 	]);
@@ -226,7 +153,12 @@ export let createMatch: MatchFactory = async function (engine) {
 		if (powerupBoxes.length < 5) {
 			// let kinds = ["mine", "missile", "laser", "nashwan", "powershield", "repair", "minigun"]
 
-			let powerupBoxCtors: PowerupBoxCtor[] = [MissilePowerupBox, MinePowerupBox, LaserPowerupBox]
+			let powerupBoxCtors: PowerupBoxCtor[] = [
+				MissilePowerupBox,
+				MinePowerupBox,
+				LaserPowerupBox,
+				MinigunPowerupBox
+			]
 			let pick = Math.floor(Math.random() * powerupBoxCtors.length)
 			let powerupBox = makeDestructible(
 				new powerupBoxCtors[pick](determineSpawnPoint()),
@@ -288,29 +220,13 @@ export let createMatch: MatchFactory = async function (engine) {
 		engine.actionCam.follow(vehicle.body, 5)
 
 		let phaserWeapon = new PhaserWeapon(phaserFactory, vehicle);
-		// let missileLauncher = new MissileLauncher(missileFactory, vehicle);
-		// let mineThrower = new MineThrower(mineFactory, vehicle);
 
 		vehicle.onPressTrigger = () => {
 			vehicle.activePowerup?.pressTrigger?.()
-			// if (vehicle.readyPowerups.length > 0) {
-
-			// 	else if (vehicle.readyPowerups[0].kind == "minigun") {
-			// 		let minigun = vehicle.readyPowerups[0] as MinigunPowerup
-			// 		minigun.guns[0].setTrigger(true)
-			// 		minigun.guns[1].setTrigger(true)
-			// 	}
-			// }
 		}
 
 		vehicle.onReleaseTrigger = () => {
-			// if (vehicle.readyPowerups.length > 0) {
-			// 	if (vehicle.readyPowerups[0].kind == "minigun") {
-			// 		let minigun = vehicle.readyPowerups[0] as MinigunPowerup
-			// 		minigun.guns[0].setTrigger(false)
-			// 		minigun.guns[1].setTrigger(false)
-			// 	}
-			// }
+			vehicle.activePowerup?.releaseTrigger?.()
 		}
 
 		vehicle.onUpdate = (dt: number) => {

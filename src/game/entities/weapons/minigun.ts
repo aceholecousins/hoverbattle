@@ -1,5 +1,5 @@
 import { Model } from "game/graphics/asset";
-import { Engine } from "game/engine";
+import { Engine, getEngine } from "game/engine";
 import { Vector2, Vector3, ypr, vec2FromDir, appendZ, DEG } from "math"
 import { Vehicle, VEHICLE_RADIUS } from "game/entities/vehicles/vehicle";
 import { Powerup } from "game/entities/powerups/powerup";
@@ -7,24 +7,22 @@ import { Visual } from "game/graphics/visual";
 import { Entity } from "game/entities/entity";
 import { Circle, Triangle } from "game/physics/shapes";
 import { Attachment } from "game/physics/physics";
-import { Actor } from "game/entities/actor";
+import { Actor, hasRole } from "game/entities/actor";
 import { randBetween } from "math"
+import { Resource } from "game/resourcemanager";
+import { Destructible, destructibleRole } from "../damage";
 
-let MINIGUN_LENGTH = 2.0
-let MINIGUN_DIAMETER = 0.3 * MINIGUN_LENGTH
-let SPINUP_TIME = 0.7 // about 0.5 seconds for M134
-let SPINDOWN_TIME = 0.25 // about 0.25 seconds for M134
-let FIRE_RATE = 6000 / 60 // 2000..6000 rounds per minute for M134
-let AMMO_PER_GUN = FIRE_RATE * 5 // 5 seconds worth of ammo
-let DISPERSION = 1.6 * DEG // about 0.35 deg for M134
-let SHOT_SPRITE_LENGTH = 6.0
-let SHOT_SPRITE_WIDTH = 0.1
-let SHOT_IMPULSE = 0.45
-
-export class MinigunPowerup implements Powerup {
-	public readonly kind = "minigun"
-	public guns: Minigun[] = []
-}
+const MINIGUN_LENGTH = 2.0
+export const MINIGUN_DIAMETER = 0.3 * MINIGUN_LENGTH
+const SPINUP_TIME = 0.7 // about 0.5 seconds for M134
+const SPINDOWN_TIME = 0.25 // about 0.25 seconds for M134
+const FIRE_RATE = 6000 / 60 // 2000..6000 rounds per minute for M134
+const AMMO_PER_GUN = FIRE_RATE * 5 // 5 seconds worth of ammo
+const DISPERSION = 1.6 * DEG // about 0.35 deg for M134
+const SHOT_SPRITE_LENGTH = 6.0
+const SHOT_SPRITE_WIDTH = 0.1
+const SHOT_IMPULSE = 0.45
+const SHOT_DAMAGE = 0.3
 
 export class Minigun extends Entity {
 	ammo = AMMO_PER_GUN
@@ -34,22 +32,19 @@ export class Minigun extends Entity {
 	private spin = 0 // 0 = still, 1 = full spinning speed and firing
 	private roll = 0 // barrel roll angle for graphics
 
+	private static model = new Resource(() =>
+		getEngine().graphics.loadModel("assets/models/minigun.glb")
+	)
+
 	constructor(
 		public parent: Vehicle,
-		public offset: Vector2,
-		public onHit: (actor: Actor) => void,
-		onDispose: () => void,
-		gunModel: Model,
-		private flashModel: Model,
-		private shotModel: Model,
-		private sparkModel: Model,
-		public engine: Engine
+		public offset: Vector2
 	) {
 
 		let w05 = MINIGUN_DIAMETER / 2
 		let h05 = MINIGUN_LENGTH / 2
 		let createBody = (self: Entity) => {
-			let body = engine.physics.addRigidBody({
+			let body = getEngine().physics.addRigidBody({
 				actor: parent, // forward all interactions to the vehicle
 				shapes: [
 					new Triangle([new Vector2(-h05, -w05), new Vector2(h05, -w05), new Vector2(-h05, w05)]),
@@ -67,7 +62,7 @@ export class Minigun extends Entity {
 		}
 
 		let createMesh = (self: Entity) => {
-			let mesh = engine.graphics.mesh.createFromModel({ model: gunModel })
+			let mesh = getEngine().graphics.mesh.createFromModel({ model: Minigun.model.get().model })
 			mesh.setScale(MINIGUN_LENGTH / 2)
 			mesh.setBaseColor(parent.player.color)
 			mesh.setPositionZ(0.5)
@@ -76,14 +71,13 @@ export class Minigun extends Entity {
 
 		super(createBody, createMesh);
 
-		this.attachment = engine.physics.attach({
+		this.attachment = getEngine().physics.attach({
 			bodyA: this.parent.body,
 			bodyB: this.body,
 			canCollide: true,
 			offsetB: this.offset
 		})
 		this.parent.onDispose(() => this.dispose())
-		this.onDispose(onDispose)
 
 		this.collidesWithParent = false
 		this.collidesWithSibling = false
@@ -117,19 +111,14 @@ export class Minigun extends Entity {
 			new MinigunShot(
 				this.body.getPosition(),
 				this.body.getAngle() + DISPERSION * Math.random(),
-				1000,
-				this.onHit,
-				this.flashModel,
-				this.shotModel,
-				this.sparkModel,
-				this.engine
+				1000
 			)
 
 			this.parent.body.applyLocalImpulse(new Vector2(-SHOT_IMPULSE, 0))
 		}
 
 		if (this.ammo <= 0) {
-			this.dispose()
+			this.parent.activePowerup?.cancel?.()
 		}
 
 		this.mesh.copy2dPose(this.body)
@@ -145,13 +134,15 @@ export class Minigun extends Entity {
 export class Spark extends Visual {
 	time: number = 0
 
+	private static model = new Resource(() =>
+		getEngine().graphics.loadSprite("assets/sprites/sparks.tint.png")
+	)
+
 	constructor(
 		position: Vector3,
-		angle: number,
-		model: Model,
-		engine: Engine
+		angle: number
 	) {
-		let mesh = engine.graphics.mesh.createFromModel({ model })
+		let mesh = getEngine().graphics.mesh.createFromModel({ model: Spark.model.get() })
 		mesh.setPosition(position)
 		mesh.setAngle(angle + randBetween(-30 * DEG, 30 * DEG))
 		let flip = Math.random() > 0.5 ? 1 : -1
@@ -174,13 +165,15 @@ export class Spark extends Visual {
 export class MuzzleFlash extends Visual {
 	time: number = 0
 
+	private static model = new Resource(() =>
+		getEngine().graphics.loadSprite("assets/sprites/muzzle_flash.tint.png")
+	)
+
 	constructor(
 		position: Vector3,
-		angle: number,
-		model: Model,
-		engine: Engine
+		angle: number
 	) {
-		let mesh = engine.graphics.mesh.createFromModel({ model })
+		let mesh = getEngine().graphics.mesh.createFromModel({ model: MuzzleFlash.model.get() })
 		let size = Math.pow(randBetween(0.6, 1.0), 2) * 2.2
 		position.x += Math.cos(angle) * (size / 2 + MINIGUN_LENGTH / 2)
 		position.y += Math.sin(angle) * (size / 2 + MINIGUN_LENGTH / 2)
@@ -206,34 +199,36 @@ export class MuzzleFlash extends Visual {
 export class MinigunShot extends Visual {
 	time: number = 0
 
+	private static model = new Resource(() =>
+		getEngine().graphics.loadSprite("assets/sprites/minigun_shot.tint.png")
+	)
+
 	constructor(
 		start: Vector2,
 		angle: number,
-		maxDistance: number,
-		onHit: (actor: Actor) => void,
-		flashModel: Model,
-		shotModel: Model,
-		sparkModel: Model,
-		private engine: Engine
+		maxDistance: number
 	) {
-		super(engine.graphics.mesh.createFromModel({ model: shotModel }))
+		super(getEngine().graphics.mesh.createFromModel({ model: MinigunShot.model.get() }))
 		let z = 0.5 + Math.random() * 0.1
 		this.mesh.setPositionZ(z)
 
 		let p1 = start
 		let p2 = vec2FromDir(angle).multiplyScalar(maxDistance).add(p1)
-		let hit = this.engine.physics.rayCast(p1, p2)
+		let hit = getEngine().physics.rayCast(p1, p2)
 		if (hit !== null) {
 			p2 = hit.position
-			new Spark(appendZ(p2, z + 0.1), angle, sparkModel, engine)
-			new MuzzleFlash(appendZ(p1, z + 0.1), angle, flashModel, engine)
+			new Spark(appendZ(p2, z + 0.1), angle)
+			new MuzzleFlash(appendZ(p1, z + 0.1), angle)
 			let impulse = new Vector2(
 				Math.cos(angle) * SHOT_IMPULSE,
 				Math.sin(angle) * SHOT_IMPULSE
 			)
 			let target = (hit.actor as Entity).body
 			target.applyGlobalImpulse(impulse, target.getPosition())
-			onHit(hit.actor)
+
+			if (hasRole(hit.actor, destructibleRole)) {
+				(hit.actor as unknown as Destructible).hit(SHOT_DAMAGE)
+			}
 		}
 
 		let distance = p1.distanceTo(p2)
@@ -262,34 +257,5 @@ export class MinigunShot extends Visual {
 
 	dispose() {
 		super.dispose()
-	}
-}
-
-export async function createMinigunFactory(engine: Engine) {
-
-	let gunModel = (await engine.graphics.loadModel(
-		"assets/models/minigun.glb")).model
-	let flashModel = await engine.graphics.loadSprite(
-		"assets/sprites/muzzle_flash.tint.png")
-	let shotModel = await engine.graphics.loadSprite(
-		"assets/sprites/minigun_shot.tint.png")
-	let sparkModel = await engine.graphics.loadSprite(
-		"assets/sprites/sparks.tint.png")
-
-	return function (parent: Vehicle, onHit: (actor: Actor) => void, onDispose: () => void) {
-
-		let leftGun = new Minigun(parent,
-			new Vector2(0.3, -VEHICLE_RADIUS * 0.7 - MINIGUN_DIAMETER / 2),
-			onHit,
-			onDispose,
-			gunModel, flashModel, shotModel, sparkModel,
-			engine)
-		let rightGun = new Minigun(parent,
-			new Vector2(0.3, VEHICLE_RADIUS * 0.7 + MINIGUN_DIAMETER / 2),
-			onHit,
-			() => { },
-			gunModel, flashModel, shotModel, sparkModel,
-			engine)
-		return [leftGun, rightGun]
 	}
 }
