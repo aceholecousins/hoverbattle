@@ -29,7 +29,7 @@ export interface Destructible {
 	repair(restore: number): void
 }
 
-let destructibleRole = new Role<Destructible>("destructible")
+export let destructibleRole = new Role<Destructible>("destructible")
 
 export function makeDestructible<T extends Entity>(
 	entity: T,

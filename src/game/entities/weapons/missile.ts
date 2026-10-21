@@ -128,7 +128,7 @@ export class MissileLauncher {
 	private coolDown = 0
 	private updateHandler = (e: any) => this.update(e.dt)
 	private stock = 3
-	
+
 	constructor(
 		private parent: Vehicle
 	) {
@@ -142,7 +142,7 @@ export class MissileLauncher {
 	tryShoot(possibleTargets: Entity[]) {
 		if (this.coolDown <= 0) {
 			let missile = this.spawnMissile(possibleTargets);
-			
+
 			assignRole(missile, collideWithEverythingRole)
 
 			let explode = () => {
@@ -157,9 +157,9 @@ export class MissileLauncher {
 			makeDestructible(missile, 3, () => { explode() })
 
 			this.stock -= 1
-			if(this.stock == 0){
+			if (this.stock == 0) {
 				this.parent.activePowerup?.cancel?.()
-			}			
+			}
 		}
 	}
 
