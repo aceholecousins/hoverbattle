@@ -49,6 +49,4 @@ export class Vehicle extends Entity {
 
 }
 
-export interface VehicleFactory {
-	(player: Player, position: Vector2): Vehicle
-}
+export type VehicleCtor = new (player: Player, position: Vector2) => Vehicle;

@@ -1,12 +1,13 @@
 import { ModelMeshConfig } from "game/graphics/mesh"
 import { Model, ModelMetaData } from "game/graphics/asset"
-import { Engine } from "game/engine"
+import { Engine, getEngine } from "game/engine"
 import { Circle, Triangle } from "game/physics/shapes"
 import { RigidBodyConfig } from "game/physics/rigidbody"
 import { Player } from "game/player"
 import { angleDelta, appendZ, LowPass, triangle3to2, Vector2, Triangle3, ypr } from "math"
-import { Vehicle, VEHICLE_RADIUS, VehicleFactory } from "game/entities/vehicles/vehicle"
+import { Vehicle, VEHICLE_RADIUS } from "game/entities/vehicles/vehicle"
 import { Entity } from "game/entities/entity"
+import { Resource } from "game/resourcemanager"
 
 export const GLIDER_THRUST = 20
 export const GLIDER_TURN_RATE = 20
@@ -18,26 +19,26 @@ export class Glider extends Vehicle {
 	public maxThrust = GLIDER_THRUST
 	public maxTurnRate = GLIDER_TURN_RATE
 
-	private engine: Engine
 	private tNextRipple = 0
 
 	private roll: LowPass = new LowPass(1, 0.3, 0)
 
+	private static model = new Resource(() =>
+		getEngine().graphics.loadModel("assets/models/glider8_halo.glb")
+	)
+
 	constructor(
 		player: Player,
-		position: Vector2,
-		model: Model,
-		meta: ModelMetaData,
-		engine: Engine
+		position: Vector2
 	) {
 
 		let triangles: Triangle[] = []
-		for (let tri of (meta.collision as Triangle3[])) {
+		for (let tri of (Glider.model.get().meta.collision as Triangle3[])) {
 			triangles.push(new Triangle(triangle3to2(tri)))
 		}
 
 		let createBody = (self: Entity) => {
-			let body = engine.physics.addRigidBody({
+			let body = getEngine().physics.addRigidBody({
 				actor: self,
 				// shapes: triangles,
 				shapes: [new Circle(VEHICLE_RADIUS)],
@@ -49,7 +50,7 @@ export class Glider extends Vehicle {
 		}
 
 		let createMesh = (self: Entity) => {
-			let mesh = engine.graphics.mesh.createFromModel({ model })
+			let mesh = getEngine().graphics.mesh.createFromModel({ model: Glider.model.get().model })
 			mesh.setScale(VEHICLE_RADIUS)
 			mesh.setPositionZ(0.5)
 			return mesh
@@ -57,7 +58,6 @@ export class Glider extends Vehicle {
 
 		super(player, createBody, createMesh);
 
-		this.engine = engine
 		this.update(0)
 	}
 
@@ -86,7 +86,7 @@ export class Glider extends Vehicle {
 		if (this.tNextRipple < 0) {
 			this.tNextRipple = 0.03
 			let v = this.body.getVelocity().length()
-			this.engine.graphics.water.makeRipple(
+			getEngine().graphics.water.makeRipple(
 				appendZ(this.body.getPosition(), 0),
 				Math.min(v / 10, 3),
 				1.0
@@ -104,22 +104,5 @@ export class Glider extends Vehicle {
 			let sign = Math.sign(delta)
 			this.body.applyAngularImpulse(-sign * 0.3)
 		}
-	}
-}
-
-
-export async function createGliderFactory(engine: Engine): Promise<VehicleFactory> {
-
-	let { model, meta } = await engine.graphics.loadModel(
-		"assets/models/glider8_halo.glb")
-
-	return function (player: Player, position: Vector2) {
-		return new Glider(
-			player,
-			position,
-			model,
-			meta,
-			engine
-		)
 	}
 }

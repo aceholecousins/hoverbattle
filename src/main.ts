@@ -32,7 +32,7 @@ async function main() {
 	let loadSound = loadWebApiSound as SoundLoader
 
 	setEngine({ graphics, physics, controllerManager, actionCam, loadSound })
-	loadAllResources()
+	await loadAllResources()
 
 	let match = await createMatch({
 		physics, graphics, actionCam, controllerManager, loadSound

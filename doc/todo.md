@@ -8,6 +8,12 @@ Refactory:
 * in general look if import graph can be drawn with single direction arrows
 * let destructibleCollector = collector as unknown as Destructible <- ugly
 * repair can not be collected with ignoreNewPowerup and destroyNewPowerup; should repair be an extra category? or is that actually a feature?
+```
+private static model = new Resource(() => // should it be model_meta ?
+	getEngine().graphics.loadModel("assets/models/glider8_halo.glb")
+)
+```
+
 
 Debug:
 

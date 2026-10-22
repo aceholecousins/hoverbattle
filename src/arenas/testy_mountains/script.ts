@@ -2,10 +2,10 @@ import { Role, enableCollision, hasRole, assignRole } from "game/entities/actor"
 import { loadArena } from "game/entities/arena/arena"
 import { Damaging, makeDamaging, Destructible, makeDestructible } from "game/entities/damage"
 import { collideWithEverythingRole, Entity } from "game/entities/entity"
-import { createGliderFactory, Glider } from "game/entities/vehicles/glider"
-import { createCarFactory, Car } from "game/entities/vehicles/car"
-import { createOmgCarFactory, OmgCar } from "game/entities/vehicles/omgcar"
-import { Vehicle, VehicleFactory } from "game/entities/vehicles/vehicle"
+import { Glider } from "game/entities/vehicles/glider"
+import { Car } from "game/entities/vehicles/car"
+import { OmgCar } from "game/entities/vehicles/omgcar"
+import { Vehicle, VehicleCtor } from "game/entities/vehicles/vehicle"
 import { ignoreNewPowerup, PowerupBox, PowerupBoxCtor, setPowerupCollectionHandler } from "game/entities/powerups/powerup"
 import { PhaserWeapon } from "game/entities/weapons/phaser"
 import { MatchFactory } from "game/match"
@@ -43,28 +43,22 @@ export let createMatch: MatchFactory = async function (engine) {
 
 	let [
 		arenaParts_meta,
-		createGlider,
-		createCar,
-		createOmgCar,
 		skybox,
 	] = await Promise.all([
 		loadArena(arenaFile, engine),
-		createGliderFactory(engine),
-		createCarFactory(engine),
-		createOmgCarFactory(engine),
 		engine.graphics.loadSkybox("arenas/testy_mountains/environment/*.jpg"),
 	]);
 
-	let createVehicle: VehicleFactory;
+	let vehicleCtor: VehicleCtor;
 
 	if (vehicle === "glider") {
-		createVehicle = createGlider
+		vehicleCtor = Glider
 	}
 	else if (vehicle === "car") {
-		createVehicle = createCar
+		vehicleCtor = Car
 	}
 	else if (vehicle === "omgcar") {
-		createVehicle = createOmgCar
+		vehicleCtor = OmgCar
 	}
 
 	for (const [key, value] of Object.entries(arenaParts_meta.meta)) {
@@ -128,7 +122,7 @@ export let createMatch: MatchFactory = async function (engine) {
 
 	function spawnVehicle(player: Player) {
 		let vehicle = makeDestructible(
-			createVehicle(
+			new vehicleCtor(
 				player,
 				determineSpawnPoint()
 			),

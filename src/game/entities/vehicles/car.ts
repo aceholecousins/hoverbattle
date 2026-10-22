@@ -1,14 +1,15 @@
 import { ModelMeshConfig } from "game/graphics/mesh"
 import { Model } from "game/graphics/asset"
-import { Engine } from "game/engine"
+import { Engine, getEngine } from "game/engine"
 import { Circle } from "game/physics/shapes"
 import { RigidBodyConfig } from "game/physics/rigidbody"
 import { Player } from "game/player"
 import { Vector2, ypr, vec2FromDir, DEG } from "math"
 import { Ramper, LowPass } from "math"
 import { angleDelta } from "math"
-import { Vehicle, VEHICLE_RADIUS, VehicleFactory } from "game/entities/vehicles/vehicle"
+import { Vehicle, VEHICLE_RADIUS } from "game/entities/vehicles/vehicle"
 import { Entity } from "game/entities/entity"
+import { Resource } from "game/resourcemanager"
 
 export const CAR_THRUST = 15
 export const CAR_TURN_RATE = 0.3
@@ -23,14 +24,16 @@ export class Car extends Vehicle {
 	private softTurnRate = new Ramper(4, 0)
 	private roll = new LowPass(1, 0.1, 0)
 
+	private static model = new Resource(() =>
+		getEngine().graphics.loadModel("assets/models/car.glb")
+	)
+
 	constructor(
 		player: Player,
-		position: Vector2,
-		model: Model,
-		engine: Engine
+		position: Vector2
 	) {
 		let createBody = (self: Entity) => {
-			let body = engine.physics.addRigidBody({
+			let body = getEngine().physics.addRigidBody({
 				actor: self,
 				shapes: [new Circle(1)],
 				damping: 0,
@@ -40,7 +43,7 @@ export class Car extends Vehicle {
 			return body
 		}
 		let createMesh = (self: Entity) => {
-			let mesh = engine.graphics.mesh.createFromModel({ model })
+			let mesh = getEngine().graphics.mesh.createFromModel({ model: Car.model.get().model })
 			mesh.setScale(VEHICLE_RADIUS)
 			mesh.setPositionZ(0.5)
 			return mesh
@@ -98,21 +101,5 @@ export class Car extends Vehicle {
 			let sign = Math.sign(delta)
 			this.body.applyAngularImpulse(-sign * 0.3)
 		}
-	}
-}
-
-
-export async function createCarFactory(engine: Engine): Promise<VehicleFactory> {
-
-	let { model, meta } = await engine.graphics.loadModel(
-		"assets/models/car.glb")
-
-	return function (player: Player, position: Vector2) {
-		return new Car(
-			player,
-			position,
-			model,
-			engine
-		)
 	}
 }

@@ -1,13 +1,14 @@
 import { ModelMeshConfig } from "game/graphics/mesh"
 import { Model } from "game/graphics/asset"
-import { Engine } from "game/engine"
+import { Engine, getEngine } from "game/engine"
 import { Circle } from "game/physics/shapes"
 import { RigidBodyConfig } from "game/physics/rigidbody"
 import { Player } from "game/player"
 import { Ramper, LowPass } from "math"
 import { angleDelta, Vector2, ypr } from "math"
-import { Vehicle, VEHICLE_RADIUS, VehicleFactory } from "game/entities/vehicles/vehicle"
+import { Vehicle, VEHICLE_RADIUS } from "game/entities/vehicles/vehicle"
 import { Entity } from "game/entities/entity"
+import { Resource } from "game/resourcemanager"
 
 export const CAR_ACCELERATION = 50
 export const CAR_MAX_SPEED = 15
@@ -16,17 +17,20 @@ export const CAR_TURN_RATE = 20 * Math.PI / 180
 export const CAR_TRACTION = 1
 
 export class OmgCar extends Vehicle {
+	// https://www.youtube.com/watch?v=BSybcKPQCnc
 
 	private softTurnRate = new Ramper(10, 0)
 
+	private static model = new Resource(() =>
+		getEngine().graphics.loadModel("assets/models/car.glb")
+	)
+
 	constructor(
 		player: Player,
-		position: Vector2,
-		model: Model,
-		engine: Engine
+		position: Vector2
 	) {
 		let createBody = (self: Entity) => {
-			let body = engine.physics.addRigidBody({
+			let body = getEngine().physics.addRigidBody({
 				actor: self,
 				shapes: [new Circle(1)],
 				damping: CAR_DRAG,
@@ -36,7 +40,7 @@ export class OmgCar extends Vehicle {
 			return body
 		}
 		let createMesh = (self: Entity) => {
-			let mesh = engine.graphics.mesh.createFromModel({ model })
+			let mesh = getEngine().graphics.mesh.createFromModel({ model: OmgCar.model.get().model })
 			mesh.setScale(VEHICLE_RADIUS)
 			mesh.setPositionZ(0.5)
 			return mesh
@@ -96,21 +100,5 @@ export class OmgCar extends Vehicle {
 			let sign = Math.sign(delta)
 			this.body.applyAngularImpulse(-sign * 0.3)
 		}
-	}
-}
-
-
-export async function createOmgCarFactory(engine: Engine): Promise<VehicleFactory> {
-
-	let { model, meta } = await engine.graphics.loadModel(
-		"assets/models/car.glb")
-
-	return function (player: Player, position: Vector2) {
-		return new OmgCar(
-			player,
-			position,
-			model,
-			engine
-		)
 	}
 }
