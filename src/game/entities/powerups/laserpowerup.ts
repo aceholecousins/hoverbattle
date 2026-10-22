@@ -24,9 +24,12 @@ export class LaserPowerupBox extends PowerupBox {
 
 		collector.activePowerup = {
 			pressTrigger() {
-				laser = new LaserBeamRoot(collector, 1)
+				if (laser === null) {
+					laser = new LaserBeamRoot(collector, 1)
+				}
 			},
 			cancel() {
+				laser?.dispose()
 				collector.activePowerup = null
 			}
 		}

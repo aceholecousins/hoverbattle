@@ -2,9 +2,11 @@ Refactory:
 
 * missiles are now always damaging and destructible
 * weapons call this.parent.activePowerup?.cancel?.() although they should not know about powerups
+* mine spawned under still player, only exploded when he moved
 
 Debug:
 
+* just destroyed someone with a powershield and he respawned twice (powershield maybe not the cause but investigate)
 * the gliders glitch through the walls but not all walls <- probably solved when ditching p2 for planck
 * sometimes if they collect a powerup, it gets collected multiple times
 * makes me think that the shapes are in there multiple times, gonna random wiggle each point a bit

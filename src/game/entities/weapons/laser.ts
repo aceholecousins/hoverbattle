@@ -129,7 +129,7 @@ export class LaserBeamRoot extends LaserBeam {
 	update(dt: number) {
 		this.countdown -= dt
 		if (this.countdown <= 0 || this.parent.isDisposed()) {
-			this.dispose()
+			this.parent.activePowerup?.cancel?.()
 			return
 		}
 
@@ -140,7 +140,6 @@ export class LaserBeamRoot extends LaserBeam {
 	}
 
 	dispose() {
-		this.parent.activePowerup?.cancel?.()
 		this.startSpeckle.dispose()
 		super.dispose()
 	}

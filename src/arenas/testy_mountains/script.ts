@@ -2,17 +2,13 @@ import { Role, enableCollision, hasRole, assignRole } from "game/entities/actor"
 import { loadArena } from "game/entities/arena/arena"
 import { Damaging, makeDamaging, Destructible, makeDestructible } from "game/entities/damage"
 import { collideWithEverythingRole, Entity } from "game/entities/entity"
-import { Actor } from "game/entities/actor"
 import { createGliderFactory, Glider } from "game/entities/vehicles/glider"
 import { createCarFactory, Car } from "game/entities/vehicles/car"
 import { createOmgCarFactory, OmgCar } from "game/entities/vehicles/omgcar"
 import { Vehicle, VehicleFactory } from "game/entities/vehicles/vehicle"
 import { ignoreNewPowerup, PowerupBox, PowerupBoxCtor, setPowerupCollectionHandler } from "game/entities/powerups/powerup"
 import { createPhaserFactory, PhaserShot, PhaserWeapon } from "game/entities/weapons/phaser"
-//import { createPowerShieldFactory, PowerShield, PowerShieldPowerup } from "game/entities/weapons/powershield"
-//import { createNashwanFactory, NashwanPowerup, NashwanShot } from "game/entities/weapons/nashwan"
 import { MatchFactory } from "game/match"
-import { CollisionOverride, CollisionHandler } from "game/physics/collision"
 import { Player } from "game/player"
 import { SceneNodeConfig } from "game/graphics/scenenode"
 import { Vector2, Vector3, ypr } from "math"
@@ -24,6 +20,7 @@ import { MissilePowerupBox } from "game/entities/powerups/missilepowerup"
 import { MinePowerupBox } from "game/entities/powerups/minepowerup"
 import { LaserPowerupBox } from "game/entities/powerups/laserpowerup"
 import { MinigunPowerupBox } from "game/entities/powerups/minigunpowerup"
+import { PowerShieldPowerupBox } from "game/entities/powerups/powershieldpowerup"
 
 
 let VEHICLE_HP = 10
@@ -38,42 +35,11 @@ export let createMatch: MatchFactory = async function (engine) {
 
 	setPowerupCollectionHandler(ignoreNewPowerup)
 
-	//let powerShieldRole = new Role<PowerShield>("powerShield")
-
-	// engine.physics.registerCollisionHandler(new CollisionHandler(
-	// 	powerShieldRole, collideWithEverythingRole, function (
-	// 		shield: PowerShield, other: Entity
-	// 	) {
-	// 	shield.flash()
-	// 	let impulse = other.body.getPosition().clone()
-	// 		.sub(shield.body.getPosition()).setLength(30)
-	// 	other.body.applyGlobalImpulse(impulse)
-	// }
-	// ))
-
 	// engine.physics.registerCollisionHandler(new CollisionHandler(
 	// 	vehicleRole, powerupBoxRole, (vehicle: Vehicle, powerupBox: PowerupBox) => {
 
-	// 		// if (vehicle.readyPowerups.length > 0 && vehicle.readyPowerups[0].kind == "minigun") {
-	// 		// 	let minigunPowerup = vehicle.readyPowerups[0] as MinigunPowerup
-	// 		// 	minigunPowerup.guns[0].dispose()
-	// 		// 	minigunPowerup.guns[1].dispose()
-	// 		// 	vehicle.readyPowerups = []
-	// 		// }
-
 	// 		// else if (powerupBox.kind == "repair") {
 	// 		// 	(vehicle as unknown as Destructible).repair(VEHICLE_HP)
-	// 		// }
-	// 		// else if (powerupBox.kind == "powershield") {
-	// 		// 	vehicle.activatedPowerups = [new PowerShieldPowerup()]
-	// 		// 	let powerShield1 = powerShieldFactory(vehicle);
-	// 		// 	let powerShield2 = makeDamaging(powerShield1, 8, () => { })
-	// 		// 	let powerShield3 = makeDestructible(powerShield2, Infinity, () => { })
-	// 		// 	assignRole(powerShield3, powerShieldRole)
-	// 		// 	assignRole(powerShield3, collideWithEverythingRole)
-	// 		// 	assignRole(powerShield3, damagingRole)
-	// 		// 	assignRole(powerShield3, destructibleRole)
-	// 		// 	new GameTimer(() => { powerShield3.dispose() }, 10)
 	// 		// }
 	// 	}
 	// ))
@@ -91,9 +57,6 @@ export let createMatch: MatchFactory = async function (engine) {
 		createOmgCar,
 		skybox,
 		phaserFactory,
-		// powerShieldFactory,
-		// createExplosion,
-		// createSmallExplosion
 	] = await Promise.all([
 		loadArena(arenaFile, engine),
 		createGliderFactory(engine),
@@ -101,9 +64,6 @@ export let createMatch: MatchFactory = async function (engine) {
 		createOmgCarFactory(engine),
 		engine.graphics.loadSkybox("arenas/testy_mountains/environment/*.jpg"),
 		createPhaserFactory(engine),
-		// createPowerShieldFactory(engine),
-		// createExplosionFactory(engine),
-		// createSmallExplosionFactory(engine)
 	]);
 
 	let createVehicle: VehicleFactory;
@@ -157,7 +117,8 @@ export let createMatch: MatchFactory = async function (engine) {
 				MissilePowerupBox,
 				MinePowerupBox,
 				LaserPowerupBox,
-				MinigunPowerupBox
+				MinigunPowerupBox,
+				PowerShieldPowerupBox
 			]
 			let pick = Math.floor(Math.random() * powerupBoxCtors.length)
 			let powerupBox = makeDestructible(

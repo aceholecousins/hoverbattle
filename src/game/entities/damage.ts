@@ -5,7 +5,7 @@ import { CollisionHandler } from "game/physics/collision";
 
 export interface Damaging {
 	damage: number
-	impact(): void
+	impact(destructible: Destructible): void
 }
 
 let damagingRole = new Role<Damaging>("damaging")
@@ -13,12 +13,12 @@ let damagingRole = new Role<Damaging>("damaging")
 export function makeDamaging<T extends Entity>(
 	entity: T,
 	damage: number,
-	impactCallback: (entity: T) => void
+	impactCallback: (self: T, other: Destructible) => void
 ) {
 	let extendedEntity = entity as T & Damaging;
 	extendedEntity.damage = damage
-	extendedEntity.impact = () => {
-		impactCallback(extendedEntity)
+	extendedEntity.impact = (other: Destructible) => {
+		impactCallback(extendedEntity, other)
 	}
 	assignRole(extendedEntity, damagingRole)
 	return extendedEntity
@@ -55,7 +55,7 @@ export function makeDestructible<T extends Entity>(
 onEngineReady(engine => {
 	engine.physics.registerCollisionHandler(new CollisionHandler(
 		damagingRole, destructibleRole, (damaging: Damaging, destructible: Destructible) => {
-			damaging.impact()
+			damaging.impact(destructible)
 			destructible.hit(damaging.damage)
 		}
 	))
