@@ -4,6 +4,10 @@ Refactory:
 * weapons call this.parent.activePowerup?.cancel?.() although they should not know about powerups
 * mine spawned under still player, only exploded when he moved
 * assignRole of the projectile in the weapon or in the projectile constructor? In general clean up responsibilities between weapons and projectiles.
+* repairPowerup should not import VEHICLE_HP
+* in general look if import graph can be drawn with single direction arrows
+* let destructibleCollector = collector as unknown as Destructible <- ugly
+* repair can not be collected with ignoreNewPowerup and destroyNewPowerup; should repair be an extra category? or is that actually a feature?
 
 Debug:
 

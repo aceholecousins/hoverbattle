@@ -21,9 +21,9 @@ import { MinePowerupBox } from "game/entities/powerups/minepowerup"
 import { LaserPowerupBox } from "game/entities/powerups/laserpowerup"
 import { MinigunPowerupBox } from "game/entities/powerups/minigunpowerup"
 import { PowerShieldPowerupBox } from "game/entities/powerups/powershieldpowerup"
+import { RepairPowerupBox } from "game/entities/powerups/repairpowerup"
 
-
-let VEHICLE_HP = 10
+export let VEHICLE_HP = 10
 
 export let createMatch: MatchFactory = async function (engine) {
 
@@ -34,15 +34,6 @@ export let createMatch: MatchFactory = async function (engine) {
 	let powerupBoxes: PowerupBox[] = []
 
 	setPowerupCollectionHandler(ignoreNewPowerup)
-
-	// engine.physics.registerCollisionHandler(new CollisionHandler(
-	// 	vehicleRole, powerupBoxRole, (vehicle: Vehicle, powerupBox: PowerupBox) => {
-
-	// 		// else if (powerupBox.kind == "repair") {
-	// 		// 	(vehicle as unknown as Destructible).repair(VEHICLE_HP)
-	// 		// }
-	// 	}
-	// ))
 
 	let spawnPoints: Vector2[] = []
 
@@ -109,14 +100,14 @@ export let createMatch: MatchFactory = async function (engine) {
 
 	function spawnPowerup() {
 		if (powerupBoxes.length < 5) {
-			// let kinds = ["mine", "missile", "laser", "nashwan", "powershield", "repair", "minigun"]
 
 			let powerupBoxCtors: PowerupBoxCtor[] = [
 				MissilePowerupBox,
 				MinePowerupBox,
 				LaserPowerupBox,
 				MinigunPowerupBox,
-				PowerShieldPowerupBox
+				PowerShieldPowerupBox,
+				RepairPowerupBox
 			]
 			let pick = Math.floor(Math.random() * powerupBoxCtors.length)
 			let powerupBox = makeDestructible(
