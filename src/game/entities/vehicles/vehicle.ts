@@ -12,8 +12,6 @@ export let vehicleRole = new Role<Vehicle>("vehicle")
 
 export class Vehicle extends Entity {
 	public player: Player
-	// public readyPowerups: Powerup[] = []
-	// public activatedPowerups: Powerup[] = []
 	public activePowerup: Powerup | null = null
 	public onPressTrigger = () => { }
 	public onReleaseTrigger = () => { }

@@ -7,7 +7,7 @@ import { createCarFactory, Car } from "game/entities/vehicles/car"
 import { createOmgCarFactory, OmgCar } from "game/entities/vehicles/omgcar"
 import { Vehicle, VehicleFactory } from "game/entities/vehicles/vehicle"
 import { ignoreNewPowerup, PowerupBox, PowerupBoxCtor, setPowerupCollectionHandler } from "game/entities/powerups/powerup"
-import { createPhaserFactory, PhaserShot, PhaserWeapon } from "game/entities/weapons/phaser"
+import { PhaserWeapon } from "game/entities/weapons/phaser"
 import { MatchFactory } from "game/match"
 import { Player } from "game/player"
 import { SceneNodeConfig } from "game/graphics/scenenode"
@@ -56,14 +56,12 @@ export let createMatch: MatchFactory = async function (engine) {
 		createCar,
 		createOmgCar,
 		skybox,
-		phaserFactory,
 	] = await Promise.all([
 		loadArena(arenaFile, engine),
 		createGliderFactory(engine),
 		createCarFactory(engine),
 		createOmgCarFactory(engine),
 		engine.graphics.loadSkybox("arenas/testy_mountains/environment/*.jpg"),
-		createPhaserFactory(engine),
 	]);
 
 	let createVehicle: VehicleFactory;
@@ -180,7 +178,7 @@ export let createMatch: MatchFactory = async function (engine) {
 		vehicle.body.setAngle(Math.random() * Math.PI * 2)
 		engine.actionCam.follow(vehicle.body, 5)
 
-		let phaserWeapon = new PhaserWeapon(phaserFactory, vehicle);
+		let phaser = new PhaserWeapon(vehicle);
 
 		vehicle.onPressTrigger = () => {
 			vehicle.activePowerup?.pressTrigger?.()
@@ -191,17 +189,9 @@ export let createMatch: MatchFactory = async function (engine) {
 		}
 
 		vehicle.onUpdate = (dt: number) => {
-			// if (vehicle.isFiring() && vehicle.readyPowerups.length == 0) {
-			// 	let phaserShots = phaserWeapon.tryShoot()
-			// 	if (phaserShots) {
-			// 		for (let shot1 of phaserShots) {
-			// 			let shot2 = makeDamaging(shot1, 1, () => { shot1.dispose() })
-			// 			assignRole(shot2, projectileRole)
-			// 			assignRole(shot2, collideWithEverythingRole)
-			// 			assignRole(shot2, damagingRole)
-			// 		}
-			// 	}
-			// }
+			if (vehicle.isFiring() && vehicle.activePowerup === null){
+				phaser.tryShoot()
+			}
 		}
 
 		vehicles.push(vehicle)

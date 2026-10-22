@@ -3,6 +3,7 @@ Refactory:
 * missiles are now always damaging and destructible
 * weapons call this.parent.activePowerup?.cancel?.() although they should not know about powerups
 * mine spawned under still player, only exploded when he moved
+* assignRole of the projectile in the weapon or in the projectile constructor? In general clean up responsibilities between weapons and projectiles.
 
 Debug:
 
