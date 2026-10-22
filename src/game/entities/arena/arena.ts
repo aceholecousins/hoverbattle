@@ -1,5 +1,5 @@
 import { EmptyMesh, ModelMeshConfig } from "game/graphics/mesh"
-import { Engine } from "game/engine"
+import { Engine, getEngine } from "game/engine"
 import { RigidBodyConfig } from "game/physics/rigidbody"
 import { Triangle } from "game/physics/shapes"
 import { triangle3to2, Triangle3 } from "math"
@@ -10,10 +10,9 @@ export class ArenaPart extends Entity {
 
 	constructor(
 		tri: Triangle3,
-		engine: Engine
 	) {
 		let createBody = (self: Entity) => {
-			return engine.physics.addRigidBody({
+			return getEngine().physics.addRigidBody({
 				actor: self,
 				static: true,
 				shapes: [new Triangle(triangle3to2(tri))]
@@ -28,8 +27,7 @@ export class ArenaPart extends Entity {
 
 
 export async function loadArena(
-	modelFile: string,
-	engine: Engine
+	modelFile: string
 ) {
 	// This function used to return one body with many shapes.
 	// However, the broadphase of the physics engine only checks
@@ -38,15 +36,15 @@ export async function loadArena(
 	// very slow. Now we return many bodies with one shape each, which
 	// is much faster.
 
-	let { model, meta } = await engine.graphics.loadModel(modelFile)
+	let { model, meta } = await getEngine().graphics.loadModel(modelFile)
 
 	let arenaParts: Entity[] = []
 
 	for (let tri of (meta.collision as Triangle3[])) {
-		arenaParts.push(new ArenaPart(tri, engine))
+		arenaParts.push(new ArenaPart(tri))
 	}
 
-	engine.graphics.mesh.createFromModel({ model })
+	getEngine().graphics.mesh.createFromModel({ model })
 
 	return { arenaParts, meta }
 }

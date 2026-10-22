@@ -13,7 +13,9 @@ private static model = new Resource(() => // should it be model_meta ?
 	getEngine().graphics.loadModel("assets/models/glider8_halo.glb")
 )
 ```
-
+* check if the comment in loadArena is still valid or if this was a P2 problem
+* engine not only holds the implementations but also the scene and the world which might be ugly with it being global
+* clean up imports
 
 Debug:
 

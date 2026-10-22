@@ -34,9 +34,7 @@ async function main() {
 	setEngine({ graphics, physics, controllerManager, actionCam, loadSound })
 	await loadAllResources()
 
-	let match = await createMatch({
-		physics, graphics, actionCam, controllerManager, loadSound
-	})
+	let match = await createMatch()
 
 	let engineStats = new Stats()
 	engineStats.showPanel(0)
