@@ -4,7 +4,6 @@ import { PowerupBox } from "./powerup";
 import { getEngine } from "game/engine";
 import { Vector2 } from "math";
 import { destructibleRole } from "../damage";
-import { VEHICLE_HP } from "arenas/testy_mountains/script";
 import { hasRole } from "../actor";
 
 export class RepairPowerupBox extends PowerupBox {
@@ -22,7 +21,7 @@ export class RepairPowerupBox extends PowerupBox {
 	onCollect(collector: Vehicle) {
 		super.onCollect(collector)
 		if (hasRole(collector, destructibleRole)) {
-			collector.repair(VEHICLE_HP)
+			collector.repair(Infinity)
 		}
 	}
 }
