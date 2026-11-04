@@ -28,13 +28,17 @@ export interface Actor {
 	roles: RoleSet
 }
 
-export function hasRole(actor: Actor, role: Role<any>) {
+function hasRoleBit(actor: Actor, role: Role<any>) {
 	return (actor.roles.bits & role.bit) > 0
+}
+
+export function hasRole<I>(actor: Actor, role: Role<I>): actor is Actor & I {
+	return hasRoleBit(actor, role)
 }
 
 export function assignRole<I>(actor: Actor & I, role: Role<I>) {
 	Object.freeze(role) // role must not be changed after this
-	if (!hasRole(actor, role)) {
+	if (!hasRoleBit(actor, role)) {
 		actor.roles.set.add(role)
 		actor.roles.bits |= role.bit
 		actor.roles.mask |= role.mask
@@ -42,7 +46,7 @@ export function assignRole<I>(actor: Actor & I, role: Role<I>) {
 }
 
 export function revokeRole<I>(actor: Actor & I, role: Role<I>) {
-	if (hasRole(actor, role)) {
+	if (hasRoleBit(actor, role)) {
 		actor.roles.set.delete(role)
 		actor.roles.bits &= (0xFFFFFFFF ^ role.bit)
 		actor.roles.mask = 0

@@ -3,8 +3,9 @@ import { Vehicle } from "../vehicles/vehicle";
 import { PowerupBox } from "./powerup";
 import { getEngine } from "game/engine";
 import { Vector2 } from "math";
-import { Destructible } from "../damage";
+import { destructibleRole } from "../damage";
 import { VEHICLE_HP } from "arenas/testy_mountains/script";
+import { hasRole } from "../actor";
 
 export class RepairPowerupBox extends PowerupBox {
 
@@ -20,7 +21,8 @@ export class RepairPowerupBox extends PowerupBox {
 
 	onCollect(collector: Vehicle) {
 		super.onCollect(collector)
-		let destructibleCollector = collector as unknown as Destructible
-		destructibleCollector.repair(VEHICLE_HP)
+		if (hasRole(collector, destructibleRole)) {
+			collector.repair(VEHICLE_HP)
+		}
 	}
 }

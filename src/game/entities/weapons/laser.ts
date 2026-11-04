@@ -6,7 +6,7 @@ import { Color } from "utils/color"
 import { Actor, hasRole } from "game/entities/actor"
 import { Powerup } from "game/entities/powerups/powerup"
 import { Resource } from "game/resourcemanager";
-import { Destructible, destructibleRole } from "../damage";
+import { destructibleRole } from "../damage";
 
 const LASER_WIDTH = 1.0;
 const LASER_DURATION = 2.0;
@@ -69,7 +69,7 @@ export class LaserBeam extends Visual {
 			p2 = hit.position
 			this.hitSpeckle.setPosition(appendZ(p2, this.z + 0.1))
 			if (hasRole(hit.actor, destructibleRole)) {
-				(hit.actor as unknown as Destructible).hit(LASER_DAMAGE_PER_SECOND * dt)
+				hit.actor.hit(LASER_DAMAGE_PER_SECOND * dt)
 			}
 		}
 		else {

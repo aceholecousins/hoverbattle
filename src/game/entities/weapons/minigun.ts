@@ -227,7 +227,7 @@ export class MinigunShot extends Visual {
 			target.applyGlobalImpulse(impulse, target.getPosition())
 
 			if (hasRole(hit.actor, destructibleRole)) {
-				(hit.actor as unknown as Destructible).hit(SHOT_DAMAGE)
+				hit.actor.hit(SHOT_DAMAGE)
 			}
 		}
 

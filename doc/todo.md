@@ -6,7 +6,6 @@ Refactory:
 * assignRole of the projectile in the weapon or in the projectile constructor? In general clean up responsibilities between weapons and projectiles. - see missile for how to fix
 * repairPowerup should not import VEHICLE_HP
 * in general look if import graph can be drawn with single direction arrows
-* let destructibleCollector = collector as unknown as Destructible <- ugly
 * repair can not be collected with ignoreNewPowerup and destroyNewPowerup; should repair be an extra category? or is that actually a feature?
 ```
 private static model = new Resource(() => // should it be model_meta ?
