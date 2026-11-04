@@ -18,16 +18,23 @@ export class MissilePowerupBox extends PowerupBox {
 	}
 
 	onCollect(collector: Vehicle) {
+
 		super.onCollect(collector)
-		let launcher = new MissileLauncher(collector);
+
+		let launcher: MissileLauncher
+
+		let cancel = () => {
+			launcher.dispose()
+			collector.activePowerup = null
+		}
+
 		collector.activePowerup = {
 			pressTrigger() {
 				launcher.tryShoot([]);
 			},
-			cancel(){
-				launcher.dispose()
-				collector.activePowerup = null
-			}
+			cancel: cancel
 		}
+
+		launcher = new MissileLauncher(collector, cancel);
 	}
 }

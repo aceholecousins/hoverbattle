@@ -130,7 +130,8 @@ export class MissileLauncher {
 	private stock = 3
 
 	constructor(
-		private parent: Vehicle
+		private parent: Vehicle,
+		private onEmpty: () => void
 	) {
 		broker.update.addHandler(this.updateHandler)
 	}
@@ -157,9 +158,7 @@ export class MissileLauncher {
 			makeDestructible(missile, 3, () => { explode() })
 
 			this.stock -= 1
-			if (this.stock == 0) {
-				this.parent.activePowerup?.cancel?.()
-			}
+			if (this.stock == 0) { this.onEmpty() }
 		}
 	}
 

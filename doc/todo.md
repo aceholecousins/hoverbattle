@@ -1,7 +1,7 @@
 Refactory:
 
-* missiles are now always damaging and destructible
-* weapons call this.parent.activePowerup?.cancel?.() although they should not know about powerups
+* missiles are now always damaging and destructible - we leave it until we need to change it
+* weapons call this.parent.activePowerup?.cancel?.() although they should not know about powerups - see missiles for how to fix
 * mine spawned under still player, only exploded when he moved
 * assignRole of the projectile in the weapon or in the projectile constructor? In general clean up responsibilities between weapons and projectiles.
 * repairPowerup should not import VEHICLE_HP
@@ -16,6 +16,7 @@ private static model = new Resource(() => // should it be model_meta ?
 * check if the comment in loadArena is still valid or if this was a P2 problem
 * engine not only holds the implementations but also the scene and the world which might be ugly with it being global
 * clean up imports
+* see what else we can take out of script.ts
 
 Debug:
 
@@ -71,7 +72,7 @@ Features:
 * phaser in all directions
 * minigun
 * shockwave + EMP = push everything away + disable control for some time
-* drift karts
+* drift karts (evaluate https://www.youtube.com/watch?v=0Gxw5HEj784)
 
 * recycle old levels
 
