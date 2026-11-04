@@ -6,7 +6,7 @@ import { Glider } from "game/entities/vehicles/glider"
 import { Car } from "game/entities/vehicles/car"
 import { OmgCar } from "game/entities/vehicles/omgcar"
 import { Vehicle, VehicleCtor } from "game/entities/vehicles/vehicle"
-import { ignoreNewPowerup, PowerupBox, PowerupBoxCtor, setPowerupCollectionHandler } from "game/entities/powerups/powerup"
+import { PowerupBox, PowerupBoxCtor, replaceCurrentPowerup, setPowerupCollectionHandler } from "game/entities/powerups/powerup"
 import { PhaserWeapon } from "game/entities/weapons/phaser"
 import { MatchFactory } from "game/match"
 import { Player } from "game/player"
@@ -46,7 +46,7 @@ export let createMatch: MatchFactory = async function () {
 	let vehicles: Vehicle[] = []
 	let powerupBoxes: PowerupBox[] = []
 
-	setPowerupCollectionHandler(ignoreNewPowerup)
+	setPowerupCollectionHandler(replaceCurrentPowerup)
 
 	let spawnPoints: Vector2[] = []
 
