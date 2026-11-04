@@ -3,7 +3,7 @@ Refactory:
 * missiles are now always damaging and destructible - we leave it until we need to change it
 * weapons call this.parent.activePowerup?.cancel?.() although they should not know about powerups - see missiles for how to fix
 * mine spawned under still player, only exploded when he moved
-* assignRole of the projectile in the weapon or in the projectile constructor? In general clean up responsibilities between weapons and projectiles.
+* assignRole of the projectile in the weapon or in the projectile constructor? In general clean up responsibilities between weapons and projectiles. - see missile for how to fix
 * repairPowerup should not import VEHICLE_HP
 * in general look if import graph can be drawn with single direction arrows
 * let destructibleCollector = collector as unknown as Destructible <- ugly
@@ -14,7 +14,7 @@ private static model = new Resource(() => // should it be model_meta ?
 )
 ```
 * check if the comment in loadArena is still valid or if this was a P2 problem
-* engine not only holds the implementations but also the scene and the world which might be ugly with it being global
+* engine not only holds the implementations but also the scene and the world which might be ugly with it being global -> we suck it up
 * clean up imports
 * see what else we can take out of script.ts
 

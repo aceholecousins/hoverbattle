@@ -35,6 +35,7 @@ export class Missile extends Entity {
 		public parent: Vehicle,
 		position: Vector2,
 		angle: number,
+		velocity: Vector2,
 		public possibleTargets: Entity[]
 	) {
 		let createBody = (self: Entity) => {
@@ -47,6 +48,7 @@ export class Missile extends Entity {
 			})
 			body.setPosition(position)
 			body.setAngle(angle)
+			body.setVelocity(velocity)
 			return body
 		}
 		let createMesh = (self: Entity) => {
@@ -63,9 +65,21 @@ export class Missile extends Entity {
 
 		this.target = this.lockOnTarget(parent);
 
+		assignRole(this, collideWithEverythingRole)
+		makeDamaging(this, 17, this.explode.bind(this))
+		makeDestructible(this, 3, this.explode.bind(this))
+
 		this.collidesWithParent = false
 
 		this.update(0)
+	}
+
+	private explode() {
+		this.dispose()
+		new Explosion(
+			appendZ(this.body.getPosition(), 1),
+			this.parent.player.color
+		)
 	}
 
 	private lockOnTarget(self: Entity): Entity | null {
@@ -142,33 +156,14 @@ export class MissileLauncher {
 
 	tryShoot(possibleTargets: Entity[]) {
 		if (this.coolDown <= 0) {
-			let missile = this.spawnMissile(possibleTargets);
-
-			assignRole(missile, collideWithEverythingRole)
-
-			let explode = () => {
-				missile.dispose()
-				new Explosion(
-					appendZ(missile.body.getPosition(), 1),
-					missile.parent.player.color
-				)
-			}
-
-			makeDamaging(missile, 17, () => { explode() })
-			makeDestructible(missile, 3, () => { explode() })
-
+			let phi = this.parent.body.getAngle();
+			let pos = this.parent.body.getPosition();
+			let vel = this.parent.body.getVelocity()
+			new Missile(this.parent, pos, phi, vel, possibleTargets);
+			this.coolDown = 1 / MISSILE_FIRE_RATE
 			this.stock -= 1
 			if (this.stock == 0) { this.onEmpty() }
 		}
-	}
-
-	private spawnMissile(possibleTargets: Entity[]): Missile {
-		let phi = this.parent.body.getAngle();
-		let pos = this.parent.body.getPosition();
-		let missile = new Missile(this.parent, pos, phi, possibleTargets);
-		missile.body.setVelocity(this.parent.body.getVelocity())
-		this.coolDown = 1 / MISSILE_FIRE_RATE
-		return missile
 	}
 
 	update(dt: number) {
