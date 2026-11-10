@@ -6,7 +6,7 @@ import { Glider } from "game/entities/vehicles/glider"
 import { Car } from "game/entities/vehicles/car"
 import { OmgCar } from "game/entities/vehicles/omgcar"
 import { Vehicle, VehicleCtor } from "game/entities/vehicles/vehicle"
-import { PowerupBox, PowerupBoxCtor, replaceCurrentPowerup, setPowerupCollectionHandler } from "game/entities/powerups/powerup"
+import { PowerupBox, ConcretePowerupBoxCtor, replaceCurrentPowerup, setPowerupCollectionHandler } from "game/entities/powerups/powerup"
 import { PhaserWeapon } from "game/entities/weapons/phaser"
 import { MatchFactory } from "game/match"
 import { Player } from "game/player"
@@ -96,7 +96,7 @@ export let createMatch: MatchFactory = async function () {
 	function spawnPowerup() {
 		if (powerupBoxes.length < 5) {
 
-			let powerupBoxCtors: PowerupBoxCtor[] = [
+			let powerupBoxCtors: ConcretePowerupBoxCtor[] = [
 				MissilePowerupBox,
 				MinePowerupBox,
 				LaserPowerupBox,
@@ -106,7 +106,7 @@ export let createMatch: MatchFactory = async function () {
 			]
 			let pick = Math.floor(Math.random() * powerupBoxCtors.length)
 			let powerupBox = makeDestructible(
-				new powerupBoxCtors[pick](determineSpawnPoint()),
+				new powerupBoxCtors[pick](determineSpawnPoint(), { vehicles }),
 				7,
 				() => { powerupBox.dispose() }
 			)

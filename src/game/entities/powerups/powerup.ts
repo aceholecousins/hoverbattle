@@ -11,6 +11,7 @@ import { assignRole, Role } from "../actor"
 import { CollisionHandler } from "game/physics/collision"
 import { assertNull } from "utils/general"
 import constants from "node:constants"
+import { Context } from "game/context"
 
 const POWERUP_BOX_SIZE = 1.8
 
@@ -21,7 +22,7 @@ export interface Powerup {
 	cancel?: () => void
 }
 
-export type PowerupBoxCtor = new (position: Vector2) => PowerupBox;
+export type ConcretePowerupBoxCtor = new (position: Vector2, context: Context) => PowerupBox;
 
 let powerupBoxRole = new Role<PowerupBox>("powerupBox")
 

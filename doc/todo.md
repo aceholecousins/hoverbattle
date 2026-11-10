@@ -1,11 +1,13 @@
 Refactory:
 
+* architecture should allow that any weapon is the default weapon
+* fix missile homing with context that stores opponents
 * missiles are now always damaging and destructible - we leave it until we need to change it
 * weapons call this.parent.activePowerup?.cancel?.() although they should not know about powerups - see missiles for how to fix
 * mine spawned under still player, only exploded when he moved
 * assignRole of the projectile in the weapon or in the projectile constructor? In general clean up responsibilities between weapons and projectiles. - see missile for how to fix
 * in general look if import graph can be drawn with single direction arrows
-* repair can not be collected with ignoreNewPowerup and destroyNewPowerup; should repair be an extra category? or is that actually a feature?
+* repair can not be collected with ignoreNewPowerup and destroyNewPowerup; should repair be an extra category? or is that actually a feature? - feature for now
 ```
 private static model = new Resource(() => // should it be model_meta ?
 	getEngine().graphics.loadModel("assets/models/glider8_halo.glb")
@@ -23,7 +25,6 @@ Debug:
 * sometimes if they collect a powerup, it gets collected multiple times
 * makes me think that the shapes are in there multiple times, gonna random wiggle each point a bit
 * somehow seems to glitch only form the inside of the level, not once it's already left the arena and wants to go back in <- probably solved when ditching p2 for planck
-* missiles not homing anymore
 * planck just glitched out when I collected a shield while nashwan was running
 * if colliding gliders both have power shields, they get shot apart
 * shooting missiles while having powershield makes the missiles explode right away

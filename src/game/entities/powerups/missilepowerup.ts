@@ -4,6 +4,7 @@ import { MissileLauncher } from "../weapons/missile";
 import { PowerupBox } from "./powerup";
 import { getEngine } from "game/engine";
 import { Vector2 } from "math";
+import { Context } from "game/context"
 
 export class MissilePowerupBox extends PowerupBox {
 
@@ -13,6 +14,7 @@ export class MissilePowerupBox extends PowerupBox {
 
 	constructor(
 		position: Vector2,
+		private context: Context
 	) {
 		super(position, MissilePowerupBox.model.get().model)
 	}
@@ -28,11 +30,14 @@ export class MissilePowerupBox extends PowerupBox {
 			collector.activePowerup = null
 		}
 
+		let context = this.context
+
 		collector.activePowerup = {
 			pressTrigger() {
-				launcher.tryShoot([]);
+				const opponents = context.vehicles.filter(v => v.player.team !== collector.player.team)
+				launcher.tryShoot(opponents);
 			},
-			cancel: cancel
+			cancel
 		}
 
 		launcher = new MissileLauncher(collector, cancel);

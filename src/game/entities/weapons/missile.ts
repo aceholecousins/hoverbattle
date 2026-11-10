@@ -18,7 +18,7 @@ const MISSILE_MASS = 1;
 const MISSILE_ACCELERATION = 70;
 const MISSILE_DAMPING = 1.6;
 const MISSILE_ANGULAR_DAMPING = 7.0;
-const MISSILE_HOMING_TORQUE = 1.2;
+const MISSILE_HOMING_TORQUE = 25;
 const MISSILE_FIRE_RATE = 1;
 
 export class Missile extends Entity {
